@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#0d1f3c"/>
+      <stop offset="100%" stop-color="#040d1a"/>
+    </radialGradient>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100" height="100" rx="22" fill="url(#bg)"/>
+
+  <!-- Center glow -->
+  <circle cx="50" cy="50" r="30" fill="url(#centerGlow)"/>
+
+  <!-- Outer ring -->
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#b45309" stroke-width="0.6" opacity="0.35"/>
+
+  <!-- Inner ring -->
+  <circle cx="50" cy="50" r="24" fill="none" stroke="#d97706" stroke-width="0.5" opacity="0.25"/>
+
+  <!-- Spokes: thin lines from center to each dot -->
+  <g stroke="#d97706" stroke-width="0.4" opacity="0.2">
+    <line x1="50" y1="50" x2="50" y2="10"/>
+    <line x1="50" y1="50" x2="70" y2="14.6"/>
+    <line x1="50" y1="50" x2="84.6" y2="30"/>
+    <line x1="50" y1="50" x2="90" y2="50"/>
+    <line x1="50" y1="50" x2="84.6" y2="70"/>
+    <line x1="50" y1="50" x2="70" y2="85.4"/>
+    <line x1="50" y1="50" x2="50" y2="90"/>
+    <line x1="50" y1="50" x2="30" y2="85.4"/>
+    <line x1="50" y1="50" x2="15.4" y2="70"/>
+    <line x1="50" y1="50" x2="10" y2="50"/>
+    <line x1="50" y1="50" x2="15.4" y2="30"/>
+    <line x1="50" y1="50" x2="30" y2="14.6"/>
+  </g>
+
+  <!-- 12 palace dots — cardinal positions larger -->
+  <!-- 0° top -->
+  <circle cx="50" cy="10" r="3.2" fill="#fbbf24" filter="url(#glow)" opacity="0.95"/>
+  <!-- 30° -->
+  <circle cx="70" cy="14.6" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 60° -->
+  <circle cx="84.6" cy="30" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 90° right -->
+  <circle cx="90" cy="50" r="3.2" fill="#fbbf24" filter="url(#glow)" opacity="0.95"/>
+  <!-- 120° -->
+  <circle cx="84.6" cy="70" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 150° -->
+  <circle cx="70" cy="85.4" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 180° bottom -->
+  <circle cx="50" cy="90" r="3.2" fill="#fbbf24" filter="url(#glow)" opacity="0.95"/>
+  <!-- 210° -->
+  <circle cx="30" cy="85.4" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 240° -->
+  <circle cx="15.4" cy="70" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 270° left -->
+  <circle cx="10" cy="50" r="3.2" fill="#fbbf24" filter="url(#glow)" opacity="0.95"/>
+  <!-- 300° -->
+  <circle cx="15.4" cy="30" r="2.2" fill="#d97706" opacity="0.85"/>
+  <!-- 330° -->
+  <circle cx="30" cy="14.6" r="2.2" fill="#d97706" opacity="0.85"/>
+
+  <!-- Central 4-pointed star -->
+  <path d="M50,39 L52.2,47.8 L61,50 L52.2,52.2 L50,61 L47.8,52.2 L39,50 L47.8,47.8 Z"
+        fill="#fbbf24" filter="url(#glow)" opacity="0.95"/>
+
+  <!-- Center dot -->
+  <circle cx="50" cy="50" r="1.8" fill="#fff8e1" opacity="0.9"/>
+</svg>
