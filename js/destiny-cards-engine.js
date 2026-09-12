@@ -4,6 +4,19 @@
  * 涵蓋本命牌 (Birth Card)、星座行星統治牌、業力牌 (Karma Cards)、52天行星週期與年度牌陣
  */
 
+function getDestinyData() {
+  if (typeof DESTINY_CARDS_DATA !== 'undefined' && DESTINY_CARDS_DATA) return DESTINY_CARDS_DATA;
+  if (typeof window !== 'undefined' && window.DESTINY_CARDS_DATA) return window.DESTINY_CARDS_DATA;
+  if (typeof globalThis !== 'undefined' && globalThis.DESTINY_CARDS_DATA) return globalThis.DESTINY_CARDS_DATA;
+  if (typeof global !== 'undefined' && global.DESTINY_CARDS_DATA) return global.DESTINY_CARDS_DATA;
+  if (typeof require !== 'undefined') {
+    try {
+      return require('./destiny-cards-data.js');
+    } catch (e) {}
+  }
+  return null;
+}
+
 const CARD_SUITS = {
   'H': { name: 'Hearts', zh: '紅心', symbol: '♥', color: '#dc2626', element: '水 (情感 / 愛戀 / 人際)', season: '春' },
   'C': { name: 'Clubs', zh: '梅花', symbol: '♣', color: '#1e293b', element: '風/火 (心智 / 學習 / 智慧)', season: '夏' },
@@ -38,6 +51,7 @@ function parseCardCode(code) {
       zh: '小丑牌 (The Joker)',
       symbol: '🃏',
       color: '#9333ea',
+      element: '全知原初 (無限可能)',
       img: 'c0.gif'
     };
   }
@@ -47,9 +61,10 @@ function parseCardCode(code) {
   const rankMeta = CARD_RANKS[rankChar] || { val: 0, name: rankChar, zh: rankChar };
   
   // 查找圖檔名稱 (c1.gif ~ c52.gif)
+  const dData = getDestinyData();
   let imgName = 'c1.gif';
-  if (typeof DESTINY_CARDS_DATA !== 'undefined' && DESTINY_CARDS_DATA.icards) {
-    const found = DESTINY_CARDS_DATA.icards.find(c => c.code === code);
+  if (dData && dData.icards) {
+    const found = dData.icards.find(c => c.code === code);
     if (found) imgName = found.img + '.gif';
   }
 
@@ -68,7 +83,7 @@ function parseCardCode(code) {
   };
 }
 
-// 根據月日取得星座 Sun Sign (0~11)
+// 根據月日取得星座 Sun Sign
 function getSunSign(month, day) {
   const signs = [
     { name: '摩羯座 (Capricorn)', start: [1, 1], end: [1, 19], idx: 9, ruler: 'Saturn' },
@@ -94,8 +109,41 @@ function getSunSign(month, day) {
   return signs[0];
 }
 
+// 根據星座取得行星統治牌偏移量 (1:水星, 2:金星, 3:火星, 4:木星, 5:土星, 6:天王星/太陽, 7:海王星/月亮)
+function getPlanetSignOffset(mth, day) {
+  if (((mth === 3) && (day >= 21)) || ((mth === 4) && (day <= 19))) return 3;  // Aries
+  if (((mth === 4) && (day >= 20)) || ((mth === 5) && (day <= 20))) return 2;  // Taurus
+  if (((mth === 5) && (day >= 21)) || ((mth === 6) && (day <= 21))) return 1;  // Gemini
+  if (((mth === 6) && (day >= 22)) || ((mth === 7) && (day <= 22))) return 7;  // Cancer
+  if (((mth === 7) && (day >= 23)) || ((mth === 8) && (day <= 22))) return 6;  // Leo
+  if (((mth === 8) && (day >= 23)) || ((mth === 9) && (day <= 22))) return 1;  // Virgo
+  if (((mth === 9) && (day >= 23)) || ((mth === 10) && (day <= 22))) return 2; // Libra
+  if (((mth === 10) && (day >= 23)) || ((mth === 11) && (day <= 21))) return 3;// Scorpio
+  if (((mth === 11) && (day >= 22)) || ((mth === 12) && (day <= 21))) return 4;// Sagittarius
+  if (((mth === 12) && (day >= 22)) || ((mth === 1) && (day <= 19))) return 5; // Capricorn
+  if (((mth === 1) && (day >= 20)) || ((mth === 2) && (day <= 18))) return 6;  // Aquarius
+  if (((mth === 2) && (day >= 19)) || ((mth === 3) && (day <= 20))) return 7;  // Pisces
+  return 3;
+}
+
+// 根據出生日期數字取得行星數字統治牌偏移量
+function getPlanetNumOffset(day) {
+  if (day === 1 || day === 10 || day === 19 || day === 28) return 6;  // Leo (Sun)
+  if (day === 2 || day === 11 || day === 20 || day === 29) return 7;  // Cancer (Moon)
+  if (day === 3 || day === 12 || day === 21 || day === 30) return 4;  // Sagittarius (Jupiter)
+  if (day === 4 || day === 13 || day === 22 || day === 31) return 6;  // Aquarius (Uranus)
+  if (day === 5 || day === 14 || day === 23) return 1;                // Gemini/Virgo (Mercury)
+  if (day === 6 || day === 15 || day === 24) return 2;                // Taurus/Libra (Venus)
+  if (day === 7 || day === 16 || day === 25) return 7;                // Pisces (Neptune)
+  if (day === 8 || day === 17 || day === 26) return 5;                // Capricorn (Saturn)
+  if (day === 9 || day === 18 || day === 27) return 3;                // Aries/Scorpio (Mars)
+  return 5;
+}
+
 // 核心計算主函數
 function calculateDestinyCard(year, month, day, targetAge = null) {
+  const dData = getDestinyData();
+
   if (month === 12 && day === 31) {
     // 12月31日是獨特的小丑牌 (The Joker)
     const jokerCard = parseCardCode('JOKER');
@@ -104,23 +152,32 @@ function calculateDestinyCard(year, month, day, targetAge = null) {
       birthCard: jokerCard,
       sunSign: getSunSign(month, day),
       planetaryRuler: jokerCard,
+      planetaryRulerByDay: jokerCard,
       karmaCards: { first: jokerCard, second: jokerCard },
+      yearlyCards: {
+        plateName: '神聖小丑無序牌陣',
+        soulCard: jokerCard,
+        lifeCard: jokerCard,
+        plutoCard: jokerCard,
+        resultCard: jokerCard,
+        environmentCard: jokerCard
+      },
       periods: []
     };
   }
 
-  // 1. 本命牌 (Birth Card) 計算公式: 55 - (2*M + D)
-  const daysInMonth = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  const dayOfYear = (month > 1 ? daysInMonth[month - 1] : 0) + day;
-  
+  // 1. 本命牌 (Birth Card)
   let bcardCode = 'KS';
-  if (typeof DESTINY_CARDS_DATA !== 'undefined' && DESTINY_CARDS_DATA.bcards) {
-    bcardCode = DESTINY_CARDS_DATA.bcards[dayOfYear - 1] || 'KS';
+  if (month === 2 && day === 29) {
+    bcardCode = '9C'; // 閏日標準映射
+  } else if (dData && dData.bcards) {
+    const daysInMonth = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    const dayOfYear = (month > 1 ? daysInMonth[month - 1] : 0) + day;
+    bcardCode = dData.bcards[dayOfYear - 1] || 'KS';
   } else {
-    // 數學公式後備
+    // 數學公式後備: 55 - (2*M + D)
     let cardVal = 55 - (2 * month + day);
     if (cardVal <= 0) cardVal += 52;
-    // 依序映射
     const allCards = [
       'AH','2H','3H','4H','5H','6H','7H','8H','9H','10H','JH','QH','KH',
       'AC','2C','3C','4C','5C','6C','7C','8C','9C','10C','JC','QC','KC',
@@ -134,23 +191,26 @@ function calculateDestinyCard(year, month, day, targetAge = null) {
 
   // 2. 星座與行星統治牌 (Planetary Ruling Card)
   const sunSign = getSunSign(month, day);
-  let rulingCardCode = bcardCode;
-  if (typeof DESTINY_CARDS_DATA !== 'undefined' && DESTINY_CARDS_DATA.psignnum) {
-    const bcardIdx = DESTINY_CARDS_DATA.icards.findIndex(c => c.code === bcardCode);
-    if (bcardIdx >= 0 && DESTINY_CARDS_DATA.psignnum[bcardIdx]) {
-      const pList = DESTINY_CARDS_DATA.psignnum[bcardIdx];
-      // 依據星座取得對應之統治牌
-      const signIdxIn8 = sunSign.idx % 8;
-      rulingCardCode = pList[signIdxIn8] || bcardCode;
+  let rulingSignCode = bcardCode;
+  let rulingDayCode = bcardCode;
+
+  if (dData && dData.psignnum) {
+    const pEntry = dData.psignnum.find(p => p[0] === bcardCode);
+    if (pEntry) {
+      const signOff = getPlanetSignOffset(month, day);
+      const numOff = getPlanetNumOffset(day);
+      rulingSignCode = pEntry[signOff] || bcardCode;
+      rulingDayCode = pEntry[numOff] || bcardCode;
     }
   }
-  const rulingCard = parseCardCode(rulingCardCode);
+  const planetaryRuler = parseCardCode(rulingSignCode);
+  const planetaryRulerByDay = parseCardCode(rulingDayCode);
 
   // 3. 業力牌 (Karma Cards)
   let karmaFirstCode = bcardCode;
   let karmaSecondCode = bcardCode;
-  if (typeof DESTINY_CARDS_DATA !== 'undefined' && DESTINY_CARDS_DATA.karma_map) {
-    const kPair = DESTINY_CARDS_DATA.karma_map[bcardCode];
+  if (dData && dData.karma_map) {
+    const kPair = dData.karma_map[bcardCode];
     if (kPair) {
       karmaFirstCode = kPair.first;
       karmaSecondCode = kPair.second;
@@ -167,12 +227,29 @@ function calculateDestinyCard(year, month, day, targetAge = null) {
   if (age > 90) age = 90;
 
   // 取得該年齡之太陽牌陣 (Plate)
-  let plateKey = 'plate00';
   let quadNum = age;
   if (quadNum > 45) quadNum -= 45;
-  plateKey = quadNum < 10 ? `plate0${quadNum}` : `plate${quadNum}`;
+  const plateKey = quadNum < 10 ? `plate0${quadNum}` : `plate${quadNum}`;
 
-  let plateCards = DESTINY_CARDS_DATA.plates[plateKey] || DESTINY_CARDS_DATA.plates['plate00'];
+  const basePlates = (dData && dData.plates) ? dData.plates : {};
+  let plateCards = [...(basePlates[plateKey] || basePlates['plate00'] || [])];
+
+  // 超過 45 歲之半固定牌 (2H, 9H, AC, 7D) 單雙歲對調法則
+  if (age > 45 && plateCards.length === 52) {
+    const isOdd = (age % 2 !== 0);
+    if (isOdd) {
+      plateCards[4] = '2H';
+      plateCards[11] = '9H';
+      plateCards[16] = 'AC';
+      plateCards[35] = '7D';
+    } else {
+      plateCards[4] = 'AC';
+      plateCards[11] = '7D';
+      plateCards[16] = '2H';
+      plateCards[35] = '9H';
+    }
+  }
+
   let bcPos = plateCards.indexOf(bcardCode);
   if (bcPos === -1) bcPos = 0;
 
@@ -187,13 +264,13 @@ function calculateDestinyCard(year, month, day, targetAge = null) {
     { key: 'Neptune', zh: '海王星牌 (Neptune)', theme: '靈性直覺 · 遠大夢想 · 慈悲包容', days: 52 }
   ];
 
-  // 計算每個週期的起訖日期
+  // 計算每個週期的起訖日期 (以今年生日為基底)
   const birthThisYear = new Date(currentYear, month - 1, day);
   const periods = [];
 
   for (let p = 0; p < 7; p++) {
     const cardPos = (bcPos + (p + 1)) % 52;
-    const cardCode = plateCards[cardPos];
+    const cardCode = plateCards[cardPos] || bcardCode;
     const pCard = parseCardCode(cardCode);
 
     const startD = new Date(birthThisYear.getTime() + p * 52 * 86400000);
@@ -214,21 +291,21 @@ function calculateDestinyCard(year, month, day, targetAge = null) {
   }
 
   // 年度關鍵四牌
-  // 長期牌 (Long Range Card): pos+0 (在當前盤的位置對照靈魂盤)
-  const soulCards = DESTINY_CARDS_DATA.plates['platesp'];
-  const lifeCards = DESTINY_CARDS_DATA.plates['plate00'];
+  const soulCards = basePlates['platesp'] || [];
+  const lifeCards = basePlates['plate00'] || [];
   
-  const soulCard = parseCardCode(soulCards[bcPos] || 'AH');
-  const lifeCard = parseCardCode(lifeCards[bcPos] || 'AH');
-  const plutoCard = parseCardCode(plateCards[(bcPos + 8) % 52]);
-  const resultCard = parseCardCode(plateCards[(bcPos + 9) % 52]);
-  const environmentCard = parseCardCode(plateCards[(bcPos + 51) % 52]);
+  const soulCard = parseCardCode(soulCards[bcPos] || bcardCode);
+  const lifeCard = parseCardCode(lifeCards[bcPos] || bcardCode);
+  const plutoCard = parseCardCode(plateCards[(bcPos + 8) % 52] || bcardCode);
+  const resultCard = parseCardCode(plateCards[(bcPos + 9) % 52] || bcardCode);
+  const environmentCard = parseCardCode(plateCards[(bcPos + 51) % 52] || bcardCode);
 
   return {
     input: { year, month, day, age },
     birthCard: birthCard,
     sunSign: sunSign,
-    planetaryRuler: rulingCard,
+    planetaryRuler: planetaryRuler,
+    planetaryRulerByDay: planetaryRulerByDay,
     karmaCards: {
       first: karmaFirst,
       second: karmaSecond
@@ -245,6 +322,13 @@ function calculateDestinyCard(year, month, day, targetAge = null) {
   };
 }
 
+if (typeof window !== 'undefined') {
+  window.calculateDestinyCard = calculateDestinyCard;
+  window.parseCardCode = parseCardCode;
+  window.CARD_SUITS = CARD_SUITS;
+  window.CARD_RANKS = CARD_RANKS;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { calculateDestinyCard, parseCardCode, CARD_SUITS, CARD_RANKS };
+  module.exports = { calculateDestinyCard, parseCardCode, CARD_SUITS, CARD_RANKS, getSunSign };
 }

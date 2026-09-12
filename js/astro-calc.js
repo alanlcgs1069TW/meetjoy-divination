@@ -31,12 +31,15 @@
     { name: '雙魚座', en: 'Pisces', symbol: '♓', start: 330, ruler: '海王星', element: '水' }
   ];
 
-  // 人類圖易經 64 閘門輪盤序列 (從雙魚座開始)
-  const HD_GATE_SERIAL = [
-    59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,
-    58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,
-    3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29
+  // 人類圖與基因天命易經 64 閘門輪盤序列 (從水瓶座 02°00'00" 第 41 閘門開始順時針排序)
+  const RAVE_MANDALA_GATES = [
+    41, 19, 13, 49, 30, 55, 37, 63, 22, 36, 25, 17, 21, 51, 42, 3,
+    27, 24, 2, 23, 8, 20, 16, 35, 45, 12, 15, 52, 39, 53, 62, 56,
+    31, 33, 7, 4, 29, 59, 40, 64, 47, 6, 46, 18, 48, 57, 32, 50,
+    28, 44, 1, 43, 14, 34, 9, 5, 26, 11, 10, 58, 38, 54, 61, 60
   ];
+  const HD_GATE_SERIAL = RAVE_MANDALA_GATES;
+  const START_OF_GATE_41 = 302.0; // 水瓶座 02°00'00"
 
   // 人類圖九大中心涵蓋之閘門
   const HD_CENTERS = {
@@ -353,21 +356,24 @@
   }
 
   /**
-   * 黃道度數換算為人類圖 64 閘門與 6 爻線
+   * 黃道度數換算為人類圖 / 基因天命 64 閘門與 6 爻線
+   * 基準點：第 41 閘門始於水瓶座 02°00'00" (302.0000°)，順時針每 5.625° 為一閘門，每 0.9375° 為一爻
    */
   function degreeToGateLine(deg) {
-    const mDeg = mod(deg, 360);
-    const idx = Math.floor(mDeg / 5.625);
-    const withinGate = mDeg % 5.625;
-    const line = Math.floor(withinGate / (5.625 / 6)) + 1;
-    const tone = Math.floor((withinGate % (5.625 / 6)) / (5.625 / 6 / 6)) + 1;
+    const norm = mod(deg - START_OF_GATE_41, 360);
+    const gateSpan = 5.625; // 360 / 64
+    const idx = Math.floor(norm / gateSpan);
+    const gate = RAVE_MANDALA_GATES[idx];
+    const withinGate = norm % gateSpan;
+    const line = Math.floor(withinGate / (gateSpan / 6)) + 1;
+    const tone = Math.floor((withinGate % (gateSpan / 6)) / (gateSpan / 6 / 6)) + 1;
 
     return {
-      gate: HD_GATE_SERIAL[idx],
+      gate: gate,
       line: line,
       tone: tone,
-      degree: mDeg,
-      formatted: `${HD_GATE_SERIAL[idx]}.${line}`
+      degree: mod(deg, 360),
+      formatted: `${gate}.${line}`
     };
   }
 
@@ -549,15 +555,58 @@
     };
   }
 
+  /**
+   * 完整基因天命 (Gene Keys) 黃金之路全息天命圖推導
+   * 100% 精準對齊 genekeys.com 官方算法與天體映射
+   */
+  function calculateGeneKeysProfile(birthUtcDate) {
+    const designUtcDate = findHumanDesignTime(birthUtcDate);
+    const pPos = calculatePlanetaryPositions(birthUtcDate);
+    const dPos = calculatePlanetaryPositions(designUtcDate);
+
+    // 11 大天命球對應之天體與爻線
+    const spheres = {
+      // 激活序列 (綠色 · 激活自我天賦)
+      lifesWork: { id: 'lifesWork', name: '生命工作', en: "Life's Work", seq: 'activation', color: '#10B981', planet: 'Personality Sun', planetSymbol: '☉', ...degreeToGateLine(pPos.Sun.longitude) },
+      evolution: { id: 'evolution', name: '進化', en: 'Evolution', seq: 'activation', color: '#10B981', planet: 'Personality Earth', planetSymbol: '⊕', ...degreeToGateLine(pPos.Earth.longitude) },
+      radiance: { id: 'radiance', name: '光芒', en: 'Radiance', seq: 'activation', color: '#10B981', planet: 'Design Sun', planetSymbol: '☉', ...degreeToGateLine(dPos.Sun.longitude) },
+      purpose: { id: 'purpose', name: '使命', en: 'Purpose', seq: 'activation', color: '#10B981', planet: 'Design Earth', planetSymbol: '⊕', ...degreeToGateLine(dPos.Earth.longitude) },
+
+      // 金星序列 (酒紅/紅色 · 療癒關係創傷)
+      attraction: { id: 'attraction', name: '吸引力', en: 'Attraction', seq: 'venus', color: '#E11D48', planet: 'Design Moon', planetSymbol: '☽', ...degreeToGateLine(dPos.Moon.longitude) },
+      iq: { id: 'iq', name: '智商', en: 'IQ', seq: 'venus', color: '#E11D48', planet: 'Personality Venus', planetSymbol: '♀', ...degreeToGateLine(pPos.Venus.longitude) },
+      eq: { id: 'eq', name: '情商', en: 'EQ', seq: 'venus', color: '#E11D48', planet: 'Personality Mars', planetSymbol: '♂', ...degreeToGateLine(pPos.Mars.longitude) },
+      sq: { id: 'sq', name: '靈商', en: 'SQ', seq: 'venus', color: '#E11D48', planet: 'Design Venus', planetSymbol: '♀', ...degreeToGateLine(dPos.Venus.longitude) },
+      core: { id: 'core', name: '核心', en: 'Core', seq: 'venus', color: '#6366F1', planet: 'Design Mars', planetSymbol: '♂', ...degreeToGateLine(dPos.Mars.longitude) },
+
+      // 珍珠序列 (藍色 · 顯化世俗豐盛)
+      vocation: { id: 'vocation', name: '天職/召喚', en: 'Vocation', seq: 'pearl', color: '#6366F1', planet: 'Design Mars', planetSymbol: '♂', ...degreeToGateLine(dPos.Mars.longitude) },
+      culture: { id: 'culture', name: '文化', en: 'Culture', seq: 'pearl', color: '#0EA5E9', planet: 'Design Jupiter', planetSymbol: '♃', ...degreeToGateLine(dPos.Jupiter.longitude) },
+      brand: { id: 'brand', name: '品牌', en: 'Brand', seq: 'pearl', color: '#10B981', planet: 'Personality Sun', planetSymbol: '☉', ...degreeToGateLine(pPos.Sun.longitude) },
+      pearl: { id: 'pearl', name: '珍珠', en: 'Pearl', seq: 'pearl', color: '#0EA5E9', planet: 'Personality Jupiter', planetSymbol: '♃', ...degreeToGateLine(pPos.Jupiter.longitude) }
+    };
+
+    return {
+      birthUtc: birthUtcDate,
+      designUtc: designUtcDate,
+      spheres: spheres,
+      personalityPlanets: pPos,
+      designPlanets: dPos
+    };
+  }
+
   return {
     ZODIAC_SIGNS,
+    RAVE_MANDALA_GATES,
     HD_GATE_SERIAL,
     HD_CENTERS,
     HD_CHANNELS,
     longitudeToSign,
+    degreeToGateLine,
     calculatePlanetaryPositions,
     calculateHousesAndAxes,
     calculateAspects,
-    calculateHumanDesignChart
+    calculateHumanDesignChart,
+    calculateGeneKeysProfile
   };
 }));

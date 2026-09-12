@@ -3581,6 +3581,13 @@ const DESTINY_CARDS_DATA = {
       "8S",
       "9S",
       "10S"
+    ],
+    "plate45": [
+      "10C", "8D", "KS", "3H", "2H", "QC", "10S", "5C", "3D", "AS",
+      "7H", "9H", "5S", "JH", "9C", "9S", "AC", "KH", "KD", "6H",
+      "4C", "2D", "JS", "8C", "6D", "4S", "10H", "10D", "8S", "AH",
+      "AD", "QD", "5H", "3C", "3S", "7D", "7C", "5D", "QS", "JC",
+      "9D", "7S", "2C", "KC", "JD", "4H", "4D", "2S", "8S", "6C", "6S", "QH"
     ]
   },
   "karma_map": {
@@ -3794,4 +3801,8 @@ const DESTINY_CARDS_DATA = {
     }
   }
 };
+if (typeof window !== 'undefined') window.DESTINY_CARDS_DATA = DESTINY_CARDS_DATA;
+if (typeof globalThis !== 'undefined') globalThis.DESTINY_CARDS_DATA = DESTINY_CARDS_DATA;
+if (typeof global !== 'undefined') global.DESTINY_CARDS_DATA = DESTINY_CARDS_DATA;
 if (typeof module !== 'undefined' && module.exports) module.exports = DESTINY_CARDS_DATA;
+

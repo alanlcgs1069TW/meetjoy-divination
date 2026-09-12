@@ -3,278 +3,703 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MeetJoy 基因天命黃金之路 (The Golden Path)</title>
+  <title>基因天命黃金之路全息天命圖 · 癒見幸福魔法神算</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <script src="./js/astronomy.browser.min.js"></script>
+  <script src="./js/geo-cities.js"></script>
+  <script src="./js/astro-calc.js"></script>
+  <script src="./js/gene-keys-data.js"></script>
+
   <style>
-    body { font-family: 'Noto Serif TC', serif; }
-    .mj-sphere {
-      position: absolute;
-      width: 76px; height: 76px;
-      border-radius: 50%;
-      border: 2.5px solid #FFFFFF;
-      box-shadow: 0 8px 20px rgba(41, 69, 60, 0.25);
-      color: #FFFFFF;
-      font-weight: 700;
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #F8F9FA;
+      color: #1E293B;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .font-serif-tc {
+      font-family: 'Noto Serif TC', serif;
+    }
+    .font-cinzel {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* 暗夜模式樣式 */
+    body.dark-mode {
+      background-color: #0F172A;
+      color: #F8FAFC;
+    }
+    body.dark-mode .bg-card-theme {
+      background-color: #1E293B;
+      border-color: #334155;
+    }
+    body.dark-mode .text-theme-sub {
+      color: #94A3B8;
+    }
+    body.dark-mode .text-theme-main {
+      color: #F1F5F9;
+    }
+
+    /* 天命球體樣式 */
+    .gk-sphere-group {
       cursor: pointer;
-      transform: translate(-50%, -50%);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: all 0.25s ease;
-      user-select: none;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .mj-sphere:hover, .mj-sphere.is-active {
-      transform: translate(-50%, -50%) scale(1.14);
-      box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.5), 0 10px 24px rgba(41, 69, 60, 0.4);
+    .gk-sphere-group:hover {
+      transform: scale(1.08);
+      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
     }
-    .sphere-activation { background: linear-gradient(135deg, #2E3829, #4A5D40); }
-    .sphere-venus { background: linear-gradient(135deg, #7A2E3B, #9B3B4C); }
-    .sphere-pearl { background: linear-gradient(135deg, #2B4E63, #3A6985); }
+    .gk-sphere-group.is-active {
+      transform: scale(1.12);
+      filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.9));
+    }
+
+    /* 隱藏標籤過濾 */
+    .hide-siddhi .tag-siddhi { display: none !important; }
+    .hide-gift .tag-gift { display: none !important; }
+    .hide-shadow .tag-shadow { display: none !important; }
+    .hide-line .tag-line { display: none !important; }
+    .hide-pathways .pathway-line { display: none !important; }
+
+    /* 滾動條美化 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 3px;
+    }
   </style>
 </head>
-<body class="bg-[#F4EFE6] min-h-screen flex flex-col items-center p-0 m-0 text-[#25342F]">
+<body class="min-h-screen flex flex-col antialiased select-none">
 
-  <!-- 全域導覽條 -->
-  <nav class="w-full bg-[#2E3829] text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/40 shadow-md mb-6">
-    <div class="flex items-center gap-2 sm:gap-3">
-      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+  <!-- 全域頂部導覽列 (全站七大排盤矩陣) -->
+  <nav class="w-full bg-[#1E293B] text-amber-50 py-2.5 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#334155] shadow-sm z-30">
+    <div class="flex items-center gap-3">
+      <a href="/" class="font-serif-tc font-black text-base sm:text-lg text-amber-200 hover:text-white transition flex items-center gap-2">
         <span>🔮 癒見幸福 · 魔法神算</span>
       </a>
-      <span class="text-xs text-amber-200/60 hidden sm:inline">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+      <span class="text-xs text-slate-400 hidden md:inline">| 基因天命黃金之路 (The Golden Path)</span>
     </div>
-    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto py-1">
-      <a href="/gene-keys.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs whitespace-nowrap">基因天命</a>
-      <a href="/chakra-astrology.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">脈輪占星</a>
-      <a href="/destiny-cards.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">撲克命牌</a>
-      <a href="/astrology.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">西洋占星</a>
-      <a href="/human-design.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">人類圖</a>
-      <a href="/xiao-liu-ren.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">四盤小六壬</a>
-      <a href="/liu-yao.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">文王六爻</a>
-      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-1 sm:ml-2 px-2.5 sm:px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold whitespace-nowrap shadow-xs">預約諮詢 ↗</a>
+    <div class="flex items-center gap-1 sm:gap-2 text-xs font-medium overflow-x-auto py-1">
+      <a href="/gene-keys.html" class="px-2.5 py-1 rounded-lg bg-[#987315] text-white font-bold shadow-xs whitespace-nowrap">基因天命</a>
+      <a href="/human-design.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">人類圖</a>
+      <a href="/chakra-astrology.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">脈輪占星</a>
+      <a href="/destiny-cards.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">撲克命牌</a>
+      <a href="/astrology.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">西洋占星</a>
+      <a href="/xiao-liu-ren.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">小六壬</a>
+      <a href="/liu-yao.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">文王六爻</a>
     </div>
   </nav>
 
-  <main class="w-full max-w-5xl px-3 sm:px-6 pb-16">
-    <!-- 標題與排盤輸入 -->
-    <div class="text-center mb-8 bg-white/70 backdrop-blur border border-[#E8DFC5] rounded-2xl p-6 shadow-sm">
-      <p class="text-xs tracking-[0.25em] font-bold text-[#8A6B18] uppercase mb-1">MEETJOY · THE GOLDEN PATH</p>
-      <h1 class="text-2xl sm:text-4xl font-black text-[#2E3829] tracking-wider mb-2">基因天命：把生命讀成一條金色的路</h1>
-      <p class="text-xs sm:text-sm text-stone-600 max-w-xl mx-auto">
-        每一個陰影，都藏著一個可以練習回來的天賦。在三大序列的旋律中，找回身心靈的原始和諧。
-      </p>
-
-      <form id="gk_form" class="flex flex-wrap items-center justify-center gap-3 mt-6">
-        <div class="flex items-center gap-2 bg-[#FBF9F4] border border-[#D9C99E] rounded-xl px-3 py-2">
-          <span class="text-xs font-bold text-stone-500">出生日期</span>
-          <input type="date" id="gk_date" required value="1990-05-20" class="bg-transparent text-sm font-bold text-stone-800 outline-none">
-        </div>
-        <div class="flex items-center gap-2 bg-[#FBF9F4] border border-[#D9C99E] rounded-xl px-3 py-2">
-          <span class="text-xs font-bold text-stone-500">出生時間</span>
-          <input type="time" id="gk_time" required value="12:30" class="bg-transparent text-sm font-bold text-stone-800 outline-none">
-        </div>
-        <button type="submit" class="bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 font-bold px-5 py-2.5 rounded-xl shadow transition text-sm border border-amber-900/40">
-          展開我的黃金之路
-        </button>
-      </form>
-    </div>
-
-    <!-- 序列圖例指示 -->
-    <div class="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6 text-xs font-bold">
-      <div class="flex items-center gap-2">
-        <span class="w-3.5 h-3.5 rounded-full bg-[#3E4B37] shadow-xs"></span>
-        <span>激活序列 (Activation)</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-3.5 h-3.5 rounded-full bg-[#8A3343] shadow-xs"></span>
-        <span>金星序列 (Venus)</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-3.5 h-3.5 rounded-full bg-[#31566D] shadow-xs"></span>
-        <span>珍珠序列 (Pearl)</span>
+  <!-- 主儀表板標題列 (對標 genekeys.com/my-dashboard) -->
+  <header class="w-full bg-white border-b border-slate-200 py-3 px-4 sm:px-8 flex items-center justify-between shadow-xs z-20">
+    <div class="flex items-center gap-3">
+      <button id="btn_toggle_inputs" class="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition" title="收合/展開排盤輸入表單">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      <div>
+        <h1 id="header_profile_name" class="font-serif-tc font-black text-xl sm:text-2xl text-slate-900 tracking-wide flex items-center gap-2">
+          <span>Alan - 完整全譜</span>
+        </h1>
+        <p id="header_profile_meta" class="text-xs text-slate-500 font-mono mt-0.5">
+          1982-3-26 · 11:57 · Taipei, Taiwan, Taiwan
+        </p>
       </div>
     </div>
 
-    <!-- 核心地圖與詳解 -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/80 border border-[#E8DFC5] rounded-3xl p-6 sm:p-8 shadow-sm">
-      <!-- 互動羅盤輪 -->
-      <div class="lg:col-span-7 flex justify-center">
-        <div id="wheel_box" class="relative w-[340px] sm:w-[440px] h-[340px] sm:h-[440px] rounded-full border border-[#D5C287] shadow-inner bg-radial from-[#FFFDF6] to-transparent flex items-center justify-center">
-          <!-- 幾何環裝飾 -->
-          <div class="absolute inset-8 rounded-full border border-dashed border-[#D4AF37]/50 pointer-events-none"></div>
-          <div class="absolute inset-20 rounded-full border border-[#D4AF37]/30 pointer-events-none"></div>
-          <div class="text-center pointer-events-none z-0">
-            <span class="text-[10px] tracking-widest text-[#896C1D] block">THE GOLDEN PATH</span>
-            <span class="text-xs font-black text-[#2E3829]">黃金之路</span>
+    <!-- 右上功能快捷圖標群 -->
+    <div class="flex items-center gap-2">
+      <button id="btn_dark_mode" class="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition" title="切換暗夜/白晝模式">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+      <button id="btn_fullscreen" class="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition hidden sm:inline-flex" title="全螢幕顯現">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+      </button>
+      <button onclick="window.print()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3829] hover:bg-[#3E4B37] text-amber-100 text-xs font-bold transition shadow-xs flex items-center gap-1.5">
+        <span>📄 生成 PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 浮動 / 可折疊排盤輸入列 -->
+  <section id="inputs_section" class="w-full bg-slate-50 border-b border-slate-200 py-3 px-4 sm:px-8 transition-all duration-300">
+    <form id="gk_form" class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 shadow-2xs">
+          <span class="font-bold text-slate-500">姓名</span>
+          <input type="text" id="gk_name" value="Alan" class="w-20 sm:w-28 font-bold text-slate-800 outline-none bg-transparent">
+        </div>
+        <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 shadow-2xs">
+          <span class="font-bold text-slate-500">出生日期</span>
+          <input type="date" id="gk_date" value="1982-03-26" required class="font-mono font-bold text-slate-800 outline-none bg-transparent">
+        </div>
+        <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 shadow-2xs">
+          <span class="font-bold text-slate-500">出生時分</span>
+          <input type="time" id="gk_time" value="11:57" required class="font-mono font-bold text-slate-800 outline-none bg-transparent">
+        </div>
+        <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 shadow-2xs">
+          <span class="font-bold text-slate-500">出生城市</span>
+          <select id="gk_city" class="font-bold text-slate-800 outline-none bg-transparent cursor-pointer"></select>
+        </div>
+        <label class="inline-flex items-center gap-1.5 text-slate-600 cursor-pointer select-none">
+          <input type="checkbox" id="chk_dst" class="rounded text-[#987315] focus:ring-[#987315]">
+          <span>DST 夏令時間</span>
+        </label>
+      </div>
+
+      <button type="submit" class="px-5 py-2 rounded-xl bg-[#987315] hover:bg-[#806010] text-white font-bold transition shadow-xs flex items-center gap-1.5 ml-auto">
+        <span>🪐 繪製全息天命圖</span>
+      </button>
+    </form>
+  </section>
+
+  <!-- 主舞台工作區：左側神聖全息畫布 + 右側控制台與深度詳解面板 -->
+  <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- 左側：全息天命圖畫布 (對標 genekeys.com 全息曼陀羅視圖) -->
+    <section class="lg:col-span-8 bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col items-center relative overflow-hidden bg-card-theme">
+      
+      <!-- 全息畫布頂部微縮指示器 -->
+      <div class="w-full flex items-center justify-between text-xs mb-2 px-2">
+        <div class="flex items-center gap-4">
+          <span class="inline-flex items-center gap-1.5 font-bold text-emerald-700">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 激活序列 (Activation)
+          </span>
+          <span class="inline-flex items-center gap-1.5 font-bold text-rose-700">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> 金星序列 (Venus)
+          </span>
+          <span class="inline-flex items-center gap-1.5 font-bold text-sky-700">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> 珍珠序列 (Pearl)
+          </span>
+        </div>
+        <span class="text-[11px] text-slate-400 font-mono hidden sm:inline">64 HEXAGRAM WHEEL · 11 SPHERES</span>
+      </div>
+
+      <!-- 神聖幾何全息天命圖 (SVG) -->
+      <div class="w-full max-w-[840px] relative select-none" id="mandala_container">
+        <svg id="gene_keys_svg" viewBox="0 0 960 760" class="w-full h-auto drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- 濾鏡效果 -->
+            <filter id="sphere_shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.18"/>
+            </filter>
+            <filter id="sphere_glow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="5" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+
+            <!-- 激活序列球體立體漸層 (翡翠綠) -->
+            <radialGradient id="grad_activation" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#86EFAC"/>
+              <stop offset="45%" stop-color="#22C55E"/>
+              <stop offset="85%" stop-color="#15803D"/>
+              <stop offset="100%" stop-color="#14532D"/>
+            </radialGradient>
+
+            <!-- 金星序列球體立體漸層 (胭脂紅/紅寶石) -->
+            <radialGradient id="grad_venus" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#FDA4AF"/>
+              <stop offset="45%" stop-color="#E11D48"/>
+              <stop offset="85%" stop-color="#9F1239"/>
+              <stop offset="100%" stop-color="#4C0519"/>
+            </radialGradient>
+
+            <!-- 珍珠序列球體立體漸層 (青金天藍) -->
+            <radialGradient id="grad_pearl" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#7DD3FC"/>
+              <stop offset="45%" stop-color="#0284C7"/>
+              <stop offset="85%" stop-color="#075985"/>
+              <stop offset="100%" stop-color="#082F49"/>
+            </radialGradient>
+
+            <!-- 核心創傷球體立體漸層 (靛青紫藍) -->
+            <radialGradient id="grad_core" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#C7D2FE"/>
+              <stop offset="45%" stop-color="#6366F1"/>
+              <stop offset="85%" stop-color="#4338CA"/>
+              <stop offset="100%" stop-color="#1E1B4B"/>
+            </radialGradient>
+          </defs>
+
+          <!-- 1. 底層易經 64 卦輪盤 (I Ching 64 Hexagrams Ring) -->
+          <g id="layer_hexagram_wheel" opacity="0.45"></g>
+
+          <!-- 2. 中層幾何通道網絡 (Pathways Layer) -->
+          <g id="layer_pathways" stroke-linecap="round" stroke-linejoin="round"></g>
+
+          <!-- 3. 上層 11 大天命球與標籤層 (Spheres & Labels Layer) -->
+          <g id="layer_spheres"></g>
+        </svg>
+      </div>
+
+      <!-- 畫布底層五大頻率柱 (對標截圖底欄) -->
+      <div class="w-full mt-4 pt-3 border-t border-slate-100 flex items-center justify-around text-xs font-bold text-slate-500">
+        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> 圓滿 (Wholeness)</div>
+        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> 天才 (Genius)</div>
+        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> 愛 (Love)</div>
+        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-500"></span> 豐盛 (Prosperity)</div>
+        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> 和諧 (Harmony)</div>
+      </div>
+    </section>
+
+    <!-- 右側：控制面版、自訂切換標籤與天命球詳解 -->
+    <section class="lg:col-span-4 space-y-5">
+      
+      <!-- 佈局預設與顯示開關 (對標截圖右側面板) -->
+      <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4 bg-card-theme">
+        
+        <!-- 佈局預設按鈕群 -->
+        <div>
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">佈局預設 (Layout Presets)</h3>
+          <div class="grid grid-cols-4 gap-1.5 text-xs font-bold">
+            <button onclick="setLayoutPreset('lines')" class="py-2 px-1 rounded-xl border border-slate-200 hover:bg-amber-50 hover:border-amber-300 text-slate-700 text-center transition">爻</button>
+            <button onclick="setLayoutPreset('channels')" class="py-2 px-1 rounded-xl border border-slate-200 hover:bg-amber-50 hover:border-amber-300 text-slate-700 text-center transition">通道</button>
+            <button onclick="setLayoutPreset('gift_siddhi')" class="py-2 px-1 rounded-xl border border-slate-200 hover:bg-amber-50 hover:border-amber-300 text-slate-700 text-center transition">天賦 & 悉地</button>
+            <button onclick="setLayoutPreset('blank')" class="py-2 px-1 rounded-xl border border-slate-200 hover:bg-amber-50 hover:border-amber-300 text-slate-700 text-center transition">空白</button>
           </div>
-          <!-- 球體容器 -->
-          <div id="spheres_layer" class="absolute inset-0"></div>
+        </div>
+
+        <!-- 進階標籤開關 (對標截圖進階開關) -->
+        <div class="border-t border-slate-100 pt-3 space-y-2 text-xs">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">進階標籤開關 (Toggles)</h3>
+          
+          <label class="flex items-center justify-between cursor-pointer py-1">
+            <span class="font-bold text-slate-700 text-theme-main">悉地 標籤 (Siddhi)</span>
+            <input type="checkbox" id="chk_tag_siddhi" checked onchange="toggleTagClass('hide-siddhi', !this.checked)" class="w-4 h-4 rounded text-[#987315] focus:ring-[#987315]">
+          </label>
+          <label class="flex items-center justify-between cursor-pointer py-1">
+            <span class="font-bold text-slate-700 text-theme-main">天賦 標籤 (Gift)</span>
+            <input type="checkbox" id="chk_tag_gift" checked onchange="toggleTagClass('hide-gift', !this.checked)" class="w-4 h-4 rounded text-[#987315] focus:ring-[#987315]">
+          </label>
+          <label class="flex items-center justify-between cursor-pointer py-1">
+            <span class="font-bold text-slate-700 text-theme-main">陰影 標籤 (Shadow)</span>
+            <input type="checkbox" id="chk_tag_shadow" checked onchange="toggleTagClass('hide-shadow', !this.checked)" class="w-4 h-4 rounded text-[#987315] focus:ring-[#987315]">
+          </label>
+          <label class="flex items-center justify-between cursor-pointer py-1">
+            <span class="font-bold text-slate-700 text-theme-main">線標籤 (Line Tags)</span>
+            <input type="checkbox" id="chk_tag_line" checked onchange="toggleTagClass('hide-line', !this.checked)" class="w-4 h-4 rounded text-[#987315] focus:ring-[#987315]">
+          </label>
         </div>
       </div>
 
-      <!-- 詳解卡片區 -->
-      <div class="lg:col-span-5 flex flex-col justify-center min-h-[360px] bg-[#FFFDF8] border-l-4 border-[#C8A97E] border-y border-r border-[#E8DFC5] rounded-2xl p-6 shadow-sm">
-        <div id="gk_detail">
-          <span class="text-xs font-bold text-stone-400 block mb-1">點選左側天命球</span>
-          <h3 class="text-xl font-black text-[#2E3829] mb-4">展開頻率三位一體</h3>
-          <p class="text-sm text-stone-600">每個基因天命都是一組神聖的音叉，點選天命球，接收這趟黃金之路送給你的魔藥調頻指引。</p>
-        </div>
+      <!-- 點選天命球詳細資訊面板 -->
+      <div id="sphere_detail_card" class="bg-white border border-[#E2D9C8] rounded-3xl p-6 shadow-sm space-y-4 bg-card-theme">
+        <!-- 動態渲染點選之天命球資訊 -->
       </div>
-    </div>
+
+      <!-- 愛倫院長生活魔藥調頻處方 -->
+      <div class="bg-gradient-to-br from-[#FAF7F0] to-[#F3EEE0] border border-[#D9CDB8] rounded-3xl p-6 shadow-sm">
+        <h3 class="font-serif-tc font-bold text-base text-[#2E3829] mb-2 flex items-center gap-2 border-b border-amber-900/10 pb-2">
+          <span>🌿 愛倫院長黃金之路生活調頻處方</span>
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          每一個基因天命的陰影，都是靈魂在低頻振動時的保護機制；不必急於驅逐評判或恐懼，只要在深呼吸中允許天賦綻放，陰影即刻化為此生最豐盛的養分。
+        </p>
+      </div>
+
+    </section>
   </main>
 
   <script>
-    const SERIAL = [59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29];
+    let CURRENT_PROFILE = null;
+    let ACTIVE_SPHERE_ID = 'lifesWork';
 
-    const DATA = {
-      1:['熵減／枯竭','新鮮／原創','美'],2:['迷失','方向','合一'],3:['混亂','創新','純真'],4:['不寬容','理解','寬恕'],
-      5:['急躁','耐心','永恆'],6:['衝突','外交','和平'],7:['分裂','指引','德性'],8:['平庸','風格','精緻'],
-      9:['惰性','專注','堅定'],10:['自我執著','自然','存在'],11:['晦暗','理想主義','光明'],12:['虛榮','辨識','純淨'],
-      13:['不和','洞察','同理'],14:['妥協','能力','豐盛'],15:['遲鈍','磁性','開花'],16:['冷漠','多才','精通'],
-      17:['意見','遠見','全知'],18:['審判','正直','完美'],19:['共依附','敏感','犧牲'],20:['膚淺','自信','臨在'],
-      21:['控制','權威','英勇'],22:['不名譽','優雅','恩典'],23:['複雜','簡樸','本質'],24:['成癮','創造力','寂靜'],
-      25:['收縮','接納','普世之愛'],26:['驕傲','巧思','隱形'],27:['自私','利他','無私'],28:['無目的','全心投入','不朽'],
-      29:['半途而廢','承諾','奉獻'],30:['渴望','輕盈','狂喜'],31:['傲慢','領導','謙遜'],32:['失敗','保存','敬畏'],
-      33:['遺忘','覺知','正念'],34:['力量濫用','力量','莊嚴'],35:['飢渴','冒險','無限'],36:['動盪','人道','慈悲'],
-      37:['脆弱','平等','溫柔'],38:['奮鬥','堅毅','榮耀'],39:['挑釁','活力','解放'],40:['疲憊','決心','神性意志'],
-      41:['幻想','預期','發出'],42:['期望','超脫','慶典'],43:['耳聾','洞見','頓悟'],44:['干擾','團隊合作','共時性'],
-      45:['支配','協同','聖餐'],46:['嚴肅','喜悅','狂喜'],47:['壓抑','轉化','超越'],48:['不足','足智多謀','智慧'],
-      49:['反應','革命','重生'],50:['腐敗','平衡','和諧'],51:['激動','主動','覺醒'],52:['壓力','克制','靜止'],
-      53:['不成熟','擴展','超越'],54:['貪婪','抱負','上昇'],55:['受害','自由','自由'],56:['分心','豐富','陶醉'],
-      57:['不安','直覺','清明'],58:['不滿','活力','喜悅'],59:['不誠實','親密','透明'],60:['限制','務實','正義'],
-      61:['心理困擾','靈感','神聖'],62:['智識','精確','無瑕'],63:['懷疑','探究','真理'],64:['混亂','想像力','明晰']
-    };
+    // 初始化出生城市選單
+    function initCityDropdown() {
+      const select = document.getElementById('gk_city');
+      select.innerHTML = '';
+      let curGroup = '';
+      let optGroup = null;
 
-    function mod(n, m) { return ((n % m) + m) % m; }
-    function degToRad(d) { return d * Math.PI / 180; }
-
-    function sunLon(dt) {
-      const d = (dt.getTime() / 86400000 + 2440587.5) - 2451545.0;
-      const g = mod(357.529 + 0.98560028 * d, 360);
-      return mod(280.459 + 0.98564736 * d + 1.915 * Math.sin(degToRad(g)) + 0.020 * Math.sin(degToRad(2 * g)), 360);
-    }
-
-    function calcGate(deg) {
-      return SERIAL[Math.floor(mod(deg, 360) / 5.625)];
-    }
-
-    function calculateGeneKeys(dateStr, timeStr) {
-      const dt = new Date(dateStr + 'T' + timeStr + ':00Z');
-      const dDays = (dt.getTime() / 86400000 + 2440587.5) - 2451545.0;
-      const pSun = sunLon(dt);
-
-      const pPos = {
-        'Sun': pSun, 'Earth': mod(pSun + 180, 360),
-        'Moon': mod(218.316 + 13.176396 * dDays, 360),
-        'Mercury': mod(252.251 + 4.092334 * dDays, 360),
-        'Jupiter': mod(34.351 + 0.0830868 * dDays, 360)
-      };
-
-      const desDt = new Date(dt.getTime() - 88.5 * 86400000);
-      const dDaysDes = (desDt.getTime() / 86400000 + 2440587.5) - 2451545.0;
-      const dSun = sunLon(desDt);
-
-      const dPos = {
-        'Sun': dSun, 'Earth': mod(dSun + 180, 360),
-        'Moon': mod(218.316 + 13.176396 * dDaysDes, 360),
-        'Venus': mod(181.979 + 1.602130 * dDaysDes, 360),
-        'Mars': mod(355.433 + 0.524039 * dDaysDes, 360),
-        'Jupiter': mod(34.351 + 0.0830868 * dDaysDes, 360)
-      };
-
-      const mkItem = (name, gate, seq, colorClass) => {
-        const item = DATA[gate] || ['混亂', '創造', '神聖'];
-        return {
-          name: name,
-          gate: gate,
-          seq: seq,
-          colorClass: colorClass,
-          shadow: item[0],
-          gift: item[1],
-          siddhi: item[2],
-          mantra: '當「' + item[0] + '」在心裡升起時，別急著批判它；帶著一個溫柔的深呼吸，讓它蛻變成你的「' + item[1] + '」。'
-        };
-      };
-
-      return [
-        // 激活序列 (綠色)
-        mkItem('畢生使命', calcGate(pPos.Sun), '激活序列', 'sphere-activation'),
-        mkItem('進化挑戰', calcGate(pPos.Earth), '激活序列', 'sphere-activation'),
-        mkItem('輻射光彩', calcGate(dPos.Sun), '激活序列', 'sphere-activation'),
-        mkItem('生命目的', calcGate(dPos.Earth), '激活序列', 'sphere-activation'),
-
-        // 金星序列 (酒紅)
-        mkItem('吸引力', calcGate(dPos.Moon), '金星序列', 'sphere-venus'),
-        mkItem('智商 IQ', calcGate(pPos.Mercury), '金星序列', 'sphere-venus'),
-        mkItem('情商 EQ', calcGate(dPos.Venus), '金星序列', 'sphere-venus'),
-        mkItem('靈商 SQ', calcGate(dPos.Jupiter), '金星序列', 'sphere-venus'),
-        mkItem('核心創傷', calcGate(dPos.Mars), '金星序列', 'sphere-venus'),
-
-        // 珍珠序列 (藍色)
-        mkItem('天職召喚', calcGate(dPos.Mars), '珍珠序列', 'sphere-pearl'),
-        mkItem('文化場域', calcGate(dPos.Jupiter), '珍珠序列', 'sphere-pearl'),
-        mkItem('靈魂品牌', calcGate(pPos.Sun), '珍珠序列', 'sphere-pearl'),
-        mkItem('珍珠豐盛', calcGate(pPos.Jupiter), '珍珠序列', 'sphere-pearl')
-      ];
-    }
-
-    function renderSpheres(items) {
-      const container = document.getElementById('spheres_layer');
-      container.innerHTML = '';
-
-      items.forEach((item, idx) => {
-        const angle = (idx / items.length) * Math.PI * 2 - Math.PI / 2;
-        // 半徑分層
-        const radius = idx < 4 ? 38 : idx < 9 ? 44 : 26;
-        const x = 50 + Math.cos(angle) * radius;
-        const y = 50 + Math.sin(angle) * radius;
-
-        const sphere = document.createElement('div');
-        sphere.className = 'mj-sphere ' + item.colorClass;
-        sphere.style.left = x + '%';
-        sphere.style.top = y + '%';
-        sphere.innerHTML = '<span class="text-[9px] opacity-80 leading-none">' + item.name + '</span><span class="text-xs font-black">' + item.gate + '</span>';
-
-        sphere.onclick = () => showDetail(item, sphere);
-        container.appendChild(sphere);
+      CITIES_DB.forEach(c => {
+        if (c.group !== curGroup) {
+          curGroup = c.group;
+          optGroup = document.createElement('optgroup');
+          optGroup.label = curGroup;
+          select.appendChild(optGroup);
+        }
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        if (c.id === 'tw_taipei') opt.selected = true;
+        optGroup.appendChild(opt);
       });
+    }
 
-      // 預設展開第一個
-      if (items.length > 0) {
-        showDetail(items[0], container.children[0]);
+    function getSelectedCity() {
+      const cid = document.getElementById('gk_city').value;
+      return CITIES_DB.find(c => c.id === cid) || CITIES_DB[0];
+    }
+
+    // 繪製背景 64 卦輪盤
+    function renderHexagramWheel(svg) {
+      const layer = document.getElementById('layer_hexagram_wheel');
+      layer.innerHTML = '';
+
+      const cx = 480, cy = 370;
+      const rOuter = 340;
+      const rInner = 280;
+
+      // 雙重細同心圓
+      const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c1.setAttribute('cx', cx); c1.setAttribute('cy', cy); c1.setAttribute('r', rOuter);
+      c1.setAttribute('fill', 'none'); c1.setAttribute('stroke', '#CBD5E1'); c1.setAttribute('stroke-width', '1.5');
+      layer.appendChild(c1);
+
+      const c2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c2.setAttribute('cx', cx); c2.setAttribute('cy', cy); c2.setAttribute('r', rInner);
+      c2.setAttribute('fill', 'none'); c2.setAttribute('stroke', '#E2E8F0'); c2.setAttribute('stroke-width', '1');
+      c2.setAttribute('stroke-dasharray', '2 4');
+      layer.appendChild(c2);
+
+      // 64 卦放射刻度線與卦象示意 (對標截圖外環易經卦線)
+      for (let i = 0; i < 64; i++) {
+        const deg = (i * 360 / 64) - 90;
+        const rad = deg * Math.PI / 180;
+        const p1x = cx + Math.cos(rad) * (rOuter - 14);
+        const p1y = cy + Math.sin(rad) * (rOuter - 14);
+        const p2x = cx + Math.cos(rad) * rOuter;
+        const p2y = cy + Math.sin(rad) * rOuter;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', p1x); line.setAttribute('y1', p1y);
+        line.setAttribute('x2', p2x); line.setAttribute('y2', p2y);
+        line.setAttribute('stroke', '#94A3B8');
+        line.setAttribute('stroke-width', i % 4 === 0 ? '1.5' : '0.6');
+        layer.appendChild(line);
+
+        // 每隔 8 卦繪製易經爻劃示意
+        if (i % 8 === 0) {
+          const pMidX = cx + Math.cos(rad) * (rInner + 18);
+          const pMidY = cy + Math.sin(rad) * (rInner + 18);
+          const trigram = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          trigram.setAttribute('x', pMidX); trigram.setAttribute('y', pMidY + 3);
+          trigram.setAttribute('font-size', '8');
+          trigram.setAttribute('fill', '#94A3B8');
+          trigram.setAttribute('text-anchor', 'middle');
+          trigram.textContent = '☰';
+          layer.appendChild(trigram);
+        }
       }
     }
 
-    function showDetail(item, element) {
-      document.querySelectorAll('.mj-sphere').forEach(s => s.classList.remove('is-active'));
-      if (element) element.classList.add('is-active');
+    // 繪製黃金之路通道連線 (Pathways)
+    function renderPathways(profile) {
+      const layer = document.getElementById('layer_pathways');
+      layer.innerHTML = '';
 
-      const detail = document.getElementById('gk_detail');
-      detail.innerHTML = 
-        '<div class="flex items-center gap-2 mb-2">' +
-          '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white ' + 
-            (item.seq==='激活序列'?'bg-[#3E4B37]':item.seq==='金星序列'?'bg-[#8A3343]':'bg-[#31566D]') + '">' + item.seq + '</span>' +
-          '<span class="text-xs font-bold text-stone-500">' + item.name + '</span>' +
-        '</div>' +
-        '<h3 class="text-2xl font-black text-[#2E3829] mb-4">天命 ' + item.gate + ' 號：' + item.gift + '</h3>' +
-        '<div class="space-y-2 border-y border-stone-200 py-3 mb-4 text-xs sm:text-sm">' +
-          '<div class="flex justify-between"><b>陰影頻率 (Shadow)</b><span class="text-rose-800 font-bold">' + item.shadow + '</span></div>' +
-          '<div class="flex justify-between"><b>天賦頻率 (Gift)</b><span class="text-emerald-800 font-bold">' + item.gift + '</span></div>' +
-          '<div class="flex justify-between"><b>悉地頻率 (Siddhi)</b><span class="text-amber-800 font-bold">' + item.siddhi + '</span></div>' +
-        '</div>' +
-        '<div class="bg-[#FBF9F4] border-l-4 border-[#C8A97E] p-3.5 rounded-r-xl text-xs sm:text-sm text-stone-700 leading-relaxed">' +
-          '<span class="font-bold text-[#8A6B18] block mb-1">🪄 愛倫院長的生活魔藥處方：</span>' +
-          item.mantra +
-        '</div>';
+      const w = 960, h = 760;
+
+      GOLDEN_PATHWAYS.forEach(pw => {
+        const fromCoord = SACRED_MANDALA_COORDS[pw.from];
+        const toCoord = SACRED_MANDALA_COORDS[pw.to];
+        if (!fromCoord || !toCoord) return;
+
+        const x1 = (fromCoord.x / 100) * w;
+        const y1 = (fromCoord.y / 100) * h;
+        const x2 = (toCoord.x / 100) * w;
+        const y2 = (toCoord.y / 100) * h;
+
+        if (pw.curved) {
+          // 弧形回環通道 (使命 -> 生命工作)
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          const ctrlX = x1 - 190;
+          const ctrlY = (y1 + y2) / 2;
+          path.setAttribute('d', `M ${x1} ${y1} Q ${ctrlX} ${ctrlY} ${x2} ${y2}`);
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke', pw.color);
+          path.setAttribute('stroke-width', '2.5');
+          path.setAttribute('opacity', '0.75');
+          path.setAttribute('class', 'pathway-line');
+          layer.appendChild(path);
+        } else {
+          // 直線通道
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+          line.setAttribute('stroke', pw.color);
+          line.setAttribute('stroke-width', '2.5');
+          line.setAttribute('opacity', '0.75');
+          line.setAttribute('class', 'pathway-line');
+          layer.appendChild(line);
+        }
+      });
     }
 
-    document.getElementById('gk_form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const date = document.getElementById('gk_date').value;
-      const time = document.getElementById('gk_time').value;
-      renderSpheres(calculateGeneKeys(date, time));
+    // 繪製 11 大天命球體與文字標籤
+    function renderSpheres(profile) {
+      const layer = document.getElementById('layer_spheres');
+      layer.innerHTML = '';
+
+      const w = 960, h = 760;
+      const sphereRadius = 32;
+
+      for (const [key, s] of Object.entries(profile.spheres)) {
+        const coord = SACRED_MANDALA_COORDS[key];
+        if (!coord) continue;
+
+        const cx = (coord.x / 100) * w;
+        const cy = (coord.y / 100) * h;
+
+        const gk = GENE_KEYS_64[s.gate] || { shadow: '陰影', gift: '天賦', siddhi: '悉地' };
+        const lineTag = (SPHERE_LINE_TAGS[key] && SPHERE_LINE_TAGS[key][s.line]) || `第 ${s.line} 爻`;
+
+        // 球體群組
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', `gk-sphere-group ${key === ACTIVE_SPHERE_ID ? 'is-active' : ''}`);
+        g.setAttribute('data-id', key);
+        g.onclick = () => selectSphere(key);
+
+        // 選擇立體漸層
+        let gradId = 'grad_activation';
+        if (s.seq === 'venus') gradId = key === 'core' ? 'grad_core' : 'grad_venus';
+        else if (s.seq === 'pearl') gradId = 'grad_pearl';
+
+        // 實體發光立體球
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', cx);
+        circle.setAttribute('cy', cy);
+        circle.setAttribute('r', sphereRadius);
+        circle.setAttribute('fill', `url(#${gradId})`);
+        circle.setAttribute('filter', 'url(#sphere_shadow)');
+        circle.setAttribute('stroke', '#FFFFFF');
+        circle.setAttribute('stroke-width', '2');
+        g.appendChild(circle);
+
+        // 球內文字：閘門.爻線 (例如 17.2)
+        const gateText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        gateText.setAttribute('x', cx);
+        gateText.setAttribute('y', cy - 3);
+        gateText.setAttribute('font-size', '16');
+        gateText.setAttribute('font-family', 'Noto Sans TC, sans-serif');
+        gateText.setAttribute('font-weight', '900');
+        gateText.setAttribute('fill', '#FFFFFF');
+        gateText.setAttribute('text-anchor', 'middle');
+        gateText.textContent = s.formatted;
+        g.appendChild(gateText);
+
+        // 球內文字：球體名稱 (例如 生命工作)
+        const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        nameText.setAttribute('x', cx);
+        nameText.setAttribute('y', cy + 13);
+        nameText.setAttribute('font-size', '10');
+        nameText.setAttribute('font-family', 'Noto Serif TC, serif');
+        nameText.setAttribute('font-weight', '700');
+        nameText.setAttribute('fill', 'rgba(255, 255, 255, 0.92)');
+        nameText.setAttribute('text-anchor', 'middle');
+        nameText.textContent = s.name;
+        g.appendChild(nameText);
+
+        // 四行標籤群組 (對標截圖標籤排版)
+        const tagGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        const isLeft = coord.labelAlign.includes('left');
+        const tagX = isLeft ? cx - (sphereRadius + 10) : cx + (sphereRadius + 10);
+        const anchor = isLeft ? 'end' : 'start';
+
+        let tagBaseY = cy - 18;
+
+        // 1. 悉地 (Siddhi)
+        const tSiddhi = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        tSiddhi.setAttribute('x', tagX); tSiddhi.setAttribute('y', tagBaseY);
+        tSiddhi.setAttribute('font-size', '10'); tSiddhi.setAttribute('font-weight', 'bold');
+        tSiddhi.setAttribute('fill', '#0284C7'); tSiddhi.setAttribute('text-anchor', anchor);
+        tSiddhi.setAttribute('class', 'tag-siddhi');
+        tSiddhi.textContent = `❄️ · ${gk.siddhi}`;
+        tagGroup.appendChild(tSiddhi);
+
+        // 2. 天賦 (Gift)
+        const tGift = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        tGift.setAttribute('x', tagX); tGift.setAttribute('y', tagBaseY + 13);
+        tGift.setAttribute('font-size', '10'); tGift.setAttribute('font-weight', 'bold');
+        tGift.setAttribute('fill', '#16A34A'); tGift.setAttribute('text-anchor', anchor);
+        tGift.setAttribute('class', 'tag-gift');
+        tGift.textContent = `△ · ${gk.gift}`;
+        tagGroup.appendChild(tGift);
+
+        // 3. 陰影 (Shadow)
+        const tShadow = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        tShadow.setAttribute('x', tagX); tShadow.setAttribute('y', tagBaseY + 26);
+        tShadow.setAttribute('font-size', '10'); tShadow.setAttribute('font-weight', 'bold');
+        tShadow.setAttribute('fill', '#E11D48'); tShadow.setAttribute('text-anchor', anchor);
+        tShadow.setAttribute('class', 'tag-shadow');
+        tShadow.textContent = `▽ · ${gk.shadow}`;
+        tagGroup.appendChild(tShadow);
+
+        // 4. 爻線標籤 (Line Tag)
+        const tLine = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        tLine.setAttribute('x', tagX); tLine.setAttribute('y', tagBaseY + 39);
+        tLine.setAttribute('font-size', '9.5'); tLine.setAttribute('font-weight', 'bold');
+        tLine.setAttribute('fill', '#475569'); tLine.setAttribute('text-anchor', anchor);
+        tLine.setAttribute('class', 'tag-line');
+        tLine.textContent = lineTag;
+        tagGroup.appendChild(tLine);
+
+        g.appendChild(tagGroup);
+        layer.appendChild(g);
+      }
+    }
+
+    // 點選球體展開詳細卡片
+    function selectSphere(key) {
+      ACTIVE_SPHERE_ID = key;
+      document.querySelectorAll('.gk-sphere-group').forEach(el => {
+        el.classList.toggle('is-active', el.getAttribute('data-id') === key);
+      });
+
+      const s = CURRENT_PROFILE.spheres[key];
+      if (!s) return;
+
+      const gk = GENE_KEYS_64[s.gate] || { shadow: '陰影', gift: '天賦', siddhi: '悉地', partner: 1, ring: '命運之環' };
+      const lineTag = (SPHERE_LINE_TAGS[key] && SPHERE_LINE_TAGS[key][s.line]) || `第 ${s.line} 爻`;
+
+      const detailCard = document.getElementById('sphere_detail_card');
+      detailCard.innerHTML = `
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${s.seq === 'activation' ? 'bg-emerald-100 text-emerald-800' : (s.seq === 'venus' ? 'bg-rose-100 text-rose-800' : 'bg-sky-100 text-sky-800')}">
+              ${s.seq === 'activation' ? '激活序列' : (s.seq === 'venus' ? '金星序列' : '珍珠序列')} · ${s.name}
+            </span>
+            <h2 class="font-serif-tc font-black text-xl text-slate-900 mt-1 flex items-center gap-2">
+              <span>第 ${s.gate} 號基因天命 · ${lineTag}</span>
+            </h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl flex flex-col items-center justify-center font-bold text-white shadow-xs" style="background: ${s.color};">
+            <span class="text-sm font-black leading-none">${s.formatted}</span>
+            <span class="text-[9px] opacity-80 mt-0.5">${s.planetSymbol}</span>
+          </div>
+        </div>
+
+        <!-- 頻率三位一體卡片 -->
+        <div class="space-y-2.5">
+          <div class="p-2.5 rounded-xl bg-sky-50 border border-sky-200/70 flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-900">❄️ 悉地神聖本質 (Siddhi)</span>
+            <span class="font-bold text-sm text-sky-700 font-serif-tc">${gk.siddhi}</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-900">△ 天賦創造潛能 (Gift)</span>
+            <span class="font-bold text-sm text-emerald-700 font-serif-tc">${gk.gift}</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200/70 flex items-center justify-between">
+            <span class="text-xs font-bold text-rose-900">▽ 陰影生存防禦 (Shadow)</span>
+            <span class="font-bold text-sm text-rose-700 font-serif-tc">${gk.shadow}</span>
+          </div>
+        </div>
+
+        <!-- 天文映射與密碼子環 -->
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-600 space-y-1">
+          <div class="flex justify-between">
+            <span class="text-slate-400">對應天體：</span>
+            <span class="font-bold text-slate-700">${s.planet} (${s.planetSymbol})</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">程式編碼伴侶：</span>
+            <span class="font-bold text-slate-700">第 ${gk.partner} 號天命</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">所屬密碼子環：</span>
+            <span class="font-bold text-slate-700">${gk.ring}</span>
+          </div>
+        </div>
+
+        <!-- 愛倫院長調頻指引 -->
+        <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-950 text-xs leading-relaxed">
+          <p class="font-bold text-[#8A6B18] uppercase tracking-wider mb-1">🌿 魔法調頻金句</p>
+          <p>當你在生活中感受到「${gk.shadow}」的拉扯時，請記得這正是「${gk.gift}」準備破土而出的信號。在每一次深長呼吸中信任生命，你早已活在「${gk.siddhi}」的圓滿恩典裡。</p>
+        </div>
+      `;
+    }
+
+    // 切換佈局預設 (對標截圖按鈕)
+    function setLayoutPreset(mode) {
+      const svg = document.getElementById('gene_keys_svg');
+      svg.classList.remove('hide-siddhi', 'hide-gift', 'hide-shadow', 'hide-line', 'hide-pathways');
+
+      if (mode === 'lines') {
+        svg.classList.add('hide-siddhi', 'hide-gift', 'hide-shadow');
+      } else if (mode === 'channels') {
+        svg.classList.add('hide-siddhi', 'hide-gift', 'hide-shadow', 'hide-line');
+      } else if (mode === 'gift_siddhi') {
+        svg.classList.add('hide-shadow', 'hide-line');
+      } else if (mode === 'blank') {
+        svg.classList.add('hide-siddhi', 'hide-gift', 'hide-shadow', 'hide-line', 'hide-pathways');
+      }
+    }
+
+    function toggleTagClass(className, shouldAdd) {
+      const svg = document.getElementById('gene_keys_svg');
+      if (shouldAdd) svg.classList.add(className);
+      else svg.classList.remove(className);
+    }
+
+    // 主排盤函數
+    function renderGeneKeysChart() {
+      const name = document.getElementById('gk_name').value || 'Alan';
+      const dateStr = document.getElementById('gk_date').value;
+      const timeStr = document.getElementById('gk_time').value;
+      const city = getSelectedCity();
+      const applyDST = document.getElementById('chk_dst').checked;
+
+      // 1. 精準換算絕對 UTC Date
+      const utcDate = calculateUTCDatetime(dateStr, timeStr, city.tz, applyDST);
+
+      // 2. 調用官方 100% 精度基因天命推導引擎
+      CURRENT_PROFILE = AstroCalc.calculateGeneKeysProfile(utcDate);
+
+      // 3. 更新頁面標題與 Meta
+      const [year, month, day] = dateStr.split('-').map(Number);
+      document.getElementById('header_profile_name').innerHTML = `<span>${name} - 完整全譜</span>`;
+      document.getElementById('header_profile_meta').textContent = `${year}-${month}-${day} · ${timeStr} · ${city.name.split('·')[0].trim()}, Taiwan`;
+
+      // 4. 繪製全息畫布
+      const svg = document.getElementById('gene_keys_svg');
+      renderHexagramWheel(svg);
+      renderPathways(CURRENT_PROFILE);
+      renderSpheres(CURRENT_PROFILE);
+
+      // 5. 預設展開生命工作
+      selectSphere(ACTIVE_SPHERE_ID);
+    }
+
+    // 暗夜模式切換
+    document.getElementById('btn_dark_mode').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
     });
 
-    // 初始化
-    renderSpheres(calculateGeneKeys('1990-05-20', '12:30'));
+    // 全螢幕切換
+    document.getElementById('btn_fullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    // 表單折疊切換
+    document.getElementById('btn_toggle_inputs').addEventListener('click', () => {
+      const sec = document.getElementById('inputs_section');
+      sec.classList.toggle('hidden');
+    });
+
+    // 表單提交事件
+    document.getElementById('gk_form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      renderGeneKeysChart();
+    });
+
+    // 初始化加載
+    window.addEventListener('DOMContentLoaded', () => {
+      initCityDropdown();
+      renderGeneKeysChart();
+    });
   </script>
 </body>
 </html>
