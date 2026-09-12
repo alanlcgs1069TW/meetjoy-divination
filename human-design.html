@@ -222,15 +222,12 @@
                 </linearGradient>
               </defs>
 
-              <!-- 底層人體簡約輪廓微影 (對標真實專業人體圖背景) -->
-              <g id="svg_body_silhouette" opacity="0.35" fill="none" stroke="#CBD5E1">
-                <!-- 頭部微影 -->
-                <circle cx="200" cy="90" r="75" stroke-width="2"/>
-                <!-- 軀幹與肩膀微影 -->
-                <path d="M 90,240 C 90,170 140,165 200,165 C 260,165 310,170 310,240 C 310,380 290,560 270,620 L 130,620 C 110,560 90,380 90,240 Z" stroke-width="2.5"/>
-                <!-- 雙重能量場大橢圓環 -->
-                <ellipse cx="200" cy="380" rx="155" ry="190" stroke-width="1.8" stroke-dasharray="6,4"/>
-                <ellipse cx="200" cy="350" rx="130" ry="120" stroke-width="1.2"/>
+              <!-- 底層人體簡約輪廓微影 (對標真實專業人體圖講義 IMG_7942 與 App 截圖 IMG_7943) -->
+              <g id="svg_body_silhouette" opacity="0.5" fill="#F8FAFC" stroke="#CBD5E1">
+                <!-- 專業冥想坐姿人體剪影 (頭頸胸腰臀) -->
+                <path d="M 200,18 C 168,18 148,44 148,82 C 148,118 168,144 184,154 L 184,172 C 142,176 88,198 68,245 C 48,290 42,350 42,420 C 42,480 52,520 62,548 C 74,578 96,605 132,615 C 166,622 234,622 268,615 C 304,605 326,578 338,548 C 348,520 358,480 358,420 C 358,350 352,290 332,245 C 312,198 258,176 216,172 L 216,154 C 232,144 252,118 252,82 C 252,44 232,18 200,18 Z" stroke-width="1.8"/>
+                <!-- 雙重立體能量光環 -->
+                <ellipse cx="200" cy="360" rx="162" ry="215" fill="none" stroke="#E2E8F0" stroke-width="1.2" stroke-dasharray="4,4"/>
               </g>
 
               <!-- 36 條寬闊雙向通道管道層 (底管 + 半通道啟動層) -->
@@ -629,24 +626,34 @@
         }
       });
 
-      // 7. 繪製 36 條通道寬管道 (底管 + 半通道 / 全通道獨立著色：紅/黑/斑馬紋)
+      // 7. 繪製 36 條通道正統雙軌凹槽管道 (底導軌 + 白槽心 + 半通道/全通道飽滿著色：紅/黑/斑馬紋)
       const chLayer = document.getElementById('svg_channels_layer');
       chLayer.innerHTML = '';
 
       HD_CHANNEL_PATHS.forEach(ch => {
         const pathData = splitChannelPath(ch.p0, ch.ctrl, ch.p2);
 
-        // 先繪製 36 條底層淺灰寬管道 (8px 寬度)
-        const bgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        bgPath.setAttribute('d', pathData.full);
-        bgPath.setAttribute('stroke', '#E2E8F0');
-        bgPath.setAttribute('stroke-width', '8');
-        bgPath.setAttribute('stroke-linecap', 'round');
-        bgPath.setAttribute('stroke-linejoin', 'round');
-        bgPath.setAttribute('fill', 'none');
-        chLayer.appendChild(bgPath);
+        // 1. 底層外框導軌 (10.5px 淺灰實心邊界，圓頭)
+        const bgCasing = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        bgCasing.setAttribute('d', pathData.full);
+        bgCasing.setAttribute('stroke', '#CBD5E1');
+        bgCasing.setAttribute('stroke-width', '10.5');
+        bgCasing.setAttribute('stroke-linecap', 'round');
+        bgCasing.setAttribute('stroke-linejoin', 'round');
+        bgCasing.setAttribute('fill', 'none');
+        chLayer.appendChild(bgCasing);
 
-        // 判斷 g1 與 g2 著色狀態
+        // 2. 內芯純白導槽 (7.5px 純白凹槽，創造正統雙導軌立體層次)
+        const bgGroove = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        bgGroove.setAttribute('d', pathData.full);
+        bgGroove.setAttribute('stroke', '#FFFFFF');
+        bgGroove.setAttribute('stroke-width', '7.5');
+        bgGroove.setAttribute('stroke-linecap', 'round');
+        bgGroove.setAttribute('stroke-linejoin', 'round');
+        bgGroove.setAttribute('fill', 'none');
+        chLayer.appendChild(bgGroove);
+
+        // 3. 判斷 g1 與 g2 著色狀態
         const g1Des = hd.activeGates.design.has(ch.g1);
         const g1Per = hd.activeGates.personality.has(ch.g1);
         const g2Des = hd.activeGates.design.has(ch.g2);
@@ -667,7 +674,7 @@
           const fullActive = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           fullActive.setAttribute('d', pathData.full);
           fullActive.setAttribute('stroke', c1);
-          fullActive.setAttribute('stroke-width', '7');
+          fullActive.setAttribute('stroke-width', '7.5');
           fullActive.setAttribute('stroke-linecap', 'round');
           fullActive.setAttribute('stroke-linejoin', 'round');
           fullActive.setAttribute('fill', 'none');
@@ -678,7 +685,7 @@
             const p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             p1.setAttribute('d', pathData.half1);
             p1.setAttribute('stroke', c1);
-            p1.setAttribute('stroke-width', '7');
+            p1.setAttribute('stroke-width', '7.5');
             p1.setAttribute('stroke-linecap', 'round');
             p1.setAttribute('stroke-linejoin', 'round');
             p1.setAttribute('fill', 'none');
@@ -688,7 +695,7 @@
             const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             p2.setAttribute('d', pathData.half2);
             p2.setAttribute('stroke', c2);
-            p2.setAttribute('stroke-width', '7');
+            p2.setAttribute('stroke-width', '7.5');
             p2.setAttribute('stroke-linecap', 'round');
             p2.setAttribute('stroke-linejoin', 'round');
             p2.setAttribute('fill', 'none');
@@ -712,13 +719,13 @@
         gGroup.setAttribute('data-gate', g);
 
         if (isAct) {
-          // 啟動閘門：實心黑底白字高亮圓形徽章 (Black Badge Circle r=8.5)
+          // 啟動閘門：實心黑底白字高亮圓形徽章 (Black Badge Circle r=9，外帶純白細微邊框)
           const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           circle.setAttribute('cx', x);
           circle.setAttribute('cy', y);
-          circle.setAttribute('r', '8.5');
-          circle.setAttribute('fill', '#1E293B');
-          circle.setAttribute('stroke', '#0F172A');
+          circle.setAttribute('r', '9');
+          circle.setAttribute('fill', '#0F172A');
+          circle.setAttribute('stroke', '#FFFFFF');
           circle.setAttribute('stroke-width', '1.2');
           gGroup.appendChild(circle);
 
@@ -733,12 +740,12 @@
           txt.textContent = g;
           gGroup.appendChild(txt);
         } else {
-          // 未啟動閘門：清爽小灰字
+          // 未啟動閘門：清爽深灰字
           const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           txt.setAttribute('x', x);
           txt.setAttribute('y', y + 3);
           txt.setAttribute('text-anchor', 'middle');
-          txt.setAttribute('fill', '#94A3B8');
+          txt.setAttribute('fill', '#64748B');
           txt.setAttribute('font-size', '8');
           txt.setAttribute('font-weight', '700');
           txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');

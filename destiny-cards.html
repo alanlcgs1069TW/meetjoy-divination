@@ -337,9 +337,9 @@
       const modalTitle = document.getElementById('modalCardTitle');
       const modalDesc = document.getElementById('modalCardDesc');
       
-      modalImg.src = `/images/cards/${imgName}`;
+      modalImg.src = `./images/cards/${imgName}`;
       modalTitle.innerText = title;
-      modalDesc.innerText = desc || '1080 規格神聖手繪禪繞曼陀羅靈性牌面';
+      modalDesc.innerText = desc || '神聖手繪禪繞曼陀羅靈性牌面';
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -351,13 +351,13 @@
     }
 
     function renderMiniCardHTML(card, extraClasses = '') {
-      const imgPath = `/images/cards/${card.img}`;
+      const imgPath = `./images/cards/${card.img}`;
       const titleSafe = `${card.zh || card.code}`;
 
       return `
         <div class="relative group cursor-pointer w-full h-full rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-amber-900/10 transition-all duration-300 transform hover:-translate-y-1 bg-white ${extraClasses}"
              onclick="openCardModal('${card.img}', '${titleSafe}', '${card.suitZh || ''} · ${card.element || ''}')">
-          <img src="${imgPath}" alt="${titleSafe}" class="w-full h-full object-contain" loading="lazy" onerror="this.src='/images/cards/c0.png'">
+          <img src="${imgPath}" alt="${titleSafe}" class="w-full h-full object-contain" loading="lazy" onerror="this.src='./images/cards/c0.png'">
           <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1">
             <i class="fa-solid fa-magnifying-glass-plus text-sm"></i>
             <span>放大</span>
@@ -387,10 +387,10 @@
       heroVisualEl.className = `w-32 sm:w-44 h-44 sm:h-60 rounded-2xl bg-white border-2 border-amber-400/90 shadow-2xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 shrink-0`;
       heroVisualEl.innerHTML = `
         <div class="w-full h-full relative group" onclick="openCardModal('${bc.img}', '${bc.zh}', '本命誕生牌 · ${bc.element}')">
-          <img src="/images/cards/${bc.img}" alt="${bc.zh}" class="w-full h-full object-contain">
+          <img src="./images/cards/${bc.img}" alt="${bc.zh}" class="w-full h-full object-contain">
           <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
             <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-            <span>點擊放大 1080 規格</span>
+            <span>點擊放大牌面</span>
           </div>
         </div>
       `;
@@ -479,7 +479,7 @@
 
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-4">
         <i class="fa-solid fa-sparkles"></i>
-        <span>1080 規格 · 神聖手繪禪繞曼陀羅靈性牌面</span>
+        <span>神聖手繪禪繞曼陀羅靈性牌面</span>
       </div>
 
       <div class="w-64 sm:w-80 h-84 sm:h-104 bg-stone-900 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400/80 mb-4">
