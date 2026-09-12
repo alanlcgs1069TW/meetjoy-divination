@@ -419,6 +419,360 @@
     return t;
   }
 
+  // 64 閘門正統輪迴交叉資料表 (Jovian Archive / 國際人類圖標準 192 組化身十字)
+  // 每個閘門格式為 [右角度交叉 (Right Angle), 並置交叉 (Juxtaposition), 左角度交叉 (Left Angle)]
+  const INCARNATION_CROSSES = {
+    1: ['The Sphinx', 'Self-Expression', 'Defiance'],
+    2: ['The Sphinx', 'The Driver', 'Defiance'],
+    3: ['Laws', 'Mutation', 'Wishes'],
+    4: ['Explanation', 'Formulization', 'Revolution'],
+    5: ['Consciousness', 'Habits', 'Separation'],
+    6: ['Eden', 'Conflict', 'The Plane'],
+    7: ['The Sphinx', 'Interaction', 'The Masks'],
+    8: ['Contagion', 'Contribution', 'Uncertainty'],
+    9: ['Planning', 'Focus', 'Identification'],
+    10: ['The Vessel of Love', 'Behavior', 'Prevention'],
+    11: ['Eden', 'Ideas', 'Education'],
+    12: ['Eden', 'Articulation', 'Education'],
+    13: ['The Sphinx', 'Listening', 'The Masks'],
+    14: ['Contagion', 'Empowering', 'Uncertainty'],
+    15: ['The Vessel of Love', 'Extremes', 'Prevention'],
+    16: ['Planning', 'Experimentation', 'Identification'],
+    17: ['Service', 'Opinions', 'Upheaval'],
+    18: ['Service', 'Correction', 'Upheaval'],
+    19: ['The Four Ways', 'Need', 'Refinement'],
+    20: ['The Sleeping Phoenix', 'The Now', 'Duality'],
+    21: ['Tension', 'Control', 'Endeavor'],
+    22: ['Rulership', 'Grace', 'Informing'],
+    23: ['Explanation', 'Assimilation', 'Dedication'],
+    24: ['The Four Ways', 'Rationalization', 'Incarnation'],
+    25: ['The Vessel of Love', 'Innocence', 'Healing'],
+    26: ['Rulership', 'The Trickster', 'Confrontation'],
+    27: ['The Unexpected', 'Caring', 'Alignment'],
+    28: ['The Unexpected', 'Risks', 'Alignment'],
+    29: ['Contagion', 'Commitment', 'Industry'],
+    30: ['Contagion', 'Fates', 'Industry'],
+    31: ['The Unexpected', 'Influence', 'The Alpha'],
+    32: ['Maya', 'Conservation', 'Limitation'],
+    33: ['The Four Ways', 'Retreat', 'Refinement'],
+    34: ['The Sleeping Phoenix', 'Power', 'Duality'],
+    35: ['Consciousness', 'Experience', 'Separation'],
+    36: ['Eden', 'Crisis', 'The Plane'],
+    37: ['Planning', 'Bargains', 'Migration'],
+    38: ['Tension', 'Opposition', 'Individualism'],
+    39: ['Tension', 'Provocation', 'Individualism'],
+    40: ['Planning', 'Denial', 'Migration'],
+    41: ['The Unexpected', 'Fantasy', 'The Alpha'],
+    42: ['Maya', 'Completion', 'Limitation'],
+    43: ['Explanation', 'Insight', 'Dedication'],
+    44: ['The Four Ways', 'Alertness', 'Incarnation'],
+    45: ['Rulership', 'Possession', 'Confrontation'],
+    46: ['The Vessel of Love', 'Serendipity', 'Healing'],
+    47: ['Rulership', 'Oppression', 'Informing'],
+    48: ['Tension', 'Depth', 'Endeavor'],
+    49: ['Explanation', 'Principles', 'Revolution'],
+    50: ['Laws', 'Values', 'Wishes'],
+    51: ['Penetration', 'Shock', 'The Clarion'],
+    52: ['Service', 'Stillness', 'Demands'],
+    53: ['Penetration', 'Beginnings', 'Cycles'],
+    54: ['Penetration', 'Ambition', 'Cycles'],
+    55: ['The Sleeping Phoenix', 'Moods', 'Spirit'],
+    56: ['Laws', 'Stimulation', 'Distraction'],
+    57: ['Penetration', 'Intuition', 'The Clarion'],
+    58: ['Service', 'Vitality', 'Demands'],
+    59: ['The Sleeping Phoenix', 'Strategy', 'Spirit'],
+    60: ['Laws', 'Limitation', 'Distraction'],
+    61: ['Maya', 'Thinking', 'Obscuration'],
+    62: ['Maya', 'Details', 'Obscuration'],
+    63: ['Consciousness', 'Doubts', 'Dominion'],
+    64: ['Consciousness', 'Confusion', 'Dominion']
+  };
+
+  // 繁體中文標準輪迴交叉名稱映射
+  const CROSS_NAME_ZH = {
+    'Alertness': '警覺',
+    'Alignment': '對齊',
+    'Ambition': '野心',
+    'Articulation': '清晰表達',
+    'Assimilation': '同化吸收',
+    'Bargains': '契約交易',
+    'Beginnings': '開端起始',
+    'Behavior': '行為風範',
+    'Caring': '關懷呵護',
+    'Commitment': '承諾獻身',
+    'Completion': '圓滿完成',
+    'Conflict': '衝突爭端',
+    'Confrontation': '對抗對峙',
+    'Confusion': '困惑迷茫',
+    'Consciousness': '意識覺知',
+    'Conservation': '保存守護',
+    'Contagion': '感染傳播',
+    'Contribution': '貢獻付出',
+    'Control': '掌控主導',
+    'Correction': '糾正修復',
+    'Crisis': '危機突破',
+    'Cycles': '週期循環',
+    'Dedication': '專注奉獻',
+    'Defiance': '挑釁抗爭',
+    'Demands': '訴求要求',
+    'Denial': '否認抗拒',
+    'Depth': '深邃洞見',
+    'Details': '細節明察',
+    'Distraction': '分心干擾',
+    'Dominion': '主權統御',
+    'Doubts': '懷疑探索',
+    'Duality': '雙重二元',
+    'Eden': '伊甸園',
+    'Education': '教育啟蒙',
+    'Empowering': '賦權賦能',
+    'Endeavor': '奮鬥努力',
+    'Experience': '歷練體驗',
+    'Experimentation': '實證實驗',
+    'Explanation': '闡明解釋',
+    'Extremes': '極端節奏',
+    'Fantasy': '夢想幻想',
+    'Fates': '命運安排',
+    'Focus': '聚焦專一',
+    'Formulization': '公式建構',
+    'Grace': '優雅恩典',
+    'Habits': '習慣律動',
+    'Healing': '療癒修復',
+    'Ideas': '點子理念',
+    'Identification': '認同歸屬',
+    'Incarnation': '化身降世',
+    'Individualism': '個別獨特',
+    'Industry': '勤勉實業',
+    'Influence': '領導影響',
+    'Informing': '告知溝通',
+    'Innocence': '純真天真',
+    'Insight': '頓悟洞察',
+    'Interaction': '人際互動',
+    'Intuition': '直覺預警',
+    'Laws': '法則律令',
+    'Limitation': '限制界線',
+    'Listening': '傾聽傾注',
+    'Maya': '幻相瑪雅',
+    'Migration': '遷徙移轉',
+    'Moods': '情緒心境',
+    'Mutation': '突變躍升',
+    'Need': '基本需求',
+    'Obscuration': '晦澀遮蔽',
+    'Opinions': '觀點定見',
+    'Opposition': '對立抗辯',
+    'Oppression': '壓力壓迫',
+    'Penetration': '直探穿透',
+    'Planning': '宏觀規劃',
+    'Possession': '資源佔有',
+    'Power': '純粹力量',
+    'Prevention': '預防阻隔',
+    'Principles': '原則底線',
+    'Provocation': '激發挑釁',
+    'Rationalization': '合理化思維',
+    'Refinement': '精緻雅致',
+    'Retreat': '退隱沉思',
+    'Revolution': '變革革命',
+    'Risks': '冒險挑戰',
+    'Rulership': '主權治理',
+    'Self-Expression': '自我表達',
+    'Separation': '抽離獨立',
+    'Serendipity': '美好機緣',
+    'Service': '無私服務',
+    'Shock': '震撼開悟',
+    'Spirit': '心靈精神',
+    'Stillness': '靜止凝定',
+    'Stimulation': '靈感激發',
+    'Strategy': '策略部署',
+    'Tension': '張力拉扯',
+    'The Alpha': '領袖典範',
+    'The Clarion': '真理號角',
+    'The Driver': '方向舵手',
+    'The Four Ways': '四向道途',
+    'The Masks': '百變面具',
+    'The Now': '當下此刻',
+    'The Plane': '凡俗人間',
+    'The Sleeping Phoenix': '沉睡鳳凰',
+    'The Sphinx': '斯芬克斯',
+    'The Trickster': '智謀弄潮',
+    'The Unexpected': '意外驚喜',
+    'The Vessel of Love': '愛之聖杯 (愛之船)',
+    'Thinking': '哲思探求',
+    'Uncertainty': '未知不確定',
+    'Upheaval': '劇烈動盪',
+    'Values': '核心價值',
+    'Vitality': '旺盛活力',
+    'Wishes': '願望期許'
+  };
+
+  /**
+   * 根據個性太陽閘門與人生角色精準求得輪迴交叉名稱
+   */
+  function getIncarnationCross(pSunGate, profile, gatesStr) {
+    const rightProfiles = ['1/3', '1/4', '2/4', '2/5', '3/5', '3/6', '4/6'];
+    const leftProfiles = ['5/1', '5/2', '6/2', '6/3'];
+    let angle = 'right';
+    let angleZh = '右角度交叉之';
+    let angleEn = 'Right Angle Cross of';
+    let idx = 0;
+
+    if (profile === '4/1') {
+      angle = 'juxtaposition';
+      angleZh = '並置交叉之';
+      angleEn = 'Juxtaposition Cross of';
+      idx = 1;
+    } else if (leftProfiles.includes(profile)) {
+      angle = 'left';
+      angleZh = '左角度交叉之';
+      angleEn = 'Left Angle Cross of';
+      idx = 2;
+    }
+
+    const crossTuple = INCARNATION_CROSSES[pSunGate];
+    if (!crossTuple) {
+      return {
+        angle,
+        nameZh: '命定十字',
+        nameEn: 'Incarnation Cross',
+        titleZh: '命定輪迴交叉',
+        titleEn: 'Incarnation Cross',
+        fullName: `命定輪迴交叉 (${gatesStr})`,
+        gates: gatesStr
+      };
+    }
+
+    const enName = crossTuple[idx];
+    const zhName = CROSS_NAME_ZH[enName] || enName;
+    const cleanEn = enName.startsWith('The ') ? enName.slice(4) : enName;
+
+    return {
+      angle,
+      nameZh: zhName,
+      nameEn: enName,
+      titleZh: `${angleZh}${zhName}`,
+      titleEn: `${angleEn} ${cleanEn}`,
+      fullName: `${angleZh}${zhName} (${angleEn} ${cleanEn})`,
+      gates: gatesStr
+    };
+  }
+
+  /**
+   * 圖論連通性演算法：檢查是否有任何動力中心 (Sacral, Heart, Solar Plexus, Root)
+   * 經由已啟動通道直接或間接連通至喉嚨中心 (Throat)
+   */
+  function isMotorConnectedToThroat(definedCenters, definedChannels) {
+    const MOTOR_CENTERS = new Set(['Heart', 'Solar Plexus', 'Root', 'Sacral']);
+    const centersSet = new Set(definedCenters);
+    if (!centersSet.has('Throat')) return false;
+
+    const adj = {};
+    definedCenters.forEach(c => { adj[c] = []; });
+    definedChannels.forEach(ch => {
+      if (adj[ch.c1] && adj[ch.c2]) {
+        adj[ch.c1].push(ch.c2);
+        adj[ch.c2].push(ch.c1);
+      }
+    });
+
+    const visited = new Set(['Throat']);
+    const queue = ['Throat'];
+
+    while (queue.length > 0) {
+      const curr = queue.shift();
+      if (curr !== 'Throat' && MOTOR_CENTERS.has(curr)) {
+        return true;
+      }
+      const neighbors = adj[curr] || [];
+      for (const nb of neighbors) {
+        if (!visited.has(nb)) {
+          visited.add(nb);
+          queue.push(nb);
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * 定義模式 (幾分人 / Definition) 連通分量推導演算法
+   */
+  function determineDefinition(definedCenters, definedChannels) {
+    const centers = Array.from(definedCenters);
+    if (centers.length === 0) {
+      return {
+        type: '無定義 (No Definition)',
+        shortName: '無定義',
+        splits: 0,
+        description: '九大中心完全空白開放，如宇宙清澈明鏡，反射周遭環境與月相週期'
+      };
+    }
+
+    const adj = {};
+    centers.forEach(c => { adj[c] = []; });
+    definedChannels.forEach(ch => {
+      if (adj[ch.c1] && adj[ch.c2]) {
+        adj[ch.c1].push(ch.c2);
+        adj[ch.c2].push(ch.c1);
+      }
+    });
+
+    const visited = new Set();
+    let componentsCount = 0;
+
+    centers.forEach(c => {
+      if (!visited.has(c)) {
+        componentsCount++;
+        const queue = [c];
+        visited.add(c);
+        while (queue.length > 0) {
+          const curr = queue.shift();
+          (adj[curr] || []).forEach(neighbor => {
+            if (!visited.has(neighbor)) {
+              visited.add(neighbor);
+              queue.push(neighbor);
+            }
+          });
+        }
+      }
+    });
+
+    switch (componentsCount) {
+      case 1:
+        return {
+          type: '一分人 (Single Definition)',
+          shortName: '一分人',
+          splits: 1,
+          description: '能量中心全部串聯一體，自給自足，決策與思維整體感強'
+        };
+      case 2:
+        return {
+          type: '二分人 (Split Definition)',
+          shortName: '二分人',
+          splits: 2,
+          description: '能量分為兩大獨立區塊，渴望橋樑閘門，易有內在多元對話'
+        };
+      case 3:
+        return {
+          type: '三分人 (Triple Split)',
+          shortName: '三分人',
+          splits: 3,
+          description: '能量分為三大獨立區塊，穿梭於不同公眾社交圈有助於能量整合'
+        };
+      case 4:
+        return {
+          type: '四分人 (Quadruple Split)',
+          shortName: '四分人',
+          splits: 4,
+          description: '能量分布於四個獨立區塊，極其罕見，需要充足時間沉澱'
+        };
+      default:
+        return {
+          type: '一分人 (Single Definition)',
+          shortName: '一分人',
+          splits: 1,
+          description: '能量中心全部串聯一體，自給自足'
+        };
+    }
+  }
+
   /**
    * 完整人類圖全盤推導
    */
@@ -492,18 +846,15 @@
       }
     });
 
-    // 判斷類型 Type
+    // 嚴謹圖論判斷：動力中心是否連通至喉嚨 (直接或間接)
+    const hasSacral = definedCenters.has('Sacral');
+    const hasMotorToThroat = isMotorConnectedToThroat(definedCenters, definedChannels);
+
+    // 判斷五大能量類型 Type
     let type = '投射者 (Projector)';
     let strategy = '等待被邀請 (Wait for the Invitation)';
     let signature = '成功 (Success)';
     let notSelf = '苦澀 (Bitterness)';
-
-    const hasSacral = definedCenters.has('Sacral');
-    const hasThroat = definedCenters.has('Throat');
-    const hasMotorToThroat = definedChannels.some(ch =>
-      (ch.c1 === 'Throat' && ['Heart', 'Solar Plexus', 'Root', 'Sacral'].includes(ch.c2)) ||
-      (ch.c2 === 'Throat' && ['Heart', 'Solar Plexus', 'Root', 'Sacral'].includes(ch.c1))
-    );
 
     if (definedCenters.size === 0) {
       type = '反映者 (Reflector)';
@@ -548,8 +899,12 @@
     // 人生角色 Profile (個性太陽爻線 / 設計太陽爻線)
     const profile = `${personality['Sun'].line}/${design['Sun'].line}`;
 
-    // 輪迴交叉 Incarnation Cross
+    // 定義模式 (幾分人 / Definition)
+    const definition = determineDefinition(definedCenters, definedChannels);
+
+    // 輪迴交叉 Incarnation Cross (四閘門與正統名稱解析)
     const crossGates = `${personality['Sun'].gate}/${personality['Earth'].gate} | ${design['Sun'].gate}/${design['Earth'].gate}`;
+    const incarnationCross = getIncarnationCross(personality['Sun'].gate, profile, crossGates);
 
     // 四顆箭頭 (Variables / Four Arrows)
     // 依據 Tone (1-3 為左 Left, 4-6 為右 Right)
@@ -572,7 +927,9 @@
       strategy: strategy,
       authority: authority,
       profile: profile,
+      definition: definition,
       crossGates: crossGates,
+      incarnationCross: incarnationCross,
       signature: signature,
       notSelf: notSelf,
       variables: variables
@@ -636,6 +993,11 @@
     calculateHousesAndAxes,
     calculateAspects,
     calculateHumanDesignChart,
-    calculateGeneKeysProfile
+    calculateGeneKeysProfile,
+    INCARNATION_CROSSES,
+    CROSS_NAME_ZH,
+    getIncarnationCross,
+    isMotorConnectedToThroat,
+    determineDefinition
   };
 }));

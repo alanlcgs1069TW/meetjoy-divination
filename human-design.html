@@ -108,11 +108,6 @@
       </form>
     </div>
 
-    <!-- 核心數據指標卡 (Type, Profile, Authority, Definition) -->
-    <div id="chart_summary_cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-8">
-      <!-- 動態填入 4 大核心標籤 -->
-    </div>
-
     <!-- 人類圖核心主舞台：左側設計盤 ＋ 中央 3D 水晶人類圖 ＋ 右側個性盤 -->
     <div class="bg-gradient-to-b from-[#DCE7F0] via-[#E8F0F7] to-[#DFEAF3] border border-[#CAD8E6] rounded-3xl p-4 sm:p-8 shadow-md">
       
@@ -316,6 +311,12 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- 核心數據指標卡 (Type, Definition, Profile, Authority, Incarnation Cross) -->
+    <!-- 依愛倫院長指示：置於立體圖與兩側行星標示之後 -->
+    <div id="chart_summary_cards" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mt-8 mb-2">
+      <!-- 動態填入 5 大核心黃金指標卡 -->
     </div>
 
     <!-- 下方深度能量分析手冊區 (通道、輪迴交叉、策略、生活魔藥) -->
@@ -602,28 +603,48 @@
       // 2. 調用核心排盤引擎
       const hd = AstroCalc.calculateHumanDesignChart(utcDate);
 
-      // 3. 更新指標卡
+      // 3. 更新指標卡 (依愛倫指示：置於圖與行星標示之後，包含定義/幾分人與輪迴交叉完整名稱)
       const summaryDiv = document.getElementById('chart_summary_cards');
       summaryDiv.innerHTML = `
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">能量類型 Type</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${hd.type}</p>
-          <p class="text-[11px] text-slate-500 mt-1">策略：${hd.strategy.split('(')[0]}</p>
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-1">能量類型 Type</p>
+            <p class="text-base sm:text-lg font-black text-slate-900 leading-tight">${hd.type}</p>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">策略：${hd.strategy.split('(')[0].trim()}</p>
         </div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">人生角色 Profile</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${hd.profile}</p>
-          <p class="text-[11px] text-slate-500 mt-1">意識 / 潛意識天賦爻線</p>
+
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-1">定義模式 Definition</p>
+            <p class="text-base sm:text-lg font-black text-slate-900 leading-tight">${hd.definition.type}</p>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">${hd.definition.description}</p>
         </div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">內在權威 Authority</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${hd.authority.split('——')[0].trim()}</p>
-          <p class="text-[11px] text-slate-500 mt-1">決策最高智慧指南</p>
+
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-1">人生角色 Profile</p>
+            <p class="text-base sm:text-lg font-black text-slate-900 leading-tight">${hd.profile}</p>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">意識 / 潛意識天賦爻線</p>
         </div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">輪迴交叉 Cross</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${hd.crossGates}</p>
-          <p class="text-[11px] text-slate-500 mt-1">主要靈魂命定軸線</p>
+
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-1">內在權威 Authority</p>
+            <p class="text-base sm:text-lg font-black text-slate-900 leading-tight">${hd.authority.split('——')[0].trim()}</p>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">決策最高智慧指南</p>
+        </div>
+
+        <div class="col-span-2 sm:col-span-2 lg:col-span-1 bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-1">輪迴交叉 Cross</p>
+            <p class="text-sm sm:text-base font-black text-slate-900 leading-tight">${hd.incarnationCross.titleZh}</p>
+            <p class="text-xs font-mono font-bold text-[#987315] mt-1 tracking-wide">${hd.crossGates}</p>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-2 truncate" title="${hd.incarnationCross.titleEn}">${hd.incarnationCross.titleEn}</p>
         </div>
       `;
 
