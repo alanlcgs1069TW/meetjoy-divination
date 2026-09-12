@@ -417,37 +417,12 @@ def create_card_image(card_id, suit_key, rank_tup, out_path):
     # 1. 繪製牌角
     draw_corner_indexes(im, rank_char, suit_key, suit_meta, fonts)
 
-    # 2. 繪製中央牌面圖案
-    motif_size = 760
-    
-    if card_id == 'c40' and os.path.exists(DESKTOP_AS):
-        raw_as = Image.open(DESKTOP_AS).convert("RGBA")
-        bbox = raw_as.getbbox()
-        if bbox:
-            raw_as = raw_as.crop(bbox)
-        raw_as.thumbnail((motif_size, motif_size), Image.Resampling.LANCZOS)
-        pos_x = int((W - raw_as.width) / 2)
-        pos_y = int(360 + (motif_size - raw_as.height) / 2)
-        im.paste(raw_as, (pos_x, pos_y), raw_as)
-        
-    elif card_id == 'c23' and os.path.exists(DESKTOP_10C):
-        raw_10c = Image.open(DESKTOP_10C).convert("RGBA")
-        w_orig, h_orig = raw_10c.size
-        crop_box = (0, 0, w_orig, int(h_orig * 0.78))
-        raw_10c_cropped = raw_10c.crop(crop_box)
-        bbox = raw_10c_cropped.getbbox()
-        if bbox:
-            raw_10c_cropped = raw_10c_cropped.crop(bbox)
-        raw_10c_cropped.thumbnail((motif_size, motif_size), Image.Resampling.LANCZOS)
-        pos_x = int((W - raw_10c_cropped.width) / 2)
-        pos_y = int(360 + (motif_size - raw_10c_cropped.height) / 2)
-        im.paste(raw_10c_cropped, (pos_x, pos_y), raw_10c_cropped)
-        
-    else:
-        motif = generate_zentangle_motif(suit_key, rank_char, size=motif_size)
-        pos_x = int((W - motif_size) / 2)
-        pos_y = 360
-        im.paste(motif, (pos_x, pos_y), motif)
+    # 2. 繪製中央牌面圖案    # 2. 中央手繪神聖圖騰 (全牌面統一採用神聖幾何曼陀羅與靈性圖騰，不使用外部翻拍圖片)
+    motif_size = 620
+    motif = generate_zentangle_motif(suit_key, rank_char, size=motif_size)
+    pos_x = int((W - motif_size) / 2)
+    pos_y = 360
+    im.paste(motif, (pos_x, pos_y), motif)
 
     # 3. 繪製底部文字
     draw_titles(im, rank_tup, suit_meta, fonts)

@@ -161,13 +161,13 @@
       </div>
     </div>
 
-    <!-- 星盤核心主舞台：AstroGold 專業風格雙盤排盤系統 -->
+    <!-- 星盤核心主舞台：癒見占星魔法 專業風格雙盤排盤系統 -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- 左欄：AstroGold 經典雙輪星盤主面板 -->
-      <div id="astrogold_card" class="lg:col-span-7 bg-[#FFFEEB] border-2 border-[#D8C7A0] rounded-3xl overflow-hidden shadow-md flex flex-col items-center">
+      <!-- 左欄：癒見占星魔法 經典雙輪星盤主面板 -->
+      <div id="divination_card" class="lg:col-span-7 bg-[#FFFEEB] border-2 border-[#D8C7A0] rounded-3xl overflow-hidden shadow-md flex flex-col items-center">
         
-        <!-- 1. AstroGold 經典金黃導航工具列 (Toolbar) -->
+        <!-- 1. 癒見占星魔法 經典金黃導航工具列 (Toolbar) -->
         <div class="w-full bg-[#F5C242] border-b border-[#DFAC2F] px-4 py-2 flex flex-wrap items-center justify-between text-[#3F2B04] font-bold text-xs select-none">
           <div class="flex items-center gap-2">
             <button id="btn_transit_reset" type="button" title="重設至當下行運" class="hover:bg-[#DFAC2F]/50 p-1.5 rounded-lg transition flex items-center gap-1 text-sm bg-[#F5C242] border border-[#D19B1A]">
@@ -192,14 +192,14 @@
           </div>
 
           <div class="flex items-center gap-1 text-xs">
-            <span class="font-mono text-[11px] opacity-90 font-black tracking-wider">AstroGold</span>
+            <span class="font-mono text-[11px] opacity-90 font-black tracking-wider">癒見占星魔法</span>
           </div>
         </div>
 
-        <!-- 2. AstroGold 經典雙欄資訊抬頭 (Inner Wheel & Outer Wheel) -->
+        <!-- 2. 癒見占星魔法 經典雙欄資訊抬頭 (Inner Wheel & Outer Wheel) -->
         <div class="w-full px-5 pt-3.5 pb-2 grid grid-cols-2 gap-4 text-[#1E293B] border-b border-[#EFE3C3] select-none text-xs bg-[#FFFEEB]">
           <!-- 左欄：Natal Inner Wheel -->
-          <div id="astrogold_header_natal" class="leading-tight">
+          <div id="divination_header_natal" class="leading-tight">
             <h2 class="text-lg sm:text-xl font-black text-black" id="disp_name">YuYang</h2>
             <p class="font-bold text-slate-800 text-[12px]" id="disp_gender">Male</p>
             <p class="font-bold text-slate-900 text-[12px]">Inner Wheel</p>
@@ -210,7 +210,7 @@
             <p class="text-slate-500 italic text-[11px]" id="disp_natal_hsys">Placidus</p>
           </div>
           <!-- 右欄：Transits Outer Wheel -->
-          <div id="astrogold_header_transit" class="text-right leading-tight">
+          <div id="divination_header_transit" class="text-right leading-tight">
             <h2 class="text-lg sm:text-xl font-black text-black">Transits</h2>
             <p class="font-bold text-slate-800 text-[12px]">Event</p>
             <p class="font-bold text-slate-900 text-[12px]">Outer Wheel</p>
@@ -222,7 +222,7 @@
           </div>
         </div>
 
-        <!-- 3. AstroGold 經典 SVG 星盤畫布 -->
+        <!-- 3. 癒見占星魔法 經典 SVG 星盤畫布 -->
         <div class="w-full max-w-[620px] p-2 relative select-none bg-[#FFFEEB]">
           <svg id="astro_wheel_svg" viewBox="0 0 680 680" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
             <!-- 圓形星盤由 JS 動態完整繪製 -->
@@ -338,12 +338,12 @@
       geoText.textContent = `座標：${lngDir} ${Math.abs(city.lng).toFixed(2)}° ${latDir} ${Math.abs(city.lat).toFixed(2)}° ｜ 時區：UTC${city.tz >= 0 ? '+' : ''}${city.tz} ${chk.checked ? '(DST -1h 生效)' : ''}`;
     }
 
-    // AstroGold 全域行運狀態
+    // 癒見占星魔法 全域行運狀態
     let currentTransitDate = new Date('2026-08-25T21:56:25+08:00');
     let isBiWheelMode = true;
 
-    // 格式化 AstroGold 經典雙盤資訊字串
-    function formatAstroGoldDateTime(date, tz) {
+    // 格式化 癒見占星魔法 經典雙盤資訊字串
+    function format癒見占星魔法DateTime(date, tz) {
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       const m = months[date.getMonth()];
@@ -367,7 +367,7 @@
       };
     }
 
-    // 圓形雙輪星盤繪製核心 (SVG · 100% 仿製 AstroGold 經典專業雙盤樣式)
+    // 圓形雙輪星盤繪製核心 (SVG · 100% 仿製 癒見占星魔法 經典專業雙盤樣式)
     function renderAstrologyWheel(planets, houses, aspects, transitPlanets, options = {}) {
       const svg = document.getElementById('astro_wheel_svg');
       svg.innerHTML = '';
@@ -416,14 +416,14 @@
         return `M ${p1.x} ${p1.y} A ${rOut} ${rOut} 0 ${largeArc} 1 ${p2.x} ${p2.y} L ${p3.x} ${p3.y} A ${rIn} ${rIn} 0 ${largeArc} 0 ${p4.x} ${p4.y} Z`;
       }
 
-      // AstroGold 12 星座色彩對照 (經典四元素高飽和純色)
-      const ZODIAC_ASTROGOLD = {
+      // 癒見占星魔法 12 星座色彩對照 (經典四元素高飽和純色)
+      const ZODIAC_CLASSIC_COLORS = {
         '白羊座': '#DC2626', '金牛座': '#15803D', '雙子座': '#0284C7', '巨蟹座': '#0F766E',
         '獅子座': '#DC2626', '處女座': '#15803D', '天秤座': '#0284C7', '天蠍座': '#1E3A8A',
         '射手座': '#DC2626', '摩羯座': '#15803D', '水瓶座': '#0284C7', '雙魚座': '#1E3A8A'
       };
 
-      // 1. 底層 AstroGold 經典象牙黃背景圓盤
+      // 1. 底層 癒見占星魔法 經典象牙黃背景圓盤
       const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       bgCircle.setAttribute('cx', cx);
       bgCircle.setAttribute('cy', cy);
@@ -457,7 +457,7 @@
       AstroCalc.ZODIAC_SIGNS.forEach((sign) => {
         const a1 = lonToSvgAngle(sign.start + 30);
         const a2 = lonToSvgAngle(sign.start);
-        const signColor = ZODIAC_ASTROGOLD[sign.name] || '#1E293B';
+        const signColor = ZODIAC_CLASSIC_COLORS[sign.name] || '#1E293B';
 
         // 星座扇形底板
         const arcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -479,7 +479,7 @@
         bLine.setAttribute('stroke-width', '1.2');
         svg.appendChild(bLine);
 
-        // 星座符號 (加入 \uFE0E 強制純向量文字輸出，套用 AstroGold 專屬紅綠藍色彩)
+        // 星座符號 (加入 \uFE0E 強制純向量文字輸出，套用 癒見占星魔法 專屬紅綠藍色彩)
         const midLon = sign.start + 15;
         const midAng = lonToSvgAngle(midLon);
         const pos = polarToCartesian(cx, cy, rZodiacMid, midAng);
@@ -610,7 +610,7 @@
         numText.textContent = c.house;
         svg.appendChild(numText);
 
-        // 在黃道外側標註該宮頭度數 (對標 AstroGold 標註，例如 27° ♒ 30')
+        // 在黃道外側標註該宮頭度數 (對標 癒見占星魔法 標註，例如 27° ♒ 30')
         const cuspTagPt = polarToCartesian(cx, cy, rZodiacOuter + 8, ang);
         const cuspTag = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         cuspTag.setAttribute('x', cuspTagPt.x);
@@ -623,7 +623,7 @@
         svg.appendChild(cuspTag);
       });
 
-      // 4. AstroGold 經典四大核心軸線醒目標籤 (As, Mc, Ds, Ic)
+      // 4. 癒見占星魔法 經典四大核心軸線醒目標籤 (As, Mc, Ds, Ic)
       // 上升點 As：位於 180° 水平左側，大字體加粗，右側緊隨度數與彩色星座符號
       const asPt = polarToCartesian(cx, cy, rZodiacOuter + 22, 180);
       const asGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -644,7 +644,7 @@
       asDeg.setAttribute('font-size', '9');
       asDeg.setAttribute('font-weight', 'bold');
       asDeg.setAttribute('text-anchor', 'start');
-      const asSignColor = ZODIAC_ASTROGOLD[houses.asc.sign] || '#15803D';
+      const asSignColor = ZODIAC_CLASSIC_COLORS[houses.asc.sign] || '#15803D';
       asDeg.innerHTML = `
         <tspan fill="#0F172A">${houses.asc.degree}°</tspan> 
         <tspan fill="${asSignColor}" class="astro-glyph">${toTextGlyph(houses.asc.signSymbol)}</tspan> 
@@ -674,7 +674,7 @@
       mcDeg.setAttribute('font-size', '8.5');
       mcDeg.setAttribute('font-weight', 'bold');
       mcDeg.setAttribute('text-anchor', 'middle');
-      const mcSignColor = ZODIAC_ASTROGOLD[houses.mc.sign] || '#15803D';
+      const mcSignColor = ZODIAC_CLASSIC_COLORS[houses.mc.sign] || '#15803D';
       mcDeg.innerHTML = `
         <tspan fill="#0F172A">${houses.mc.degree}°</tspan> 
         <tspan fill="${mcSignColor}" class="astro-glyph">${toTextGlyph(houses.mc.signSymbol)}</tspan> 
@@ -691,7 +691,7 @@
       dsDeg.setAttribute('font-size', '8.5');
       dsDeg.setAttribute('font-weight', 'bold');
       dsDeg.setAttribute('text-anchor', 'start');
-      const dsSignColor = ZODIAC_ASTROGOLD[houses.dsc.sign] || '#1E3A8A';
+      const dsSignColor = ZODIAC_CLASSIC_COLORS[houses.dsc.sign] || '#1E3A8A';
       dsDeg.innerHTML = `
         <tspan fill="#475569">${houses.dsc.minute}'</tspan> 
         <tspan fill="${dsSignColor}" class="astro-glyph">${toTextGlyph(houses.dsc.signSymbol)}</tspan> 
@@ -717,7 +717,7 @@
         line.setAttribute('x2', pt2.x);
         line.setAttribute('y2', pt2.y);
 
-        // AstroGold 色彩：硬相位紅色、軟相位天藍/深藍、梅花相綠色
+        // 癒見占星魔法 色彩：硬相位紅色、軟相位天藍/深藍、梅花相綠色
         if (asp.angle === 90 || asp.angle === 180 || asp.angle === 0) {
           line.setAttribute('stroke', '#E11D48');
           line.setAttribute('stroke-width', '1.3');
@@ -750,7 +750,7 @@
       centerHub.setAttribute('stroke-width', '1.2');
       svg.appendChild(centerHub);
 
-      // 6. 繪製本命星盤 (Inner Wheel - Natal Planets) · AstroGold 經典直列垂直緊湊排版
+      // 6. 繪製本命星盤 (Inner Wheel - Natal Planets) · 癒見占星魔法 經典直列垂直緊湊排版
       const planetKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
       
       const PLANET_COLORS_NATAL = {
@@ -797,7 +797,7 @@
         const ptTrue = polarToCartesian(cx, cy, rZodiacInner, p.trueAng);
         const ptDisp = polarToCartesian(cx, cy, p.dispR, p.dispAng);
         const pColor = PLANET_COLORS_NATAL[p.key] || '#1E293B';
-        const signColor = ZODIAC_ASTROGOLD[p.sign] || '#1E293B';
+        const signColor = ZODIAC_CLASSIC_COLORS[p.sign] || '#1E293B';
 
         // 刻度引導線 (Pointer Line)
         const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -828,7 +828,7 @@
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
-        // AstroGold 經典緊湊格式度數標註：度數、星座小符號、分
+        // 癒見占星魔法 經典緊湊格式度數標註：度數、星座小符號、分
         const degPt = polarToCartesian(cx, cy, p.dispR - 14, p.dispAng);
         const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         degText.setAttribute('x', degPt.x);
@@ -860,7 +860,7 @@
         svg.appendChild(g);
       });
 
-      // 7. 繪製行運外輪 (Outer Wheel - Transits) · 對標 AstroGold 雙盤標準
+      // 7. 繪製行運外輪 (Outer Wheel - Transits) · 對標 癒見占星魔法 雙盤標準
       if (isBiWheelMode && transitPlanets) {
         const PLANET_COLORS_TRANSIT = {
           'Neptune': '#E11D48', 'Saturn': '#991B1B', 'Uranus': '#0284C7', 'Jupiter': '#16A34A',
@@ -901,7 +901,7 @@
           const ptZodiacOut = polarToCartesian(cx, cy, rZodiacOuter, tp.trueAng);
           const ptDisp = polarToCartesian(cx, cy, rTransitRing, tp.dispAng);
           const tpColor = PLANET_COLORS_TRANSIT[tp.key] || '#1E293B';
-          const signColor = ZODIAC_ASTROGOLD[tp.sign] || '#1E293B';
+          const signColor = ZODIAC_CLASSIC_COLORS[tp.sign] || '#1E293B';
 
           // 指向黃道外緣的細微刻度線
           const tLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -961,7 +961,7 @@
       }
     }
 
-    // 主排盤函數 (本命盤 + AstroGold 行運推運雙盤計算)
+    // 主排盤函數 (本命盤 + 癒見占星魔法 行運推運雙盤計算)
     function renderAstrologyChart() {
       const userName = document.getElementById('user_name').value.trim() || 'YuYang';
       const userGender = document.getElementById('user_gender').value;
@@ -983,10 +983,10 @@
       const transitUtcDate = new Date(currentTransitDate.getTime() - city.tz * 3600000);
       const transitPlanets = AstroCalc.calculatePlanetaryPositions(transitUtcDate);
 
-      // 4. 更新 AstroGold 經典雙盤抬頭資訊
+      // 4. 更新 癒見占星魔法 經典雙盤抬頭資訊
       const nDt = new Date(`${dateStr}T${timeStr}:00`);
-      const natalAstroInfo = formatAstroGoldDateTime(nDt, city.tz);
-      const transitAstroInfo = formatAstroGoldDateTime(currentTransitDate, city.tz);
+      const natalAstroInfo = format癒見占星魔法DateTime(nDt, city.tz);
+      const transitAstroInfo = format癒見占星魔法DateTime(currentTransitDate, city.tz);
 
       const hSysName = hSys === 'whole_sign' ? 'Whole Sign' : (hSys === 'equal' ? 'Equal' : 'Placidus');
 
@@ -1044,7 +1044,7 @@
         `;
       }
 
-      // 6. 繪製 AstroGold 圓形星盤 (雙輪模式)
+      // 6. 繪製 癒見占星魔法 圓形星盤 (雙輪模式)
       renderAstrologyWheel(planets, houses, aspects, transitPlanets);
 
       // 7. 生成行星落點表格
@@ -1144,7 +1144,7 @@
       `;
     }
 
-    // AstroGold 推運步進函數
+    // 癒見占星魔法 推運步進函數
     function stepTransit(direction) {
       const stepUnit = document.getElementById('sel_transit_step').value;
       if (stepUnit === 'hour') {
@@ -1172,7 +1172,7 @@
     document.getElementById('chk_dst').addEventListener('change', updateGeoInfo);
     document.getElementById('house_system').addEventListener('change', renderAstrologyChart);
 
-    // AstroGold 工具列事件綁定
+    // 癒見占星魔法 工具列事件綁定
     document.getElementById('btn_step_prev').addEventListener('click', () => stepTransit(-1));
     document.getElementById('btn_step_next').addEventListener('click', () => stepTransit(1));
     document.getElementById('btn_transit_reset').addEventListener('click', () => {
