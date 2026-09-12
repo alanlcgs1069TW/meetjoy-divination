@@ -725,8 +725,44 @@
     }
   };
 
-  // 外圍十二星座方形排列定義 (參照 IMG_7974)
-  // 順序：金牛、牡羊、雙魚、水瓶、摩羯、射手、天蠍、天秤、處女、獅子、巨蟹、雙子
+  // 十二宮位古典固定星盤守護地占符號 (宮位盤外圈固定對應，對照 IMG_7975 / IMG_7976 經典盤位天體守護)
+  const FIXED_HOUSE_FIGURE_IDS = {
+    1:  "puer",          // I 少年 (Puer) [1, 1, 2, 1] - 命宮
+    2:  "laetitia",      // II 喜悅 (Laetitia) [1, 2, 2, 2] - 財帛
+    3:  "caput_draconis",// III 龍首 (Caput Draconis) [2, 1, 1, 1] - 兄弟
+    4:  "albus",         // IV 純白 (Albus) [2, 2, 1, 2] - 田宅
+    5:  "puella",        // V 少女 (Puella) [1, 2, 1, 1] - 子女
+    6:  "cauda_draconis",// VI 龍尾 (Cauda Draconis) [1, 1, 1, 2] - 奴僕
+    7:  "rubeus",        // VII 赤紅 (Rubeus) [2, 1, 2, 2] - 夫妻
+    8:  "tristitia",     // VIII 憂傷 (Tristitia) [2, 2, 2, 1] - 疾厄
+    9:  "fortuna_minor", // IX 小吉 (Fortuna Minor) [1, 1, 2, 2] - 遷移
+    10: "carcer",        // X 禁錮 (Carcer) [1, 2, 2, 1] - 官祿
+    11: "coniunctio",    // XI 聯合 (Coniunctio) [2, 1, 1, 2] - 福德
+    12: "fortuna_major"  // XII 大吉 (Fortuna Major) [2, 2, 1, 1] - 相貌
+  };
+
+  const FIXED_HOUSE_ZODIAC_FIGURES = {};
+  for (let h = 1; h <= 12; h++) {
+    FIXED_HOUSE_ZODIAC_FIGURES[h] = getFigureById(FIXED_HOUSE_FIGURE_IDS[h]);
+  }
+
+  // 標準黃道十二星座順序 (從牡羊座起逆時針輪轉)
+  const ZODIAC_SIGNS_ORDER = [
+    { name: "牡羊座", symbol: "♈", latin: "Aries" },
+    { name: "金牛座", symbol: "♉", latin: "Taurus" },
+    { name: "雙子座", symbol: "♊", latin: "Gemini" },
+    { name: "巨蟹座", symbol: "♋", latin: "Cancer" },
+    { name: "獅子座", symbol: "♌", latin: "Leo" },
+    { name: "處女座", symbol: "♍", latin: "Virgo" },
+    { name: "天秤座", symbol: "♎", latin: "Libra" },
+    { name: "天蠍座", symbol: "♏", latin: "Scorpio" },
+    { name: "射手座", symbol: "♐", latin: "Sagittarius" },
+    { name: "摩羯座", symbol: "♑", latin: "Capricorn" },
+    { name: "水瓶座", symbol: "♒", latin: "Aquarius" },
+    { name: "雙魚座", symbol: "♓", latin: "Pisces" }
+  ];
+
+  // 外圍十二星座方形排列定義 (參照 IMG_7974 原始預設)
   const ZODIAC_SQUARE = [
     { sign: "金牛座", symbol: "♉", latin: "Taurus", side: "top", pos: "left" },
     { sign: "牡羊座", symbol: "♈", latin: "Aries", side: "top", pos: "center" },
@@ -763,7 +799,7 @@
     };
   }
 
-  function generatePlanetaryChart(shieldChart) {
+  function generatePlanetaryChart(shieldChart, houseChart = null, customAscSign = null, offset = 0) {
     const slots = [
       shieldChart.mothers[0], shieldChart.mothers[1], shieldChart.mothers[2], shieldChart.mothers[3],
       shieldChart.daughters[0], shieldChart.daughters[1], shieldChart.daughters[2], shieldChart.daughters[3],
@@ -803,12 +839,33 @@
       }
     }
 
+    // 計算行星盤外圈 12 宮位飛臨星座 (根據上升星座與旋轉偏移動態變動)
+    let ascSignName = "巨蟹座";
+    if (customAscSign && customAscSign !== 'auto') {
+      ascSignName = customAscSign;
+    } else if (houseChart && houseChart.houses && houseChart.houses[0] && houseChart.houses[0].figure) {
+      ascSignName = houseChart.houses[0].figure.sign;
+    }
+
+    let ascIndex = ZODIAC_SIGNS_ORDER.findIndex(z => z.name === ascSignName || z.name.includes(ascSignName));
+    if (ascIndex === -1) ascIndex = 3; // 預設巨蟹座 (Index 3，對照 IMG_7974 第一宮命宮為巨蟹座)
+
+    const houseSigns = {};
+    for (let h = 1; h <= 12; h++) {
+      const idx = (ascIndex + (h - 1) + offset) % 12;
+      const normalizedIdx = (idx + 12) % 12;
+      houseSigns[h] = ZODIAC_SIGNS_ORDER[normalizedIdx];
+    }
+
     return {
       elementCounts,
       dominantElement,
       planetCounts,
       dominantPlanet,
-      signCounts
+      signCounts,
+      ascSign: ZODIAC_SIGNS_ORDER[ascIndex],
+      houseSigns,
+      offset
     };
   }
 
@@ -937,6 +994,8 @@
     FIGURES: GEOMANCY_FIGURES,
     HOUSE_BASE_DEFINITIONS,
     SCHOOL_SLOT_MAPPINGS,
+    FIXED_HOUSE_ZODIAC_FIGURES,
+    ZODIAC_SIGNS_ORDER,
     ZODIAC_SQUARE,
     getFigureById,
     getFigureByDots,

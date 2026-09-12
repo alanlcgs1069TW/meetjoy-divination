@@ -375,12 +375,38 @@
 
         <!-- 視圖三：古典行星地占盤 (Square Planetary Chart 參照 IMG_7974) -->
         <div id="view_planetary" class="hidden bg-white/95 border border-[#E2D9C8] rounded-3xl p-4 sm:p-7 shadow-sm">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+          <div class="flex flex-wrap items-center justify-between border-b border-stone-200 pb-3 mb-4 gap-2">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-[#B8860B]"></span>
               <h3 class="font-black text-base sm:text-lg text-[#1F261C]">行星能量與星座交感盤 (Planetary Square Chart)</h3>
             </div>
-            <span class="text-xs text-stone-400">外圍十二星座 · 內圈古典行星守護</span>
+            
+            <!-- 行星盤專屬操作：外圈命宮上升星座切換與轉盤旋轉 (參照 IMG_7974) -->
+            <div class="flex items-center gap-2 text-xs">
+              <div class="flex items-center bg-stone-100 rounded-lg px-2.5 py-1 border border-stone-300">
+                <span class="text-stone-500 mr-1.5 font-bold whitespace-nowrap">命宮上升:</span>
+                <select id="selectAscSign" onchange="changeAscSign(this.value)" class="bg-transparent font-bold text-stone-800 outline-none cursor-pointer">
+                  <option value="auto">自動 (第一宮對應)</option>
+                  <option value="牡羊座">♈ 牡羊座</option>
+                  <option value="金牛座">♉ 金牛座</option>
+                  <option value="雙子座">♊ 雙子座</option>
+                  <option value="巨蟹座">♋ 巨蟹座</option>
+                  <option value="獅子座">♌ 獅子座</option>
+                  <option value="處女座">♍ 處女座</option>
+                  <option value="天秤座">♎ 天秤座</option>
+                  <option value="天蠍座">♏ 天蠍座</option>
+                  <option value="射手座">♐ 射手座</option>
+                  <option value="摩羯座">♑ 摩羯座</option>
+                  <option value="水瓶座">♒ 水瓶座</option>
+                  <option value="雙魚座">♓ 雙魚座</option>
+                </select>
+              </div>
+
+              <button type="button" onclick="rotatePlanetaryChart(1)" class="flex items-center gap-1.5 px-3 py-1 bg-[#2E3829] text-[#F7E7CE] hover:bg-[#3E4C38] rounded-lg font-bold shadow-xs transition" title="旋轉星盤一宮 (參照古典星盤『轉』功能)">
+                <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                <span>轉盤 ↺</span>
+              </button>
+            </div>
           </div>
 
           <!-- 視覺化 SVG 行星方形星盤容器 -->
@@ -710,6 +736,8 @@
     let currentPlanetaryChart = null;
     let currentReading = null;
     let currentSchool = 'agrippa'; // agrippa 或 arabic
+    let currentAscSign = 'auto';   // auto 或指定星座
+    let planetaryOffset = 0;       // 旋轉偏移行星星盤
     let activeSlotKey = 'j15';
 
     let sandCounts = [0, 0, 0, 0];
@@ -752,7 +780,26 @@
       
       if (currentChart) {
         currentHouseChart = GeomancyCalc.generateHouseChart(currentChart, currentSchool);
+        currentPlanetaryChart = GeomancyCalc.generatePlanetaryChart(currentChart, currentHouseChart, currentAscSign, planetaryOffset);
         renderSquareHouseChart();
+        renderSquarePlanetaryChart();
+        updateReadings();
+      }
+    }
+
+    function changeAscSign(signVal) {
+      currentAscSign = signVal;
+      if (currentChart && currentHouseChart) {
+        currentPlanetaryChart = GeomancyCalc.generatePlanetaryChart(currentChart, currentHouseChart, currentAscSign, planetaryOffset);
+        renderSquarePlanetaryChart();
+        updateReadings();
+      }
+    }
+
+    function rotatePlanetaryChart(step = 1) {
+      planetaryOffset = (planetaryOffset + step) % 12;
+      if (currentChart && currentHouseChart) {
+        currentPlanetaryChart = GeomancyCalc.generatePlanetaryChart(currentChart, currentHouseChart, currentAscSign, planetaryOffset);
         renderSquarePlanetaryChart();
         updateReadings();
       }
@@ -762,7 +809,13 @@
       try {
         currentChart = GeomancyCalc.generateShieldChart(mothers);
         currentHouseChart = GeomancyCalc.generateHouseChart(currentChart, currentSchool);
-        currentPlanetaryChart = GeomancyCalc.generatePlanetaryChart(currentChart);
+        currentPlanetaryChart = GeomancyCalc.generatePlanetaryChart(currentChart, currentHouseChart, currentAscSign, planetaryOffset);
+
+        // 更新上升星座下拉選單顯示文字
+        const ascSelect = document.getElementById('selectAscSign');
+        if (ascSelect && currentPlanetaryChart.ascSign) {
+          ascSelect.options[0].textContent = `自動 (${currentPlanetaryChart.ascSign.name} ${currentPlanetaryChart.ascSign.symbol})`;
+        }
 
         renderShieldSlots();
         renderSquareHouseChart();
@@ -805,18 +858,18 @@
       centerSquare: { x: 230, y: 230, size: 240 },
 
       houses: {
-        1:  { points: "110,350 230,230 230,470", roman: "I",    pX: 185, pY: 350, dotX: 195, dotY: 335, numX: 140, numY: 355 }, // 最左大三角 (命宮)
-        2:  { points: "110,350 110,590 230,470", roman: "II",   pX: 150, pY: 470, dotX: 160, dotY: 455, numX: 135, numY: 495 }, // 左下外直角 (財帛)
-        3:  { points: "350,590 110,590 230,470", roman: "III",  pX: 230, pY: 550, dotX: 230, dotY: 535, numX: 230, numY: 575 }, // 底左直角 (兄弟)
-        4:  { points: "350,590 230,470 470,470", roman: "IV",   pX: 350, pY: 510, dotX: 350, dotY: 495, numX: 350, numY: 545 }, // 正底下大三角 (田宅)
-        5:  { points: "350,590 590,590 470,470", roman: "V",    pX: 470, pY: 550, dotX: 470, dotY: 535, numX: 470, numY: 575 }, // 底右直角 (子女)
-        6:  { points: "590,350 590,590 470,470", roman: "VI",   pX: 550, pY: 470, dotX: 540, dotY: 455, numX: 565, numY: 495 }, // 右下外直角 (奴僕)
-        7:  { points: "590,350 470,470 470,230", roman: "VII",  pX: 515, pY: 350, dotX: 505, dotY: 335, numX: 560, numY: 355 }, // 最右大三角 (夫妻)
-        8:  { points: "590,350 590,110 470,230", roman: "VIII", pX: 550, pY: 230, dotX: 540, dotY: 220, numX: 565, numY: 205 }, // 右上外直角 (疾厄)
-        9:  { points: "350,110 590,110 470,230", roman: "IX",   pX: 470, pY: 150, dotX: 470, dotY: 145, numX: 470, numY: 125 }, // 頂右直角 (遷移)
-        10: { points: "350,110 470,230 230,230", roman: "X",    pX: 350, pY: 190, dotX: 350, dotY: 175, numX: 350, numY: 135 }, // 正頂天頂大三角 (官祿)
-        11: { points: "350,110 110,110 230,230", roman: "XI",   pX: 230, pY: 150, dotX: 230, dotY: 145, numX: 230, numY: 125 }, // 頂左直角 (福德)
-        12: { points: "110,350 110,110 230,230", roman: "XII",  pX: 150, pY: 230, dotX: 160, dotY: 220, numX: 135, numY: 205 }  // 左上外直角 (相貌)
+        1:  { points: "110,350 230,230 230,470", roman: "I",    pX: 185, pY: 350, dotX: 195, dotY: 335, numX: 140, numY: 345 }, // 最左大三角 (命宮)
+        2:  { points: "110,350 110,590 230,470", roman: "II",   pX: 150, pY: 465, dotX: 160, dotY: 445, numX: 135, numY: 485 }, // 左下外直角 (財帛)
+        3:  { points: "350,590 110,590 230,470", roman: "III",  pX: 230, pY: 535, dotX: 230, dotY: 518, numX: 230, numY: 558 }, // 底左直角 (兄弟)
+        4:  { points: "350,590 230,470 470,470", roman: "IV",   pX: 350, pY: 510, dotX: 350, dotY: 500, numX: 350, numY: 545 }, // 正底下大三角 (田宅)
+        5:  { points: "350,590 590,590 470,470", roman: "V",    pX: 470, pY: 535, dotX: 470, dotY: 518, numX: 470, numY: 558 }, // 底右直角 (子女)
+        6:  { points: "590,350 590,590 470,470", roman: "VI",   pX: 550, pY: 465, dotX: 540, dotY: 445, numX: 565, numY: 485 }, // 右下外直角 (奴僕)
+        7:  { points: "590,350 470,470 470,230", roman: "VII",  pX: 515, pY: 350, dotX: 505, dotY: 335, numX: 560, numY: 345 }, // 最右大三角 (夫妻)
+        8:  { points: "590,350 590,110 470,230", roman: "VIII", pX: 550, pY: 235, dotX: 540, dotY: 215, numX: 565, numY: 220 }, // 右上外直角 (疾厄)
+        9:  { points: "350,110 590,110 470,230", roman: "IX",   pX: 470, pY: 155, dotX: 470, dotY: 135, numX: 470, numY: 175 }, // 頂右直角 (遷移)
+        10: { points: "350,110 470,230 230,230", roman: "X",    pX: 350, pY: 185, dotX: 350, dotY: 170, numX: 350, numY: 138 }, // 正頂天頂大三角 (官祿)
+        11: { points: "350,110 110,110 230,230", roman: "XI",   pX: 230, pY: 155, dotX: 230, dotY: 135, numX: 230, numY: 175 }, // 頂左直角 (福德)
+        12: { points: "110,350 110,110 230,230", roman: "XII",  pX: 150, pY: 235, dotX: 160, dotY: 215, numX: 135, numY: 220 }  // 左上外直角 (相貌)
       },
 
       outerSlots: [
@@ -880,8 +933,8 @@
           <g onclick="selectSlot('${h.slot}')" class="cursor-pointer group">
             <polygon points="${poly.points}" class="house-poly ${isActive ? 'active-house' : ''}" />
             <!-- 羅馬數字與宮名 -->
-            <text x="${poly.numX}" y="${poly.numY}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="14" fill="#8A6B18" text-anchor="middle">${poly.roman}</text>
-            <text x="${poly.numX}" y="${poly.numY + 16}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#4B5563" text-anchor="middle">${fig.zh}</text>
+            <text x="${poly.numX}" y="${poly.numY}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#8A6B18" text-anchor="middle">${poly.roman}</text>
+            <text x="${poly.numX}" y="${poly.numY + 14}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="10.5" fill="#4B5563" text-anchor="middle">${fig.zh}</text>
             <!-- 點陣珠子 -->
             ${renderSvgDots(fig.dots, poly.dotX, poly.dotY, 7.5, 4.4)}
           </g>
@@ -942,12 +995,16 @@
         <rect x="110" y="110" width="480" height="480" fill="#FFFDF8" stroke="#1F261C" stroke-width="2.5" />
       `;
 
-      // 3. 繪製外圍 12 星座方形小標籤盒 (參照 IMG_7974: 44x44 精緻居中方格)
+      // 3. 繪製外圍 12 星座方形小標籤盒 (參照 IMG_7974: 根據上升星座與轉盤動態旋轉變動)
       CHART_GEOM.outerSlots.forEach(slot => {
+        const signInfo = (currentPlanetaryChart && currentPlanetaryChart.houseSigns)
+          ? currentPlanetaryChart.houseSigns[slot.houseNum]
+          : { symbol: slot.sign, name: slot.signName };
+
         svgContent += `
-          <g class="select-none">
-            <rect x="${slot.boxX}" y="${slot.boxY}" width="44" height="44" fill="#FFFDF9" stroke="#1F261C" stroke-width="1.8" rx="3" />
-            <text x="${slot.cX}" y="${slot.cY + 8}" font-family="'Noto Serif TC', serif" font-weight="bold" font-size="22" fill="#1F261C" text-anchor="middle">${slot.sign}</text>
+          <g onclick="selectHouseSign(${slot.houseNum})" class="cursor-pointer group select-none" title="第 ${slot.houseNum} 宮飛臨 · ${signInfo.name} (${signInfo.symbol})">
+            <rect x="${slot.boxX}" y="${slot.boxY}" width="44" height="44" fill="#FFFDF9" stroke="#1F261C" stroke-width="1.8" rx="3" class="group-hover:fill-amber-50 transition" />
+            <text x="${slot.cX}" y="${slot.cY + 8}" font-family="'Noto Serif TC', serif" font-weight="bold" font-size="22" fill="#1F261C" text-anchor="middle">${signInfo.symbol}</text>
           </g>
         `;
       });
@@ -997,13 +1054,19 @@
       return res;
     }
 
-    // 輔助函式：繪製外圍 12 組圖形外向微縮點陣標記 (對照 IMG_7975 / IMG_7976)
+    // 輔助函式：繪製外圍 12 組固定圖形外向微縮點陣標記 (宮位盤外圈完全固定，對照 IMG_7975 / IMG_7976)
     function renderOuterBorderMarkers() {
-      let res = '<g opacity="0.9">';
+      let res = '<g opacity="0.95">';
       CHART_GEOM.outerSlots.forEach(slot => {
-        const house = currentHouseChart.houses.find(h => h.num === slot.houseNum);
-        if (house && house.figure) {
-          res += renderSvgDots(house.figure.dots, slot.cX, slot.dotStartY, 6.8, 3.5);
+        const fig = GeomancyCalc.FIXED_HOUSE_ZODIAC_FIGURES[slot.houseNum];
+        if (fig && fig.dots) {
+          res += `
+            <g onclick="selectFixedHouse(${slot.houseNum})" class="cursor-pointer group select-none" title="第 ${slot.houseNum} 宮固定天體守護 · ${fig.zh} (${fig.latin})">
+              <!-- 點擊熱區 -->
+              <rect x="${slot.boxX}" y="${slot.boxY}" width="44" height="44" fill="transparent" class="group-hover:stroke-[#8A6B18] group-hover:stroke-1" />
+              ${renderSvgDots(fig.dots, slot.cX, slot.dotStartY, 6.8, 3.5)}
+            </g>
+          `;
         }
       });
       res += '</g>';
@@ -1053,28 +1116,50 @@
         j15: "XV 法官 (全盤終審)", r16: "XVI 調解者 (解局之鑰)"
       };
 
-      document.getElementById('detailSlotBadge').textContent = slotNames[slotKey] || slotKey;
+      displayFigureDetail(fig, slotNames[slotKey] || slotKey);
+    }
+
+    function selectFixedHouse(houseNum) {
+      const fig = GeomancyCalc.FIXED_HOUSE_ZODIAC_FIGURES[houseNum];
+      if (!fig) return;
+      displayFigureDetail(fig, `宮位盤外圈固定守護 · 第 ${houseNum} 宮`);
+    }
+
+    function selectHouseSign(houseNum) {
+      if (!currentPlanetaryChart || !currentPlanetaryChart.houseSigns) return;
+      const signInfo = currentPlanetaryChart.houseSigns[houseNum];
+      const house = currentHouseChart ? currentHouseChart.houses.find(h => h.num === houseNum) : null;
+      if (house && house.figure) {
+        displayFigureDetail(house.figure, `第 ${houseNum} 宮飛臨 · ${signInfo.name} (${signInfo.symbol})`);
+      }
+    }
+
+    function displayFigureDetail(fig, badgeText) {
+      if (!fig) return;
+      document.getElementById('detailSlotBadge').textContent = badgeText;
       document.getElementById('detailZhName').textContent = fig.zh;
       document.getElementById('detailLatinName').textContent = fig.latin;
       document.getElementById('detailDots').innerHTML = renderDotsHTML(fig.dots);
-      document.getElementById('detailNick').textContent = `別名：${fig.nick}`;
-      document.getElementById('detailPlanet').textContent = `${fig.planet} (${fig.planetSymbol || ''})`;
-      document.getElementById('detailSign').textContent = `${fig.sign} (${fig.signSymbol || ''})`;
-      document.getElementById('detailElement').textContent = `${fig.element}元素`;
+      document.getElementById('detailNick').textContent = `別名：${fig.nick || ''}`;
+      document.getElementById('detailPlanet').textContent = `${fig.planet || ''} (${fig.planetSymbol || ''})`;
+      document.getElementById('detailSign').textContent = `${fig.sign || ''} (${fig.signSymbol || ''})`;
+      document.getElementById('detailElement').textContent = `${fig.element || ''}元素`;
       
       const favEl = document.getElementById('detailFavorable');
-      favEl.textContent = fig.favorable;
-      favEl.className = fig.favorable.includes('吉') ? "font-bold text-emerald-600" : (fig.favorable.includes('凶') ? "font-bold text-rose-600" : "font-bold text-stone-700");
+      favEl.textContent = fig.favorable || '平';
+      favEl.className = (fig.favorable && fig.favorable.includes('吉')) ? "font-bold text-emerald-600" : ((fig.favorable && fig.favorable.includes('凶')) ? "font-bold text-rose-600" : "font-bold text-stone-700");
 
-      document.getElementById('detailKeyword').textContent = fig.keyword;
-      document.getElementById('detailStory').textContent = fig.story;
-      document.getElementById('detailDaily').textContent = fig.daily;
+      document.getElementById('detailKeyword').textContent = fig.keyword || '';
+      document.getElementById('detailStory').textContent = fig.story || '';
+      document.getElementById('detailDaily').textContent = fig.daily || '';
       
-      document.getElementById('detailCareer').textContent = fig.extended.career;
-      document.getElementById('detailLove').textContent = fig.extended.love;
-      document.getElementById('detailWealth').textContent = fig.extended.wealth;
-      document.getElementById('detailHealth').textContent = fig.extended.health;
-      document.getElementById('detailTiming').textContent = fig.extended.timing;
+      if (fig.extended) {
+        document.getElementById('detailCareer').textContent = fig.extended.career || '';
+        document.getElementById('detailLove').textContent = fig.extended.love || '';
+        document.getElementById('detailWealth').textContent = fig.extended.wealth || '';
+        document.getElementById('detailHealth').textContent = fig.extended.health || '';
+        document.getElementById('detailTiming').textContent = fig.extended.timing || '';
+      }
     }
 
     function updateReadings() {
