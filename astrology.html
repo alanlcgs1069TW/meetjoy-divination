@@ -112,7 +112,7 @@
             <button type="submit" class="flex-1 bg-gradient-to-r from-[#2B3828] to-[#3B4D36] text-amber-100 hover:text-white hover:from-[#1E281C] hover:to-[#2B3828] font-bold py-2.5 px-3 rounded-xl text-sm shadow-md transition duration-200 flex items-center justify-center gap-1.5">
               <span>🪶</span> 繪製星盤
             </button>
-            <button type="button" id="btn_sample_alan" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-3 py-2.5 rounded-xl text-xs transition whitespace-nowrap" title="載入 1982-03-26 Alan 命盤">
+            <button type="button" id="btn_sample_alan" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-3 py-2.5 rounded-xl text-xs transition whitespace-nowrap" title="載入 1990-03-21 台北春分範例盤">
               範例
             </button>
           </div>
@@ -1170,12 +1170,12 @@
       renderAstrologyChart();
     });
 
-    // 載入 Alan 命盤範例 (1982-03-26 11:57 AM 台北)
+    // 載入 1990 春分命盤範例 (1990-03-21 12:19 台北)
     document.getElementById('btn_sample_alan').addEventListener('click', () => {
-      document.getElementById('user_name').value = 'Alan';
-      document.getElementById('user_gender').value = 'Male';
-      document.getElementById('birth_date').value = '1982-03-26';
-      document.getElementById('birth_time').value = '11:57';
+      document.getElementById('user_name').value = '學員';
+      document.getElementById('user_gender').value = 'Female';
+      document.getElementById('birth_date').value = '1990-03-21';
+      document.getElementById('birth_time').value = '12:19';
       document.getElementById('birth_city').value = 'tw_taipei';
       document.getElementById('house_system').value = 'placidus';
       updateGeoInfo();

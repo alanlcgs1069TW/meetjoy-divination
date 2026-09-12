@@ -62,13 +62,13 @@
           <!-- 出生日期 -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 出生公曆日期 (Date)</label>
-            <input type="date" id="birth_date" required value="1990-05-20" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+            <input type="date" id="birth_date" required value="1990-03-21" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
           </div>
 
           <!-- 出生時間 -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">2. 出生時分 (Time · 24H)</label>
-            <input type="time" id="birth_time" required value="12:30" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+            <input type="time" id="birth_time" required value="12:19" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
           </div>
 
           <!-- 出生地點選擇 -->
@@ -423,7 +423,7 @@
       41: [220, 591], 39: [226, 575], 19: [226, 560]
     };
 
-    // 36 條通道標準幾何路徑 (同心平行等距分流，徹底杜絕通道穿插重疊)
+    // 36 條通道標準幾何路徑 (完整定義 36 條通道，包含四閘門六通道整合迴路：20-57, 20-10, 20-34, 10-34, 10-57, 34-57)
     const HD_CHANNEL_PATHS = [
       // 頭部至邏輯 (Head -> Ajna)
       { id: '64-47', g1: 64, g2: 47, p0: [178, 76], ctrl: null, p2: [178, 116] },
@@ -433,11 +433,18 @@
       { id: '17-62', g1: 17, g2: 62, p0: [176, 142], ctrl: null, p2: [180, 202] },
       { id: '43-23', g1: 43, g2: 23, p0: [200, 152], ctrl: null, p2: [200, 202] },
       { id: '11-56', g1: 11, g2: 56, p0: [224, 142], ctrl: null, p2: [216, 202] },
-      // 喉嚨至脾臟 (Throat -> Spleen) 雙弧線外側平滑分軌
+      // 喉嚨至脾臟最外圈 (Throat -> Spleen) 16-48
       { id: '16-48', g1: 16, g2: 48, p0: [174, 218], ctrl: [65, 270], p2: [78, 398] },
-      { id: '20-57', g1: 20, g2: 57, p0: [174, 236], ctrl: [105, 305], p2: [98, 415] },
-      // 喉嚨至G中心 (Throat -> G)
-      { id: '20-10', g1: 20, g2: 10, p0: [174, 236], ctrl: null, p2: [172, 335] },
+
+      // 四閘門六通道整合迴路 (Integration Circuit: 20, 10, 34, 57，匯流節點 J: [106, 360])
+      { id: '20-57', g1: 20, g2: 57, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [100, 390], p2: [98, 415], type: 'two-segment' },
+      { id: '20-10', g1: 20, g2: 10, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [135, 342], p2: [172, 335], type: 'two-segment' },
+      { id: '20-34', g1: 20, g2: 34, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [114, 422], p2: [174, 444], type: 'two-segment' },
+      { id: '10-34', g1: 10, g2: 34, p0: [172, 335], ctrl: [135, 342], pMid: [106, 360], ctrl2: [114, 422], p2: [174, 444], type: 'two-segment' },
+      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [130, 385], p2: [98, 415] },
+      { id: '34-57', g1: 34, g2: 57, p0: [174, 444], ctrl: [126, 440], p2: [98, 415] },
+
+      // 喉嚨至G中心其他通道 (Throat -> G)
       { id: '31-7',  g1: 31, g2: 7,  p0: [178, 252], ctrl: null, p2: [182, 312] },
       { id: '8-1',   g1: 8,  g2: 1,  p0: [196, 252], ctrl: null, p2: [200, 300] },
       { id: '33-13', g1: 33, g2: 13, p0: [214, 252], ctrl: null, p2: [218, 312] },
@@ -448,8 +455,6 @@
       { id: '12-22', g1: 12, g2: 22, p0: [226, 228], ctrl: [295, 305], p2: [302, 415] },
       // G中心至心輪 (G -> Heart)
       { id: '25-51', g1: 25, g2: 51, p0: [228, 335], ctrl: null, p2: [254, 346] },
-      // 整合通道：G至脾臟 (G -> Spleen) 與 薦骨至脾臟 (Sacral -> Spleen) (整合四閘門正統匯流幾何，無多餘縱向直管)
-      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [125, 365], p2: [98, 415] },
       // G中心至薦骨 (G -> Sacral)
       { id: '15-5',  g1: 15, g2: 5,  p0: [182, 358], ctrl: null, p2: [180, 425] },
       { id: '2-14',  g1: 2,  g2: 14, p0: [200, 370], ctrl: null, p2: [200, 425] },
@@ -458,8 +463,7 @@
       { id: '26-44', g1: 26, g2: 44, p0: [256, 368], ctrl: [186, 400], p2: [118, 432] },
       // 心輪至情緒中心 (Heart -> Solar Plexus)
       { id: '40-37', g1: 40, g2: 37, p0: [298, 368], ctrl: null, p2: [282, 432] },
-      // 薦骨至脾臟 (Sacral -> Spleen)
-      { id: '34-57', g1: 34, g2: 57, p0: [174, 444], ctrl: [130, 435], p2: [98, 415] },
+      // 薦骨至脾臟 (Sacral -> Spleen) 27-50
       { id: '27-50', g1: 27, g2: 50, p0: [174, 464], ctrl: null, p2: [120, 458] },
       // 薦骨至情緒中心 (Sacral -> Solar Plexus)
       { id: '59-6',  g1: 59, g2: 6,  p0: [226, 452], ctrl: null, p2: [280, 458] },
@@ -477,24 +481,53 @@
       { id: '30-41', g1: 30, g2: 41, p0: [328, 502], ctrl: [308, 580], p2: [220, 591] }
     ];
 
-    // 二次貝茲曲線/直線平滑切分
-    function splitChannelPath(p0, ctrl, p2) {
+    // 二次貝茲曲線/直線/兩段式平滑切分
+    function splitChannelPath(ch) {
+      if (ch.type === 'two-segment') {
+        const full = `M ${ch.p0[0]},${ch.p0[1]} Q ${ch.ctrl[0]},${ch.ctrl[1]} ${ch.pMid[0]},${ch.pMid[1]} Q ${ch.ctrl2[0]},${ch.ctrl2[1]} ${ch.p2[0]},${ch.p2[1]}`;
+        
+        // 第一段 (p0 -> pMid) 中點
+        const q1 = [(ch.p0[0] + ch.ctrl[0]) / 2, (ch.p0[1] + ch.ctrl[1]) / 2];
+        const r1 = [(ch.ctrl[0] + ch.pMid[0]) / 2, (ch.ctrl[1] + ch.pMid[1]) / 2];
+        const mid1 = [(q1[0] + r1[0]) / 2, (q1[1] + r1[1]) / 2];
+
+        // 第二段 (pMid -> p2) 中點
+        const q2 = [(ch.pMid[0] + ch.ctrl2[0]) / 2, (ch.pMid[1] + ch.ctrl2[1]) / 2];
+        const r2 = [(ch.ctrl2[0] + ch.p2[0]) / 2, (ch.ctrl2[1] + ch.p2[1]) / 2];
+        const mid2 = [(q2[0] + r2[0]) / 2, (q2[1] + r2[1]) / 2];
+
+        // 定義通道時的兩半 (各延伸到匯流節點 J)
+        const defHalf1 = `M ${ch.p0[0]},${ch.p0[1]} Q ${ch.ctrl[0]},${ch.ctrl[1]} ${ch.pMid[0]},${ch.pMid[1]}`;
+        const defHalf2 = `M ${ch.pMid[0]},${ch.pMid[1]} Q ${ch.ctrl2[0]},${ch.ctrl2[1]} ${ch.p2[0]},${ch.p2[1]}`;
+
+        // 懸掛閘門時的短半 (只走自身段的一半，不抵達匯流點)
+        const hangHalf1 = `M ${ch.p0[0]},${ch.p0[1]} Q ${q1[0]},${q1[1]} ${mid1[0]},${mid1[1]}`;
+        const hangHalf2 = `M ${mid2[0]},${mid2[1]} Q ${r2[0]},${r2[1]} ${ch.p2[0]},${ch.p2[1]}`;
+
+        return { full, defHalf1, defHalf2, hangHalf1, hangHalf2 };
+      }
+
+      const p0 = ch.p0, ctrl = ch.ctrl, p2 = ch.p2;
       if (!ctrl) {
         const mx = (p0[0] + p2[0]) / 2;
         const my = (p0[1] + p2[1]) / 2;
+        const half1 = `M ${p0[0]},${p0[1]} L ${mx},${my}`;
+        const half2 = `M ${mx},${my} L ${p2[0]},${p2[1]}`;
         return {
           full: `M ${p0[0]},${p0[1]} L ${p2[0]},${p2[1]}`,
-          half1: `M ${p0[0]},${p0[1]} L ${mx},${my}`,
-          half2: `M ${mx},${my} L ${p2[0]},${p2[1]}`
+          defHalf1: half1, defHalf2: half2,
+          hangHalf1: half1, hangHalf2: half2
         };
       } else {
         const q1 = [(p0[0] + ctrl[0]) / 2, (p0[1] + ctrl[1]) / 2];
         const r1 = [(ctrl[0] + p2[0]) / 2, (ctrl[1] + p2[1]) / 2];
         const mid = [(q1[0] + r1[0]) / 2, (q1[1] + r1[1]) / 2];
+        const half1 = `M ${p0[0]},${p0[1]} Q ${q1[0]},${q1[1]} ${mid[0]},${mid[1]}`;
+        const half2 = `M ${mid[0]},${mid[1]} Q ${r1[0]},${r1[1]} ${p2[0]},${p2[1]}`;
         return {
           full: `M ${p0[0]},${p0[1]} Q ${ctrl[0]},${ctrl[1]} ${p2[0]},${p2[1]}`,
-          half1: `M ${p0[0]},${p0[1]} Q ${q1[0]},${q1[1]} ${mid[0]},${mid[1]}`,
-          half2: `M ${mid[0]},${mid[1]} Q ${r1[0]},${r1[1]} ${p2[0]},${p2[1]}`
+          defHalf1: half1, defHalf2: half2,
+          hangHalf1: half1, hangHalf2: half2
         };
       }
     }
@@ -649,95 +682,103 @@
         }
       });
 
-      // 7. 繪製 36 條通道正統雙軌凹槽管道 (精準分流線寬，徹底避免交疊黏結)
+      // 7. 繪製 36 條通道正統雙軌凹槽管道 (精準分流線寬，包含四閘門六通道整合迴路：20-57, 20-10, 20-34, 10-34, 10-57, 34-57)
       const chLayer = document.getElementById('svg_channels_layer');
       chLayer.innerHTML = '';
 
-      HD_CHANNEL_PATHS.forEach(ch => {
-        const pathData = splitChannelPath(ch.p0, ch.ctrl, ch.p2);
+      // 7.1 底層實體幾何管道骨架 (避免整合節點多次繪製重複疊加，呈現正統乾淨雙軌凹槽)
+      const PHYSICAL_BASE_TRACKS = [
+        // 整合迴路 6 條實體管道分支
+        'M 174,236 Q 115,285 106,360',  // 20 -> J
+        'M 172,335 Q 135,342 106,360',  // 10 -> J
+        'M 106,360 Q 100,390 98,415',   // J -> 57
+        'M 106,360 Q 114,422 174,444',  // J -> 34 (10-34 與 20-34 的 34 閘門專屬管道)
+        'M 172,335 Q 130,385 98,415',   // 10 -> 57
+        'M 174,444 Q 126,440 98,415'    // 34 -> 57
+      ];
 
-        // 1. 底層外框導軌 (7.2px 淺灰實心邊界，圓頭)
+      // 加入其他 30 條非整合通道之完整幾何
+      HD_CHANNEL_PATHS.forEach(ch => {
+        if (!['20-57', '20-10', '20-34', '10-34', '10-57', '34-57'].includes(ch.id)) {
+          PHYSICAL_BASE_TRACKS.push(splitChannelPath(ch).full);
+        }
+      });
+
+      // 1. 繪製所有實體管道的底層外框導軌 (7.2px 淺灰實心邊界)
+      PHYSICAL_BASE_TRACKS.forEach(d => {
         const bgCasing = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        bgCasing.setAttribute('d', pathData.full);
+        bgCasing.setAttribute('d', d);
         bgCasing.setAttribute('stroke', '#CBD5E1');
         bgCasing.setAttribute('stroke-width', '7.2');
         bgCasing.setAttribute('stroke-linecap', 'round');
         bgCasing.setAttribute('stroke-linejoin', 'round');
         bgCasing.setAttribute('fill', 'none');
         chLayer.appendChild(bgCasing);
+      });
 
-        // 2. 內芯純白導槽 (4.8px 純白凹槽，創造正統雙導軌立體層次)
+      // 2. 繪製所有實體管道的內芯純白導槽 (4.8px 純白凹槽)
+      PHYSICAL_BASE_TRACKS.forEach(d => {
         const bgGroove = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        bgGroove.setAttribute('d', pathData.full);
+        bgGroove.setAttribute('d', d);
         bgGroove.setAttribute('stroke', '#FFFFFF');
         bgGroove.setAttribute('stroke-width', '4.8');
         bgGroove.setAttribute('stroke-linecap', 'round');
         bgGroove.setAttribute('stroke-linejoin', 'round');
         bgGroove.setAttribute('fill', 'none');
         chLayer.appendChild(bgGroove);
+      });
 
-        // 3. 判斷 g1 與 g2 著色狀態
-        let g1Des = hd.activeGates.design.has(ch.g1);
-        let g1Per = hd.activeGates.personality.has(ch.g1);
-        let g2Des = hd.activeGates.design.has(ch.g2);
-        let g2Per = hd.activeGates.personality.has(ch.g2);
+      // 7.2 繪製 36 條通道的啟動著色層 (黑/紅/黑紅斑馬紋)
+      const getColor = (isDes, isPer) => {
+        if (isDes && isPer) return 'url(#zebra_both)';
+        if (isDes) return '#DC2626'; // 潛意識紅
+        if (isPer) return '#0F172A'; // 顯意識黑
+        return null;
+      };
 
-        // 整合通道特化 (Integration Circuit: 20, 10, 34, 57 四閘門六種通法)
-        // 20-34 與 10-34 經由 57 匯流節點連通，接通時 57 端自動延伸導通
-        const is20_34 = hd.definedChannels.some(c => c.id === '20-34');
-        const is10_34 = hd.definedChannels.some(c => c.id === '10-34');
+      const renderedPaths = new Set();
+      const addPath = (d, color) => {
+        if (!d || !color) return;
+        const key = `${d}__${color}`;
+        if (renderedPaths.has(key)) return;
+        renderedPaths.add(key);
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('stroke', color);
+        p.setAttribute('stroke-width', '4.8');
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        p.setAttribute('fill', 'none');
+        chLayer.appendChild(p);
+      };
 
-        if (is20_34) {
-          if (ch.id === '20-57') { g2Des = g2Des || hd.activeGates.design.has(34); g2Per = g2Per || hd.activeGates.personality.has(34); }
-          if (ch.id === '34-57') { g2Des = g2Des || hd.activeGates.design.has(20); g2Per = g2Per || hd.activeGates.personality.has(20); }
-        }
-        if (is10_34) {
-          if (ch.id === '10-57') { g2Des = g2Des || hd.activeGates.design.has(34); g2Per = g2Per || hd.activeGates.personality.has(34); }
-          if (ch.id === '34-57') { g2Des = g2Des || hd.activeGates.design.has(10); g2Per = g2Per || hd.activeGates.personality.has(10); }
-        }
+      HD_CHANNEL_PATHS.forEach(ch => {
+        const pathData = splitChannelPath(ch);
 
-        const getColor = (isDes, isPer) => {
-          if (isDes && isPer) return 'url(#zebra_both)';
-          if (isDes) return '#DC2626'; // 潛意識紅
-          if (isPer) return '#0F172A'; // 顯意識黑
-          return null;
-        };
+        const g1Des = hd.activeGates.design.has(ch.g1);
+        const g1Per = hd.activeGates.personality.has(ch.g1);
+        const g2Des = hd.activeGates.design.has(ch.g2);
+        const g2Per = hd.activeGates.personality.has(ch.g2);
 
         const c1 = getColor(g1Des, g1Per);
         const c2 = getColor(g2Des, g2Per);
+        const isDefined = (c1 && c2) || hd.definedChannels.some(c => 
+          c.id === ch.id || 
+          c.id === `${ch.g1}-${ch.g2}` || 
+          c.id === `${ch.g2}-${ch.g1}`
+        );
 
-        // 若兩端都啟動且顏色一致，以整條連續平滑路徑渲染
-        if (c1 && c2 && c1 === c2) {
-          const fullActive = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          fullActive.setAttribute('d', pathData.full);
-          fullActive.setAttribute('stroke', c1);
-          fullActive.setAttribute('stroke-width', '4.8');
-          fullActive.setAttribute('stroke-linecap', 'round');
-          fullActive.setAttribute('stroke-linejoin', 'round');
-          fullActive.setAttribute('fill', 'none');
-          chLayer.appendChild(fullActive);
+        if (isDefined) {
+          if (c1 && c2 && c1 === c2) {
+            addPath(pathData.full, c1);
+          } else {
+            if (c1) addPath(pathData.defHalf1, c1);
+            if (c2) addPath(pathData.defHalf2, c2);
+          }
         } else {
-          // 半通道分別獨立著色
-          if (c1) {
-            const p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            p1.setAttribute('d', pathData.half1);
-            p1.setAttribute('stroke', c1);
-            p1.setAttribute('stroke-width', '4.8');
-            p1.setAttribute('stroke-linecap', 'round');
-            p1.setAttribute('stroke-linejoin', 'round');
-            p1.setAttribute('fill', 'none');
-            chLayer.appendChild(p1);
-          }
-          if (c2) {
-            const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            p2.setAttribute('d', pathData.half2);
-            p2.setAttribute('stroke', c2);
-            p2.setAttribute('stroke-width', '4.8');
-            p2.setAttribute('stroke-linecap', 'round');
-            p2.setAttribute('stroke-linejoin', 'round');
-            p2.setAttribute('fill', 'none');
-            chLayer.appendChild(p2);
-          }
+          // 懸掛閘門 (Hanging Gate) 只繪製朝向對應閘門的短半
+          if (c1) addPath(pathData.hangHalf1, c1);
+          if (c2) addPath(pathData.hangHalf2, c2);
         }
       });
 
@@ -915,10 +956,10 @@
     document.getElementById('birth_city').addEventListener('change', updateGeoInfo);
     document.getElementById('chk_dst').addEventListener('change', updateGeoInfo);
 
-    // 範例按鈕 (還原 7933 截圖命盤 1990-05-20 12:30 台北)
+    // 範例按鈕 (1990-03-21 12:19 台北春分盤)
     document.getElementById('btn_sample').addEventListener('click', () => {
-      document.getElementById('birth_date').value = '1990-05-20';
-      document.getElementById('birth_time').value = '12:30';
+      document.getElementById('birth_date').value = '1990-03-21';
+      document.getElementById('birth_time').value = '12:19';
       document.getElementById('birth_city').value = 'tw_taipei';
       updateGeoInfo();
       renderHumanDesignChart();

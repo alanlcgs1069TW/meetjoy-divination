@@ -208,8 +208,8 @@
           <input type="checkbox" id="chk_dst" class="rounded text-[#987315] focus:ring-[#987315]">
           <span>DST 夏令時間</span>
         </label>
-        <button type="button" onclick="loadAlanExample()" class="px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 font-bold transition flex items-center gap-1" title="載入 1982-03-26 11:57 台北範例資料以比對官方截圖">
-          <span>✨ 載入範例 (Alan)</span>
+        <button type="button" onclick="loadSpringEquinoxExample()" class="px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 font-bold transition flex items-center gap-1" title="載入 1990-03-21 12:19 台北春分範例資料">
+          <span>✨ 載入範例 (春分)</span>
         </button>
       </div>
 
@@ -532,11 +532,11 @@
       return CITIES_DB.find(c => c.id === cid) || CITIES_DB[0];
     }
 
-    // 載入 Alan 範例盤 (1982-03-26 11:57 Taipei)
-    function loadAlanExample() {
-      document.getElementById('gk_name').value = 'Alan';
-      document.getElementById('gk_date').value = '1982-03-26';
-      document.getElementById('gk_time').value = '11:57';
+    // 載入春分範例盤 (1990-03-21 12:19 Taipei)
+    function loadSpringEquinoxExample() {
+      document.getElementById('gk_name').value = '學員';
+      document.getElementById('gk_date').value = '1990-03-21';
+      document.getElementById('gk_time').value = '12:19';
       document.getElementById('gk_city').value = 'tw_taipei';
       document.getElementById('chk_dst').checked = false;
       renderGeneKeysChart();
