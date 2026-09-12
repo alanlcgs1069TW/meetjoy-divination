@@ -44,20 +44,23 @@
       @media print {
         @page {
           size: A4 portrait;
-          margin: 8mm 10mm 8mm 10mm;
+          margin: 6mm 8mm 6mm 8mm;
         }
 
-        /* 隱藏無關的操作與導航元素 */
-        nav, form, button, .no-print, #geo_info_text, .modal-backdrop, #meetjoy_pdf_modal {
+        /* 隱藏無關的操作、導航、表單與開關元素 */
+        nav, form, button, .no-print, #geo_info_text, .modal-backdrop, #meetjoy_pdf_modal,
+        #btn_toggle_inputs, #subsequence_tabs_bar, .subseq-tab, [onclick*="setLayoutPreset"],
+        input, select, textarea, .hide-for-print {
           display: none !important;
         }
 
+        /* 全局純淨白底與高對比文字 */
         body {
           background: #FFFFFF !important;
           color: #0F172A !important;
           padding: 0 !important;
           margin: 0 !important;
-          font-size: 11px !important;
+          font-size: 10.5px !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
@@ -70,26 +73,31 @@
         }
 
         /* 抬頭與卡片美化 */
-        .mb-8.bg-white\\/90 {
-          margin-bottom: 8px !important;
-          padding: 8px 12px !important;
-          border-radius: 12px !important;
-          border: 1px solid #E2E8F0 !important;
+        header, .print-title {
+          margin-bottom: 6px !important;
+          padding: 4px 0 !important;
+          text-align: center !important;
         }
 
-        /* 避免關鍵卡片被硬生生截斷 */
-        .crystal-center, .card-box, .bg-white, [id*="card"], [id*="container"] {
+        h1, h2 {
+          color: #0F172A !important;
+        }
+
+        /* 避免關鍵卡片被切斷 */
+        .crystal-center, .card-box, .bg-white, [id*="card"], [id*="container"], article.palace {
           page-break-inside: avoid !important;
           break-inside: avoid !important;
         }
 
-        /* 人類圖專屬排版優化：主舞台 3 欄並列，收在單頁 */
+        /* ======================================================================
+           1. 人類圖專屬排版 (The Chart is the Hero)
+           ====================================================================== */
         .bg-gradient-to-b {
-          background: #F8FAFC !important;
+          background: #FFFFFF !important;
           border: 1px solid #CBD5E1 !important;
-          border-radius: 16px !important;
-          padding: 8px 12px !important;
-          margin-bottom: 8px !important;
+          border-radius: 12px !important;
+          padding: 6px 10px !important;
+          margin-bottom: 6px !important;
           page-break-inside: avoid !important;
           break-inside: avoid !important;
         }
@@ -102,90 +110,205 @@
           gap: 4px !important;
         }
 
+        /* 左右兩側行星欄緊湊排整齊 */
         .grid.grid-cols-1.lg\\:grid-cols-12 > div:nth-child(1) {
-          width: 25% !important;
+          width: 24% !important;
           order: 1 !important;
         }
 
+        /* 中央人體圖最大化且居中放大 */
         .grid.grid-cols-1.lg\\:grid-cols-12 > div:nth-child(2) {
-          width: 50% !important;
+          width: 52% !important;
           order: 2 !important;
+          display: flex !important;
+          justify-content: center !important;
         }
 
         .grid.grid-cols-1.lg\\:grid-cols-12 > div:nth-child(3) {
-          width: 25% !important;
+          width: 24% !important;
           order: 3 !important;
         }
 
         #bodygraph_svg {
-          max-height: 420px !important;
-          width: auto !important;
+          max-height: 480px !important;
+          width: 100% !important;
+          margin: 0 auto !important;
         }
 
         #design_planet_list, #personality_planet_list {
-          gap: 2px !important;
-          font-size: 10px !important;
+          gap: 1px !important;
+          font-size: 9.5px !important;
         }
 
         #design_planet_list > div, #personality_planet_list > div {
-          padding: 2px 4px !important;
+          padding: 1.5px 3px !important;
+          border-bottom: 1px dotted #E2E8F0 !important;
         }
 
+        /* 人類圖核心屬性 4~5 欄整齊緊湊排在命盤下方 */
         #chart_summary_cards {
           display: grid !important;
           grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-          gap: 6px !important;
-          margin-top: 8px !important;
-          margin-bottom: 8px !important;
+          gap: 4px !important;
+          margin-top: 6px !important;
+          margin-bottom: 6px !important;
           page-break-inside: avoid !important;
           break-inside: avoid !important;
         }
 
         #chart_summary_cards > div {
           border: 1px solid #CBD5E1 !important;
-          background: #FFFFFF !important;
-          border-radius: 10px !important;
-          padding: 6px 8px !important;
+          background: #F8FAFC !important;
+          border-radius: 8px !important;
+          padding: 4px 6px !important;
+          text-align: center !important;
           box-shadow: none !important;
         }
 
         #chart_summary_cards p {
-          font-size: 9px !important;
+          font-size: 8.5px !important;
+          color: #64748B !important;
         }
 
         #chart_summary_cards p.font-black {
-          font-size: 11px !important;
+          font-size: 10.5px !important;
+          color: #0F172A !important;
+          margin-top: 2px !important;
         }
 
-        /* 第二頁：通道與生活魔藥處方 */
-        .mt-8.grid.grid-cols-1.md\\:grid-cols-2 {
+        /* ======================================================================
+           2. 基因天命專屬排版 (全息圖居中，11 球端點一覽無遺)
+           ====================================================================== */
+        #gene_keys_golden_path {
+          display: block !important;
+          width: 100% !important;
+          margin: 0 auto 6px auto !important;
+          background: #FFFFFF !important;
+          border: 1px solid #CBD5E1 !important;
+          border-radius: 12px !important;
+          padding: 6px !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        #gene_keys_svg {
+          max-height: 520px !important;
+          width: 100% !important;
+          margin: 0 auto !important;
+          display: block !important;
+        }
+
+        /* 基因天命右側控制項在列印時隱藏開關，保留下方精選解讀 */
+        .lg\\:col-span-4 > div:first-child {
+          display: none !important;
+        }
+
+        #sphere_detail_card {
+          border: 1px solid #CBD5E1 !important;
+          background: #F8FAFC !important;
+          border-radius: 10px !important;
+          padding: 8px 12px !important;
+          margin-top: 6px !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        /* ======================================================================
+           3. 紫微斗數專屬排版 (十二宮 4 欄九宮盤居中放大)
+           ====================================================================== */
+        #summary {
+          display: grid !important;
+          grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+          gap: 4px !important;
+          margin-bottom: 6px !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        #summary > div {
+          border: 1px solid #CBD5E1 !important;
+          background: #F8FAFC !important;
+          border-radius: 8px !important;
+          padding: 4px 6px !important;
+          text-align: center !important;
+        }
+
+        #chart {
+          display: grid !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          gap: 4px !important;
+          width: 100% !important;
+          margin: 0 auto 6px auto !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        article.palace {
+          border: 1px solid #94A3B8 !important;
+          border-radius: 8px !important;
+          padding: 4px 6px !important;
+          background: #FFFFFF !important;
+          min-height: 105px !important;
+          font-size: 9.5px !important;
+        }
+
+        article.palace .star {
+          font-size: 10px !important;
+          font-weight: 900 !important;
+          margin-right: 2px !important;
+        }
+
+        article.palace .line-note {
+          font-size: 8px !important;
+          color: #64748B !important;
+        }
+
+        /* ======================================================================
+           4. 西洋占星專屬排版 (雙環星盤居中大圖，四軸雙欄排齊)
+           ====================================================================== */
+        #astrology_wheel_container {
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          margin: 0 auto 8px auto !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        #astrology_wheel_container svg {
+          max-height: 480px !important;
+          width: auto !important;
+          margin: 0 auto !important;
+        }
+
+        .planet-table, .aspect-grid {
+          font-size: 9.5px !important;
+          border-collapse: collapse !important;
+          width: 100% !important;
+        }
+
+        .planet-table th, .planet-table td {
+          border: 1px solid #CBD5E1 !important;
+          padding: 3px 5px !important;
+          text-align: center !important;
+        }
+
+        /* ======================================================================
+           5. 文王六爻與四盤小六壬排版
+           ====================================================================== */
+        #sanchuan_card, #hexagram_result, #gua_main_box, .gua-card {
+          border: 1px solid #CBD5E1 !important;
+          border-radius: 10px !important;
+          padding: 6px 10px !important;
+          margin-bottom: 6px !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        /* 換頁控制：詳細長解讀若超頁，自動優雅平滑換頁 */
+        .print-page-break {
           page-break-before: always !important;
           break-before: page !important;
-          margin-top: 10px !important;
-        }
-
-        /* 六爻排盤優化 */
-        #sanchuan_card, #hexagram_result, #gua_main_box, .gua-card {
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* 占星星盤優化 */
-        #astrology_wheel_container, svg {
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* 基因天命全息圖優化 */
-        #gene_keys_golden_path, .gk-sequence-card {
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* 撲克牌陣優化 */
-        .card-matrix, .playing-card {
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
         }
       }
     `;

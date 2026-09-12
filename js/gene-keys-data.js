@@ -236,43 +236,62 @@ const SPHERE_LINE_TAGS = {
   }
 };
 
-// 全息天命圖各序列標準幾何座標 (基於 960x760 視圖百分比)
+// 全息天命圖各序列標準幾何端點座標 (基於 960x760 視圖百分比)
+// 1. 完整全譜 (Wholeness · 11 Spheres 神聖幾何曼陀羅)
 const SACRED_MANDALA_COORDS = {
-  // 激活序列 (綠)
-  lifesWork:  { x: 50, y: 14, labelAlign: 'top-right' },
-  evolution:  { x: 73, y: 48, labelAlign: 'right' },
-  radiance:   { x: 27, y: 48, labelAlign: 'left' },
-  purpose:    { x: 50, y: 81, labelAlign: 'bottom-right' },
+  // 激活序列 (菱形四極頂點)
+  lifesWork:  { x: 50.0, y: 12.0, labelAlign: 'top-right' },
+  evolution:  { x: 82.0, y: 49.0, labelAlign: 'right' },
+  radiance:   { x: 18.0, y: 49.0, labelAlign: 'left' },
+  purpose:    { x: 50.0, y: 88.0, labelAlign: 'bottom-right' },
 
-  // 金星序列 (紅/紫)
-  attraction: { x: 50, y: 65, labelAlign: 'right' },
-  iq:         { x: 39, y: 56, labelAlign: 'left' },
-  eq:         { x: 61, y: 56, labelAlign: 'right' },
-  sq:         { x: 50, y: 48, labelAlign: 'right' },
-  core:       { x: 39, y: 40, labelAlign: 'left' },
+  // 金星序列 (聖杯心型天梯)
+  attraction: { x: 50.0, y: 70.0, labelAlign: 'right' },
+  iq:         { x: 33.0, y: 61.0, labelAlign: 'left' },
+  eq:         { x: 67.0, y: 61.0, labelAlign: 'right' },
+  sq:         { x: 50.0, y: 49.0, labelAlign: 'top-right' }, // 正幾何中心
+  core:       { x: 33.0, y: 37.0, labelAlign: 'left' },
 
-  // 珍珠序列 (藍)
-  culture:    { x: 61, y: 40, labelAlign: 'right' },
-  pearl:      { x: 50, y: 32, labelAlign: 'top' }
+  // 珍珠序列 (等腰三角與中心珍珠)
+  culture:    { x: 67.0, y: 37.0, labelAlign: 'right' },
+  pearl:      { x: 50.0, y: 26.0, labelAlign: 'top-right' }
 };
 
-// 珍珠序列專屬等邊三角形座標 (大正三角形 + 中心珍珠)
+// 2. 激活序列專屬幾何端點 (大正菱形 · 四大天才端點)
+const ACTIVATION_SEQUENCE_COORDS = {
+  lifesWork:  { x: 50.0, y: 14.0, labelAlign: 'top-right' },
+  evolution:  { x: 82.0, y: 50.0, labelAlign: 'right' },
+  purpose:    { x: 50.0, y: 86.0, labelAlign: 'bottom-right' },
+  radiance:   { x: 18.0, y: 50.0, labelAlign: 'left' }
+};
+
+// 3. 金星序列專屬幾何端點 (心靈聖杯 · 六大愛的端點)
+const VENUS_SEQUENCE_COORDS = {
+  purpose:    { x: 50.0, y: 86.0, labelAlign: 'bottom-right' },
+  attraction: { x: 50.0, y: 68.0, labelAlign: 'right' },
+  iq:         { x: 28.0, y: 52.0, labelAlign: 'left' },
+  eq:         { x: 72.0, y: 52.0, labelAlign: 'right' },
+  sq:         { x: 50.0, y: 36.0, labelAlign: 'right' },
+  core:       { x: 32.0, y: 18.0, labelAlign: 'left' }
+};
+
+// 4. 珍珠序列專屬幾何端點 (大等邊正三角形 + 正中心珍珠)
 const PEARL_SEQUENCE_COORDS = {
-  brand:      { x: 50, y: 22, labelAlign: 'right' },
-  vocation:   { x: 37, y: 58, labelAlign: 'left' },
-  culture:    { x: 63, y: 58, labelAlign: 'right' },
-  pearl:      { x: 50, y: 47, labelAlign: 'right' }
+  brand:      { x: 50.0, y: 18.0, labelAlign: 'top-right' },
+  vocation:   { x: 25.0, y: 68.0, labelAlign: 'left' },
+  culture:    { x: 75.0, y: 68.0, labelAlign: 'right' },
+  pearl:      { x: 50.0, y: 48.0, labelAlign: 'right' }
 };
 
-// 星辰珍珠專屬神聖六角幾何座標 (正六邊形 + 中心珍珠)
+// 5. 星辰珍珠專屬神聖六角幾何端點 (正六邊形 + 正中心珍珠)
 const STAR_PEARL_COORDS = {
-  brand:        { x: 50.0, y: 21.0, labelAlign: 'right' },
-  relationship: { x: 73.4, y: 34.5, labelAlign: 'right' },
-  culture:      { x: 73.4, y: 61.5, labelAlign: 'right' },
-  stability:    { x: 50.0, y: 75.0, labelAlign: 'right' },
-  vocation:     { x: 26.6, y: 61.5, labelAlign: 'left' },
-  creativity:   { x: 26.6, y: 34.5, labelAlign: 'left' },
-  pearl:        { x: 50.0, y: 48.0, labelAlign: 'right' }
+  brand:        { x: 50.0, y: 16.0, labelAlign: 'top-right' },
+  relationship: { x: 78.0, y: 33.0, labelAlign: 'right' },
+  culture:      { x: 78.0, y: 67.0, labelAlign: 'right' },
+  stability:    { x: 50.0, y: 84.0, labelAlign: 'bottom-right' },
+  vocation:     { x: 22.0, y: 67.0, labelAlign: 'left' },
+  creativity:   { x: 22.0, y: 33.0, labelAlign: 'left' },
+  pearl:        { x: 50.0, y: 50.0, labelAlign: 'right' }
 };
 
 // 全息通道網絡連線 (Pathways) - 完整全譜
@@ -354,9 +373,12 @@ if (typeof module !== 'undefined' && module.exports) {
     GENE_KEYS_64,
     SPHERE_LINE_TAGS,
     SACRED_MANDALA_COORDS,
+    ACTIVATION_SEQUENCE_COORDS,
+    VENUS_SEQUENCE_COORDS,
     PEARL_SEQUENCE_COORDS,
     STAR_PEARL_COORDS,
     GOLDEN_PATHWAYS,
     SUB_SEQUENCE_PATHWAYS
   };
 }
+

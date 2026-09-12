@@ -150,6 +150,7 @@
       <a href="/chakra-astrology.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">脈輪占星</a>
       <a href="/destiny-cards.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">撲克命牌</a>
       <a href="/astrology.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">西洋占星</a>
+      <a href="/ziwei.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">紫微斗數</a>
       <a href="/xiao-liu-ren.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">小六壬</a>
       <a href="/liu-yao.html" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-white/10 transition whitespace-nowrap">文王六爻</a>
     </div>
@@ -179,8 +180,8 @@
       <button id="btn_fullscreen" class="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition hidden sm:inline-flex" title="全螢幕顯現">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
       </button>
-      <button onclick="window.print()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3829] hover:bg-[#3E4B37] text-amber-100 text-xs font-bold transition shadow-xs flex items-center gap-1.5">
-        <span>📄 生成 PDF</span>
+      <button onclick="MeetJoyPDF.exportPDF({title:'基因天命黃金之路全息天命圖'})" class="px-3.5 py-1.5 rounded-xl bg-[#2E3829] hover:bg-[#3E4B37] text-amber-100 text-xs font-bold transition shadow-xs flex items-center gap-1.5">
+        <span>📄 匯出 PDF</span>
       </button>
     </div>
   </header>
@@ -666,10 +667,10 @@
         coordsMap = SACRED_MANDALA_COORDS;
       } else if (CURRENT_SUB_SEQUENCE === 'activation') {
         pathways = SUB_SEQUENCE_PATHWAYS.activation;
-        coordsMap = SACRED_MANDALA_COORDS;
+        coordsMap = ACTIVATION_SEQUENCE_COORDS;
       } else if (CURRENT_SUB_SEQUENCE === 'venus') {
         pathways = SUB_SEQUENCE_PATHWAYS.venus;
-        coordsMap = SACRED_MANDALA_COORDS;
+        coordsMap = VENUS_SEQUENCE_COORDS;
       } else if (CURRENT_SUB_SEQUENCE === 'pearl') {
         pathways = SUB_SEQUENCE_PATHWAYS.pearl;
         coordsMap = PEARL_SEQUENCE_COORDS;
@@ -724,7 +725,9 @@
 
       const targetKeys = SUB_SEQ_CONFIG[CURRENT_SUB_SEQUENCE].spheres;
       let coordsMap = SACRED_MANDALA_COORDS;
-      if (CURRENT_SUB_SEQUENCE === 'pearl') coordsMap = PEARL_SEQUENCE_COORDS;
+      if (CURRENT_SUB_SEQUENCE === 'activation') coordsMap = ACTIVATION_SEQUENCE_COORDS;
+      else if (CURRENT_SUB_SEQUENCE === 'venus') coordsMap = VENUS_SEQUENCE_COORDS;
+      else if (CURRENT_SUB_SEQUENCE === 'pearl') coordsMap = PEARL_SEQUENCE_COORDS;
       else if (CURRENT_SUB_SEQUENCE === 'starPearl') coordsMap = STAR_PEARL_COORDS;
 
       targetKeys.forEach(key => {
@@ -807,19 +810,27 @@
         nameText.textContent = s.name;
         g.appendChild(nameText);
 
-        // 四行標籤群組 (對標官方截圖排版)
+        // 四行標籤群組 (精準幾何端點外展排版，防碰撞重疊)
         const tagGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         const isLeft = coord.labelAlign && coord.labelAlign.includes('left');
-        const tagX = isLeft ? cx - (sphereRadius + 10) : cx + (sphereRadius + 10);
+        const isTop = coord.labelAlign && coord.labelAlign.includes('top');
+        const isBottom = coord.labelAlign && coord.labelAlign.includes('bottom');
+
+        const tagX = isLeft ? cx - (sphereRadius + 12) : cx + (sphereRadius + 12);
         const anchor = isLeft ? 'end' : 'start';
 
         let tagBaseY = cy - 18;
+        if (isTop) tagBaseY = cy - 24;
+        else if (isBottom) tagBaseY = cy - 12;
+
+        const commonStyle = 'paint-order: stroke fill; stroke: rgba(255,255,255,0.9); stroke-width: 2.5px; stroke-linejoin: round;';
 
         // 1. 悉地 (Siddhi)
         const tSiddhi = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         tSiddhi.setAttribute('x', tagX); tSiddhi.setAttribute('y', tagBaseY);
         tSiddhi.setAttribute('font-size', '10'); tSiddhi.setAttribute('font-weight', 'bold');
         tSiddhi.setAttribute('fill', '#0284C7'); tSiddhi.setAttribute('text-anchor', anchor);
+        tSiddhi.setAttribute('style', commonStyle);
         tSiddhi.setAttribute('class', 'tag-siddhi');
         tSiddhi.textContent = isLeft ? `${gk.siddhi} · ❄️` : `❄️ · ${gk.siddhi}`;
         tagGroup.appendChild(tSiddhi);
@@ -829,6 +840,7 @@
         tGift.setAttribute('x', tagX); tGift.setAttribute('y', tagBaseY + 13);
         tGift.setAttribute('font-size', '10'); tGift.setAttribute('font-weight', 'bold');
         tGift.setAttribute('fill', '#16A34A'); tGift.setAttribute('text-anchor', anchor);
+        tGift.setAttribute('style', commonStyle);
         tGift.setAttribute('class', 'tag-gift');
         tGift.textContent = isLeft ? `${gk.gift} · △` : `△ · ${gk.gift}`;
         tagGroup.appendChild(tGift);
@@ -838,6 +850,7 @@
         tShadow.setAttribute('x', tagX); tShadow.setAttribute('y', tagBaseY + 26);
         tShadow.setAttribute('font-size', '10'); tShadow.setAttribute('font-weight', 'bold');
         tShadow.setAttribute('fill', '#E11D48'); tShadow.setAttribute('text-anchor', anchor);
+        tShadow.setAttribute('style', commonStyle);
         tShadow.setAttribute('class', 'tag-shadow');
         tShadow.textContent = isLeft ? `${gk.shadow} · ▽` : `▽ · ${gk.shadow}`;
         tagGroup.appendChild(tShadow);
@@ -846,7 +859,8 @@
         const tLine = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         tLine.setAttribute('x', tagX); tLine.setAttribute('y', tagBaseY + 39);
         tLine.setAttribute('font-size', '9.5'); tLine.setAttribute('font-weight', 'bold');
-        tLine.setAttribute('fill', '#475569'); tLine.setAttribute('text-anchor', anchor);
+        tLine.setAttribute('fill', '#334155'); tLine.setAttribute('text-anchor', anchor);
+        tLine.setAttribute('style', commonStyle);
         tLine.setAttribute('class', 'tag-line');
         tLine.textContent = lineTag;
         tagGroup.appendChild(tLine);
