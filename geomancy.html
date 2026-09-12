@@ -17,14 +17,14 @@
     .gold-border { border-color: #C8A97E; }
     .gold-glow { box-shadow: 0 0 20px rgba(200, 169, 126, 0.3); }
     
-    /* 地占圖形珠子樣式 */
+    /* 地占圖形珠子樣式 (太極陰陽圓珠 / 黑曜石) */
     .geomancy-dots {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      padding: 6px 0;
+      padding: 5px 0;
     }
     .dot-line {
       display: flex;
@@ -42,13 +42,9 @@
       box-shadow: 0 1.5px 3px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.4);
       transition: all 0.2s ease;
     }
-    .bead-gold {
-      background: radial-gradient(circle at 35% 35%, #F7E7CE, #B8860B);
-      box-shadow: 0 1.5px 4px rgba(184, 134, 11, 0.5), inset 0 1px 1px rgba(255,255,255,0.6);
-    }
-    .bead-red {
-      background: radial-gradient(circle at 35% 35%, #FCA5A5, #B91C1C);
-      box-shadow: 0 1.5px 4px rgba(185, 28, 28, 0.5), inset 0 1px 1px rgba(255,255,255,0.6);
+    .bead-yin-yang {
+      background: radial-gradient(circle at 35% 35%, #F7E7CE, #2E3829);
+      box-shadow: 0 1.5px 3px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
     }
     
     /* 盾盤節點卡片 */
@@ -79,6 +75,43 @@
       color: #F7E7CE;
       font-weight: 700;
       border-color: #2E3829;
+    }
+    
+    /* 方形盤 SVG 互動元素 */
+    .house-poly {
+      fill: #FFFDF8;
+      stroke: #2E3829;
+      stroke-width: 2.2;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .house-poly:hover {
+      fill: #FBF0DD;
+      stroke: #8A6B18;
+    }
+    .house-poly.active-house {
+      fill: #FDF3DB !important;
+      stroke: #B8860B !important;
+      stroke-width: 3.5 !important;
+      filter: drop-shadow(0 0 6px rgba(184, 134, 11, 0.4));
+    }
+    
+    .center-box {
+      fill: #F9F5EC;
+      stroke: #2E3829;
+      stroke-width: 2.5;
+    }
+    .center-cell {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .center-cell:hover {
+      fill: #F5EBDA;
+    }
+    .center-cell.active-house {
+      fill: #FDF3DB !important;
+      stroke: #B8860B !important;
+      stroke-width: 2 !important;
     }
     
     /* 沙盤點擊區 */
@@ -127,32 +160,36 @@
             西洋地占神聖排盤
           </h1>
           <p class="text-xs sm:text-sm text-stone-600 mt-1.5 max-w-3xl leading-relaxed">
-            源自中世紀與阿拉伯大地的全息神數。從隨機大地印記（四位母親）展開八母女、四姪女、左右證人至最終法官（Judge），並推導調解者（Judge of Judges）破局關鍵，提供盾盤、十二宮位盤與行星能量全景洞察。
+            源自阿拉伯與中世紀文藝復興的古典大地神數。從隨機大地印記（四位母親）推導八母女、四姪女、左右證人與最終法官（Judge），並精確建構古典方形十二宮盤（Square Chart）與行星地占能量盤。
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button type="button" onclick="castQuick()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 transition flex items-center gap-1.5 shadow-xs">
+          <button type="button" onclick="castQuick()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 transition flex items-center gap-1.5 shadow-xs">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span>神聖一鍵起盤</span>
+            <span>點擊起卦</span>
           </button>
-          <button type="button" onclick="toggleCastModal('sand')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition flex items-center gap-1">
+          <button type="button" onclick="toggleCastModal('sand')" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition flex items-center gap-1">
             <i class="fa-solid fa-pen-nib"></i>
             <span>沙盤戳點法</span>
           </button>
-          <button type="button" onclick="toggleCastModal('custom')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition flex items-center gap-1">
+          <button type="button" onclick="toggleCastModal('custom')" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition flex items-center gap-1">
             <i class="fa-solid fa-sliders"></i>
             <span>自選四母卦</span>
+          </button>
+          <button type="button" onclick="toggleDataPanel()" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800 hover:bg-stone-900 text-amber-100 transition flex items-center gap-1">
+            <i class="fa-solid fa-table-list"></i>
+            <span>數據面板</span>
           </button>
         </div>
       </div>
 
       <!-- 問事設定與類別選擇 -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1">提問者稱呼 / 代號</label>
           <input type="text" id="querentName" value="旅途尋道者" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
         </div>
-        <div>
+        <div class="sm:col-span-2">
           <label class="block text-xs font-bold text-stone-600 mb-1">心中欲占卜之核心問題</label>
           <input type="text" id="questionText" placeholder="例如：這項合約談判走向如何？" value="當前重要企劃與事業合作走向" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
         </div>
@@ -165,7 +202,7 @@
             <option value="general" selected>全息綜合全局審判 (第1/4/10宮)</option>
           </select>
         </div>
-        <div class="flex items-center gap-2">
+        <div>
           <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '西洋地占神聖排盤報告' })" class="w-full py-2.5 px-4 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 text-xs sm:text-sm">
             <i class="fa-solid fa-file-pdf"></i>
             <span>匯出 PDF 報告</span>
@@ -174,7 +211,7 @@
       </div>
     </div>
 
-    <!-- 起手警告提示盒（若 M1 為 Rubeus 或 Cauda Draconis 時顯示） -->
+    <!-- 起手警告提示盒 -->
     <div id="warningBox" class="hidden mb-6 bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 sm:p-5 text-rose-900 shadow-sm flex items-start gap-3">
       <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xl mt-0.5"></i>
       <div>
@@ -183,28 +220,36 @@
       </div>
     </div>
 
-    <!-- 排盤視圖切換標籤 (Tab) -->
-    <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
-      <div class="inline-flex p-1.5 bg-stone-200/80 rounded-2xl border border-stone-300/80">
-        <button type="button" onclick="switchView('shield')" id="tab_shield" class="tab-btn active px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5">
-          <i class="fa-solid fa-shield-halved"></i>
-          <span>盾盤 (Shield Chart)</span>
+    <!-- 三大排盤核心 Tab 切換按鈕 -->
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-6 border-b-2 border-stone-300 pb-3">
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="switchView('shield')" id="tab_shield" class="tab-btn active px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-stone-300 transition flex flex-col items-center">
+          <span class="text-base font-black">盾盤</span>
+          <span class="text-[10px] tracking-wider uppercase opacity-80">Shield Chart</span>
         </button>
-        <button type="button" onclick="switchView('house')" id="tab_house" class="tab-btn px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-bold text-stone-700 hover:text-stone-900 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-vector-square"></i>
-          <span>十二宮位盤 (House Chart)</span>
+        <button type="button" onclick="switchView('house')" id="tab_house" class="tab-btn px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-stone-300 text-stone-700 hover:text-stone-900 transition flex flex-col items-center">
+          <span class="text-base font-black">宮位盤</span>
+          <span class="text-[10px] tracking-wider uppercase opacity-80">House Chart</span>
         </button>
-        <button type="button" onclick="switchView('planetary')" id="tab_planetary" class="tab-btn px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-bold text-stone-700 hover:text-stone-900 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-sun"></i>
-          <span>行星與元素交感 (Planetary)</span>
+        <button type="button" onclick="switchView('planetary')" id="tab_planetary" class="tab-btn px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-stone-300 text-stone-700 hover:text-stone-900 transition flex flex-col items-center">
+          <span class="text-base font-black">行星地占盤</span>
+          <span class="text-[10px] tracking-wider uppercase opacity-80">Planetary Chart</span>
         </button>
       </div>
-      <div class="text-xs text-stone-500 font-medium">
-        <span>💡 點選任一圖形可於右側展開深度詳解與生活魔藥</span>
+
+      <!-- 流派切換開關 (參照截圖右下角 阿拉伯 / 阿格里帕) -->
+      <div class="flex items-center gap-2 bg-stone-200/80 p-1.5 rounded-xl text-xs font-bold text-stone-700">
+        <span class="text-[11px] text-stone-500 pl-1"><i class="fa-solid fa-landmark"></i> 宮位流派：</span>
+        <button type="button" onclick="setSchool('agrippa')" id="btn_school_agrippa" class="px-3 py-1 rounded-lg bg-[#2E3829] text-[#F7E7CE] transition">
+          阿格里帕 (古典)
+        </button>
+        <button type="button" onclick="setSchool('arabic')" id="btn_school_arabic" class="px-3 py-1 rounded-lg text-stone-600 hover:bg-stone-300 transition">
+          阿拉伯 (正宮)
+        </button>
       </div>
     </div>
 
-    <!-- 主要內容區：左側排盤圖形 + 右側選中圖形/法官即時深析 -->
+    <!-- 主要內容區：左側排盤盤面 + 右側選中圖形/法官深析 -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- 左側 8 欄：視覺化盤面 -->
@@ -217,13 +262,13 @@
               <span class="w-3 h-3 rounded-full bg-[#C8A97E]"></span>
               <h3 class="font-black text-base sm:text-lg text-[#1F261C]">神聖盾盤家族樹 (The Shield Tree)</h3>
             </div>
-            <span class="text-xs text-stone-400">由右至左排列 · 嚴謹 XOR 演算法</span>
+            <span class="text-xs text-stone-400">由右至左排列 · 嚴謹異或 XOR 演算法</span>
           </div>
 
           <!-- 第一層：8 位母女 (D8~D5 | M4~M1) -->
           <div class="mb-5">
             <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 mb-1.5 px-1">
-              <span>四女兒 (Daughters 8–5) ← 源於母親行</span>
+              <span>四女兒 (Daughters 8–5) ← 橫向四線提取</span>
               <span>四母親 (Mothers 4–1) ← 神聖源頭</span>
             </div>
             <div class="grid grid-cols-8 gap-1.5 sm:gap-2.5">
@@ -231,10 +276,10 @@
               <div id="slot_d7" onclick="selectSlot('d7')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">VII 女3</div><div class="geomancy-dots" id="dots_d7"></div><div class="text-xs font-black text-stone-800" id="name_d7">--</div></div>
               <div id="slot_d6" onclick="selectSlot('d6')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">VI 女2</div><div class="geomancy-dots" id="dots_d6"></div><div class="text-xs font-black text-stone-800" id="name_d6">--</div></div>
               <div id="slot_d5" onclick="selectSlot('d5')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">V 女1</div><div class="geomancy-dots" id="dots_d5"></div><div class="text-xs font-black text-stone-800" id="name_d5">--</div></div>
-              <div id="slot_m4" onclick="selectSlot('m4')" class="shield-card bg-amber-50/30 border-amber-200"><div class="text-[10px] font-bold text-amber-800">IV 母4</div><div class="geomancy-dots" id="dots_m4"></div><div class="text-xs font-black text-stone-800" id="name_m4">--</div></div>
-              <div id="slot_m3" onclick="selectSlot('m3')" class="shield-card bg-amber-50/30 border-amber-200"><div class="text-[10px] font-bold text-amber-800">III 母3</div><div class="geomancy-dots" id="dots_m3"></div><div class="text-xs font-black text-stone-800" id="name_m3">--</div></div>
-              <div id="slot_m2" onclick="selectSlot('m2')" class="shield-card bg-amber-50/30 border-amber-200"><div class="text-[10px] font-bold text-amber-800">II 母2</div><div class="geomancy-dots" id="dots_m2"></div><div class="text-xs font-black text-stone-800" id="name_m2">--</div></div>
-              <div id="slot_m1" onclick="selectSlot('m1')" class="shield-card bg-amber-50/30 border-amber-200"><div class="text-[10px] font-bold text-amber-800">I 母1</div><div class="geomancy-dots" id="dots_m1"></div><div class="text-xs font-black text-stone-800" id="name_m1">--</div></div>
+              <div id="slot_m4" onclick="selectSlot('m4')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">IV 母4</div><div class="geomancy-dots" id="dots_m4"></div><div class="text-xs font-black text-stone-800" id="name_m4">--</div></div>
+              <div id="slot_m3" onclick="selectSlot('m3')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">III 母3</div><div class="geomancy-dots" id="dots_m3"></div><div class="text-xs font-black text-stone-800" id="name_m3">--</div></div>
+              <div id="slot_m2" onclick="selectSlot('m2')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">II 母2</div><div class="geomancy-dots" id="dots_m2"></div><div class="text-xs font-black text-stone-800" id="name_m2">--</div></div>
+              <div id="slot_m1" onclick="selectSlot('m1')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">I 母1</div><div class="geomancy-dots" id="dots_m1"></div><div class="text-xs font-black text-stone-800" id="name_m1">--</div></div>
             </div>
           </div>
 
@@ -253,10 +298,10 @@
           </div>
 
           <!-- 第三層：2 位證人 (Left Witness 14, Right Witness 13) -->
-          <div class="mb-5 px-12 sm:px-24">
+          <div class="mb-5 px-10 sm:px-20">
             <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 mb-1.5 px-1">
-              <span class="text-blue-700">左證人 (事情/外部環境)</span>
-              <span class="text-emerald-700">右證人 (提問者/心理動機)</span>
+              <span class="text-blue-700 font-black">左證人 XIV (外在局勢 / 對方)</span>
+              <span class="text-emerald-700 font-black">右證人 XIII (提問者 / 動機)</span>
             </div>
             <div class="grid grid-cols-2 gap-4 sm:gap-8">
               <div id="slot_w14" onclick="selectSlot('w14')" class="shield-card border-blue-200 bg-blue-50/20">
@@ -289,7 +334,7 @@
             </div>
           </div>
 
-          <!-- 第五層：弧形收尾 · 調解者 / 審判之審判 (Reconciler / Judge of Judges 16) -->
+          <!-- 第五層：調解者 / 審判之審判 (Judge of Judges 16) -->
           <div class="pt-4 border-t border-dashed border-stone-200 flex flex-col items-center">
             <div class="text-xs font-bold text-stone-500 mb-2 flex items-center gap-1.5">
               <i class="fa-solid fa-scale-balanced text-stone-400"></i>
@@ -299,58 +344,54 @@
               <div class="text-left">
                 <div class="text-[10px] font-bold text-purple-700">XVI 調解法官 (Reconciler)</div>
                 <div class="text-sm font-black text-stone-900" id="name_r16">--</div>
-                <div class="text-[11px] text-stone-500" id="sub_r16">深層解局鑰匙</div>
+                <div class="text-[11px] text-stone-500" id="sub_r16">破局之鑰</div>
               </div>
               <div class="geomancy-dots" id="dots_r16"></div>
             </div>
           </div>
         </div>
 
-        <!-- 視圖二：十二宮位盤 (House Chart) -->
+        <!-- 視圖二：古典十二宮方形星盤 (Square House Chart 參照 IMG_7973 / IMG_7975) -->
         <div id="view_house" class="hidden bg-white/95 border border-[#E2D9C8] rounded-3xl p-4 sm:p-7 shadow-sm">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-5">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-[#536349]"></span>
               <h3 class="font-black text-base sm:text-lg text-[#1F261C]">古典十二宮方形地占盤 (Classical Square Chart)</h3>
             </div>
-            <span class="text-xs text-stone-400">阿格里帕 Agrippa 傳承 · 點擊查看生活宮位</span>
+            <span class="text-xs text-stone-400">點選任一宮位三角形展開生活解讀</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5" id="houseGridContainer">
-            <!-- 由 JS 動態渲染 12 宮位卡片 -->
+          <!-- 視覺化 SVG 方形星盤容器 -->
+          <div class="w-full flex justify-center py-2">
+            <div class="w-full max-w-[560px] aspect-square bg-[#F7EFE6] p-2 rounded-2xl border border-stone-300 shadow-inner">
+              <svg id="svgHouseChart" viewBox="0 0 700 700" class="w-full h-full select-none"></svg>
+            </div>
           </div>
 
-          <!-- 中央法庭證人與法官摘要 -->
-          <div class="mt-6 p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-around gap-4 text-center">
-            <div>
-              <div class="text-[11px] font-bold text-stone-500">XIII 右證人 (自身)</div>
-              <div class="font-black text-stone-800 text-sm mt-0.5" id="h_rw_name">--</div>
-            </div>
-            <div class="h-8 w-px bg-stone-300 hidden sm:block"></div>
-            <div>
-              <div class="text-[11px] font-bold text-stone-500">XIV 左證人 (外在)</div>
-              <div class="font-black text-stone-800 text-sm mt-0.5" id="h_lw_name">--</div>
-            </div>
-            <div class="h-8 w-px bg-stone-300 hidden sm:block"></div>
-            <div>
-              <div class="text-[11px] font-bold text-amber-900">XV 最終法官 (判決)</div>
-              <div class="font-black text-[#B8860B] text-base mt-0.5" id="h_judge_name">--</div>
-            </div>
+          <div class="mt-4 p-3 bg-stone-50 rounded-xl border border-stone-200 text-center text-xs text-stone-500">
+            <span>💡 點選上方方形盤中任一宮位（I～XII）或中央證人/法官（XIII～XV），右側卡片將即時同步深層詳解。</span>
           </div>
         </div>
 
-        <!-- 視圖三：行星地占盤 (Planetary Chart) -->
+        <!-- 視圖三：古典行星地占盤 (Square Planetary Chart 參照 IMG_7974) -->
         <div id="view_planetary" class="hidden bg-white/95 border border-[#E2D9C8] rounded-3xl p-4 sm:p-7 shadow-sm">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-5">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-[#B8860B]"></span>
-              <h3 class="font-black text-base sm:text-lg text-[#1F261C]">行星能量與元素分佈全景 (Planetary Resonance)</h3>
+              <h3 class="font-black text-base sm:text-lg text-[#1F261C]">行星能量與星座交感盤 (Planetary Square Chart)</h3>
             </div>
-            <span class="text-xs text-stone-400">宏觀能量場診斷</span>
+            <span class="text-xs text-stone-400">外圍十二星座 · 內圈古典行星守護</span>
+          </div>
+
+          <!-- 視覺化 SVG 行星方形星盤容器 -->
+          <div class="w-full flex justify-center py-2">
+            <div class="w-full max-w-[560px] aspect-square bg-[#F7EFE6] p-2 rounded-2xl border border-stone-300 shadow-inner">
+              <svg id="svgPlanetaryChart" viewBox="0 0 700 700" class="w-full h-full select-none"></svg>
+            </div>
           </div>
 
           <!-- 四大元素配比進度條 -->
-          <div class="mb-6 bg-stone-50 p-4 rounded-2xl border border-stone-200">
+          <div class="mt-6 bg-stone-50 p-4 rounded-2xl border border-stone-200">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-stone-700">四大元素能量張力</span>
               <span class="text-xs font-black text-[#8A6B18]" id="dominantElementText">主導元素：火</span>
@@ -359,7 +400,7 @@
               <div class="p-2.5 rounded-xl bg-red-50 border border-red-200">
                 <div class="text-xs font-bold text-red-800 flex items-center justify-center gap-1"><i class="fa-solid fa-fire"></i> 火元素</div>
                 <div class="text-lg font-black text-red-900 mt-1" id="el_fire_count">0 卦</div>
-                <div class="text-[10px] text-stone-500">主動開拓、直覺、勇氣</div>
+                <div class="text-[10px] text-stone-500">主動開拓、直覺勇氣</div>
               </div>
               <div class="p-2.5 rounded-xl bg-sky-50 border border-sky-200">
                 <div class="text-xs font-bold text-sky-800 flex items-center justify-center gap-1"><i class="fa-solid fa-wind"></i> 風元素</div>
@@ -369,21 +410,13 @@
               <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200">
                 <div class="text-xs font-bold text-blue-800 flex items-center justify-center gap-1"><i class="fa-solid fa-water"></i> 水元素</div>
                 <div class="text-lg font-black text-blue-900 mt-1" id="el_water_count">0 卦</div>
-                <div class="text-[10px] text-stone-500">情感共鳴、流動適應</div>
+                <div class="text-[10px] text-stone-500">情感共鳴、適應直覺</div>
               </div>
               <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
                 <div class="text-xs font-bold text-amber-800 flex items-center justify-center gap-1"><i class="fa-solid fa-mountain"></i> 土元素</div>
                 <div class="text-lg font-black text-amber-900 mt-1" id="el_earth_count">0 卦</div>
-                <div class="text-[10px] text-stone-500">物質穩固、落實累積</div>
+                <div class="text-[10px] text-stone-500">物質穩固、紮根落實</div>
               </div>
-            </div>
-          </div>
-
-          <!-- 七大行星守護分佈 -->
-          <div>
-            <h4 class="text-xs font-bold text-stone-600 mb-3">占星行星與虛點守護矩陣</h4>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5" id="planetCountsContainer">
-              <!-- 由 JS 動態填充 -->
             </div>
           </div>
         </div>
@@ -481,7 +514,7 @@
             </p>
           </div>
 
-          <!-- 原型與生活白話故事 -->
+          <!-- 原型故事與日常情境 -->
           <div class="space-y-3 text-xs leading-relaxed text-stone-700">
             <div>
               <h5 class="text-[11px] font-black text-stone-500 uppercase tracking-wider mb-0.5">魔法原型故事</h5>
@@ -505,9 +538,8 @@
             </div>
           </div>
 
-          <!-- 小提示 -->
           <div class="mt-4 pt-3 border-t border-stone-200 text-center">
-            <span class="text-[11px] text-stone-400">點擊盾盤或十二宮其他格子可切換檢視</span>
+            <span class="text-[11px] text-stone-400">點擊方形宮位盤或盾盤任一格子可切換檢視</span>
           </div>
         </div>
 
@@ -517,7 +549,56 @@
 
   </main>
 
-  <!-- 彈窗一：沙盤戳點法 (Sand Tap Modal) -->
+  <!-- 彈窗：數據面板 (Data Panel Modal 參照截圖) -->
+  <div id="modal_data" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 text-[#2E3829] max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+        <div>
+          <h3 class="text-lg font-black text-stone-900">地占全盤數據面板 (Spread Data Analytics)</h3>
+          <p class="text-xs text-stone-500">16 圖形全息指標、元素權重與吉凶比率統計</p>
+        </div>
+        <button type="button" onclick="toggleDataPanel()" class="text-stone-400 hover:text-stone-700 text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <!-- 吉凶比率 -->
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <div class="text-[11px] font-bold text-emerald-800">吉祥圖形</div>
+            <div class="text-xl font-black text-emerald-900 mt-1" id="data_fav_count">--</div>
+          </div>
+          <div class="p-3 bg-stone-50 border border-stone-200 rounded-xl">
+            <div class="text-[11px] font-bold text-stone-600">中性圖形</div>
+            <div class="text-xl font-black text-stone-800 mt-1" id="data_neu_count">--</div>
+          </div>
+          <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+            <div class="text-[11px] font-bold text-rose-800">挑戰圖形</div>
+            <div class="text-xl font-black text-rose-900 mt-1" id="data_unfav_count">--</div>
+          </div>
+        </div>
+
+        <!-- 16 卦槽位快速一覽表 -->
+        <div class="border border-stone-200 rounded-2xl overflow-hidden">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-stone-100 text-stone-600 font-bold border-b border-stone-200">
+              <tr>
+                <th class="p-2.5">槽位</th>
+                <th class="p-2.5">圖形名稱</th>
+                <th class="p-2.5">拉丁名</th>
+                <th class="p-2.5">元素/守護星</th>
+                <th class="p-2.5">吉凶</th>
+              </tr>
+            </thead>
+            <tbody id="data_table_body" class="divide-y divide-stone-200 bg-white">
+              <!-- JS 動態生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 彈窗：沙盤戳點法 (Sand Tap Modal) -->
   <div id="modal_sand" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 text-[#2E3829] max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
@@ -530,12 +611,10 @@
 
       <div class="space-y-4">
         <div class="text-xs text-stone-600 bg-amber-50 p-3 rounded-xl border border-amber-200 leading-relaxed">
-          請在心中默念您的問題三次。隨後依序在下方 4 行沙地上用滑鼠或手指隨性點擊（戳點），不要去數點了幾下，戳到「直覺停手」為止。完成 4 行後點擊下方確認排盤。
+          請在心中默念您的問題三次。隨後依序在下方 4 行沙地上隨性點擊（戳點），不要去數點了幾下，戳到「直覺停手」為止。完成 4 行後點擊確認。
         </div>
 
-        <!-- 4 行沙盤點擊區 -->
         <div class="space-y-3" id="sandRowsContainer">
-          <!-- 行 1 (火) -->
           <div>
             <div class="flex justify-between text-xs font-bold text-stone-600 mb-1">
               <span>第 1 行 · 火元素 (頭部/精神)</span>
@@ -543,7 +622,6 @@
             </div>
             <div class="sand-row rounded-xl p-2 flex flex-wrap gap-1.5 min-h-12 items-center" id="sand_row_0" onclick="addSandDot(0, event)"></div>
           </div>
-          <!-- 行 2 (風) -->
           <div>
             <div class="flex justify-between text-xs font-bold text-stone-600 mb-1">
               <span>第 2 行 · 風元素 (喉輪/溝通)</span>
@@ -551,7 +629,6 @@
             </div>
             <div class="sand-row rounded-xl p-2 flex flex-wrap gap-1.5 min-h-12 items-center" id="sand_row_1" onclick="addSandDot(1, event)"></div>
           </div>
-          <!-- 行 3 (水) -->
           <div>
             <div class="flex justify-between text-xs font-bold text-stone-600 mb-1">
               <span>第 3 行 · 水元素 (心輪/情感)</span>
@@ -559,7 +636,6 @@
             </div>
             <div class="sand-row rounded-xl p-2 flex flex-wrap gap-1.5 min-h-12 items-center" id="sand_row_2" onclick="addSandDot(2, event)"></div>
           </div>
-          <!-- 行 4 (土) -->
           <div>
             <div class="flex justify-between text-xs font-bold text-stone-600 mb-1">
               <span>第 4 行 · 土元素 (海底/物質)</span>
@@ -569,7 +645,6 @@
           </div>
         </div>
 
-        <!-- 當前已生成的母親進度 -->
         <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center justify-between">
           <span class="text-xs font-bold text-stone-600">正在生成母親卦：<strong class="text-[#8A6B18]" id="sandMotherStep">第 1 位母親 (M1)</strong></span>
           <button type="button" onclick="resetCurrentSandRow()" class="text-xs text-stone-400 hover:text-stone-700 underline">清空當前行</button>
@@ -587,7 +662,7 @@
     </div>
   </div>
 
-  <!-- 彈窗二：自選四母卦 (Custom Mothers Modal) -->
+  <!-- 彈窗：自選四母卦 (Custom Mothers Modal) -->
   <div id="modal_custom" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 text-[#2E3829] max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
@@ -630,26 +705,23 @@
 
   <!-- 邏輯腳本 -->
   <script>
-    // 全域狀態變數
     let currentChart = null;
     let currentHouseChart = null;
     let currentPlanetaryChart = null;
     let currentReading = null;
-    let activeSlotKey = 'j15'; // 預設聚焦法官
+    let currentSchool = 'agrippa'; // agrippa 或 arabic
+    let activeSlotKey = 'j15';
 
-    // 沙盤戳點狀態
     let sandCounts = [0, 0, 0, 0];
     let collectedMothers = [];
     let currentMotherIndex = 0;
 
-    // 頁面初始化
     document.addEventListener('DOMContentLoaded', () => {
       populateCustomModalOptions();
-      castQuick(); // 初始載入隨機起盤
+      castQuick();
     });
 
-    // 渲染珠子點陣 HTML
-    function renderDotsHTML(dots, isFavorable) {
+    function renderDotsHTML(dots) {
       if (!dots || dots.length !== 4) return '';
       let html = '';
       dots.forEach(d => {
@@ -662,30 +734,40 @@
       return html;
     }
 
-    // 快速一鍵起盤
     function castQuick() {
       const mothers = GeomancyCalc.castRandomMothers();
       applyMothersAndRender(mothers);
     }
 
-    // 依四母親更新並渲染全盤
+    function setSchool(school) {
+      currentSchool = school;
+      document.getElementById('btn_school_agrippa').className = school === 'agrippa' 
+        ? "px-3 py-1 rounded-lg bg-[#2E3829] text-[#F7E7CE] transition"
+        : "px-3 py-1 rounded-lg text-stone-600 hover:bg-stone-300 transition";
+      document.getElementById('btn_school_arabic').className = school === 'arabic'
+        ? "px-3 py-1 rounded-lg bg-[#2E3829] text-[#F7E7CE] transition"
+        : "px-3 py-1 rounded-lg text-stone-600 hover:bg-stone-300 transition";
+      
+      if (currentChart) {
+        currentHouseChart = GeomancyCalc.generateHouseChart(currentChart, currentSchool);
+        renderSquareHouseChart();
+        renderSquarePlanetaryChart();
+        updateReadings();
+      }
+    }
+
     function applyMothersAndRender(mothers) {
       try {
         currentChart = GeomancyCalc.generateShieldChart(mothers);
-        currentHouseChart = GeomancyCalc.generateHouseChart(currentChart);
+        currentHouseChart = GeomancyCalc.generateHouseChart(currentChart, currentSchool);
         currentPlanetaryChart = GeomancyCalc.generatePlanetaryChart(currentChart);
-        
-        // 渲染盾盤所有槽位
+
         renderShieldSlots();
-        // 渲染十二宮
-        renderHouseSlots();
-        // 渲染行星與元素
-        renderPlanetary();
-        // 檢查起手警告
+        renderSquareHouseChart();
+        renderSquarePlanetaryChart();
         checkWarningBanner();
-        // 更新解卦文字
         updateReadings();
-        // 預設聚焦法官
+        renderDataTable();
         selectSlot('j15');
       } catch (err) {
         console.error("排盤錯誤：", err);
@@ -693,22 +775,16 @@
       }
     }
 
-    // 渲染盾盤 16 個格子
     function renderShieldSlots() {
       const slots = currentChart.allSlots;
       for (const key in slots) {
         const fig = slots[key];
         const dotsEl = document.getElementById(`dots_${key}`);
         const nameEl = document.getElementById(`name_${key}`);
-        if (dotsEl && fig) {
-          dotsEl.innerHTML = renderDotsHTML(fig.dots);
-        }
-        if (nameEl && fig) {
-          nameEl.textContent = fig.zh;
-        }
+        if (dotsEl && fig) dotsEl.innerHTML = renderDotsHTML(fig.dots);
+        if (nameEl && fig) nameEl.textContent = fig.zh;
       }
 
-      // 法官與調解法官標題
       const subJudge = document.getElementById('sub_j15');
       if (subJudge) subJudge.textContent = `${currentChart.judge.latin} · ${currentChart.judge.favorable}`;
       
@@ -716,80 +792,237 @@
       if (subReconciler) subReconciler.textContent = `破局之鑰 · ${currentChart.reconciler.keyword}`;
     }
 
-    // 渲染十二宮位網格
-    function renderHouseSlots() {
-      const container = document.getElementById('houseGridContainer');
-      if (!container || !currentHouseChart) return;
+    /**
+     * 核心高精度向量 SVG：古典方形十二宮盤 (Square House Chart 參照 IMG_7973 / IMG_7975)
+     */
+    function renderSquareHouseChart() {
+      const svg = document.getElementById('svgHouseChart');
+      if (!svg || !currentHouseChart) return;
 
-      container.innerHTML = '';
+      // 幾何頂點定義 (viewBox: 0 0 700 700)
+      // 外框: 95,95 到 605,605; 中心方框: 245,245 到 455,455
+      const housePolys = {
+        1:  { points: "95,350 245,245 245,455", labelX: 145, labelY: 340, dotsX: 185, dotsY: 325 }, // I 最左大三角
+        2:  { points: "95,350 95,605 245,455", labelX: 130, labelY: 520, dotsX: 175, dotsY: 495 }, // II 左下外
+        3:  { points: "95,605 350,605 245,455", labelX: 230, labelY: 575, dotsX: 285, dotsY: 525 }, // III 底左
+        4:  { points: "350,605 245,455 455,455", labelX: 350, labelY: 575, dotsX: 350, dotsY: 490 }, // IV 正底下大三角
+        5:  { points: "350,605 605,605 455,455", labelX: 470, labelY: 575, dotsX: 415, dotsY: 525 }, // V 底右
+        6:  { points: "605,350 605,605 455,455", labelX: 570, labelY: 520, dotsX: 525, dotsY: 495 }, // VI 右下外
+        7:  { points: "605,350 455,245 455,455", labelX: 555, labelY: 340, dotsX: 515, dotsY: 325 }, // VII 最右大三角
+        8:  { points: "605,95 605,350 455,245", labelX: 570, labelY: 180, dotsX: 525, dotsY: 205 }, // VIII 右上外
+        9:  { points: "350,95 605,95 455,245", labelX: 470, labelY: 125, dotsX: 415, dotsY: 175 }, // IX 頂右
+        10: { points: "350,95 245,245 455,245", labelX: 350, labelY: 125, dotsX: 350, dotsY: 210 }, // X 正頂天頂大三角
+        11: { points: "95,95 350,95 245,245", labelX: 230, labelY: 125, dotsX: 285, dotsY: 175 }, // XI 頂左
+        12: { points: "95,95 95,350 245,245", labelX: 130, labelY: 180, dotsX: 175, dotsY: 205 }  // XII 左上外
+      };
+
+      let svgContent = `
+        <defs>
+          <radialGradient id="beadGrad" cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#738B67" />
+            <stop offset="40%" stop-color="#3B4A34" />
+            <stop offset="100%" stop-color="#141B13" />
+          </radialGradient>
+          <radialGradient id="goldBeadGrad" cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#FFF3D6" />
+            <stop offset="50%" stop-color="#C8A97E" />
+            <stop offset="100%" stop-color="#8A6B18" />
+          </radialGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <!-- 最外層大方框 -->
+        <rect x="95" y="95" width="510" height="510" fill="#F8F3E9" stroke="#2E3829" stroke-width="3" />
+      `;
+
+      // 繪製 12 宮位多邊形
       currentHouseChart.houses.forEach(h => {
+        const poly = housePolys[h.num];
         const fig = h.figure;
-        const card = document.createElement('div');
-        card.className = "bg-stone-50 border border-stone-200/90 rounded-2xl p-3.5 hover:border-[#C8A97E] hover:shadow-xs transition cursor-pointer flex items-center justify-between";
-        card.onclick = () => selectSlot(h.slot);
+        const isActive = activeSlotKey === h.slot;
 
-        card.innerHTML = `
-          <div>
-            <div class="text-[11px] font-bold text-stone-500">${h.name}</div>
-            <div class="text-sm font-black text-[#1F261C] mt-0.5">${fig.zh} <span class="text-xs font-normal text-stone-400">(${fig.latin})</span></div>
-            <div class="text-[11px] text-stone-500 mt-1 line-clamp-1">${h.themes}</div>
-          </div>
-          <div class="geomancy-dots scale-90">
-            ${renderDotsHTML(fig.dots)}
-          </div>
+        svgContent += `
+          <g onclick="selectSlot('${h.slot}')" class="cursor-pointer group">
+            <polygon points="${poly.points}" class="house-poly ${isActive ? 'active-house' : ''}" />
+            <!-- 羅馬數字與宮名 -->
+            <text x="${poly.labelX}" y="${poly.labelY}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16" fill="#8A6B18" text-anchor="middle">${h.roman}</text>
+            <text x="${poly.labelX}" y="${poly.labelY + 16}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#4B5563" text-anchor="middle">${fig.zh}</text>
+            <!-- 點陣珠子 -->
+            ${renderSvgDots(fig.dots, poly.dotsX, poly.dotsY)}
+          </g>
         `;
-        container.appendChild(card);
       });
 
-      // 中央三巨頭摘要
-      document.getElementById('h_rw_name').textContent = `${currentChart.witnesses.right.zh} (${currentChart.witnesses.right.latin})`;
-      document.getElementById('h_lw_name').textContent = `${currentChart.witnesses.left.zh} (${currentChart.witnesses.left.latin})`;
-      document.getElementById('h_judge_name').textContent = `${currentChart.judge.zh} (${currentChart.judge.latin})`;
+      // 繪製中央方形區域 (245, 245 到 455, 455)
+      svgContent += `
+        <!-- 中央法庭大方框 -->
+        <rect x="245" y="245" width="210" height="210" class="center-box" />
+
+        <!-- 中央分隔線 -->
+        <line x1="350" y1="245" x2="350" y2="365" stroke="#2E3829" stroke-width="1.8" stroke-dasharray="3 3" />
+        <line x1="245" y1="365" x2="455" y2="365" stroke="#2E3829" stroke-width="1.8" />
+
+        <!-- XIV 左證人 (左上) -->
+        <g onclick="selectSlot('w14')" class="center-cell ${activeSlotKey === 'w14' ? 'active-house' : ''}">
+          <rect x="246" y="246" width="103" height="118" fill="transparent" />
+          <text x="297" y="265" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#1D4ED8" text-anchor="middle">XIV 左證人</text>
+          <text x="297" y="280" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#374151" text-anchor="middle">${currentChart.witnesses.left.zh}</text>
+          ${renderSvgDots(currentChart.witnesses.left.dots, 297, 298, 7)}
+        </g>
+
+        <!-- XIII 右證人 (右上) -->
+        <g onclick="selectSlot('w13')" class="center-cell ${activeSlotKey === 'w13' ? 'active-house' : ''}">
+          <rect x="351" y="246" width="103" height="118" fill="transparent" />
+          <text x="403" y="265" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#047857" text-anchor="middle">XIII 右證人</text>
+          <text x="403" y="280" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#374151" text-anchor="middle">${currentChart.witnesses.right.zh}</text>
+          ${renderSvgDots(currentChart.witnesses.right.dots, 403, 298, 7)}
+        </g>
+
+        <!-- XV 核心法官 (下方) -->
+        <g onclick="selectSlot('j15')" class="center-cell ${activeSlotKey === 'j15' ? 'active-house' : ''}">
+          <rect x="246" y="366" width="208" height="88" fill="transparent" />
+          <text x="350" y="388" font-family="'Noto Serif TC', serif" font-weight="900" font-size="15" fill="#B8860B" text-anchor="middle">XV 法官 (Judge)</text>
+          <text x="350" y="405" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="13" fill="#1F261C" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
+          ${renderSvgDots(currentChart.judge.dots, 350, 418, 7)}
+        </g>
+
+        <!-- 外圍 12 組圖形外向微縮點陣標記 (對照 IMG_7975 / IMG_7976) -->
+        ${renderOuterBorderMarkers()}
+      `;
+
+      svg.innerHTML = svgContent;
     }
 
-    // 渲染行星與元素
-    function renderPlanetary() {
-      if (!currentPlanetaryChart) return;
-      const { elementCounts, dominantElement, planetCounts } = currentPlanetaryChart;
+    /**
+     * 核心高精度向量 SVG：古典行星地占盤 (Square Planetary Chart 參照 IMG_7974)
+     */
+    function renderSquarePlanetaryChart() {
+      const svg = document.getElementById('svgPlanetaryChart');
+      if (!svg || !currentHouseChart) return;
 
-      document.getElementById('dominantElementText').textContent = `主導元素：${dominantElement}元素能量最為充沛`;
-      document.getElementById('el_fire_count').textContent = `${elementCounts['火'] || 0} 卦`;
-      document.getElementById('el_air_count').textContent = `${elementCounts['風'] || 0} 卦`;
-      document.getElementById('el_water_count').textContent = `${elementCounts['水'] || 0} 卦`;
-      document.getElementById('el_earth_count').textContent = `${elementCounts['土'] || 0} 卦`;
+      const housePolys = {
+        1:  { points: "95,350 245,245 245,455", pX: 155, pY: 350 }, // I
+        2:  { points: "95,350 95,605 245,455", pX: 145, pY: 510 },  // II
+        3:  { points: "95,605 350,605 245,455", pX: 250, pY: 555 }, // III
+        4:  { points: "350,605 245,455 455,455", pX: 350, pY: 545 }, // IV
+        5:  { points: "350,605 605,605 455,455", pX: 450, pY: 555 }, // V
+        6:  { points: "605,350 605,605 455,455", pX: 555, pY: 510 }, // VI
+        7:  { points: "605,350 455,245 455,455", pX: 545, pY: 350 }, // VII
+        8:  { points: "605,95 605,350 455,245", pX: 555, pY: 190 },  // VIII
+        9:  { points: "350,95 605,95 455,245", pX: 450, pY: 145 },  // IX
+        10: { points: "350,95 245,245 455,245", pX: 350, pY: 155 }, // X
+        11: { points: "95,95 350,95 245,245", pX: 250, pY: 145 },  // XI
+        12: { points: "95,95 95,350 245,245", pX: 145, pY: 190 }   // XII
+      };
 
-      const plContainer = document.getElementById('planetCountsContainer');
-      if (plContainer) {
-        plContainer.innerHTML = '';
-        const planets = [
-          { name: "太陽", icon: "fa-sun", color: "text-amber-500" },
-          { name: "月亮", icon: "fa-moon", color: "text-slate-400" },
-          { name: "火星", icon: "fa-fire", color: "text-red-500" },
-          { name: "水星", icon: "fa-comment-dots", color: "text-emerald-500" },
-          { name: "木星", icon: "fa-chess-king", color: "text-indigo-500" },
-          { name: "金星", icon: "fa-heart", color: "text-rose-400" },
-          { name: "土星", icon: "fa-hourglass", color: "text-stone-500" },
-          { name: "北交點", icon: "fa-dragon", color: "text-amber-700" },
-          { name: "南交點", icon: "fa-feather", color: "text-stone-700" }
-        ];
+      let svgContent = `
+        <rect x="95" y="95" width="510" height="510" fill="#F8F3E9" stroke="#2E3829" stroke-width="3" />
+      `;
 
-        planets.forEach(p => {
-          const count = planetCounts[p.name] || 0;
-          const box = document.createElement('div');
-          box.className = "p-2.5 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between";
-          box.innerHTML = `
-            <div class="flex items-center gap-1.5 text-xs font-bold text-stone-700">
-              <i class="fa-solid ${p.icon} ${p.color}"></i>
-              <span>${p.name}</span>
-            </div>
-            <span class="text-xs font-black text-stone-900 bg-white px-2 py-0.5 rounded-lg border border-stone-200">${count}</span>
-          `;
-          plContainer.appendChild(box);
-        });
-      }
+      // 12 星座外框標籤 (參照 IMG_7974)
+      const zodiacBoxes = [
+        // 頂邊三個
+        { x: 95, y: 48, w: 150, h: 47, sign: "金牛座 ♉", p: "Taurus" },
+        { x: 245, y: 48, w: 210, h: 47, sign: "牡羊座 ♈", p: "Aries" },
+        { x: 455, y: 48, w: 150, h: 47, sign: "雙魚座 ♓", p: "Pisces" },
+        // 右邊三個
+        { x: 605, y: 95, w: 55, h: 150, sign: "♒", p: "水瓶" },
+        { x: 605, y: 245, w: 55, h: 210, sign: "♑", p: "摩羯" },
+        { x: 605, y: 455, w: 55, h: 150, sign: "♐", p: "射手" },
+        // 底邊三個
+        { x: 455, y: 605, w: 150, h: 47, sign: "天蠍座 ♏", p: "Scorpio" },
+        { x: 245, y: 605, w: 210, h: 47, sign: "天秤座 ♎", p: "Libra" },
+        { x: 95, y: 605, w: 150, h: 47, sign: "處女座 ♍", p: "Virgo" },
+        // 左邊三個
+        { x: 40, y: 455, w: 55, h: 150, sign: "♌", p: "獅子" },
+        { x: 40, y: 245, w: 55, h: 210, sign: "♋", p: "巨蟹" },
+        { x: 40, y: 95, w: 55, h: 150, sign: "♊", p: "雙子" }
+      ];
+
+      zodiacBoxes.forEach(z => {
+        svgContent += `
+          <rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="#FFFDF8" stroke="#2E3829" stroke-width="2" rx="4" />
+          <text x="${z.x + z.w/2}" y="${z.y + z.h/2 + 5}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="${z.sign.length > 2 ? 13 : 18}" fill="#1F261C" text-anchor="middle">${z.sign}</text>
+        `;
+      });
+
+      // 繪製 12 宮位三角形 + 古典行星大符號 (參照 IMG_7974)
+      currentHouseChart.houses.forEach(h => {
+        const poly = housePolys[h.num];
+        const fig = h.figure;
+        const isActive = activeSlotKey === h.slot;
+
+        svgContent += `
+          <g onclick="selectSlot('${h.slot}')" class="cursor-pointer group">
+            <polygon points="${poly.points}" class="house-poly ${isActive ? 'active-house' : ''}" />
+            <!-- 行星大天文符號 -->
+            <text x="${poly.pX}" y="${poly.pY + 8}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="28" fill="#2E3829" text-anchor="middle">${fig.planetSymbol || '☉'}</text>
+            <text x="${poly.pX}" y="${poly.pY + 26}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="10" fill="#6B7280" text-anchor="middle">${fig.zh}</text>
+          </g>
+        `;
+      });
+
+      // 中央方形區域
+      svgContent += `
+        <rect x="245" y="245" width="210" height="210" class="center-box" />
+        <text x="350" y="325" font-family="'Noto Serif TC', serif" font-weight="900" font-size="42" fill="#B8860B" text-anchor="middle">${currentChart.judge.planetSymbol || '☉'}</text>
+        <text x="350" y="358" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16" fill="#1F261C" text-anchor="middle">法官守護 · ${currentChart.judge.planet}</text>
+        <text x="350" y="380" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="12" fill="#8A6B18" text-anchor="middle">${currentChart.judge.zh} (${currentChart.judge.sign})</text>
+      `;
+
+      svg.innerHTML = svgContent;
     }
 
-    // 檢查警告橫幅
+    // 輔助函式：在 SVG 中繪製四線珠子點陣
+    function renderSvgDots(dots, centerX, startY, gap = 8, r = 4.2) {
+      if (!dots || dots.length !== 4) return '';
+      let res = '';
+      dots.forEach((d, idx) => {
+        const y = startY + (idx * gap);
+        if (d === 1) {
+          res += `<circle cx="${centerX}" cy="${y}" r="${r}" fill="url(#beadGrad)" stroke="#111" stroke-width="0.8" />`;
+        } else {
+          res += `<circle cx="${centerX - 6}" cy="${y}" r="${r}" fill="url(#beadGrad)" stroke="#111" stroke-width="0.8" />`;
+          res += `<circle cx="${centerX + 6}" cy="${y}" r="${r}" fill="url(#beadGrad)" stroke="#111" stroke-width="0.8" />`;
+        }
+      });
+      return res;
+    }
+
+    // 輔助函式：繪製外圍 12 組圖形外向微縮點陣標記 (對照 IMG_7975 / IMG_7976)
+    function renderOuterBorderMarkers() {
+      // 頂邊三組、右邊三組、底邊三組、左邊三組
+      return `
+        <!-- 頂邊 3 組 -->
+        <g opacity="0.85">
+          ${renderSvgDots(currentHouseChart.houses[10].figure.dots, 230, 48, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[9].figure.dots, 350, 48, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[8].figure.dots, 470, 48, 7, 3.2)}
+        </g>
+        <!-- 右邊 3 組 -->
+        <g opacity="0.85">
+          ${renderSvgDots(currentHouseChart.houses[7].figure.dots, 630, 180, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[6].figure.dots, 630, 325, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[5].figure.dots, 630, 495, 7, 3.2)}
+        </g>
+        <!-- 底邊 3 組 -->
+        <g opacity="0.85">
+          ${renderSvgDots(currentHouseChart.houses[2].figure.dots, 230, 625, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[3].figure.dots, 350, 625, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[4].figure.dots, 470, 625, 7, 3.2)}
+        </g>
+        <!-- 左邊 3 組 -->
+        <g opacity="0.85">
+          ${renderSvgDots(currentHouseChart.houses[11].figure.dots, 70, 180, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[0].figure.dots, 70, 325, 7, 3.2)}
+          ${renderSvgDots(currentHouseChart.houses[1].figure.dots, 70, 495, 7, 3.2)}
+        </g>
+      `;
+    }
+
     function checkWarningBanner() {
       const box = document.getElementById('warningBox');
       const title = document.getElementById('warningTitle');
@@ -810,20 +1043,21 @@
       }
     }
 
-    // 更新右側選中槽位詳解卡
     function selectSlot(slotKey) {
       if (!currentChart) return;
       activeSlotKey = slotKey;
 
-      // 清除其他格子的 active 樣式
       document.querySelectorAll('.shield-card').forEach(c => c.classList.remove('active-slot'));
       const activeEl = document.getElementById(`slot_${slotKey}`);
       if (activeEl) activeEl.classList.add('active-slot');
 
+      // 更新 SVG 高亮
+      renderSquareHouseChart();
+      renderSquarePlanetaryChart();
+
       const fig = currentChart.allSlots[slotKey];
       if (!fig) return;
 
-      // 槽位名稱映射
       const slotNames = {
         m1: "I 第一母親 (自身起因)", m2: "II 第二母親 (財源動向)", m3: "III 第三母親 (訊息流動)", m4: "IV 第四母親 (結局基石)",
         d5: "V 第一女兒 (行動創造)", d6: "VI 第二女兒 (勞務健康)", d7: "VII 第三女兒 (合作對象)", d8: "VIII 第四女兒 (偏財轉化)",
@@ -837,8 +1071,8 @@
       document.getElementById('detailLatinName').textContent = fig.latin;
       document.getElementById('detailDots').innerHTML = renderDotsHTML(fig.dots);
       document.getElementById('detailNick').textContent = `別名：${fig.nick}`;
-      document.getElementById('detailPlanet').textContent = fig.planet;
-      document.getElementById('detailSign').textContent = fig.sign;
+      document.getElementById('detailPlanet').textContent = `${fig.planet} (${fig.planetSymbol || ''})`;
+      document.getElementById('detailSign').textContent = `${fig.sign} (${fig.signSymbol || ''})`;
       document.getElementById('detailElement').textContent = `${fig.element}元素`;
       
       const favEl = document.getElementById('detailFavorable');
@@ -856,11 +1090,10 @@
       document.getElementById('detailTiming').textContent = fig.extended.timing;
     }
 
-    // 更新解卦文字
     function updateReadings() {
       if (!currentChart) return;
       const cat = document.getElementById('questionCategory').value;
-      currentReading = GeomancyCalc.generateReading(currentChart, cat);
+      currentReading = GeomancyCalc.generateReading(currentChart, cat, currentSchool);
 
       document.getElementById('readingVerdictBadge').textContent = currentReading.verdictLevel;
       document.getElementById('reportJudgeSummary').textContent = currentReading.verdictSummary;
@@ -874,9 +1107,54 @@
       document.getElementById('potionOil').textContent = p.oil;
       document.getElementById('potionAction').textContent = p.ritualAction;
       document.getElementById('potionQuote').textContent = p.soulQuote;
+
+      // 更新元素統計
+      const { elementCounts, dominantElement } = currentPlanetaryChart;
+      document.getElementById('dominantElementText').textContent = `主導元素：${dominantElement}元素能量最為充沛`;
+      document.getElementById('el_fire_count').textContent = `${elementCounts['火'] || 0} 卦`;
+      document.getElementById('el_air_count').textContent = `${elementCounts['風'] || 0} 卦`;
+      document.getElementById('el_water_count').textContent = `${elementCounts['水'] || 0} 卦`;
+      document.getElementById('el_earth_count').textContent = `${elementCounts['土'] || 0} 卦`;
     }
 
-    // 切換視圖 (Shield / House / Planetary)
+    function renderDataTable() {
+      if (!currentChart) return;
+      let fav = 0, neu = 0, unfav = 0;
+      const tbody = document.getElementById('data_table_body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const slotLabels = {
+        m1: "I 第一母親", m2: "II 第二母親", m3: "III 第三母親", m4: "IV 第四母親",
+        d5: "V 第一女兒", d6: "VI 第二女兒", d7: "VII 第三女兒", d8: "VIII 第四女兒",
+        n9: "IX 第一姪女", n10: "X 第二姪女", n11: "XI 第三姪女", n12: "XII 第四姪女",
+        w13: "XIII 右證人", w14: "XIV 左證人", j15: "XV 法官", r16: "XVI 調解法官"
+      };
+
+      for (const k in currentChart.allSlots) {
+        const fig = currentChart.allSlots[k];
+        if (fig.favorable.includes('吉')) fav++;
+        else if (fig.favorable.includes('凶')) unfav++;
+        else neu++;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-stone-50 cursor-pointer";
+        tr.onclick = () => { toggleDataPanel(); selectSlot(k); };
+        tr.innerHTML = `
+          <td class="p-2.5 font-bold text-[#8A6B18]">${slotLabels[k] || k}</td>
+          <td class="p-2.5 font-black text-stone-900">${fig.zh}</td>
+          <td class="p-2.5 text-stone-500 italic font-serif">${fig.latin}</td>
+          <td class="p-2.5">${fig.element} · ${fig.planet}</td>
+          <td class="p-2.5 font-bold ${fig.favorable.includes('吉') ? 'text-emerald-600' : (fig.favorable.includes('凶') ? 'text-rose-600' : 'text-stone-600')}">${fig.favorable}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      document.getElementById('data_fav_count').textContent = `${fav} 卦`;
+      document.getElementById('data_neu_count').textContent = `${neu} 卦`;
+      document.getElementById('data_unfav_count').textContent = `${unfav} 卦`;
+    }
+
     function switchView(viewName) {
       document.getElementById('view_shield').classList.add('hidden');
       document.getElementById('view_house').classList.add('hidden');
@@ -886,9 +1164,16 @@
 
       document.getElementById(`view_${viewName}`).classList.remove('hidden');
       document.getElementById(`tab_${viewName}`).classList.add('active');
+
+      if (viewName === 'house') renderSquareHouseChart();
+      if (viewName === 'planetary') renderSquarePlanetaryChart();
     }
 
-    // 彈窗開關
+    function toggleDataPanel() {
+      const modal = document.getElementById('modal_data');
+      if (modal) modal.classList.toggle('hidden');
+    }
+
     function toggleCastModal(type) {
       const modal = document.getElementById(`modal_${type}`);
       if (modal) {
@@ -899,7 +1184,6 @@
       }
     }
 
-    // 初始化沙盤狀態
     function initSandState() {
       sandCounts = [0, 0, 0, 0];
       collectedMothers = [];
@@ -922,7 +1206,6 @@
       }
     }
 
-    // 在沙盤點擊戳點
     function addSandDot(rowIndex, event) {
       sandCounts[rowIndex]++;
       const row = document.getElementById(`sand_row_${rowIndex}`);
@@ -942,12 +1225,11 @@
       updateSandUI();
     }
 
-    // 隨機在沙盤潑點
     function randomFillSand() {
       for (let i = 0; i < 4; i++) {
         const row = document.getElementById(`sand_row_${i}`);
         row.innerHTML = '';
-        const dotsNum = Math.floor(Math.random() * 15) + 7; // 7 ~ 21
+        const dotsNum = Math.floor(Math.random() * 15) + 7;
         sandCounts[i] = dotsNum;
         for (let j = 0; j < dotsNum; j++) {
           const dot = document.createElement('span');
@@ -958,9 +1240,7 @@
       updateSandUI();
     }
 
-    // 提交當前沙盤母親
     function submitSandMother() {
-      // 若某行點數為 0，自動隨機給予
       for (let i = 0; i < 4; i++) {
         if (sandCounts[i] === 0) {
           sandCounts[i] = Math.floor(Math.random() * 10) + 5;
@@ -974,13 +1254,11 @@
         currentMotherIndex++;
         resetCurrentSandRow();
       } else {
-        // 完成全部 4 個母親
         toggleCastModal('sand');
         applyMothersAndRender(collectedMothers);
       }
     }
 
-    // 填充電腦自選四母下拉清單
     function populateCustomModalOptions() {
       const figures = GeomancyCalc.FIGURES;
       ['custom_m1', 'custom_m2', 'custom_m3', 'custom_m4'].forEach(selectId => {
@@ -994,7 +1272,6 @@
           sel.appendChild(opt);
         });
       });
-      // 預設給予一組典雅組合
       if (document.getElementById('custom_m1')) document.getElementById('custom_m1').value = 'via';
       if (document.getElementById('custom_m2')) document.getElementById('custom_m2').value = 'populus';
       if (document.getElementById('custom_m3')) document.getElementById('custom_m3').value = 'fortuna_major';

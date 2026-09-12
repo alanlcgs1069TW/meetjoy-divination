@@ -1,7 +1,7 @@
 /**
  * 癒見幸福 · 魔法占星學院
  * 西洋地占排盤核心演算引擎 (Geomancy Calculation Engine)
- * 遵循古典阿格里帕 (Agrippa) 與黃金黎明西洋地占體系，純繁體中文（台灣）呈現
+ * 遵循古典阿格里帕 (Agrippa) 與阿拉伯 (Arabic) 地占體系，純繁體中文（台灣）呈現
  */
 
 (function(global) {
@@ -21,8 +21,10 @@
       isEven: true,
       planet: "月亮（虧月）",
       planetLatin: "Moon (Waning)",
+      planetSymbol: "☽",
       sign: "巨蟹座",
       signLatin: "Cancer",
+      signSymbol: "♋",
       element: "水",
       elementLatin: "Water",
       quality: "中性偏動態",
@@ -56,8 +58,10 @@
       isEven: true,
       planet: "月亮（盈月）",
       planetLatin: "Moon (Waxing)",
+      planetSymbol: "☽",
       sign: "巨蟹座",
       signLatin: "Cancer",
+      signSymbol: "♋",
       element: "水",
       elementLatin: "Water",
       quality: "中性偏靜態",
@@ -91,8 +95,10 @@
       isEven: false,
       planet: "火星",
       planetLatin: "Mars",
+      planetSymbol: "♂",
       sign: "牡羊座",
       signLatin: "Aries",
+      signSymbol: "♈",
       element: "火",
       elementLatin: "Fire",
       quality: "強烈主動",
@@ -126,8 +132,10 @@
       isEven: false,
       planet: "金星",
       planetLatin: "Venus",
+      planetSymbol: "♀",
       sign: "天秤座",
       signLatin: "Libra",
+      signSymbol: "♎",
       element: "風",
       elementLatin: "Air",
       quality: "柔和協調",
@@ -161,8 +169,10 @@
       isEven: true,
       planet: "太陽（日間）",
       planetLatin: "Sun (Diurnal)",
+      planetSymbol: "☉",
       sign: "獅子座",
       signLatin: "Leo",
+      signSymbol: "♌",
       element: "火",
       elementLatin: "Fire",
       quality: "強盛光芒",
@@ -196,8 +206,10 @@
       isEven: true,
       planet: "太陽（夜間）",
       planetLatin: "Sun (Nocturnal)",
+      planetSymbol: "☉",
       sign: "獅子座",
       signLatin: "Leo",
+      signSymbol: "♌",
       element: "火",
       elementLatin: "Fire",
       quality: "速效閃爍",
@@ -231,8 +243,10 @@
       isEven: true,
       planet: "木星",
       planetLatin: "Jupiter",
+      planetSymbol: "♃",
       sign: "射手座",
       signLatin: "Sagittarius",
+      signSymbol: "♐",
       element: "火",
       elementLatin: "Fire",
       quality: "繁榮擴張",
@@ -266,8 +280,10 @@
       isEven: true,
       planet: "金星（逆行）",
       planetLatin: "Venus (Retrograde)",
+      planetSymbol: "♀",
       sign: "金牛座",
       signLatin: "Taurus",
+      signSymbol: "♉",
       element: "土",
       elementLatin: "Earth",
       quality: "流失宣洩",
@@ -301,8 +317,10 @@
       isEven: false,
       planet: "木星（逆行）",
       planetLatin: "Jupiter (Retrograde)",
+      planetSymbol: "♃",
       sign: "雙魚座",
       signLatin: "Pisces",
+      signSymbol: "♓",
       element: "水",
       elementLatin: "Water",
       quality: "向上昂首",
@@ -336,8 +354,10 @@
       isEven: false,
       planet: "土星",
       planetLatin: "Saturn",
+      planetSymbol: "♄",
       sign: "水瓶座",
       signLatin: "Aquarius",
+      signSymbol: "♒",
       element: "風",
       elementLatin: "Air",
       quality: "向下沉墜",
@@ -371,8 +391,10 @@
       isEven: true,
       planet: "水星（逆行）",
       planetLatin: "Mercury (Retrograde)",
+      planetSymbol: "☿",
       sign: "處女座",
       signLatin: "Virgo",
+      signSymbol: "♍",
       element: "土",
       elementLatin: "Earth",
       quality: "中性收斂",
@@ -406,8 +428,10 @@
       isEven: true,
       planet: "土星（逆行）",
       planetLatin: "Saturn (Retrograde)",
+      planetSymbol: "♄",
       sign: "摩羯座",
       signLatin: "Capricorn",
+      signSymbol: "♑",
       element: "土",
       elementLatin: "Earth",
       quality: "封閉收縮",
@@ -441,8 +465,10 @@
       isEven: false,
       planet: "北交點（木星/金星交感）",
       planetLatin: "North Node",
+      planetSymbol: "☊",
       sign: "射手座",
       signLatin: "Sagittarius",
+      signSymbol: "♐",
       element: "火",
       elementLatin: "Fire",
       quality: "啟程向上",
@@ -476,8 +502,10 @@
       isEven: false,
       planet: "南交點（火星/土星交感）",
       planetLatin: "South Node",
+      planetSymbol: "☋",
       sign: "處女座",
       signLatin: "Virgo",
+      signSymbol: "♍",
       element: "火",
       elementLatin: "Fire",
       quality: "退場消散",
@@ -511,8 +539,10 @@
       isEven: false,
       planet: "水星",
       planetLatin: "Mercury",
+      planetSymbol: "☿",
       sign: "雙子座",
       signLatin: "Gemini",
+      signSymbol: "♊",
       element: "風",
       elementLatin: "Air",
       quality: "清晰明澈",
@@ -546,8 +576,10 @@
       isEven: false,
       planet: "火星（逆行）",
       planetLatin: "Mars (Retrograde)",
+      planetSymbol: "♂",
       sign: "天蠍座",
       signLatin: "Scorpio",
+      signSymbol: "♏",
       element: "水",
       elementLatin: "Water",
       quality: "洶湧暗流",
@@ -572,7 +604,6 @@
     }
   ];
 
-  // 輔助查找：依 ID 或 dots 陣列尋找圖形
   function getFigureById(id) {
     return GEOMANCY_FIGURES.find(f => f.id === id) || null;
   }
@@ -587,15 +618,6 @@
     ) || null;
   }
 
-  /**
-   * 圖形相加演算法 (XOR 異或加法)
-   * 規則：
-   * 1 + 1 = 2 (偶數雙點)
-   * 2 + 2 = 2 (偶數雙點)
-   * 1 + 2 = 1 (奇數單點)
-   * 2 + 1 = 1 (奇數單點)
-   * 即：兩者相同則為 2 (偶數)，相異則為 1 (奇數)
-   */
   function addFigures(figA, figB) {
     const dotsA = figA.dots;
     const dotsB = figB.dots;
@@ -608,11 +630,6 @@
     return getFigureByDots(resultDots);
   }
 
-  /**
-   * 生成完整盾盤 (Shield Chart)
-   * 輸入：4 個母親圖形陣列 [M1, M2, M3, M4] (由右至左)
-   * 輸出：包含 16 個圖形槽位的完整盾盤物件
-   */
   function generateShieldChart(mothers) {
     if (!mothers || mothers.length !== 4) {
       throw new Error("必須提供 4 個母親圖形 (M1 ~ M4)");
@@ -623,42 +640,29 @@
     const m3 = mothers[2];
     const m4 = mothers[3];
 
-    // 四女兒 (Daughters 5~8)：由四母親由右至左橫向讀取元素組成
-    // 女兒一 (D5) = [M1.火, M2.火, M3.火, M4.火]
+    // 四女兒 (D5 ~ D8)
     const d5 = getFigureByDots([m1.dots[0], m2.dots[0], m3.dots[0], m4.dots[0]]);
-    // 女兒二 (D6) = [M1.風, M2.風, M3.風, M4.風]
     const d6 = getFigureByDots([m1.dots[1], m2.dots[1], m3.dots[1], m4.dots[1]]);
-    // 女兒三 (D7) = [M1.水, M2.水, M3.水, M4.水]
     const d7 = getFigureByDots([m1.dots[2], m2.dots[2], m3.dots[2], m4.dots[2]]);
-    // 女兒四 (D8) = [M1.土, M2.土, M3.土, M4.土]
     const d8 = getFigureByDots([m1.dots[3], m2.dots[3], m3.dots[3], m4.dots[3]]);
 
-    // 四姪女 (Nieces 9~12)
-    // 姪女一 (N9) = M1 + M2
+    // 四姪女 (N9 ~ N12)
     const n9 = addFigures(m1, m2);
-    // 姪女二 (N10) = M3 + M4
     const n10 = addFigures(m3, m4);
-    // 姪女三 (N11) = D5 + D6
     const n11 = addFigures(d5, d6);
-    // 姪女四 (N12) = D7 + D8
     const n12 = addFigures(d7, d8);
 
-    // 兩證人 (Witnesses 13~14)
-    // 右證人 (Right Witness, W13) = N9 + N10 (代表提問者、當下狀況、動機)
-    const w13 = addFigures(n9, n10);
-    // 左證人 (Left Witness, W14) = N11 + N12 (代表事情外在環境、對方、未來走向)
-    const w14 = addFigures(n11, n12);
+    // 兩證人 (W13, W14)
+    const w13 = addFigures(n9, n10); // 右證人
+    const w14 = addFigures(n11, n12); // 左證人
 
-    // 法官 (Judge 15) = W13 + W14 (最終判決；根據數學定律必為偶數點圖形)
+    // 法官 (J15)
     const j15 = addFigures(w13, w14);
 
-    // 調解者 / 審判之審判 (Reconciler / Judge of Judges 16) = J15 + M1
+    // 調解者 (R16)
     const r16 = addFigures(j15, m1);
 
-    // 驗證法官點數奇偶
     const isJudgeEven = j15.isEven;
-
-    // 起手警告判定
     const isWarningStart = (m1.id === 'rubeus' || m1.id === 'cauda_draconis');
 
     return {
@@ -666,11 +670,11 @@
       daughters: [d5, d6, d7, d8],
       nieces: [n9, n10, n11, n12],
       witnesses: {
-        right: w13, // 13
-        left: w14   // 14
+        right: w13,
+        left: w14
       },
-      judge: j15,   // 15
-      reconciler: r16, // 16
+      judge: j15,
+      reconciler: r16,
       allSlots: {
         m1, m2, m3, m4,
         d5, d6, d7, d8,
@@ -682,39 +686,76 @@
     };
   }
 
-  /**
-   * 生成十二宮位盤 (House Chart)
-   * 按照古典阿格里帕 (Agrippa) 與黃金黎明地占宮位映射：
-   * 第 1 宮 = M1, 第 2 宮 = M2, 第 3 宮 = M3, 第 4 宮 = M4
-   * 第 5 宮 = D5, 第 6 宮 = D6, 第 7 宮 = D7, 第 8 宮 = D8
-   * 第 9 宮 = N9, 第 10 宮 = N10, 第 11 宮 = N11, 第 12 宮 = N12
-   * 中央法庭：XIII (右證人), XIV (左證人), XV (法官)
-   */
-  const HOUSE_DEFINITIONS = [
-    { num: 1, name: "第一宮 命宮 (自身)", slot: "m1", themes: "提問者本質、當前心理動機、生命活力與自我認同" },
-    { num: 2, name: "第二宮 財帛宮 (金錢)", slot: "m2", themes: "正財收入、現金流動、物質安全感、可動用的資源" },
-    { num: 3, name: "第三宮 兄弟宮 (溝通)", slot: "m3", themes: "人際訊息、短期合約、出差短行、學習與手足關係" },
-    { num: 4, name: "第四宮 田宅宮 (根基)", slot: "m4", themes: "原生家庭、不動產環境、隱藏根基、事情最終結局歸宿" },
-    { num: 5, name: "第五宮 男女宮 (戀愛)", slot: "d5", themes: "桃花戀情、歡樂聚會、子女懷孕、創意表達與冒險投機" },
-    { num: 6, name: "第六宮 奴僕宮 (工作健康)", slot: "d6", themes: "日常勞務、部屬同事、寵物、日常身心小病痛與工作習慣" },
-    { num: 7, name: "第七宮 夫妻宮 (合夥對手)", slot: "d7", themes: "親密伴侶、商業合夥人、談判對手、公開競爭敵友" },
-    { num: 8, name: "第八宮 疾厄宮 (轉化偏財)", slot: "d8", themes: "他人財富、投資借貸、深層恐懼、生死考驗與蛻變契機" },
-    { num: 9, name: "第九宮 遷移宮 (遠行哲學)", slot: "n9", themes: "長途遠行、出國深造、高等學問、心靈信仰與法律指引" },
-    { num: 10, name: "第十宮 官祿宮 (事業名望)", slot: "n10", themes: "職涯成就、社會地位、主管長官態度、專案最終成果" },
-    { num: 11, name: "第十一宮 福德宮 (人脈願景)", slot: "n11", themes: "朋友圈、社群團體、貴人扶持援助、對未來的希望夢想" },
-    { num: 12, name: "第十二宮 玄秘宮 (隱患暗敵)", slot: "n12", themes: "隱蔽危機、暗中小人、自我懷疑、盲點與潛意識業力" }
+  // 十二宮位基本定義
+  const HOUSE_BASE_DEFINITIONS = [
+    { num: 1, roman: "I", name: "命宮 (自身)", themes: "提問者本質、心理動機、當前活力、自我認同" },
+    { num: 2, roman: "II", name: "財帛宮 (金錢)", themes: "正財收入、資產流動、物質安全感、可動用的資源" },
+    { num: 3, roman: "III", name: "兄弟宮 (溝通)", themes: "人際往來、合約信件、短途出差、學習與手足關係" },
+    { num: 4, roman: "IV", name: "田宅宮 (根基)", themes: "原生家庭、不動產、居住環境、事情最終歸宿底牌" },
+    { num: 5, roman: "V", name: "男女宮 (戀愛)", themes: "桃花戀情、歡樂聚會、子女懷孕、創意與冒險投資" },
+    { num: 6, roman: "VI", name: "奴僕宮 (工作健康)", themes: "日常勞務、部屬同事、寵物、身心小病痛與工作習慣" },
+    { num: 7, roman: "VII", name: "夫妻宮 (合夥對手)", themes: "親密伴侶、合夥人、談判對象、公開競爭對手" },
+    { num: 8, roman: "VIII", name: "疾厄宮 (轉化偏財)", themes: "他人財富、投資借貸、深層恐懼、生死與蛻變危機" },
+    { num: 9, roman: "IX", name: "遷移宮 (心靈遠行)", themes: "出國旅行、跨界拓展、高等教育、精神哲學與指引" },
+    { num: 10, roman: "X", name: "官祿宮 (事業名望)", themes: "職涯成就、社會地位、主管長官態度、專案最終成果" },
+    { num: 11, roman: "XI", name: "福德宮 (人脈貴人)", themes: "社群圈子、知心好友、貴人援手、對未來的希望願景" },
+    { num: 12, roman: "XII", name: "玄秘宮 (隱患暗敵)", themes: "隱藏危機、暗中小人、自我懷疑、盲點與潛意識業力" }
   ];
 
-  function generateHouseChart(shieldChart) {
-    const houses = HOUSE_DEFINITIONS.map(h => {
-      const figure = shieldChart.allSlots[h.slot];
+  /**
+   * 十二宮位映射演算法
+   * 支援兩種流派：
+   * 1. agrippa (阿格里帕流派，預設)：
+   *    House 1~4 = M1~M4, House 5~8 = D5~D8, House 9~12 = N9~N12
+   * 2. arabic (古典阿拉伯流派)：
+   *    四母親坐四正宮 (Angular): H1=M1, H10=M2, H7=M3, H4=M4
+   *    四女兒坐四續宮 (Succedent): H2=D5, H11=D6, H8=D7, H5=D8
+   *    四姪女坐四果宮 (Cadent): H3=N9, H12=N10, H9=N11, H6=N12
+   */
+  const SCHOOL_SLOT_MAPPINGS = {
+    agrippa: {
+      1: "m1", 2: "m2", 3: "m3", 4: "m4",
+      5: "d5", 6: "d6", 7: "d7", 8: "d8",
+      9: "n9", 10: "n10", 11: "n11", 12: "n12"
+    },
+    arabic: {
+      1: "m1", 10: "m2", 7: "m3", 4: "m4",
+      2: "d5", 11: "d6", 8: "d7", 5: "d8",
+      3: "n9", 12: "n10", 9: "n11", 6: "n12"
+    }
+  };
+
+  // 外圍十二星座方形排列定義 (參照 IMG_7974)
+  // 順序：金牛、牡羊、雙魚、水瓶、摩羯、射手、天蠍、天秤、處女、獅子、巨蟹、雙子
+  const ZODIAC_SQUARE = [
+    { sign: "金牛座", symbol: "♉", latin: "Taurus", side: "top", pos: "left" },
+    { sign: "牡羊座", symbol: "♈", latin: "Aries", side: "top", pos: "center" },
+    { sign: "雙魚座", symbol: "♓", latin: "Pisces", side: "top", pos: "right" },
+    { sign: "水瓶座", symbol: "♒", latin: "Aquarius", side: "right", pos: "top" },
+    { sign: "摩羯座", symbol: "♑", latin: "Capricorn", side: "right", pos: "center" },
+    { sign: "射手座", symbol: "♐", latin: "Sagittarius", side: "right", pos: "bottom" },
+    { sign: "天蠍座", symbol: "♏", latin: "Scorpio", side: "bottom", pos: "right" },
+    { sign: "天秤座", symbol: "♎", latin: "Libra", side: "bottom", pos: "center" },
+    { sign: "處女座", symbol: "♍", latin: "Virgo", side: "bottom", pos: "left" },
+    { sign: "獅子座", symbol: "♌", latin: "Leo", side: "left", pos: "bottom" },
+    { sign: "巨蟹座", symbol: "♋", latin: "Cancer", side: "left", pos: "center" },
+    { sign: "雙子座", symbol: "♊", latin: "Gemini", side: "left", pos: "top" }
+  ];
+
+  function generateHouseChart(shieldChart, school = "agrippa") {
+    const mapping = SCHOOL_SLOT_MAPPINGS[school] || SCHOOL_SLOT_MAPPINGS.agrippa;
+    const houses = HOUSE_BASE_DEFINITIONS.map(h => {
+      const slot = mapping[h.num];
+      const figure = shieldChart.allSlots[slot];
       return {
         ...h,
+        slot,
         figure
       };
     });
 
     return {
+      school,
       houses,
       witnesses: shieldChart.witnesses,
       judge: shieldChart.judge,
@@ -722,10 +763,6 @@
     };
   }
 
-  /**
-   * 生成行星地占盤 (Planetary Chart)
-   * 統計盾盤中各行星、星座與四大元素的能量分佈與強弱
-   */
   function generatePlanetaryChart(shieldChart) {
     const slots = [
       shieldChart.mothers[0], shieldChart.mothers[1], shieldChart.mothers[2], shieldChart.mothers[3],
@@ -775,17 +812,13 @@
     };
   }
 
-  /**
-   * 智慧全息解卦引擎
-   */
-  function generateReading(shieldChart, category = "general") {
+  function generateReading(shieldChart, category = "general", school = "agrippa") {
     const judge = shieldChart.judge;
-    const wRight = shieldChart.witnesses.right; // 提問者
-    const wLeft = shieldChart.witnesses.left;   // 外界環境
-    const reconciler = shieldChart.reconciler;  // 調解者
+    const wRight = shieldChart.witnesses.right;
+    const wLeft = shieldChart.witnesses.left;
+    const reconciler = shieldChart.reconciler;
     const m1 = shieldChart.mothers[0];
 
-    // 1. 警告判定
     let warningMessage = null;
     if (m1.id === "rubeus") {
       warningMessage = "【神聖警告】第一母親卦抽得 Rubeus（赤紅）：古典地占傳統認為此時提問者心緒極度狂躁、憤怒或受慾望執念矇蔽，盤象極易失真。請務必先平息情緒、靜心沉澱後再重新起盤。";
@@ -793,7 +826,6 @@
       warningMessage = "【神聖警告】第一母親卦抽得 Cauda Draconis（龍尾）：代表此提問所涉之事已至窮途末路、大局已定或存在背叛盲點，多問無益，唯有放手斷捨離方能自保。";
     }
 
-    // 2. 法官總裁判評級
     let verdictLevel = "中性";
     let verdictSummary = "";
     if (["fortuna_major", "acquisitio", "laetitia", "caput_draconis", "albus"].includes(judge.id)) {
@@ -810,7 +842,6 @@
       verdictSummary = `法官現身 ${judge.zh}（${judge.latin}），眼前將面臨拖延、流失或體制框架之嚴峻考驗，不宜盲目強求，應以防守深扎根基為先。`;
     }
 
-    // 3. 左右證人三角因果分析
     let triangleAnalysis = "";
     const isRightFavorable = ["fortuna_major", "acquisitio", "laetitia", "puella", "albus", "caput_draconis"].includes(wRight.id);
     const isLeftFavorable = ["fortuna_major", "acquisitio", "laetitia", "puella", "albus", "caput_draconis"].includes(wLeft.id);
@@ -825,47 +856,44 @@
       triangleAnalysis = `【內憂外患・磨礪修煉】：右證人（提問者）為 ${wRight.zh}，左證人（外在環境）為 ${wLeft.zh}，內在焦慮碰上外在緊縮，雙方皆處於高壓或耗損狀態。法官指出這是一場靈魂的深度淬鍊，切忌意氣用事，應先退回防線守住本心。`;
     }
 
-    // 4. 調解者（審判之審判）點評
     const reconcilerText = `調解者（Judge of Judges）為 ${reconciler.zh}（${reconciler.latin}）：由最終法官與第一母親交感而生，它揭示了「若想打破目前僵局，最深層的破局鑰匙」。它叮嚀你：${reconciler.daily} 保持 ${reconciler.keyword} 的心靈彈性，就能順利打通最後一哩路。`;
 
-    // 5. 專屬領域重點宮位分析
-    const houseChart = generateHouseChart(shieldChart);
+    const houseChart = generateHouseChart(shieldChart, school);
     let categoryAnalysis = "";
     if (category === "career") {
-      const h10 = houseChart.houses[9]; // 官祿宮
-      const h6 = houseChart.houses[5];  // 奴僕宮
-      const h2 = houseChart.houses[1];  // 財帛宮
+      const h10 = houseChart.houses[9];
+      const h6 = houseChart.houses[5];
+      const h2 = houseChart.houses[1];
       categoryAnalysis = `【事業官運深度指引】：
 • 事業官祿（第10宮）坐落【${h10.figure.zh}】：${h10.figure.extended.career}
 • 職場日常（第6宮）坐落【${h6.figure.zh}】：${h6.figure.summary}
 • 成果回饋（第2宮）坐落【${h2.figure.zh}】：${h2.figure.extended.wealth}`;
     } else if (category === "love") {
-      const h7 = houseChart.houses[6]; // 夫妻宮
-      const h5 = houseChart.houses[4]; // 戀愛宮
-      const h1 = houseChart.houses[0]; // 自身宮
+      const h7 = houseChart.houses[6];
+      const h5 = houseChart.houses[4];
+      const h1 = houseChart.houses[0];
       categoryAnalysis = `【感情緣分深度指引】：
 • 伴侶關係（第7宮）坐落【${h7.figure.zh}】：${h7.figure.extended.love}
 • 戀愛氛圍（第5宮）坐落【${h5.figure.zh}】：${h5.figure.daily}
 • 自身心境（第1宮）坐落【${h1.figure.zh}】：${h1.figure.summary}`;
     } else if (category === "wealth") {
-      const h2 = houseChart.houses[1]; // 財帛宮
-      const h8 = houseChart.houses[7]; // 偏財宮
-      const h10 = houseChart.houses[9]; // 事業宮
+      const h2 = houseChart.houses[1];
+      const h8 = houseChart.houses[7];
+      const h10 = houseChart.houses[9];
       categoryAnalysis = `【財富金流深度指引】：
 • 正財收入（第2宮）坐落【${h2.figure.zh}】：${h2.figure.extended.wealth}
 • 投資偏財（第8宮）坐落【${h8.figure.zh}】：${h8.figure.daily}
 • 業務格局（第10宮）坐落【${h10.figure.zh}】：${h10.figure.extended.career}`;
     } else {
-      const h1 = houseChart.houses[0];  // 自身
-      const h4 = houseChart.houses[3];  // 結局根基
-      const h10 = houseChart.houses[9]; // 名望
+      const h1 = houseChart.houses[0];
+      const h4 = houseChart.houses[3];
+      const h10 = houseChart.houses[9];
       categoryAnalysis = `【綜合全息核心宮位】：
 • 當前自身（第1宮）坐落【${h1.figure.zh}】：${h1.figure.summary}
 • 事業願景（第10宮）坐落【${h10.figure.zh}】：${h10.figure.extended.career}
 • 事情歸宿（第4宮）坐落【${h4.figure.zh}】：象徵整件事沉澱後的底定基石，${h4.figure.daily}`;
     }
 
-    // 6. 愛倫院長生活魔藥處方
     const potion = {
       name: `【${judge.zh} × ${reconciler.zh}】靈魂調頻魔藥`,
       herbs: `${judge.potion.herb}、${reconciler.potion.herb}`,
@@ -885,9 +913,6 @@
     };
   }
 
-  /**
-   * 隨機生成 4 個母親圖形
-   */
   function castRandomMothers() {
     const mothers = [];
     for (let i = 0; i < 4; i++) {
@@ -902,19 +927,17 @@
     return mothers;
   }
 
-  /**
-   * 戳點點數計算法 (四行點數計算法)
-   */
   function dotsFromCounts(counts) {
     if (!counts || counts.length !== 4) return null;
     const dots = counts.map(c => (c % 2 === 1 ? 1 : 2));
     return getFigureByDots(dots);
   }
 
-  // 匯出到全域命名空間
   global.GeomancyCalc = {
     FIGURES: GEOMANCY_FIGURES,
-    HOUSE_DEFINITIONS,
+    HOUSE_BASE_DEFINITIONS,
+    SCHOOL_SLOT_MAPPINGS,
+    ZODIAC_SQUARE,
     getFigureById,
     getFigureByDots,
     addFigures,
