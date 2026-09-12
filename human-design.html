@@ -257,9 +257,9 @@
                   <polygon points="200,285 242,335 200,385 158,335" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2" class="crystal-base"/>
                 </g>
 
-                <!-- 5. 意志力中心 (Heart / Ego) 小三角形 -->
+                <!-- 5. 意志力中心 (Heart / Ego) 標準正統倒三角微向左偏 (26 號閘門寬敞清晰) -->
                 <g class="crystal-center cursor-pointer transition" data-center="Heart" id="center_Heart">
-                  <polygon points="252,350 284,325 284,375" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2" class="crystal-base"/>
+                  <polygon points="280,316 314,378 240,378" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2" class="crystal-base"/>
                 </g>
 
                 <!-- 6. 直覺脾中心 (Spleen) 左直角三角形指向右 -->
@@ -405,8 +405,8 @@
       7: [182, 312], 1: [200, 300], 13: [218, 312],
       10: [172, 335], 25: [228, 335],
       15: [182, 358], 2: [200, 370], 46: [218, 358],
-      // 意志力心輪 (Heart)
-      21: [276, 332], 51: [260, 348], 26: [276, 350], 40: [276, 368],
+      // 意志力心輪 (Heart) 標準正統倒三角微向左偏 (閘門26大空間清晰展現)
+      21: [280, 328], 51: [254, 346], 26: [256, 368], 40: [298, 368],
       // 脾臟直覺中心 (Spleen) 嚴格拉開 20px+ 安全間距
       48: [78, 398], 57: [98, 415], 44: [118, 432], 50: [120, 458],
       32: [104, 474], 28: [88, 490], 18: [72, 502],
@@ -442,27 +442,24 @@
       { id: '8-1',   g1: 8,  g2: 1,  p0: [196, 252], ctrl: null, p2: [200, 300] },
       { id: '33-13', g1: 33, g2: 13, p0: [214, 252], ctrl: null, p2: [218, 312] },
       // 喉嚨至意志力心輪 (Throat -> Heart)
-      { id: '45-21', g1: 45, g2: 21, p0: [226, 244], ctrl: [265, 275], p2: [276, 332] },
+      { id: '45-21', g1: 45, g2: 21, p0: [226, 244], ctrl: [265, 275], p2: [280, 328] },
       // 喉嚨至情緒中心 (Throat -> Solar Plexus) 雙弧線平滑分軌
       { id: '35-36', g1: 35, g2: 36, p0: [226, 212], ctrl: [335, 270], p2: [322, 398] },
       { id: '12-22', g1: 12, g2: 22, p0: [226, 228], ctrl: [295, 305], p2: [302, 415] },
       // G中心至心輪 (G -> Heart)
-      { id: '25-51', g1: 25, g2: 51, p0: [228, 335], ctrl: null, p2: [260, 348] },
-      // 整合通道：G至薦骨 (G -> Sacral) 與 喉嚨繞過G至薦骨 (Throat -> Sacral)
-      { id: '10-34', g1: 10, g2: 34, p0: [172, 335], ctrl: null, p2: [174, 444] },
-      { id: '34-20', g1: 34, g2: 20, p0: [174, 444], ctrl: [146, 335], p2: [174, 236] },
-      // G至脾臟 (G -> Spleen)
-      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [130, 365], p2: [98, 415] },
+      { id: '25-51', g1: 25, g2: 51, p0: [228, 335], ctrl: null, p2: [254, 346] },
+      // 整合通道：G至脾臟 (G -> Spleen) 與 薦骨至脾臟 (Sacral -> Spleen) (整合四閘門正統匯流幾何，無多餘縱向直管)
+      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [125, 365], p2: [98, 415] },
       // G中心至薦骨 (G -> Sacral)
       { id: '15-5',  g1: 15, g2: 5,  p0: [182, 358], ctrl: null, p2: [180, 425] },
       { id: '2-14',  g1: 2,  g2: 14, p0: [200, 370], ctrl: null, p2: [200, 425] },
       { id: '46-29', g1: 46, g2: 29, p0: [218, 358], ctrl: null, p2: [220, 425] },
       // 心輪至脾臟 (Heart -> Spleen) 走 G 與 薦骨間隙 (Y=400)，乾淨不纏繞
-      { id: '26-44', g1: 26, g2: 44, p0: [276, 354], ctrl: [195, 400], p2: [118, 432] },
+      { id: '26-44', g1: 26, g2: 44, p0: [256, 368], ctrl: [186, 400], p2: [118, 432] },
       // 心輪至情緒中心 (Heart -> Solar Plexus)
-      { id: '40-37', g1: 40, g2: 37, p0: [276, 368], ctrl: null, p2: [282, 432] },
+      { id: '40-37', g1: 40, g2: 37, p0: [298, 368], ctrl: null, p2: [282, 432] },
       // 薦骨至脾臟 (Sacral -> Spleen)
-      { id: '34-57', g1: 34, g2: 57, p0: [174, 444], ctrl: [132, 435], p2: [98, 415] },
+      { id: '34-57', g1: 34, g2: 57, p0: [174, 444], ctrl: [130, 435], p2: [98, 415] },
       { id: '27-50', g1: 27, g2: 50, p0: [174, 464], ctrl: null, p2: [120, 458] },
       // 薦骨至情緒中心 (Sacral -> Solar Plexus)
       { id: '59-6',  g1: 59, g2: 6,  p0: [226, 452], ctrl: null, p2: [280, 458] },
@@ -680,10 +677,24 @@
         chLayer.appendChild(bgGroove);
 
         // 3. 判斷 g1 與 g2 著色狀態
-        const g1Des = hd.activeGates.design.has(ch.g1);
-        const g1Per = hd.activeGates.personality.has(ch.g1);
-        const g2Des = hd.activeGates.design.has(ch.g2);
-        const g2Per = hd.activeGates.personality.has(ch.g2);
+        let g1Des = hd.activeGates.design.has(ch.g1);
+        let g1Per = hd.activeGates.personality.has(ch.g1);
+        let g2Des = hd.activeGates.design.has(ch.g2);
+        let g2Per = hd.activeGates.personality.has(ch.g2);
+
+        // 整合通道特化 (Integration Circuit: 20, 10, 34, 57 四閘門六種通法)
+        // 20-34 與 10-34 經由 57 匯流節點連通，接通時 57 端自動延伸導通
+        const is20_34 = hd.definedChannels.some(c => c.id === '20-34');
+        const is10_34 = hd.definedChannels.some(c => c.id === '10-34');
+
+        if (is20_34) {
+          if (ch.id === '20-57') { g2Des = g2Des || hd.activeGates.design.has(34); g2Per = g2Per || hd.activeGates.personality.has(34); }
+          if (ch.id === '34-57') { g2Des = g2Des || hd.activeGates.design.has(20); g2Per = g2Per || hd.activeGates.personality.has(20); }
+        }
+        if (is10_34) {
+          if (ch.id === '10-57') { g2Des = g2Des || hd.activeGates.design.has(34); g2Per = g2Per || hd.activeGates.personality.has(34); }
+          if (ch.id === '34-57') { g2Des = g2Des || hd.activeGates.design.has(10); g2Per = g2Per || hd.activeGates.personality.has(10); }
+        }
 
         const getColor = (isDes, isPer) => {
           if (isDes && isPer) return 'url(#zebra_both)';
