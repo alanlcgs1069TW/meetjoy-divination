@@ -719,6 +719,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       populateCustomModalOptions();
       castQuick();
+      if (location.hash === '#house') switchView('house');
+      if (location.hash === '#planetary') switchView('planetary');
     });
 
     function renderDotsHTML(dots) {
@@ -793,28 +795,59 @@
     }
 
     /**
+     * 幾何常數：古典方形星盤 (Sacred Geometry Unified Registration)
+     * 外框 600x600，內圈十二宮方框 480x480，中央聖殿法庭 240x240
+     * 保持 1:2:1 黃金比例，外圍 12 槽位與內圈 12 宮位 100% 精準對齊
+     */
+    const CHART_GEOM = {
+      outerFrame: { x: 50, y: 50, size: 600 },
+      houseSquare: { x: 110, y: 110, size: 480 },
+      centerSquare: { x: 230, y: 230, size: 240 },
+
+      houses: {
+        1:  { points: "110,350 230,230 230,470", roman: "I",    pX: 185, pY: 350, dotX: 195, dotY: 335, numX: 140, numY: 355 }, // 最左大三角 (命宮)
+        2:  { points: "110,350 110,590 230,470", roman: "II",   pX: 150, pY: 470, dotX: 160, dotY: 455, numX: 135, numY: 495 }, // 左下外直角 (財帛)
+        3:  { points: "350,590 110,590 230,470", roman: "III",  pX: 230, pY: 550, dotX: 230, dotY: 535, numX: 230, numY: 575 }, // 底左直角 (兄弟)
+        4:  { points: "350,590 230,470 470,470", roman: "IV",   pX: 350, pY: 510, dotX: 350, dotY: 495, numX: 350, numY: 545 }, // 正底下大三角 (田宅)
+        5:  { points: "350,590 590,590 470,470", roman: "V",    pX: 470, pY: 550, dotX: 470, dotY: 535, numX: 470, numY: 575 }, // 底右直角 (子女)
+        6:  { points: "590,350 590,590 470,470", roman: "VI",   pX: 550, pY: 470, dotX: 540, dotY: 455, numX: 565, numY: 495 }, // 右下外直角 (奴僕)
+        7:  { points: "590,350 470,470 470,230", roman: "VII",  pX: 515, pY: 350, dotX: 505, dotY: 335, numX: 560, numY: 355 }, // 最右大三角 (夫妻)
+        8:  { points: "590,350 590,110 470,230", roman: "VIII", pX: 550, pY: 230, dotX: 540, dotY: 220, numX: 565, numY: 205 }, // 右上外直角 (疾厄)
+        9:  { points: "350,110 590,110 470,230", roman: "IX",   pX: 470, pY: 150, dotX: 470, dotY: 145, numX: 470, numY: 125 }, // 頂右直角 (遷移)
+        10: { points: "350,110 470,230 230,230", roman: "X",    pX: 350, pY: 190, dotX: 350, dotY: 175, numX: 350, numY: 135 }, // 正頂天頂大三角 (官祿)
+        11: { points: "350,110 110,110 230,230", roman: "XI",   pX: 230, pY: 150, dotX: 230, dotY: 145, numX: 230, numY: 125 }, // 頂左直角 (福德)
+        12: { points: "110,350 110,110 230,230", roman: "XII",  pX: 150, pY: 230, dotX: 160, dotY: 220, numX: 135, numY: 205 }  // 左上外直角 (相貌)
+      },
+
+      outerSlots: [
+        // 頂邊三個 (y=80)
+        { houseNum: 11, sign: "♉", signName: "金牛", cX: 230, cY: 80, boxX: 208, boxY: 58, dotStartY: 66 },
+        { houseNum: 10, sign: "♈", signName: "牡羊", cX: 350, cY: 80, boxX: 328, boxY: 58, dotStartY: 66 },
+        { houseNum: 9,  sign: "♓", signName: "雙魚", cX: 470, cY: 80, boxX: 448, boxY: 58, dotStartY: 66 },
+
+        // 右邊三個 (x=620)
+        { houseNum: 8,  sign: "♒", signName: "水瓶", cX: 620, cY: 230, boxX: 598, boxY: 208, dotStartY: 216 },
+        { houseNum: 7,  sign: "♑", signName: "摩羯", cX: 620, cY: 350, boxX: 598, boxY: 328, dotStartY: 336 },
+        { houseNum: 6,  sign: "♐", signName: "射手", cX: 620, cY: 470, boxX: 598, boxY: 448, dotStartY: 456 },
+
+        // 底邊三個 (y=620)
+        { houseNum: 5,  sign: "♏", signName: "天蠍", cX: 470, cY: 620, boxX: 448, boxY: 598, dotStartY: 606 },
+        { houseNum: 4,  sign: "♎", signName: "天秤", cX: 350, cY: 620, boxX: 328, boxY: 598, dotStartY: 606 },
+        { houseNum: 3,  sign: "♍", signName: "處女", cX: 230, cY: 620, boxX: 208, boxY: 598, dotStartY: 606 },
+
+        // 左邊三個 (x=80)
+        { houseNum: 2,  sign: "♌", signName: "獅子", cX: 80,  cY: 470, boxX: 58,  boxY: 448, dotStartY: 456 },
+        { houseNum: 1,  sign: "♋", signName: "巨蟹", cX: 80,  cY: 350, boxX: 58,  boxY: 328, dotStartY: 336 },
+        { houseNum: 12, sign: "♊", signName: "雙子", cX: 80,  cY: 230, boxX: 58,  boxY: 208, dotStartY: 216 }
+      ]
+    };
+
+    /**
      * 核心高精度向量 SVG：古典方形十二宮盤 (Square House Chart 參照 IMG_7973 / IMG_7975)
      */
     function renderSquareHouseChart() {
       const svg = document.getElementById('svgHouseChart');
       if (!svg || !currentHouseChart) return;
-
-      // 幾何頂點定義 (viewBox: 0 0 700 700)
-      // 外框: 95,95 到 605,605; 中心方框: 245,245 到 455,455
-      const housePolys = {
-        1:  { points: "95,350 245,245 245,455", labelX: 145, labelY: 340, dotsX: 185, dotsY: 325 }, // I 最左大三角
-        2:  { points: "95,350 95,605 245,455", labelX: 130, labelY: 520, dotsX: 175, dotsY: 495 }, // II 左下外
-        3:  { points: "95,605 350,605 245,455", labelX: 230, labelY: 575, dotsX: 285, dotsY: 525 }, // III 底左
-        4:  { points: "350,605 245,455 455,455", labelX: 350, labelY: 575, dotsX: 350, dotsY: 490 }, // IV 正底下大三角
-        5:  { points: "350,605 605,605 455,455", labelX: 470, labelY: 575, dotsX: 415, dotsY: 525 }, // V 底右
-        6:  { points: "605,350 605,605 455,455", labelX: 570, labelY: 520, dotsX: 525, dotsY: 495 }, // VI 右下外
-        7:  { points: "605,350 455,245 455,455", labelX: 555, labelY: 340, dotsX: 515, dotsY: 325 }, // VII 最右大三角
-        8:  { points: "605,95 605,350 455,245", labelX: 570, labelY: 180, dotsX: 525, dotsY: 205 }, // VIII 右上外
-        9:  { points: "350,95 605,95 455,245", labelX: 470, labelY: 125, dotsX: 415, dotsY: 175 }, // IX 頂右
-        10: { points: "350,95 245,245 455,245", labelX: 350, labelY: 125, dotsX: 350, dotsY: 210 }, // X 正頂天頂大三角
-        11: { points: "95,95 350,95 245,245", labelX: 230, labelY: 125, dotsX: 285, dotsY: 175 }, // XI 頂左
-        12: { points: "95,95 95,350 245,245", labelX: 130, labelY: 180, dotsX: 175, dotsY: 205 }  // XII 左上外
-      };
 
       let svgContent = `
         <defs>
@@ -828,19 +861,18 @@
             <stop offset="50%" stop-color="#C8A97E" />
             <stop offset="100%" stop-color="#8A6B18" />
           </radialGradient>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
 
-        <!-- 最外層大方框 -->
-        <rect x="95" y="95" width="510" height="510" fill="#F8F3E9" stroke="#2E3829" stroke-width="3" />
+        <!-- 1. 最外層邊框 (Outer Frame: 50,50 600x600) -->
+        <rect x="50" y="50" width="600" height="600" fill="#FFFFFF" stroke="#1F261C" stroke-width="3" />
+
+        <!-- 2. 內圈十二宮大方框 (House Square: 110,110 480x480) -->
+        <rect x="110" y="110" width="480" height="480" fill="#FFFDF8" stroke="#1F261C" stroke-width="2.5" />
       `;
 
-      // 繪製 12 宮位多邊形
+      // 3. 繪製 12 宮位多邊形三角形
       currentHouseChart.houses.forEach(h => {
-        const poly = housePolys[h.num];
+        const poly = CHART_GEOM.houses[h.num];
         const fig = h.figure;
         const isActive = activeSlotKey === h.slot;
 
@@ -848,48 +880,47 @@
           <g onclick="selectSlot('${h.slot}')" class="cursor-pointer group">
             <polygon points="${poly.points}" class="house-poly ${isActive ? 'active-house' : ''}" />
             <!-- 羅馬數字與宮名 -->
-            <text x="${poly.labelX}" y="${poly.labelY}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16" fill="#8A6B18" text-anchor="middle">${h.roman}</text>
-            <text x="${poly.labelX}" y="${poly.labelY + 16}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#4B5563" text-anchor="middle">${fig.zh}</text>
+            <text x="${poly.numX}" y="${poly.numY}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="14" fill="#8A6B18" text-anchor="middle">${poly.roman}</text>
+            <text x="${poly.numX}" y="${poly.numY + 16}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#4B5563" text-anchor="middle">${fig.zh}</text>
             <!-- 點陣珠子 -->
-            ${renderSvgDots(fig.dots, poly.dotsX, poly.dotsY)}
+            ${renderSvgDots(fig.dots, poly.dotX, poly.dotY, 7.5, 4.4)}
           </g>
         `;
       });
 
-      // 繪製中央方形區域 (245, 245 到 455, 455)
+      // 4. 繪製中央聖殿大方框 (Center Court: 230,230 240x240)
       svgContent += `
-        <!-- 中央法庭大方框 -->
-        <rect x="245" y="245" width="210" height="210" class="center-box" />
+        <rect x="230" y="230" width="240" height="240" fill="#FAF6EE" stroke="#1F261C" stroke-width="2.5" />
 
-        <!-- 中央分隔線 -->
-        <line x1="350" y1="245" x2="350" y2="365" stroke="#2E3829" stroke-width="1.8" stroke-dasharray="3 3" />
-        <line x1="245" y1="365" x2="455" y2="365" stroke="#2E3829" stroke-width="1.8" />
+        <!-- 中央分隔虛線 -->
+        <line x1="350" y1="230" x2="350" y2="350" stroke="#8A6B18" stroke-width="1.5" stroke-dasharray="3 3" />
+        <line x1="230" y1="350" x2="470" y2="350" stroke="#8A6B18" stroke-width="1.5" />
 
         <!-- XIV 左證人 (左上) -->
         <g onclick="selectSlot('w14')" class="center-cell ${activeSlotKey === 'w14' ? 'active-house' : ''}">
-          <rect x="246" y="246" width="103" height="118" fill="transparent" />
-          <text x="297" y="265" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#1D4ED8" text-anchor="middle">XIV 左證人</text>
-          <text x="297" y="280" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#374151" text-anchor="middle">${currentChart.witnesses.left.zh}</text>
-          ${renderSvgDots(currentChart.witnesses.left.dots, 297, 298, 7)}
+          <rect x="231" y="231" width="118" height="118" fill="transparent" />
+          <text x="290" y="252" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#1D4ED8" text-anchor="middle">XIV 左證人</text>
+          <text x="290" y="268" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#374151" text-anchor="middle">${currentChart.witnesses.left.zh}</text>
+          ${renderSvgDots(currentChart.witnesses.left.dots, 290, 278, 6.8, 4.0)}
         </g>
 
         <!-- XIII 右證人 (右上) -->
         <g onclick="selectSlot('w13')" class="center-cell ${activeSlotKey === 'w13' ? 'active-house' : ''}">
-          <rect x="351" y="246" width="103" height="118" fill="transparent" />
-          <text x="403" y="265" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#047857" text-anchor="middle">XIII 右證人</text>
-          <text x="403" y="280" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#374151" text-anchor="middle">${currentChart.witnesses.right.zh}</text>
-          ${renderSvgDots(currentChart.witnesses.right.dots, 403, 298, 7)}
+          <rect x="351" y="231" width="118" height="118" fill="transparent" />
+          <text x="410" y="252" font-family="'Noto Serif TC', serif" font-weight="900" font-size="13" fill="#047857" text-anchor="middle">XIII 右證人</text>
+          <text x="410" y="268" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#374151" text-anchor="middle">${currentChart.witnesses.right.zh}</text>
+          ${renderSvgDots(currentChart.witnesses.right.dots, 410, 278, 6.8, 4.0)}
         </g>
 
-        <!-- XV 核心法官 (下方) -->
+        <!-- XV 終審法官 (下方) -->
         <g onclick="selectSlot('j15')" class="center-cell ${activeSlotKey === 'j15' ? 'active-house' : ''}">
-          <rect x="246" y="366" width="208" height="88" fill="transparent" />
-          <text x="350" y="388" font-family="'Noto Serif TC', serif" font-weight="900" font-size="15" fill="#B8860B" text-anchor="middle">XV 法官 (Judge)</text>
-          <text x="350" y="405" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="13" fill="#1F261C" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
-          ${renderSvgDots(currentChart.judge.dots, 350, 418, 7)}
+          <rect x="231" y="351" width="238" height="118" fill="transparent" />
+          <text x="350" y="372" font-family="'Noto Serif TC', serif" font-weight="900" font-size="14" fill="#B8860B" text-anchor="middle">XV 法官 (The Judge)</text>
+          <text x="350" y="389" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="12" fill="#1F261C" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
+          ${renderSvgDots(currentChart.judge.dots, 350, 400, 6.8, 4.0)}
         </g>
 
-        <!-- 外圍 12 組圖形外向微縮點陣標記 (對照 IMG_7975 / IMG_7976) -->
+        <!-- 5. 外圍 12 組外向微縮點陣 (對照 IMG_7975 / IMG_7976，完美居中於 outerFrame 邊界) -->
         ${renderOuterBorderMarkers()}
       `;
 
@@ -903,55 +934,27 @@
       const svg = document.getElementById('svgPlanetaryChart');
       if (!svg || !currentHouseChart) return;
 
-      const housePolys = {
-        1:  { points: "95,350 245,245 245,455", pX: 155, pY: 350 }, // I
-        2:  { points: "95,350 95,605 245,455", pX: 145, pY: 510 },  // II
-        3:  { points: "95,605 350,605 245,455", pX: 250, pY: 555 }, // III
-        4:  { points: "350,605 245,455 455,455", pX: 350, pY: 545 }, // IV
-        5:  { points: "350,605 605,605 455,455", pX: 450, pY: 555 }, // V
-        6:  { points: "605,350 605,605 455,455", pX: 555, pY: 510 }, // VI
-        7:  { points: "605,350 455,245 455,455", pX: 545, pY: 350 }, // VII
-        8:  { points: "605,95 605,350 455,245", pX: 555, pY: 190 },  // VIII
-        9:  { points: "350,95 605,95 455,245", pX: 450, pY: 145 },  // IX
-        10: { points: "350,95 245,245 455,245", pX: 350, pY: 155 }, // X
-        11: { points: "95,95 350,95 245,245", pX: 250, pY: 145 },  // XI
-        12: { points: "95,95 95,350 245,245", pX: 145, pY: 190 }   // XII
-      };
-
       let svgContent = `
-        <rect x="95" y="95" width="510" height="510" fill="#F8F3E9" stroke="#2E3829" stroke-width="3" />
+        <!-- 1. 最外層邊框 (與宮位盤 100% 同步座標: 50,50 600x600) -->
+        <rect x="50" y="50" width="600" height="600" fill="#FFFFFF" stroke="#1F261C" stroke-width="3" />
+
+        <!-- 2. 內圈十二宮大方框 (與宮位盤 100% 同步座標: 110,110 480x480) -->
+        <rect x="110" y="110" width="480" height="480" fill="#FFFDF8" stroke="#1F261C" stroke-width="2.5" />
       `;
 
-      // 12 星座外框標籤 (參照 IMG_7974)
-      const zodiacBoxes = [
-        // 頂邊三個
-        { x: 95, y: 48, w: 150, h: 47, sign: "金牛座 ♉", p: "Taurus" },
-        { x: 245, y: 48, w: 210, h: 47, sign: "牡羊座 ♈", p: "Aries" },
-        { x: 455, y: 48, w: 150, h: 47, sign: "雙魚座 ♓", p: "Pisces" },
-        // 右邊三個
-        { x: 605, y: 95, w: 55, h: 150, sign: "♒", p: "水瓶" },
-        { x: 605, y: 245, w: 55, h: 210, sign: "♑", p: "摩羯" },
-        { x: 605, y: 455, w: 55, h: 150, sign: "♐", p: "射手" },
-        // 底邊三個
-        { x: 455, y: 605, w: 150, h: 47, sign: "天蠍座 ♏", p: "Scorpio" },
-        { x: 245, y: 605, w: 210, h: 47, sign: "天秤座 ♎", p: "Libra" },
-        { x: 95, y: 605, w: 150, h: 47, sign: "處女座 ♍", p: "Virgo" },
-        // 左邊三個
-        { x: 40, y: 455, w: 55, h: 150, sign: "♌", p: "獅子" },
-        { x: 40, y: 245, w: 55, h: 210, sign: "♋", p: "巨蟹" },
-        { x: 40, y: 95, w: 55, h: 150, sign: "♊", p: "雙子" }
-      ];
-
-      zodiacBoxes.forEach(z => {
+      // 3. 繪製外圍 12 星座方形小標籤盒 (參照 IMG_7974: 44x44 精緻居中方格)
+      CHART_GEOM.outerSlots.forEach(slot => {
         svgContent += `
-          <rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="#FFFDF8" stroke="#2E3829" stroke-width="2" rx="4" />
-          <text x="${z.x + z.w/2}" y="${z.y + z.h/2 + 5}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="${z.sign.length > 2 ? 13 : 18}" fill="#1F261C" text-anchor="middle">${z.sign}</text>
+          <g class="select-none">
+            <rect x="${slot.boxX}" y="${slot.boxY}" width="44" height="44" fill="#FFFDF9" stroke="#1F261C" stroke-width="1.8" rx="3" />
+            <text x="${slot.cX}" y="${slot.cY + 8}" font-family="'Noto Serif TC', serif" font-weight="bold" font-size="22" fill="#1F261C" text-anchor="middle">${slot.sign}</text>
+          </g>
         `;
       });
 
-      // 繪製 12 宮位三角形 + 古典行星大符號 (參照 IMG_7974)
+      // 4. 繪製 12 宮位三角形 + 古典行星大天文符號 (參照 IMG_7974)
       currentHouseChart.houses.forEach(h => {
-        const poly = housePolys[h.num];
+        const poly = CHART_GEOM.houses[h.num];
         const fig = h.figure;
         const isActive = activeSlotKey === h.slot;
 
@@ -959,18 +962,20 @@
           <g onclick="selectSlot('${h.slot}')" class="cursor-pointer group">
             <polygon points="${poly.points}" class="house-poly ${isActive ? 'active-house' : ''}" />
             <!-- 行星大天文符號 -->
-            <text x="${poly.pX}" y="${poly.pY + 8}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="28" fill="#2E3829" text-anchor="middle">${fig.planetSymbol || '☉'}</text>
-            <text x="${poly.pX}" y="${poly.pY + 26}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="10" fill="#6B7280" text-anchor="middle">${fig.zh}</text>
+            <text x="${poly.pX}" y="${poly.pY + 5}" font-family="'Noto Serif TC', serif" font-weight="900" font-size="32" fill="#1F261C" text-anchor="middle">${fig.planetSymbol || '☉'}</text>
+            <text x="${poly.pX}" y="${poly.pY + 24}" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="11" fill="#4B5563" text-anchor="middle">${fig.zh}</text>
           </g>
         `;
       });
 
-      // 中央方形區域
+      // 5. 中央聖殿法庭大方框與主宰星 (參照 IMG_7974: 大天文符號與守護星)
       svgContent += `
-        <rect x="245" y="245" width="210" height="210" class="center-box" />
-        <text x="350" y="325" font-family="'Noto Serif TC', serif" font-weight="900" font-size="42" fill="#B8860B" text-anchor="middle">${currentChart.judge.planetSymbol || '☉'}</text>
-        <text x="350" y="358" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16" fill="#1F261C" text-anchor="middle">法官守護 · ${currentChart.judge.planet}</text>
-        <text x="350" y="380" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="12" fill="#8A6B18" text-anchor="middle">${currentChart.judge.zh} (${currentChart.judge.sign})</text>
+        <rect x="230" y="230" width="240" height="240" fill="#FAF6EE" stroke="#1F261C" stroke-width="2.5" />
+        <g onclick="selectSlot('j15')" class="center-cell ${activeSlotKey === 'j15' ? 'active-house' : ''} cursor-pointer">
+          <text x="350" y="325" font-family="'Noto Serif TC', serif" font-weight="900" font-size="52" fill="#B8860B" text-anchor="middle">${currentChart.judge.planetSymbol || '☉'}</text>
+          <text x="350" y="362" font-family="'Noto Serif TC', serif" font-weight="900" font-size="15" fill="#1F261C" text-anchor="middle">法官守護 · ${currentChart.judge.planet}</text>
+          <text x="350" y="384" font-family="'Noto Sans TC', sans-serif" font-weight="bold" font-size="12" fill="#8A6B18" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
+        </g>
       `;
 
       svg.innerHTML = svgContent;
@@ -994,33 +999,15 @@
 
     // 輔助函式：繪製外圍 12 組圖形外向微縮點陣標記 (對照 IMG_7975 / IMG_7976)
     function renderOuterBorderMarkers() {
-      // 頂邊三組、右邊三組、底邊三組、左邊三組
-      return `
-        <!-- 頂邊 3 組 -->
-        <g opacity="0.85">
-          ${renderSvgDots(currentHouseChart.houses[10].figure.dots, 230, 48, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[9].figure.dots, 350, 48, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[8].figure.dots, 470, 48, 7, 3.2)}
-        </g>
-        <!-- 右邊 3 組 -->
-        <g opacity="0.85">
-          ${renderSvgDots(currentHouseChart.houses[7].figure.dots, 630, 180, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[6].figure.dots, 630, 325, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[5].figure.dots, 630, 495, 7, 3.2)}
-        </g>
-        <!-- 底邊 3 組 -->
-        <g opacity="0.85">
-          ${renderSvgDots(currentHouseChart.houses[2].figure.dots, 230, 625, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[3].figure.dots, 350, 625, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[4].figure.dots, 470, 625, 7, 3.2)}
-        </g>
-        <!-- 左邊 3 組 -->
-        <g opacity="0.85">
-          ${renderSvgDots(currentHouseChart.houses[11].figure.dots, 70, 180, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[0].figure.dots, 70, 325, 7, 3.2)}
-          ${renderSvgDots(currentHouseChart.houses[1].figure.dots, 70, 495, 7, 3.2)}
-        </g>
-      `;
+      let res = '<g opacity="0.9">';
+      CHART_GEOM.outerSlots.forEach(slot => {
+        const house = currentHouseChart.houses.find(h => h.num === slot.houseNum);
+        if (house && house.figure) {
+          res += renderSvgDots(house.figure.dots, slot.cX, slot.dotStartY, 6.8, 3.5);
+        }
+      });
+      res += '</g>';
+      return res;
     }
 
     function checkWarningBanner() {
