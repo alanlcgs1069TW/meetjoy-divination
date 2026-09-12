@@ -340,11 +340,8 @@ function App() {
     if (base === 12) setRectDateOffset(o => o + 1); // 晚子時 → 次日早子時
   }
 
-  // Restore page to 'chart' if we successfully recovered a chart or have active charts
-  const [page, setPage] = useState<AppPage>(() => {
-    const active = getActiveCharts();
-    return active.length > 0 ? 'chart' : 'list';
-  });
+  // 預設進入「命盤資料庫」列表頁面
+  const [page, setPage] = useState<AppPage>('list');
 
   function handleViewChart(saved: SavedChart) {
     try {
