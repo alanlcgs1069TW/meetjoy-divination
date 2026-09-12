@@ -229,28 +229,40 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
-            <div class="text-xs font-bold text-amber-800 mb-1">長期牌 (Long Range)</div>
-            <div id="anchorLongRange" class="text-base font-black text-[#1F261C] mb-1">黑桃 A</div>
-            <p class="text-[11px] text-stone-500 leading-relaxed">一整年的大背景底色與年度核心主軸。</p>
+          <div class="p-4 rounded-2xl bg-stone-50/90 border border-stone-200 flex items-center gap-3">
+            <div id="anchorLongRangeVisual" class="w-14 h-20 shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-amber-800 mb-0.5">長期牌 (Long Range)</div>
+              <div id="anchorLongRange" class="text-sm font-black text-[#1F261C] mb-0.5">黑桃 A</div>
+              <p class="text-[11px] text-stone-500 leading-relaxed">一整年的大背景底色與年度核心主軸。</p>
+            </div>
           </div>
 
-          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
-            <div class="text-xs font-bold text-rose-800 mb-1">冥王星牌 (Pluto)</div>
-            <div id="anchorPluto" class="text-base font-black text-[#1F261C] mb-1">紅心 2</div>
-            <p class="text-[11px] text-stone-500 leading-relaxed">年度最深層的轉化課題與潛意識恐懼挑戰。</p>
+          <div class="p-4 rounded-2xl bg-stone-50/90 border border-stone-200 flex items-center gap-3">
+            <div id="anchorPlutoVisual" class="w-14 h-20 shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-rose-800 mb-0.5">冥王星牌 (Pluto)</div>
+              <div id="anchorPluto" class="text-sm font-black text-[#1F261C] mb-0.5">紅心 2</div>
+              <p class="text-[11px] text-stone-500 leading-relaxed">年度最深層的轉化課題與潛意識挑戰。</p>
+            </div>
           </div>
 
-          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
-            <div class="text-xs font-bold text-emerald-800 mb-1">結果牌 (Result)</div>
-            <div id="anchorResult" class="text-base font-black text-[#1F261C] mb-1">黑桃 8</div>
-            <p class="text-[11px] text-stone-500 leading-relaxed">克服挑戰後所能收穫的最高榮耀與突破成果。</p>
+          <div class="p-4 rounded-2xl bg-stone-50/90 border border-stone-200 flex items-center gap-3">
+            <div id="anchorResultVisual" class="w-14 h-20 shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-emerald-800 mb-0.5">結果牌 (Result)</div>
+              <div id="anchorResult" class="text-sm font-black text-[#1F261C] mb-0.5">黑桃 8</div>
+              <p class="text-[11px] text-stone-500 leading-relaxed">克服挑戰後所能收穫的突破成果。</p>
+            </div>
           </div>
 
-          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
-            <div class="text-xs font-bold text-indigo-800 mb-1">環境/置換牌 (Environment)</div>
-            <div id="anchorEnv" class="text-base font-black text-[#1F261C] mb-1">方塊 10</div>
-            <p class="text-[11px] text-stone-500 leading-relaxed">圍繞在您身邊的外部環境、人際機遇與貴人氛圍。</p>
+          <div class="p-4 rounded-2xl bg-stone-50/90 border border-stone-200 flex items-center gap-3">
+            <div id="anchorEnvVisual" class="w-14 h-20 shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-indigo-800 mb-0.5">環境/置換牌 (Environment)</div>
+              <div id="anchorEnv" class="text-sm font-black text-[#1F261C] mb-0.5">方塊 10</div>
+              <p class="text-[11px] text-stone-500 leading-relaxed">圍繞身邊的外部環境、人際機遇與貴人。</p>
+            </div>
           </div>
 
         </div>
@@ -318,29 +330,37 @@
       handleCalculateCards(new Event('submit'));
     }
 
-    function renderMiniCardHTML(card, size = 'md') {
-      const isRed = (card.suit === 'H' || card.suit === 'D');
-      const textColor = isRed ? 'text-red-600' : 'text-stone-900';
-      const borderColor = isRed ? 'border-red-200' : 'border-stone-300';
-      const symbol = card.symbol || '';
-      const rank = card.rank || '';
+    // 點擊放大查看 1080 高清神聖卡牌 Modal
+    function openCardModal(imgName, title, desc = '') {
+      const modal = document.getElementById('cardPreviewModal');
+      const modalImg = document.getElementById('modalCardImg');
+      const modalTitle = document.getElementById('modalCardTitle');
+      const modalDesc = document.getElementById('modalCardDesc');
+      
+      modalImg.src = `/images/cards/${imgName}`;
+      modalTitle.innerText = title;
+      modalDesc.innerText = desc || '1080 規格神聖手繪禪繞曼陀羅靈性牌面';
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
 
-      // 圖檔優先
+    function closeCardModal() {
+      const modal = document.getElementById('cardPreviewModal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function renderMiniCardHTML(card, extraClasses = '') {
       const imgPath = `/images/cards/${card.img}`;
+      const titleSafe = `${card.zh || card.code}`;
 
       return `
-        <div class="w-full h-full flex flex-col justify-between items-center bg-white rounded-lg p-1 text-center font-bold ${textColor} ${borderColor}">
-          <div class="w-full flex justify-between items-center text-[11px] leading-none px-0.5">
-            <span>${rank}</span>
-            <span>${symbol}</span>
-          </div>
-          <div class="my-auto flex flex-col items-center justify-center">
-            <img src="${imgPath}" alt="${card.zh}" class="w-10 h-14 object-contain rounded shadow-xs" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <span class="text-2xl hidden">${symbol}</span>
-          </div>
-          <div class="w-full flex justify-between items-center text-[11px] leading-none px-0.5 rotate-180">
-            <span>${rank}</span>
-            <span>${symbol}</span>
+        <div class="relative group cursor-pointer w-full h-full rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-amber-900/10 transition-all duration-300 transform hover:-translate-y-1 bg-white ${extraClasses}"
+             onclick="openCardModal('${card.img}', '${titleSafe}', '${card.suitZh || ''} · ${card.element || ''}')">
+          <img src="${imgPath}" alt="${titleSafe}" class="w-full h-full object-contain" loading="lazy" onerror="this.src='/images/cards/c0.png'">
+          <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1">
+            <i class="fa-solid fa-magnifying-glass-plus text-sm"></i>
+            <span>放大</span>
           </div>
         </div>
       `;
@@ -361,22 +381,17 @@
     function renderCardsResult(res) {
       document.getElementById('cardsResultContainer').classList.remove('hidden');
 
-      // 1. Hero Card
+      // 1. Hero Card (本命牌)
       const bc = res.birthCard;
-      const isRed = (bc.suit === 'H' || bc.suit === 'D');
-      document.getElementById('heroCardVisual').className = `w-28 sm:w-36 h-40 sm:h-52 rounded-2xl bg-white ${isRed ? 'text-red-600' : 'text-stone-900'} border-4 border-amber-300/80 playing-card-shadow flex flex-col justify-between p-3 relative overflow-hidden transform hover:scale-105 transition`;
-      document.getElementById('heroCardVisual').innerHTML = `
-        <div class="flex justify-between items-center text-sm sm:text-base font-black">
-          <span>${bc.rank}</span>
-          <span>${bc.symbol}</span>
-        </div>
-        <div class="my-auto flex flex-col items-center justify-center">
-          <img src="/images/cards/${bc.img}" alt="${bc.zh}" class="w-16 sm:w-20 h-24 sm:h-28 object-contain rounded-md shadow-xs mb-1" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <span class="text-4xl hidden">${bc.symbol}</span>
-        </div>
-        <div class="flex justify-between items-center text-sm sm:text-base font-black rotate-180">
-          <span>${bc.rank}</span>
-          <span>${bc.symbol}</span>
+      const heroVisualEl = document.getElementById('heroCardVisual');
+      heroVisualEl.className = `w-32 sm:w-44 h-44 sm:h-60 rounded-2xl bg-white border-2 border-amber-400/90 shadow-2xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 shrink-0`;
+      heroVisualEl.innerHTML = `
+        <div class="w-full h-full relative group" onclick="openCardModal('${bc.img}', '${bc.zh}', '本命誕生牌 · ${bc.element}')">
+          <img src="/images/cards/${bc.img}" alt="${bc.zh}" class="w-full h-full object-contain">
+          <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
+            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+            <span>點擊放大 1080 規格</span>
+          </div>
         </div>
       `;
 
@@ -402,28 +417,35 @@
       periodsGridEl.innerHTML = res.periods.map(p => `
         <div class="p-3 rounded-2xl border transition text-center flex flex-col justify-between ${
           p.isCurrentPeriod 
-            ? 'bg-amber-50/90 border-amber-500 ring-2 ring-amber-400/40 shadow-sm' 
+            ? 'bg-amber-50/90 border-amber-500 ring-2 ring-amber-400/40 shadow-md' 
             : 'bg-stone-50 border-stone-200'
         }">
           <div>
-            <div class="text-[10px] font-bold text-[#8A6B18] mb-0.5">${p.planetZh.split(' ')[0]}</div>
+            <div class="text-[11px] font-bold text-[#8A6B18] mb-0.5">${p.planetZh.split(' ')[0]}</div>
             <div class="text-[10px] text-stone-500 mb-2">${p.dateRange}</div>
           </div>
-          <div class="w-16 h-24 mx-auto my-1.5">
+          <div class="w-20 h-28 mx-auto my-1.5">
             ${renderMiniCardHTML(p.card)}
           </div>
           <div>
             <div class="text-xs font-black text-[#1F261C] mt-1">${p.card.rank} ${p.card.symbol}</div>
             <div class="text-[10px] text-stone-500 line-clamp-1">${p.card.suitZh}</div>
-            ${p.isCurrentPeriod ? '<span class="mt-1.5 inline-block text-[10px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-full">當前進行</span>' : ''}
+            ${p.isCurrentPeriod ? '<span class="mt-1.5 inline-block text-[10px] bg-amber-600 text-white font-bold px-2.5 py-0.5 rounded-full shadow-xs">當前進行</span>' : ''}
           </div>
         </div>
       `).join('');
 
       // 4. 年度四大定位牌
+      document.getElementById('anchorLongRangeVisual').innerHTML = renderMiniCardHTML(res.yearlyCards.lifeCard);
       document.getElementById('anchorLongRange').innerText = res.yearlyCards.lifeCard.zh;
+
+      document.getElementById('anchorPlutoVisual').innerHTML = renderMiniCardHTML(res.yearlyCards.plutoCard);
       document.getElementById('anchorPluto').innerText = res.yearlyCards.plutoCard.zh;
+
+      document.getElementById('anchorResultVisual').innerHTML = renderMiniCardHTML(res.yearlyCards.resultCard);
       document.getElementById('anchorResult').innerText = res.yearlyCards.resultCard.zh;
+
+      document.getElementById('anchorEnvVisual').innerHTML = renderMiniCardHTML(res.yearlyCards.environmentCard);
       document.getElementById('anchorEnv').innerText = res.yearlyCards.environmentCard.zh;
 
       // 5. 愛倫院長魔藥處方
@@ -447,5 +469,32 @@
       handleCalculateCards();
     });
   </script>
+
+  <!-- 1080 高清卡牌放大預覽視窗 (Modal) -->
+  <div id="cardPreviewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md hidden transition-opacity" onclick="if(event.target === this) closeCardModal()">
+    <div class="bg-gradient-to-b from-stone-900 to-stone-950 border border-amber-500/40 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative flex flex-col items-center animate-fade-in text-center">
+      <button onclick="closeCardModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-stone-800 text-stone-300 hover:text-white hover:bg-stone-700 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-4">
+        <i class="fa-solid fa-sparkles"></i>
+        <span>1080 規格 · 神聖手繪禪繞曼陀羅靈性牌面</span>
+      </div>
+
+      <div class="w-64 sm:w-80 h-84 sm:h-104 bg-stone-900 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400/80 mb-4">
+        <img id="modalCardImg" src="" alt="Card" class="w-full h-full object-contain">
+      </div>
+
+      <h3 id="modalCardTitle" class="text-2xl font-black text-[#F7E7CE] tracking-wide mb-1"></h3>
+      <p id="modalCardDesc" class="text-xs text-amber-200/80 max-w-sm"></p>
+      
+      <div class="mt-4 pt-4 border-t border-stone-800 w-full flex justify-center">
+        <button onclick="closeCardModal()" class="px-6 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-white text-xs font-bold transition">
+          關閉預覽
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

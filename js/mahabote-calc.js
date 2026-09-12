@@ -1,7 +1,7 @@
 /**
  * 癒見幸福 · 魔法占星學院
- * 脈輪占星系統 (Chakra Astrology System · 緬甸小占星 Mahabote 演算法引擎)
- * 整合七大脈輪 (Chakras)、七大本命宮位 (Mahabote 7 Houses)、108年大運週期與八方風水
+ * 脈輪占星系統 (Chakra Astrology System · 七曜七脈輪生命能量全息演算法引擎)
+ * 整合七大脈輪 (Chakras)、七大本命宮位神聖金字塔 (7 Sacred Houses)、108年大運週期與八方風水
  */
 
 const MAHABOTE_DATA = {
@@ -150,9 +150,9 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
   else if (weekday === 5) birthPlanet = 'Venus';
   else if (weekday === 6) birthPlanet = 'Saturn';
 
-  // 2. 判斷緬甸紀年 (Burmese Era) 與餘數 (Remainder)
-  // 4月15日以前 (含) 使用 Workchart 1: Year - 639
-  // 4月16日以後 (含) 使用 Workchart 2: Year - 638
+  // 2. 判斷天命神聖紀年與天命餘數 (Sacred Era & Remainder)
+  // 4月15日以前 (含) 使用第 1 工作盤: Year - 639
+  // 4月16日以後 (含) 使用第 2 工作盤: Year - 638
   const isBeforeNewYear = (month < 4) || (month === 4 && day <= 15);
   const burmeseYear = isBeforeNewYear ? (year - 639) : (year - 638);
   const remainder = burmeseYear % 7; // 0, 1, 2, 3, 4, 5, 6

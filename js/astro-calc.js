@@ -9,7 +9,11 @@
   if (typeof define === 'function' && define.amd) {
     define(['./astronomy.browser.min.js'], factory);
   } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('astronomy-engine'));
+    let ast = null;
+    try { ast = require('astronomy-engine'); } catch(e) {
+      try { ast = require('./astronomy.browser.min.js'); } catch(e2) {}
+    }
+    module.exports = factory(ast);
   } else {
     root.AstroCalc = factory(root.Astronomy);
   }
@@ -114,7 +118,7 @@
       totalDegree: normLon,
       sign: ZODIAC_SIGNS[signIndex].name,
       signEn: ZODIAC_SIGNS[signIndex].en,
-      symbol: ZODIAC_SIGNS[signIndex].symbol,
+      signSymbol: ZODIAC_SIGNS[signIndex].symbol,
       degree: deg,
       minute: min,
       second: sec,
@@ -155,27 +159,36 @@
       const diff = mod(ecl.elon - eclPast.elon + 180, 360) - 180;
       const isRetrograde = diff < 0;
 
+      const signInfo = longitudeToSign(lon);
+
       results[b.id] = {
         id: b.id,
         name: b.name,
         symbol: b.symbol,
+        planetSymbol: b.symbol,
+        signSymbol: signInfo.signSymbol,
         longitude: lon,
         latitude: lat,
         isRetrograde: isRetrograde,
         speedDaily: diff * 24,
-        ...longitudeToSign(lon)
+        ...signInfo,
+        symbol: b.symbol
       };
     });
 
     // 地球位置為太陽對宮 180 度
     const earthLon = mod(results['Sun'].longitude + 180, 360);
+    const earthSignInfo = longitudeToSign(earthLon);
     results['Earth'] = {
       id: 'Earth',
       name: '地球',
       symbol: '⊕',
+      planetSymbol: '⊕',
+      signSymbol: earthSignInfo.signSymbol,
       longitude: earthLon,
       isRetrograde: false,
-      ...longitudeToSign(earthLon)
+      ...earthSignInfo,
+      symbol: '⊕'
     };
 
     // 月球交點 (標準天文真北交點 True North Node & 真南交點 True South Node，對齊 astro.com)
@@ -196,22 +209,34 @@
       - 0.0801 * Math.sin(r * 2 * (Mprime - F));
     trueNodeLon = mod(trueNodeLon, 360);
 
+    const nnSignInfo = longitudeToSign(trueNodeLon);
     results['NorthNode'] = {
       id: 'NorthNode',
       name: '北交點',
       symbol: '☊',
+      planetSymbol: '☊',
+      signSymbol: nnSignInfo.signSymbol,
       longitude: trueNodeLon,
       isRetrograde: true,
-      ...longitudeToSign(trueNodeLon)
+      ...nnSignInfo,
+      symbol: '☊'
     };
+
+    const snLon = mod(trueNodeLon + 180, 360);
+    const snSignInfo = longitudeToSign(snLon);
     results['SouthNode'] = {
       id: 'SouthNode',
       name: '南交點',
       symbol: '☋',
-      longitude: mod(trueNodeLon + 180, 360),
+      planetSymbol: '☋',
+      signSymbol: snSignInfo.signSymbol,
+      longitude: snLon,
       isRetrograde: true,
-      ...longitudeToSign(mod(trueNodeLon + 180, 360))
+      ...snSignInfo,
+      symbol: '☋'
     };
+
+    return results;
 
     return results;
   }

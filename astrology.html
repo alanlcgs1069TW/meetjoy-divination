@@ -496,17 +496,17 @@
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
-        // 度數標註 (例如 5°10)
+        // 度數標註 (例如 5°♈10')
         const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         const degPt = polarToCartesian(cx, cy, rPlanetBase - 15, p.dispAng);
         degText.setAttribute('x', degPt.x);
         degText.setAttribute('y', degPt.y + 3);
         degText.setAttribute('font-size', '8');
-        degText.setAttribute('font-family', 'monospace');
+        degText.setAttribute('font-family', 'sans-serif');
         degText.setAttribute('font-weight', 'bold');
-        degText.setAttribute('fill', '#64748B');
+        degText.setAttribute('fill', '#475569');
         degText.setAttribute('text-anchor', 'middle');
-        degText.textContent = `${p.degree}°${p.minute.toString().padStart(2, '0')}`;
+        degText.textContent = `${p.degree}°${p.signSymbol || ''}${p.minute.toString().padStart(2, '0')}'`;
         g.appendChild(degText);
 
         // 逆行標籤
@@ -609,9 +609,11 @@
               return `
                 <tr class="hover:bg-amber-50/40 transition">
                   <td class="py-2 flex items-center gap-1.5 font-bold text-slate-800">
-                    <span class="text-base">${p.symbol}</span> ${p.name}
+                    <span class="text-base text-amber-700 font-bold">${p.symbol}</span> ${p.name}
                   </td>
-                  <td class="py-2 font-mono text-slate-700">${p.formatted}</td>
+                  <td class="py-2 font-mono text-slate-700">
+                    <span class="font-bold text-stone-900 mr-1 text-sm">${p.signSymbol || ''}</span> ${p.formatted}
+                  </td>
                   <td class="py-2 text-slate-600 font-bold">第 ${h} 宮</td>
                   <td class="py-2">
                     ${p.isRetrograde ? '<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">逆行 ℞</span>' : '<span class="text-slate-400">順行</span>'}

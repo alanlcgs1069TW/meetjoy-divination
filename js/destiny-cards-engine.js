@@ -52,7 +52,7 @@ function parseCardCode(code) {
       symbol: '🃏',
       color: '#9333ea',
       element: '全知原初 (無限可能)',
-      img: 'c0.gif'
+      img: 'c0.png'
     };
   }
   const suitChar = code.slice(-1);
@@ -60,12 +60,12 @@ function parseCardCode(code) {
   const suitMeta = CARD_SUITS[suitChar] || CARD_SUITS['S'];
   const rankMeta = CARD_RANKS[rankChar] || { val: 0, name: rankChar, zh: rankChar };
   
-  // 查找圖檔名稱 (c1.gif ~ c52.gif)
+  // 查找圖檔名稱 (c1.png ~ c52.png 1080規格高清神聖牌面)
   const dData = getDestinyData();
-  let imgName = 'c1.gif';
+  let imgName = 'c1.png';
   if (dData && dData.icards) {
     const found = dData.icards.find(c => c.code === code);
-    if (found) imgName = found.img + '.gif';
+    if (found) imgName = found.img + '.png';
   }
 
   return {
