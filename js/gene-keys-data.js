@@ -100,7 +100,7 @@ const SPHERE_LINE_TAGS = {
     5: '五爻 · 影響（聲音）',
     6: '六爻 · 臣服（意識）'
   },
-  // 使命 (Purpose)
+  // 使命 (Purpose - 激活序列/身體根基)
   purpose: {
     1: '初爻 · 物理根基',
     2: '二爻 · 姿勢流動',
@@ -108,6 +108,15 @@ const SPHERE_LINE_TAGS = {
     4: '四爻 · 呼吸（韻律）',
     5: '五爻 · 聲音頻率',
     6: '六爻 · 臣服大化'
+  },
+  // 使命 (Purpose - 金星序列/靈魂關係)
+  purpose_venus: {
+    1: '初爻 · 骨盆／錨定',
+    2: '二爻 · 伴侶／同調',
+    3: '三爻 · 逃避者／轉化',
+    4: '四爻 · 滋養者/政客',
+    5: '五爻 · 領袖／實用',
+    6: '六爻 · 隱士／示範'
   },
   // 吸引力 (Attraction)
   attraction: {
@@ -183,46 +192,102 @@ const SPHERE_LINE_TAGS = {
   // 品牌 (Brand)
   brand: {
     1: '初爻 · 原創先行者',
-    2: '二爻 · 舞者',
+    2: '二爻 · 魅力',
     3: '三爻 · 靈活變革者',
     4: '四爻 · 誠摯服務者',
     5: '五爻 · 宏觀引導者',
     6: '六爻 · 崇高示範者'
+  },
+  // 天職 (Vocation)
+  vocation: {
+    1: '初爻 · 壓抑／大師',
+    2: '二爻 · 否定／天才',
+    3: '擁抱風險 · 三爻',
+    4: '四爻 · 拒絕／網絡',
+    5: '五爻 · 內疚／領導',
+    6: '六爻 · 分離／視野'
+  },
+  // 關係力 (Relationship / Attunement)
+  relationship: {
+    1: '初爻 · 誠信／原真',
+    2: '二爻 · 響應／流動',
+    3: '三爻 · 融匯',
+    4: '四爻 · 親和／同理',
+    5: '五爻 · 影響／引導',
+    6: '六爻 · 願景／昇華'
+  },
+  // 穩定性 (Stability)
+  stability: {
+    1: '初爻 · 自律',
+    2: '二爻 · 彈性／自如',
+    3: '三爻 · 堅毅／扎根',
+    4: '四爻 · 網絡／守護',
+    5: '五爻 · 系統／持衡',
+    6: '六爻 · 永恆／超越'
+  },
+  // 創造力 (Creativity)
+  creativity: {
+    1: '初爻 · 原始純力',
+    2: '二爻 · 天賦律動',
+    3: '鍊金 · 三爻',
+    4: '四爻 · 協同交響',
+    5: '五爻 · 破局引領',
+    6: '六爻 · 神性造化'
   }
 };
 
-// 全息天命圖畫布標準神聖幾何座標 (基於 900x720 視圖百分比)
+// 全息天命圖各序列標準幾何座標 (基於 960x760 視圖百分比)
 const SACRED_MANDALA_COORDS = {
   // 激活序列 (綠)
-  lifesWork:  { x: 50, y: 14, seq: 'activation', labelAlign: 'top-right' },
-  evolution:  { x: 73, y: 48, seq: 'activation', labelAlign: 'right' },
-  radiance:   { x: 27, y: 48, seq: 'activation', labelAlign: 'left' },
-  purpose:    { x: 50, y: 81, seq: 'activation', labelAlign: 'bottom-right' },
+  lifesWork:  { x: 50, y: 14, labelAlign: 'top-right' },
+  evolution:  { x: 73, y: 48, labelAlign: 'right' },
+  radiance:   { x: 27, y: 48, labelAlign: 'left' },
+  purpose:    { x: 50, y: 81, labelAlign: 'bottom-right' },
 
   // 金星序列 (紅/紫)
-  attraction: { x: 50, y: 65, seq: 'venus', labelAlign: 'right' },
-  iq:         { x: 39, y: 56, seq: 'venus', labelAlign: 'left' },
-  eq:         { x: 61, y: 56, seq: 'venus', labelAlign: 'right' },
-  sq:         { x: 50, y: 48, seq: 'venus', labelAlign: 'right' },
-  core:       { x: 39, y: 40, seq: 'venus', labelAlign: 'left' },
+  attraction: { x: 50, y: 65, labelAlign: 'right' },
+  iq:         { x: 39, y: 56, labelAlign: 'left' },
+  eq:         { x: 61, y: 56, labelAlign: 'right' },
+  sq:         { x: 50, y: 48, labelAlign: 'right' },
+  core:       { x: 39, y: 40, labelAlign: 'left' },
 
   // 珍珠序列 (藍)
-  culture:    { x: 61, y: 40, seq: 'pearl', labelAlign: 'right' },
-  pearl:      { x: 50, y: 32, seq: 'pearl', labelAlign: 'top' }
+  culture:    { x: 61, y: 40, labelAlign: 'right' },
+  pearl:      { x: 50, y: 32, labelAlign: 'top' }
 };
 
-// 全息通道網絡連線 (Pathways)
+// 珍珠序列專屬等邊三角形座標 (大正三角形 + 中心珍珠)
+const PEARL_SEQUENCE_COORDS = {
+  brand:      { x: 50, y: 22, labelAlign: 'right' },
+  vocation:   { x: 37, y: 58, labelAlign: 'left' },
+  culture:    { x: 63, y: 58, labelAlign: 'right' },
+  pearl:      { x: 50, y: 47, labelAlign: 'right' }
+};
+
+// 星辰珍珠專屬神聖六角幾何座標 (正六邊形 + 中心珍珠)
+const STAR_PEARL_COORDS = {
+  brand:        { x: 50.0, y: 21.0, labelAlign: 'right' },
+  relationship: { x: 73.4, y: 34.5, labelAlign: 'right' },
+  culture:      { x: 73.4, y: 61.5, labelAlign: 'right' },
+  stability:    { x: 50.0, y: 75.0, labelAlign: 'right' },
+  vocation:     { x: 26.6, y: 61.5, labelAlign: 'left' },
+  creativity:   { x: 26.6, y: 34.5, labelAlign: 'left' },
+  pearl:        { x: 50.0, y: 48.0, labelAlign: 'right' }
+};
+
+// 全息通道網絡連線 (Pathways) - 完整全譜
 const GOLDEN_PATHWAYS = [
   // 激活序列綠線 (The Activation Sequence)
   { from: 'lifesWork', to: 'evolution', color: '#10B981', seq: 'activation', name: '突破通道' },
   { from: 'evolution', to: 'radiance', color: '#10B981', seq: 'activation', name: '挑戰通道' },
   { from: 'radiance', to: 'purpose', color: '#10B981', seq: 'activation', name: '扎根通道' },
-  { from: 'purpose', to: 'lifesWork', color: '#10B981', seq: 'activation', name: '天命循環通道', curved: true },
+  { from: 'purpose', to: 'lifesWork', color: '#10B981', seq: 'activation', name: '天命循環通道' },
 
   // 金星序列紅線 (The Venus Sequence)
   { from: 'purpose', to: 'attraction', color: '#E11D48', seq: 'venus', name: '業力吸引力通道' },
   { from: 'attraction', to: 'iq', color: '#E11D48', seq: 'venus', name: '心智轉化通道' },
   { from: 'attraction', to: 'eq', color: '#E11D48', seq: 'venus', name: '情緒轉化通道' },
+  { from: 'iq', to: 'eq', color: '#E11D48', seq: 'venus', name: '心智情緒整合通道' },
   { from: 'iq', to: 'sq', color: '#E11D48', seq: 'venus', name: '靈性覺醒通道' },
   { from: 'eq', to: 'sq', color: '#E11D48', seq: 'venus', name: '心輪開啟通道' },
   { from: 'sq', to: 'core', color: '#E11D48', seq: 'venus', name: '核心創傷通道' },
@@ -234,11 +299,64 @@ const GOLDEN_PATHWAYS = [
   { from: 'pearl', to: 'lifesWork', color: '#0EA5E9', seq: 'pearl', name: '品牌顯化通道' }
 ];
 
+// 各分盤專屬通道網絡
+const SUB_SEQUENCE_PATHWAYS = {
+  activation: [
+    { from: 'lifesWork', to: 'evolution', color: '#10B981' },
+    { from: 'evolution', to: 'radiance', color: '#10B981' },
+    { from: 'radiance', to: 'purpose', color: '#10B981' },
+    { from: 'purpose', to: 'lifesWork', color: '#10B981' }
+  ],
+  venus: [
+    { from: 'purpose', to: 'attraction', color: '#E11D48' },
+    { from: 'attraction', to: 'iq', color: '#E11D48' },
+    { from: 'attraction', to: 'eq', color: '#E11D48' },
+    { from: 'iq', to: 'eq', color: '#E11D48' },
+    { from: 'iq', to: 'sq', color: '#E11D48' },
+    { from: 'eq', to: 'sq', color: '#E11D48' },
+    { from: 'sq', to: 'core', color: '#E11D48' }
+  ],
+  pearl: [
+    { from: 'brand', to: 'vocation', color: '#0284C7' },
+    { from: 'vocation', to: 'culture', color: '#0284C7' },
+    { from: 'culture', to: 'brand', color: '#0284C7' },
+    { from: 'brand', to: 'pearl', color: '#0284C7' },
+    { from: 'vocation', to: 'pearl', color: '#0284C7' },
+    { from: 'culture', to: 'pearl', color: '#0284C7' }
+  ],
+  starPearl: [
+    // 正六邊形邊界
+    { from: 'brand', to: 'relationship', color: '#2563EB' },
+    { from: 'relationship', to: 'culture', color: '#2563EB' },
+    { from: 'culture', to: 'stability', color: '#2563EB' },
+    { from: 'stability', to: 'vocation', color: '#2563EB' },
+    { from: 'vocation', to: 'creativity', color: '#2563EB' },
+    { from: 'creativity', to: 'brand', color: '#2563EB' },
+    // 內部六芒星連線
+    { from: 'brand', to: 'culture', color: '#2563EB' },
+    { from: 'culture', to: 'vocation', color: '#2563EB' },
+    { from: 'vocation', to: 'brand', color: '#2563EB' },
+    { from: 'relationship', to: 'stability', color: '#2563EB' },
+    { from: 'stability', to: 'creativity', color: '#2563EB' },
+    { from: 'creativity', to: 'relationship', color: '#2563EB' },
+    // 中心輻射連線
+    { from: 'pearl', to: 'brand', color: '#2563EB' },
+    { from: 'pearl', to: 'relationship', color: '#2563EB' },
+    { from: 'pearl', to: 'culture', color: '#2563EB' },
+    { from: 'pearl', to: 'stability', color: '#2563EB' },
+    { from: 'pearl', to: 'vocation', color: '#2563EB' },
+    { from: 'pearl', to: 'creativity', color: '#2563EB' }
+  ]
+};
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     GENE_KEYS_64,
     SPHERE_LINE_TAGS,
     SACRED_MANDALA_COORDS,
-    GOLDEN_PATHWAYS
+    PEARL_SEQUENCE_COORDS,
+    STAR_PEARL_COORDS,
+    GOLDEN_PATHWAYS,
+    SUB_SEQUENCE_PATHWAYS
   };
 }

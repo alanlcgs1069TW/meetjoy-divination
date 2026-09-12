@@ -604,10 +604,15 @@
       core: { id: 'core', name: '核心', en: 'Core', seq: 'venus', color: '#6366F1', planet: 'Design Mars', planetSymbol: '♂', ...degreeToGateLine(dPos.Mars.longitude) },
 
       // 珍珠序列 (藍色 · 顯化世俗豐盛)
-      vocation: { id: 'vocation', name: '天職/召喚', en: 'Vocation', seq: 'pearl', color: '#6366F1', planet: 'Design Mars', planetSymbol: '♂', ...degreeToGateLine(dPos.Mars.longitude) },
+      vocation: { id: 'vocation', name: '天職', en: 'Vocation', seq: 'pearl', color: '#0EA5E9', planet: 'Design Mars', planetSymbol: '♂', ...degreeToGateLine(dPos.Mars.longitude) },
       culture: { id: 'culture', name: '文化', en: 'Culture', seq: 'pearl', color: '#0EA5E9', planet: 'Design Jupiter', planetSymbol: '♃', ...degreeToGateLine(dPos.Jupiter.longitude) },
-      brand: { id: 'brand', name: '品牌', en: 'Brand', seq: 'pearl', color: '#10B981', planet: 'Personality Sun', planetSymbol: '☉', ...degreeToGateLine(pPos.Sun.longitude) },
-      pearl: { id: 'pearl', name: '珍珠', en: 'Pearl', seq: 'pearl', color: '#0EA5E9', planet: 'Personality Jupiter', planetSymbol: '♃', ...degreeToGateLine(pPos.Jupiter.longitude) }
+      brand: { id: 'brand', name: '品牌', en: 'Brand', seq: 'pearl', color: '#0EA5E9', planet: 'Personality Sun', planetSymbol: '☉', ...degreeToGateLine(pPos.Sun.longitude) },
+      pearl: { id: 'pearl', name: '珍珠', en: 'Pearl', seq: 'pearl', color: '#0EA5E9', planet: 'Personality Jupiter', planetSymbol: '♃', ...degreeToGateLine(pPos.Jupiter.longitude) },
+
+      // 星辰珍珠序列 (Star Pearl · 宇宙和諧與量子共振)
+      relationship: { id: 'relationship', name: '關係力', en: 'Relationship', seq: 'starPearl', color: '#4338CA', planet: 'Personality Mercury', planetSymbol: '☿', ...degreeToGateLine(pPos.Mercury.longitude) },
+      stability: { id: 'stability', name: '穩定性', en: 'Stability', seq: 'starPearl', color: '#4338CA', planet: 'Design Saturn', planetSymbol: '♄', ...degreeToGateLine(dPos.Saturn.longitude) },
+      creativity: { id: 'creativity', name: '創造力', en: 'Creativity', seq: 'starPearl', color: '#4338CA', planet: 'Design Uranus', planetSymbol: '♅', ...degreeToGateLine(dPos.Uranus.longitude) }
     };
 
     return {
