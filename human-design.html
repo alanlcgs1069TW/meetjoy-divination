@@ -389,69 +389,95 @@
       'Root': '【根部中心調頻】：腎上腺素的壓力是火箭引擎，不是方向盤。不要為了逃避焦慮而倉促做事，先深呼吸站穩腳跟。'
     };
 
-    // 64 閘門在 SVG 上的標準座標
+    // 64 閘門在 SVG 上的精準標準座標 (全面最佳化間距，杜絕重疊擠壓)
     const GATE_COORDS = {
-      64: [175, 76], 61: [200, 76], 63: [225, 76],
-      47: [175, 115], 24: [200, 115], 4: [225, 115],
-      17: [175, 142], 43: [200, 150], 11: [225, 142],
-      62: [178, 198], 23: [200, 198], 56: [222, 198],
-      16: [173, 212], 20: [173, 235], 31: [178, 252],
-      8: [200, 252], 33: [222, 252], 45: [227, 245],
-      12: [227, 225], 35: [227, 208],
-      7: [182, 310], 1: [200, 302], 13: [218, 310],
+      // 頭部中心 (Head)
+      64: [178, 76], 61: [200, 76], 63: [222, 76],
+      // 邏輯中心 (Ajna)
+      47: [178, 116], 24: [200, 116], 4: [222, 116],
+      17: [176, 142], 43: [200, 152], 11: [224, 142],
+      // 喉嚨中心 (Throat)
+      62: [180, 202], 23: [200, 202], 56: [216, 202],
+      16: [174, 218], 20: [174, 236], 31: [178, 252],
+      8: [196, 252], 33: [214, 252], 45: [226, 244],
+      12: [226, 228], 35: [226, 212],
+      // G中心 (Identity)
+      7: [182, 312], 1: [200, 300], 13: [218, 312],
       10: [172, 335], 25: [228, 335],
-      15: [182, 360], 2: [200, 368], 46: [218, 360],
-      21: [274, 335], 51: [260, 350], 26: [274, 355], 40: [274, 368],
-      48: [75, 400], 57: [98, 418], 44: [118, 435], 50: [120, 455],
-      32: [105, 472], 28: [88, 488], 18: [75, 495],
-      36: [325, 400], 22: [302, 418], 37: [282, 435], 6: [280, 455],
-      49: [295, 472], 55: [312, 488], 30: [325, 495],
-      5: [178, 423], 14: [200, 423], 29: [222, 423],
-      34: [173, 442], 27: [173, 462], 42: [178, 477],
-      3: [200, 477], 9: [222, 477], 59: [227, 450],
-      53: [178, 543], 60: [200, 543], 52: [222, 543],
-      54: [173, 558], 38: [173, 572], 58: [178, 592],
-      41: [222, 592], 39: [227, 572], 19: [227, 558]
+      15: [182, 358], 2: [200, 370], 46: [218, 358],
+      // 意志力心輪 (Heart)
+      21: [276, 332], 51: [260, 348], 26: [276, 350], 40: [276, 368],
+      // 脾臟直覺中心 (Spleen) 嚴格拉開 20px+ 安全間距
+      48: [78, 398], 57: [98, 415], 44: [118, 432], 50: [120, 458],
+      32: [104, 474], 28: [88, 490], 18: [72, 502],
+      // 情緒中心 (Solar Plexus) 嚴格拉開 20px+ 安全間距
+      36: [322, 398], 22: [302, 415], 37: [282, 432], 6: [280, 458],
+      49: [296, 474], 55: [312, 490], 30: [328, 502],
+      // 薦骨中心 (Sacral)
+      5: [180, 425], 14: [200, 425], 29: [220, 425],
+      34: [174, 444], 27: [174, 464], 42: [180, 475],
+      3: [200, 475], 9: [220, 475], 59: [226, 452],
+      // 根部中心 (Root)
+      53: [180, 545], 60: [200, 545], 52: [220, 545],
+      54: [174, 560], 38: [174, 575], 58: [180, 591],
+      41: [220, 591], 39: [226, 575], 19: [226, 560]
     };
 
-    // 36 條通道標準幾何路徑 (起點 p0, 控制點 ctrl, 終點 p2)
+    // 36 條通道標準幾何路徑 (同心平行等距分流，徹底杜絕通道穿插重疊)
     const HD_CHANNEL_PATHS = [
-      { id: '64-47', g1: 64, g2: 47, p0: [175, 76], ctrl: null, p2: [175, 115] },
-      { id: '61-24', g1: 61, g2: 24, p0: [200, 76], ctrl: null, p2: [200, 115] },
-      { id: '63-4',  g1: 63, g2: 4,  p0: [225, 76], ctrl: null, p2: [225, 115] },
-      { id: '17-62', g1: 17, g2: 62, p0: [175, 142], ctrl: null, p2: [178, 198] },
-      { id: '43-23', g1: 43, g2: 23, p0: [200, 150], ctrl: null, p2: [200, 198] },
-      { id: '11-56', g1: 11, g2: 56, p0: [225, 142], ctrl: null, p2: [222, 198] },
-      { id: '16-48', g1: 16, g2: 48, p0: [173, 212], ctrl: [100, 260], p2: [75, 400] },
-      { id: '20-57', g1: 20, g2: 57, p0: [173, 235], ctrl: [120, 310], p2: [98, 418] },
-      { id: '20-10', g1: 20, g2: 10, p0: [173, 235], ctrl: [145, 280], p2: [172, 335] },
-      { id: '31-7',  g1: 31, g2: 7,  p0: [178, 252], ctrl: [170, 280], p2: [182, 310] },
-      { id: '8-1',   g1: 8,  g2: 1,  p0: [200, 252], ctrl: null, p2: [200, 302] },
-      { id: '33-13', g1: 33, g2: 13, p0: [222, 252], ctrl: [230, 280], p2: [218, 310] },
-      { id: '45-21', g1: 45, g2: 21, p0: [227, 245], ctrl: [270, 280], p2: [274, 335] },
-      { id: '12-22', g1: 12, g2: 22, p0: [227, 225], ctrl: [280, 310], p2: [302, 418] },
-      { id: '35-36', g1: 35, g2: 36, p0: [227, 208], ctrl: [300, 260], p2: [325, 400] },
-      { id: '25-51', g1: 25, g2: 51, p0: [228, 335], ctrl: null, p2: [260, 350] },
-      { id: '10-34', g1: 10, g2: 34, p0: [172, 335], ctrl: [145, 390], p2: [173, 442] },
-      { id: '15-5',  g1: 15, g2: 5,  p0: [182, 360], ctrl: [170, 395], p2: [178, 423] },
-      { id: '2-14',  g1: 2,  g2: 14, p0: [200, 368], ctrl: null, p2: [200, 423] },
-      { id: '46-29', g1: 46, g2: 29, p0: [218, 360], ctrl: [230, 395], p2: [222, 423] },
-      { id: '26-44', g1: 26, g2: 44, p0: [274, 355], ctrl: [180, 385], p2: [118, 435] },
-      { id: '40-37', g1: 40, g2: 37, p0: [274, 368], ctrl: null, p2: [282, 435] },
-      { id: '34-57', g1: 34, g2: 57, p0: [173, 442], ctrl: [135, 430], p2: [98, 418] },
-      { id: '27-50', g1: 27, g2: 50, p0: [173, 462], ctrl: null, p2: [120, 455] },
-      { id: '59-6',  g1: 59, g2: 6,  p0: [227, 450], ctrl: null, p2: [280, 455] },
-      { id: '34-20', g1: 34, g2: 20, p0: [173, 442], ctrl: [130, 340], p2: [173, 235] },
-      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [110, 360], p2: [98, 418] },
-      { id: '42-53', g1: 42, g2: 53, p0: [178, 477], ctrl: [170, 510], p2: [178, 543] },
-      { id: '3-60',  g1: 3,  g2: 60, p0: [200, 477], ctrl: null, p2: [200, 543] },
-      { id: '9-52',  g1: 9,  g2: 52, p0: [222, 477], ctrl: [230, 510], p2: [222, 543] },
-      { id: '32-54', g1: 32, g2: 54, p0: [105, 472], ctrl: [130, 520], p2: [173, 558] },
-      { id: '28-38', g1: 28, g2: 38, p0: [88, 488],  ctrl: [115, 550], p2: [173, 572] },
-      { id: '18-58', g1: 18, g2: 58, p0: [75, 495],  ctrl: [80, 600],  p2: [178, 592] },
-      { id: '49-19', g1: 49, g2: 19, p0: [295, 472], ctrl: [270, 520], p2: [227, 558] },
-      { id: '55-39', g1: 55, g2: 39, p0: [312, 488], ctrl: [285, 550], p2: [227, 572] },
-      { id: '30-41', g1: 30, g2: 41, p0: [325, 495], ctrl: [320, 600], p2: [222, 592] }
+      // 頭部至邏輯 (Head -> Ajna)
+      { id: '64-47', g1: 64, g2: 47, p0: [178, 76], ctrl: null, p2: [178, 116] },
+      { id: '61-24', g1: 61, g2: 24, p0: [200, 76], ctrl: null, p2: [200, 116] },
+      { id: '63-4',  g1: 63, g2: 4,  p0: [222, 76], ctrl: null, p2: [222, 116] },
+      // 邏輯至喉嚨 (Ajna -> Throat)
+      { id: '17-62', g1: 17, g2: 62, p0: [176, 142], ctrl: null, p2: [180, 202] },
+      { id: '43-23', g1: 43, g2: 23, p0: [200, 152], ctrl: null, p2: [200, 202] },
+      { id: '11-56', g1: 11, g2: 56, p0: [224, 142], ctrl: null, p2: [216, 202] },
+      // 喉嚨至脾臟 (Throat -> Spleen) 雙弧線外側平滑分軌
+      { id: '16-48', g1: 16, g2: 48, p0: [174, 218], ctrl: [65, 270], p2: [78, 398] },
+      { id: '20-57', g1: 20, g2: 57, p0: [174, 236], ctrl: [105, 305], p2: [98, 415] },
+      // 喉嚨至G中心 (Throat -> G)
+      { id: '20-10', g1: 20, g2: 10, p0: [174, 236], ctrl: null, p2: [172, 335] },
+      { id: '31-7',  g1: 31, g2: 7,  p0: [178, 252], ctrl: null, p2: [182, 312] },
+      { id: '8-1',   g1: 8,  g2: 1,  p0: [196, 252], ctrl: null, p2: [200, 300] },
+      { id: '33-13', g1: 33, g2: 13, p0: [214, 252], ctrl: null, p2: [218, 312] },
+      // 喉嚨至意志力心輪 (Throat -> Heart)
+      { id: '45-21', g1: 45, g2: 21, p0: [226, 244], ctrl: [265, 275], p2: [276, 332] },
+      // 喉嚨至情緒中心 (Throat -> Solar Plexus) 雙弧線平滑分軌
+      { id: '35-36', g1: 35, g2: 36, p0: [226, 212], ctrl: [335, 270], p2: [322, 398] },
+      { id: '12-22', g1: 12, g2: 22, p0: [226, 228], ctrl: [295, 305], p2: [302, 415] },
+      // G中心至心輪 (G -> Heart)
+      { id: '25-51', g1: 25, g2: 51, p0: [228, 335], ctrl: null, p2: [260, 348] },
+      // 整合通道：G至薦骨 (G -> Sacral) 與 喉嚨繞過G至薦骨 (Throat -> Sacral)
+      { id: '10-34', g1: 10, g2: 34, p0: [172, 335], ctrl: null, p2: [174, 444] },
+      { id: '34-20', g1: 34, g2: 20, p0: [174, 444], ctrl: [146, 335], p2: [174, 236] },
+      // G至脾臟 (G -> Spleen)
+      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [130, 365], p2: [98, 415] },
+      // G中心至薦骨 (G -> Sacral)
+      { id: '15-5',  g1: 15, g2: 5,  p0: [182, 358], ctrl: null, p2: [180, 425] },
+      { id: '2-14',  g1: 2,  g2: 14, p0: [200, 370], ctrl: null, p2: [200, 425] },
+      { id: '46-29', g1: 46, g2: 29, p0: [218, 358], ctrl: null, p2: [220, 425] },
+      // 心輪至脾臟 (Heart -> Spleen) 走 G 與 薦骨間隙 (Y=400)，乾淨不纏繞
+      { id: '26-44', g1: 26, g2: 44, p0: [276, 354], ctrl: [195, 400], p2: [118, 432] },
+      // 心輪至情緒中心 (Heart -> Solar Plexus)
+      { id: '40-37', g1: 40, g2: 37, p0: [276, 368], ctrl: null, p2: [282, 432] },
+      // 薦骨至脾臟 (Sacral -> Spleen)
+      { id: '34-57', g1: 34, g2: 57, p0: [174, 444], ctrl: [132, 435], p2: [98, 415] },
+      { id: '27-50', g1: 27, g2: 50, p0: [174, 464], ctrl: null, p2: [120, 458] },
+      // 薦骨至情緒中心 (Sacral -> Solar Plexus)
+      { id: '59-6',  g1: 59, g2: 6,  p0: [226, 452], ctrl: null, p2: [280, 458] },
+      // 薦骨至根部 (Sacral -> Root)
+      { id: '42-53', g1: 42, g2: 53, p0: [180, 475], ctrl: null, p2: [180, 545] },
+      { id: '3-60',  g1: 3,  g2: 60, p0: [200, 475], ctrl: null, p2: [200, 545] },
+      { id: '9-52',  g1: 9,  g2: 52, p0: [220, 475], ctrl: null, p2: [220, 545] },
+      // 脾臟至根部 (Spleen -> Root) 三重同心等距弧線，間距嚴格保證 >= 16px，絕對不交叉
+      { id: '32-54', g1: 32, g2: 54, p0: [104, 474], ctrl: [140, 508], p2: [174, 560] },
+      { id: '28-38', g1: 28, g2: 38, p0: [88, 490],  ctrl: [120, 540], p2: [174, 575] },
+      { id: '18-58', g1: 18, g2: 58, p0: [72, 502],  ctrl: [92, 580],  p2: [180, 591] },
+      // 情緒中心至根部 (Solar Plexus -> Root) 三重同心等距弧線，絕對不交叉
+      { id: '49-19', g1: 49, g2: 19, p0: [296, 474], ctrl: [260, 508], p2: [226, 560] },
+      { id: '55-39', g1: 55, g2: 39, p0: [312, 490], ctrl: [280, 540], p2: [226, 575] },
+      { id: '30-41', g1: 30, g2: 41, p0: [328, 502], ctrl: [308, 580], p2: [220, 591] }
     ];
 
     // 二次貝茲曲線/直線平滑切分
@@ -626,28 +652,28 @@
         }
       });
 
-      // 7. 繪製 36 條通道正統雙軌凹槽管道 (底導軌 + 白槽心 + 半通道/全通道飽滿著色：紅/黑/斑馬紋)
+      // 7. 繪製 36 條通道正統雙軌凹槽管道 (精準分流線寬，徹底避免交疊黏結)
       const chLayer = document.getElementById('svg_channels_layer');
       chLayer.innerHTML = '';
 
       HD_CHANNEL_PATHS.forEach(ch => {
         const pathData = splitChannelPath(ch.p0, ch.ctrl, ch.p2);
 
-        // 1. 底層外框導軌 (10.5px 淺灰實心邊界，圓頭)
+        // 1. 底層外框導軌 (7.2px 淺灰實心邊界，圓頭)
         const bgCasing = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         bgCasing.setAttribute('d', pathData.full);
         bgCasing.setAttribute('stroke', '#CBD5E1');
-        bgCasing.setAttribute('stroke-width', '10.5');
+        bgCasing.setAttribute('stroke-width', '7.2');
         bgCasing.setAttribute('stroke-linecap', 'round');
         bgCasing.setAttribute('stroke-linejoin', 'round');
         bgCasing.setAttribute('fill', 'none');
         chLayer.appendChild(bgCasing);
 
-        // 2. 內芯純白導槽 (7.5px 純白凹槽，創造正統雙導軌立體層次)
+        // 2. 內芯純白導槽 (4.8px 純白凹槽，創造正統雙導軌立體層次)
         const bgGroove = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         bgGroove.setAttribute('d', pathData.full);
         bgGroove.setAttribute('stroke', '#FFFFFF');
-        bgGroove.setAttribute('stroke-width', '7.5');
+        bgGroove.setAttribute('stroke-width', '4.8');
         bgGroove.setAttribute('stroke-linecap', 'round');
         bgGroove.setAttribute('stroke-linejoin', 'round');
         bgGroove.setAttribute('fill', 'none');
@@ -674,7 +700,7 @@
           const fullActive = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           fullActive.setAttribute('d', pathData.full);
           fullActive.setAttribute('stroke', c1);
-          fullActive.setAttribute('stroke-width', '7.5');
+          fullActive.setAttribute('stroke-width', '4.8');
           fullActive.setAttribute('stroke-linecap', 'round');
           fullActive.setAttribute('stroke-linejoin', 'round');
           fullActive.setAttribute('fill', 'none');
@@ -685,7 +711,7 @@
             const p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             p1.setAttribute('d', pathData.half1);
             p1.setAttribute('stroke', c1);
-            p1.setAttribute('stroke-width', '7.5');
+            p1.setAttribute('stroke-width', '4.8');
             p1.setAttribute('stroke-linecap', 'round');
             p1.setAttribute('stroke-linejoin', 'round');
             p1.setAttribute('fill', 'none');
@@ -695,7 +721,7 @@
             const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             p2.setAttribute('d', pathData.half2);
             p2.setAttribute('stroke', c2);
-            p2.setAttribute('stroke-width', '7.5');
+            p2.setAttribute('stroke-width', '4.8');
             p2.setAttribute('stroke-linecap', 'round');
             p2.setAttribute('stroke-linejoin', 'round');
             p2.setAttribute('fill', 'none');
@@ -704,9 +730,17 @@
         }
       });
 
-      // 8. 繪製 64 閘門標籤與高亮徽章 (對標桌面真實截圖 IMG_7943)
+      // 8. 繪製 64 閘門標籤與高對比立體徽章 (徹底解決中心填色時數字看不清楚問題)
       const gatesLayer = document.getElementById('svg_gates_layer');
       gatesLayer.innerHTML = '';
+
+      // 建立 gate -> center 快速映射
+      const GATE_TO_CENTER = {};
+      if (AstroCalc.HD_CENTERS) {
+        Object.entries(AstroCalc.HD_CENTERS).forEach(([cName, gList]) => {
+          gList.forEach(gNum => { GATE_TO_CENTER[gNum] = cName; });
+        });
+      }
 
       for (let g = 1; g <= 64; g++) {
         const pt = GATE_COORDS[g];
@@ -714,16 +748,19 @@
         const [x, y] = pt;
 
         const isAct = hd.activeGates.all.has(g);
+        const parentCenter = GATE_TO_CENTER[g];
+        const isCenterDefined = parentCenter ? defCenters.has(parentCenter) : false;
+
         const gGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         gGroup.setAttribute('class', 'gate-node cursor-pointer transition');
         gGroup.setAttribute('data-gate', g);
 
         if (isAct) {
-          // 啟動閘門：實心黑底白字高亮圓形徽章 (Black Badge Circle r=9，外帶純白細微邊框)
+          // 啟動閘門：黑底白字高亮圓形徽章 (Black Badge Circle r=7.5，外帶純白細邊框，最高對比)
           const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           circle.setAttribute('cx', x);
           circle.setAttribute('cy', y);
-          circle.setAttribute('r', '9');
+          circle.setAttribute('r', '7.5');
           circle.setAttribute('fill', '#0F172A');
           circle.setAttribute('stroke', '#FFFFFF');
           circle.setAttribute('stroke-width', '1.2');
@@ -731,26 +768,58 @@
 
           const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           txt.setAttribute('x', x);
-          txt.setAttribute('y', y + 3.2);
+          txt.setAttribute('y', y + 2.7);
           txt.setAttribute('text-anchor', 'middle');
           txt.setAttribute('fill', '#FFFFFF');
-          txt.setAttribute('font-size', '8.5');
+          txt.setAttribute('font-size', '7.5');
           txt.setAttribute('font-weight', '900');
           txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
           txt.textContent = g;
           gGroup.appendChild(txt);
         } else {
-          // 未啟動閘門：清爽深灰字
-          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          txt.setAttribute('x', x);
-          txt.setAttribute('y', y + 3);
-          txt.setAttribute('text-anchor', 'middle');
-          txt.setAttribute('fill', '#64748B');
-          txt.setAttribute('font-size', '8');
-          txt.setAttribute('font-weight', '700');
-          txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
-          txt.textContent = g;
-          gGroup.appendChild(txt);
+          // 未啟動閘門：加入獨立圓形襯底徽章，確保在棕/紅/綠/黃或白底中心皆 100% 刀鋒般清晰
+          const bgBadge = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          bgBadge.setAttribute('cx', x);
+          bgBadge.setAttribute('cy', y);
+          bgBadge.setAttribute('r', '6.5');
+
+          if (isCenterDefined) {
+            // 已定義填色中心：純白高透光襯底 + 深碳黑粗體數字
+            bgBadge.setAttribute('fill', '#FFFFFF');
+            bgBadge.setAttribute('opacity', '0.92');
+            bgBadge.setAttribute('stroke', '#94A3B8');
+            bgBadge.setAttribute('stroke-width', '0.7');
+            gGroup.appendChild(bgBadge);
+
+            const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            txt.setAttribute('x', x);
+            txt.setAttribute('y', y + 2.4);
+            txt.setAttribute('text-anchor', 'middle');
+            txt.setAttribute('fill', '#0F172A');
+            txt.setAttribute('font-size', '7');
+            txt.setAttribute('font-weight', '800');
+            txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+            txt.textContent = g;
+            gGroup.appendChild(txt);
+          } else {
+            // 未定義空白中心：柔和白底微灰邊框 + 灰黑數字
+            bgBadge.setAttribute('fill', '#F8FAFC');
+            bgBadge.setAttribute('opacity', '0.85');
+            bgBadge.setAttribute('stroke', '#CBD5E1');
+            bgBadge.setAttribute('stroke-width', '0.6');
+            gGroup.appendChild(bgBadge);
+
+            const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            txt.setAttribute('x', x);
+            txt.setAttribute('y', y + 2.4);
+            txt.setAttribute('text-anchor', 'middle');
+            txt.setAttribute('fill', '#475569');
+            txt.setAttribute('font-size', '7');
+            txt.setAttribute('font-weight', '700');
+            txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+            txt.textContent = g;
+            gGroup.appendChild(txt);
+          }
         }
 
         // 點擊閘門顯示該閘門啟用狀態

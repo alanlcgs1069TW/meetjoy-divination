@@ -17,6 +17,10 @@
     .cinzel { font-family: 'Cinzel', serif; }
     .planet-glyph { cursor: pointer; transition: transform 0.2s ease; }
     .planet-glyph:hover { transform: scale(1.3); }
+    .astro-glyph {
+      font-family: 'Apple Symbols', 'Segoe UI Symbol', 'Noto Sans Symbols', 'Noto Sans Math', 'DejaVu Sans', sans-serif;
+      font-style: normal;
+    }
   </style>
 </head>
 <body class="bg-[#F4F1EA] min-h-screen flex flex-col items-center p-0 m-0 text-[#1E293B]">
@@ -55,90 +59,182 @@
 
       <!-- 輸入表單 -->
       <form id="astro_form" class="bg-[#FAF7F2] border border-[#E8DFC8] rounded-2xl p-4 sm:p-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5 items-end">
           
-          <!-- 出生日期 -->
+          <!-- 姓名與性別 -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 出生公曆日期 (Date)</label>
-            <input type="date" id="birth_date" required value="1990-05-20" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 姓名與稱謂 (Name)</label>
+            <div class="flex gap-1.5">
+              <input type="text" id="user_name" required value="YuYang" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+              <select id="user_gender" class="bg-white border border-slate-300 rounded-xl px-2 py-2 text-xs font-bold text-slate-700 focus:outline-none">
+                <option value="Male" selected>男</option>
+                <option value="Female">女</option>
+              </select>
+            </div>
           </div>
 
-          <!-- 出生時間 -->
+          <!-- 出生西元日期 -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. 出生時分 (Time · 24H)</label>
-            <input type="time" id="birth_time" required value="12:30" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. 出生日 (Date)</label>
+            <input type="date" id="birth_date" required value="1990-01-27" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
           </div>
 
-          <!-- 出生城市 -->
+          <!-- 出生時分 -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 出生城市 (Place of Birth)</label>
-            <select id="birth_city" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
-              <!-- JS 動態填充 -->
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 出生時分 (Time · 24H)</label>
+            <input type="time" id="birth_time" required value="11:36" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+          </div>
+
+          <!-- 出生地點 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">4. 出生城市 (Place)</label>
+            <select id="birth_city" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+              <!-- JS 動態填入全球城市 -->
             </select>
           </div>
 
-          <!-- 宮位制選擇 -->
+          <!-- 宮位制 -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">4. 分宮制度 (House System)</label>
-            <select id="house_system" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
-              <option value="placidus" selected>普拉西度制 (Placidus · 當代標準)</option>
-              <option value="whole_sign">整宮制 (Whole Sign · 古典占星)</option>
-              <option value="equal">等宮制 (Equal House)</option>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">5. 分宮制度 (House System)</label>
+            <select id="house_system" class="w-full bg-white border border-slate-300 rounded-xl px-2 py-2 text-xs font-bold text-slate-800 focus:outline-none">
+              <option value="placidus" selected>普拉西度制 (Placidus)</option>
+              <option value="koch">柯氏分宮制 (Koch)</option>
+              <option value="whole_sign">整宮制 (Whole Sign)</option>
+              <option value="equal_house">等宮制 (Equal House)</option>
+              <option value="regiomontanus">芮氏分宮制 (Regiomontanus)</option>
+              <option value="campanus">坎氏分宮制 (Campanus)</option>
+              <option value="topocentric">地表分宮制 (Topocentric)</option>
             </select>
           </div>
 
-          <!-- 提交排盤按鈕 -->
+          <!-- 排盤按鈕 -->
           <div>
-            <button type="submit" class="w-full bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 font-bold py-2.5 px-4 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-1.5 border border-amber-900/30">
-              <span>🪐 繪製本命星盤</span>
+            <button type="submit" class="w-full bg-gradient-to-r from-[#2B3828] to-[#3B4D36] text-amber-100 hover:text-white hover:from-[#1E281C] hover:to-[#2B3828] font-bold py-2.5 px-4 rounded-xl text-sm shadow-md transition duration-200 flex items-center justify-center gap-2">
+              <span>🪶</span> 繪製本命星盤
             </button>
           </div>
         </div>
 
-        <!-- 夏令時間與經緯度資訊列 -->
-        <div class="mt-4 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-          <div class="flex items-center gap-2">
-            <label class="inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="chk_dst" class="sr-only peer">
-              <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#987315]"></div>
-              <span class="ml-2 font-medium text-slate-700">歷史夏令時間 (DST) 校驗</span>
+        <!-- 歷史夏令時間提示 -->
+        <div class="mt-3.5 pt-3 border-t border-slate-200/60 flex flex-wrap items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="chk_dst" class="rounded text-[#987315] focus:ring-[#987315] h-4 w-4">
+              <span class="font-medium">歷史夏令時間 (DST) 校驗</span>
             </label>
-            <span id="dst_auto_tag" class="hidden px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[11px]">系統自動檢測符合</span>
+            <span id="dst_auto_tag" class="hidden px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold border border-amber-300">
+              ⚡ 當期適用歷史夏令時間 (減 1 小時)
+            </span>
           </div>
-
-          <div id="geo_info_text" class="font-mono text-slate-600">
-            座標：東經 121°33' 北緯 25°02' ｜ 時區：UTC+8
+          <div id="geo_info_text" class="font-mono text-[11px] text-slate-500">
+            座標：東經 121.52° 北緯 25.05° ｜ 時區：UTC+8
           </div>
         </div>
       </form>
     </div>
 
-    <!-- 四大核心軸線指標卡 (Asc, MC, Sun, Moon) -->
-    <div id="astro_summary_cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-8"></div>
+    <!-- 四大核心焦點指標 (Asc, Mc, Sun, Moon) -->
+    <div id="astro_summary_cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- 上升點 Asc -->
+      <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-sm">
+        <p class="text-[11px] font-black tracking-wider text-slate-500 uppercase cinzel">上升點 (ASCENDANT · AS)</p>
+        <h4 id="kpi_asc" class="text-xl font-black text-[#1E293B] mt-1">金牛座 11°26'</h4>
+        <p class="text-xs text-slate-600 mt-1">人格面具與此生英雄旅程</p>
+      </div>
+      <!-- 天頂 Mc -->
+      <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-sm">
+        <p class="text-[11px] font-black tracking-wider text-slate-500 uppercase cinzel">天頂 (MIDHEAVEN · MC)</p>
+        <h4 id="kpi_mc" class="text-xl font-black text-[#987315] mt-1">摩羯座 29°31'</h4>
+        <p class="text-xs text-slate-600 mt-1">事業巔峰與社會成就標竿</p>
+      </div>
+      <!-- 太陽星座 -->
+      <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-sm">
+        <p class="text-[11px] font-black tracking-wider text-slate-500 uppercase cinzel">太陽星座 (SUN SIGN)</p>
+        <h4 id="kpi_sun" class="text-xl font-black text-[#D97706] mt-1">水瓶座 6°56'</h4>
+        <p class="text-xs text-slate-600 mt-1">生命意志核心與光芒綻放</p>
+      </div>
+      <!-- 月亮星座 -->
+      <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-sm">
+        <p class="text-[11px] font-black tracking-wider text-slate-500 uppercase cinzel">月亮星座 (MOON SIGN)</p>
+        <h4 id="kpi_moon" class="text-xl font-black text-[#4F46E5] mt-1">水瓶座 11°11'</h4>
+        <p class="text-xs text-slate-600 mt-1">潛意識情緒與靈魂安全感</p>
+      </div>
+    </div>
 
-    <!-- 星盤核心主舞台：圓形 SVG 星盤與詳細相位網 -->
+    <!-- 星盤核心主舞台：AstroGold 專業風格雙盤排盤系統 -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- 左欄：高階圓形本命星盤 SVG -->
-      <div class="lg:col-span-7 bg-white/95 border border-[#E2D9C8] rounded-3xl p-6 shadow-sm flex flex-col items-center">
-        <div class="w-full max-w-[540px] relative select-none">
-          <svg id="astro_wheel_svg" viewBox="0 0 600 600" class="w-full h-auto drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
+      <!-- 左欄：AstroGold 經典雙輪星盤主面板 -->
+      <div id="astrogold_card" class="lg:col-span-7 bg-[#FFFEEB] border-2 border-[#D8C7A0] rounded-3xl overflow-hidden shadow-md flex flex-col items-center">
+        
+        <!-- 1. AstroGold 經典金黃導航工具列 (Toolbar) -->
+        <div class="w-full bg-[#F5C242] border-b border-[#DFAC2F] px-4 py-2 flex flex-wrap items-center justify-between text-[#3F2B04] font-bold text-xs select-none">
+          <div class="flex items-center gap-2">
+            <button id="btn_transit_reset" type="button" title="重設至當下行運" class="hover:bg-[#DFAC2F]/50 p-1.5 rounded-lg transition flex items-center gap-1 text-sm bg-[#F5C242] border border-[#D19B1A]">
+              <span>↺</span> <span class="text-xs">當下</span>
+            </button>
+            <button id="btn_toggle_wheel_mode" type="button" class="px-2.5 py-1 rounded-lg bg-[#3F2B04] text-[#FFFEEB] hover:bg-[#5C3F08] transition text-xs flex items-center gap-1">
+              <span id="label_wheel_mode">雙盤 (Natal + Transits)</span>
+            </button>
+          </div>
+
+          <!-- ◀ 1 Day ▶ 行運推運步進器 -->
+          <div class="flex items-center bg-[#E5B232] rounded-lg px-2 py-0.5 border border-[#C9961A]">
+            <button id="btn_step_prev" type="button" class="px-2 py-1 hover:bg-[#D4A122] rounded text-sm transition" title="倒退">◀</button>
+            <select id="sel_transit_step" class="bg-transparent border-none text-xs font-black cursor-pointer focus:outline-none px-1 text-[#2B1D02]">
+              <option value="hour">1 Hour</option>
+              <option value="day" selected>1 Day</option>
+              <option value="week">1 Week</option>
+              <option value="month">1 Month</option>
+              <option value="year">1 Year</option>
+            </select>
+            <button id="btn_step_next" type="button" class="px-2 py-1 hover:bg-[#D4A122] rounded text-sm transition" title="前進">▶</button>
+          </div>
+
+          <div class="flex items-center gap-1 text-xs">
+            <span class="font-mono text-[11px] opacity-90 font-black tracking-wider">AstroGold</span>
+          </div>
+        </div>
+
+        <!-- 2. AstroGold 經典雙欄資訊抬頭 (Inner Wheel & Outer Wheel) -->
+        <div class="w-full px-5 pt-3.5 pb-2 grid grid-cols-2 gap-4 text-[#1E293B] border-b border-[#EFE3C3] select-none text-xs bg-[#FFFEEB]">
+          <!-- 左欄：Natal Inner Wheel -->
+          <div id="astrogold_header_natal" class="leading-tight">
+            <h2 class="text-lg sm:text-xl font-black text-black" id="disp_name">YuYang</h2>
+            <p class="font-bold text-slate-800 text-[12px]" id="disp_gender">Male</p>
+            <p class="font-bold text-slate-900 text-[12px]">Inner Wheel</p>
+            <p class="text-slate-700 font-mono text-[11px]" id="disp_natal_date">Jan 27 1990, Sat</p>
+            <p class="text-slate-700 font-mono text-[11px]" id="disp_natal_time">11:36 AM AWST -8:00</p>
+            <p class="text-slate-700 font-mono text-[11px]" id="disp_natal_place">T'ai-pei, Taiwan</p>
+            <p class="text-slate-500 italic text-[11px]">Tropical</p>
+            <p class="text-slate-500 italic text-[11px]" id="disp_natal_hsys">Placidus</p>
+          </div>
+          <!-- 右欄：Transits Outer Wheel -->
+          <div id="astrogold_header_transit" class="text-right leading-tight">
+            <h2 class="text-lg sm:text-xl font-black text-black">Transits</h2>
+            <p class="font-bold text-slate-800 text-[12px]">Event</p>
+            <p class="font-bold text-slate-900 text-[12px]">Outer Wheel</p>
+            <p class="text-slate-700 font-mono text-[11px]" id="disp_transit_date">Aug 25 2026, Tue</p>
+            <p class="text-slate-700 font-mono text-[11px]" id="disp_transit_time">9:56:25 PM AWST -8:00</p>
+            <p class="text-slate-700 font-mono text-[11px]" id="disp_transit_place">T'ai-pei, Taiwan</p>
+            <p class="text-slate-500 italic text-[11px]">Tropical</p>
+            <p class="text-slate-500 italic text-[11px]" id="disp_transit_hsys">Placidus</p>
+          </div>
+        </div>
+
+        <!-- 3. AstroGold 經典 SVG 星盤畫布 -->
+        <div class="w-full max-w-[620px] p-2 relative select-none bg-[#FFFEEB]">
+          <svg id="astro_wheel_svg" viewBox="0 0 680 680" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
             <!-- 圓形星盤由 JS 動態完整繪製 -->
           </svg>
         </div>
 
-        <div class="mt-4 flex flex-wrap justify-center gap-3 text-[11px] font-bold">
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span> 0° 合相 (Conjunction)</span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> 120° 三分相 (Trine)</span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span> 60° 六分相 (Sextile)</span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span> 90° 四分相 (Square)</span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#8B5CF6]"></span> 180° 對分相 (Opposition)</span>
+        <!-- 圖例 -->
+        <div class="w-full bg-[#FAF5DF] border-t border-[#EFE3C3] px-4 py-2.5 flex flex-wrap justify-center gap-3 text-[11px] font-bold text-slate-700">
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#E11D48]"></span> 0° 合相 / 90° 刑相 / 180° 衝相</span>
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span> 120° 三分拱相</span>
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#0D9488]"></span> 60° 六分相</span>
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-0.5 border-t border-dashed border-[#16A34A]"></span> 150° 梅花補相</span>
         </div>
       </div>
 
@@ -242,34 +338,71 @@
       geoText.textContent = `座標：${lngDir} ${Math.abs(city.lng).toFixed(2)}° ${latDir} ${Math.abs(city.lat).toFixed(2)}° ｜ 時區：UTC${city.tz >= 0 ? '+' : ''}${city.tz} ${chk.checked ? '(DST -1h 生效)' : ''}`;
     }
 
-    // 圓形星盤繪製核心 (SVG · 對標 astro.com 與 Astro Gold 瑞士星曆專業標準)
-    function renderAstrologyWheel(planets, houses, aspects) {
+    // AstroGold 全域行運狀態
+    let currentTransitDate = new Date('2026-08-25T21:56:25+08:00');
+    let isBiWheelMode = true;
+
+    // 格式化 AstroGold 經典雙盤資訊字串
+    function formatAstroGoldDateTime(date, tz) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const m = months[date.getMonth()];
+      const d = date.getDate();
+      const y = date.getFullYear();
+      const dayName = days[date.getDay()];
+      
+      let hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+
+      const tzNum = tz !== undefined ? tz : 8;
+      const tzStr = `AWST -${Math.abs(tzNum)}:00`;
+
+      return {
+        dateStr: `${m} ${d.toString().padStart(2, '0')} ${y}, ${dayName}`,
+        timeStr: `${hours}:${minutes}:${seconds} ${ampm} ${tzStr}`
+      };
+    }
+
+    // 圓形雙輪星盤繪製核心 (SVG · 100% 仿製 AstroGold 經典專業雙盤樣式)
+    function renderAstrologyWheel(planets, houses, aspects, transitPlanets, options = {}) {
       const svg = document.getElementById('astro_wheel_svg');
       svg.innerHTML = '';
 
-      const cx = 300, cy = 300;
-      const rOuter = 265;      // 黃道外圈邊界
-      const rZodiacMid = 245;  // 12 星座符號中心軌道
-      const rSigns = 225;      // 黃道內圈邊界 (刻度底圈)
-      const rPlanet = 168;     // 行星符號與度數排版主軌道
-      const rHouses = 118;     // 宮位放射線內圓
-      const rAspects = 114;    // 相位線連接外端
-      const rAspectHub = 22;   // 中心留白純白輪轂
+      const cx = 340, cy = 340;
+      const rWheelOuter = 330;   // 外輪外邊界
+      const rTransitRing = 302;  // 行運星曜符號軌道
+      const rZodiacOuter = 272;  // 12 星座黃道環外徑 (含刻度)
+      const rZodiacMid = 252;    // 12 星座符號居中軌道
+      const rZodiacInner = 230;  // 12 星座黃道環內徑
+      const rNatalBase = 180;    // 本命星曜主排版軌道
+      const rHouseOuter = 138;   // 內圈宮位放射線外圓
+      const rHouseNum = 108;     // 宮位數字居中軌道
+      const rHouseInner = 76;    // 宮位放射線內圓 (相位線連接點)
+      const rAspectHub = 22;     // 中心純白留白輪轂
 
-      // 占星盤標準將上升點 (Asc) 放置於左側水平軸線 (180°)
+      // 文本字形防 Emoji 化輔助函數
+      function toTextGlyph(sym) {
+        if (!sym) return '';
+        return sym.endsWith('\uFE0E') ? sym : (sym + '\uFE0E');
+      }
+
+      // 占星盤標準將上升點 (Asc) 鎖定於左側水平軸線 (180°)
       const ascLon = houses.asc.longitude;
 
-      // 轉換黃道度數為 SVG 角度 (Asc 鎖定於 180° 西側水平)
       function lonToSvgAngle(lon) {
         let ang = 180 - (lon - ascLon);
         return ((ang % 360) + 360) % 360;
       }
 
       function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-        const angleInRadians = (angleInDegrees * Math.PI) / 180.0;
+        const rad = (angleInDegrees * Math.PI) / 180.0;
         return {
-          x: centerX + radius * Math.cos(angleInRadians),
-          y: centerY + radius * Math.sin(angleInRadians)
+          x: centerX + radius * Math.cos(rad),
+          y: centerY + radius * Math.sin(rad)
         };
       }
 
@@ -283,97 +416,121 @@
         return `M ${p1.x} ${p1.y} A ${rOut} ${rOut} 0 ${largeArc} 1 ${p2.x} ${p2.y} L ${p3.x} ${p3.y} A ${rIn} ${rIn} 0 ${largeArc} 0 ${p4.x} ${p4.y} Z`;
       }
 
-      // 1. 底層同心圓背景與細緻同心邊框
+      // AstroGold 12 星座色彩對照 (經典四元素高飽和純色)
+      const ZODIAC_ASTROGOLD = {
+        '白羊座': '#DC2626', '金牛座': '#15803D', '雙子座': '#0284C7', '巨蟹座': '#0F766E',
+        '獅子座': '#DC2626', '處女座': '#15803D', '天秤座': '#0284C7', '天蠍座': '#1E3A8A',
+        '射手座': '#DC2626', '摩羯座': '#15803D', '水瓶座': '#0284C7', '雙魚座': '#1E3A8A'
+      };
+
+      // 1. 底層 AstroGold 經典象牙黃背景圓盤
       const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       bgCircle.setAttribute('cx', cx);
       bgCircle.setAttribute('cy', cy);
-      bgCircle.setAttribute('r', rOuter);
-      bgCircle.setAttribute('fill', '#FFFFFF');
-      bgCircle.setAttribute('stroke', '#B8860B');
-      bgCircle.setAttribute('stroke-width', '1.8');
+      bgCircle.setAttribute('r', isBiWheelMode ? rWheelOuter : rZodiacOuter);
+      bgCircle.setAttribute('fill', '#FFFEEB');
+      bgCircle.setAttribute('stroke', '#C5A866');
+      bgCircle.setAttribute('stroke-width', '1.6');
       svg.appendChild(bgCircle);
 
-      const bgInnerRing = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      bgInnerRing.setAttribute('cx', cx);
-      bgInnerRing.setAttribute('cy', cy);
-      bgInnerRing.setAttribute('r', rSigns);
-      bgInnerRing.setAttribute('fill', 'none');
-      bgInnerRing.setAttribute('stroke', '#CBD5E1');
-      bgInnerRing.setAttribute('stroke-width', '1.2');
-      svg.appendChild(bgInnerRing);
+      // 黃道外環邊框
+      const zodiacBorder = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      zodiacBorder.setAttribute('cx', cx);
+      zodiacBorder.setAttribute('cy', cy);
+      zodiacBorder.setAttribute('r', rZodiacOuter);
+      zodiacBorder.setAttribute('fill', 'none');
+      zodiacBorder.setAttribute('stroke', '#C5A866');
+      zodiacBorder.setAttribute('stroke-width', '1.4');
+      svg.appendChild(zodiacBorder);
 
-      // 四元素風格配置
-      const ZODIAC_STYLE = {
-        '火': { bg: '#FFF1F2', border: '#FECDD3', text: '#E11D48' },
-        '土': { bg: '#F0FDF4', border: '#BBF7D0', text: '#16A34A' },
-        '風': { bg: '#FFFBEB', border: '#FDE68A', text: '#D97706' },
-        '水': { bg: '#EFF6FF', border: '#BFDBFE', text: '#2563EB' }
-      };
+      // 黃道內環邊框
+      const innerZodiacBorder = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      innerZodiacBorder.setAttribute('cx', cx);
+      innerZodiacBorder.setAttribute('cy', cy);
+      innerZodiacBorder.setAttribute('r', rZodiacInner);
+      innerZodiacBorder.setAttribute('fill', '#FFFDF2');
+      innerZodiacBorder.setAttribute('stroke', '#C5A866');
+      innerZodiacBorder.setAttribute('stroke-width', '1.2');
+      svg.appendChild(innerZodiacBorder);
 
-      // 2. 繪製 12 星座扇形環 (Zodiac Ring) 與 360 度精細刻度 (Tick Marks)
+      // 2. 繪製 12 星座扇形區間與正統彩色向量星座符號
       AstroCalc.ZODIAC_SIGNS.forEach((sign) => {
-        const startDeg = sign.start;
-        const endDeg = sign.start + 30;
-        const a1 = lonToSvgAngle(endDeg);
-        const a2 = lonToSvgAngle(startDeg);
-        const sty = ZODIAC_STYLE[sign.element] || { bg: '#F8FAFC', text: '#1E293B' };
+        const a1 = lonToSvgAngle(sign.start + 30);
+        const a2 = lonToSvgAngle(sign.start);
+        const signColor = ZODIAC_ASTROGOLD[sign.name] || '#1E293B';
 
-        // 星座扇形背景
+        // 星座扇形底板
         const arcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        arcPath.setAttribute('d', describeArc(cx, cy, rSigns, rOuter, a1, a2));
-        arcPath.setAttribute('fill', sty.bg);
-        arcPath.setAttribute('stroke', '#E2E8F0');
-        arcPath.setAttribute('stroke-width', '0.8');
+        arcPath.setAttribute('d', describeArc(cx, cy, rZodiacInner, rZodiacOuter, a1, a2));
+        arcPath.setAttribute('fill', '#FFFDF2');
+        arcPath.setAttribute('stroke', '#E8D8B0');
+        arcPath.setAttribute('stroke-width', '0.6');
         svg.appendChild(arcPath);
 
-        // 星座符號標註 (居中於扇形正中，色彩鮮明)
+        // 星座 30° 邊界分割線 (貫穿黃道環)
+        const p1 = polarToCartesian(cx, cy, rZodiacInner, a2);
+        const p2 = polarToCartesian(cx, cy, rZodiacOuter, a2);
+        const bLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        bLine.setAttribute('x1', p1.x);
+        bLine.setAttribute('y1', p1.y);
+        bLine.setAttribute('x2', p2.x);
+        bLine.setAttribute('y2', p2.y);
+        bLine.setAttribute('stroke', '#C5A866');
+        bLine.setAttribute('stroke-width', '1.2');
+        svg.appendChild(bLine);
+
+        // 星座符號 (加入 \uFE0E 強制純向量文字輸出，套用 AstroGold 專屬紅綠藍色彩)
         const midLon = sign.start + 15;
         const midAng = lonToSvgAngle(midLon);
         const pos = polarToCartesian(cx, cy, rZodiacMid, midAng);
 
         const signText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         signText.setAttribute('x', pos.x);
-        signText.setAttribute('y', pos.y + 6);
-        signText.setAttribute('font-size', '17');
+        signText.setAttribute('y', pos.y + 6.5);
+        signText.setAttribute('font-size', '20');
         signText.setAttribute('font-weight', 'bold');
-        signText.setAttribute('fill', sty.text);
+        signText.setAttribute('fill', signColor);
         signText.setAttribute('text-anchor', 'middle');
-        signText.textContent = sign.symbol;
+        signText.setAttribute('class', 'astro-glyph');
+        signText.textContent = toTextGlyph(sign.symbol);
         svg.appendChild(signText);
       });
 
-      // 360 度精細黃道刻度線 (每 1° 細刻度, 每 5° 中刻度, 每 10° 分割線, 每 30° 貫穿線)
+      // 360 度黃道精細刻度 (1° 細刻, 5° 中刻, 10° 標註數字)
       for (let deg = 0; deg < 360; deg++) {
         const ang = lonToSvgAngle(deg);
+        if (deg % 30 === 0) continue; // 交界線已繪製
+
         let tickLen = 2.5;
-        let strokeColor = '#94A3B8';
+        let strokeColor = '#CBD5E1';
         let strokeW = '0.6';
 
-        if (deg % 30 === 0) {
-          // 星座 30 度交界貫穿線
-          const p1 = polarToCartesian(cx, cy, rSigns, ang);
-          const p2 = polarToCartesian(cx, cy, rOuter, ang);
-          const line30 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line30.setAttribute('x1', p1.x);
-          line30.setAttribute('y1', p1.y);
-          line30.setAttribute('x2', p2.x);
-          line30.setAttribute('y2', p2.y);
-          line30.setAttribute('stroke', '#C8A97E');
-          line30.setAttribute('stroke-width', '1.4');
-          svg.appendChild(line30);
-          continue;
-        } else if (deg % 10 === 0) {
-          tickLen = 7.5;
+        if (deg % 10 === 0) {
+          tickLen = 6.0;
           strokeColor = '#475569';
           strokeW = '1.2';
+          
+          // 在黃道圈內標註 10° 與 20° 數字刻度
+          const degInSign = deg % 30;
+          const numPt = polarToCartesian(cx, cy, rZodiacOuter - 9, ang);
+          const numTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          numTxt.setAttribute('x', numPt.x);
+          numTxt.setAttribute('y', numPt.y + 2.5);
+          numTxt.setAttribute('font-size', '6.5');
+          numTxt.setAttribute('font-weight', 'bold');
+          numTxt.setAttribute('font-family', 'ui-monospace, monospace');
+          numTxt.setAttribute('fill', '#64748B');
+          numTxt.setAttribute('text-anchor', 'middle');
+          numTxt.textContent = `${degInSign}°`;
+          svg.appendChild(numTxt);
         } else if (deg % 5 === 0) {
-          tickLen = 4.5;
+          tickLen = 4.0;
           strokeColor = '#64748B';
           strokeW = '0.9';
         }
 
-        const ptOut = polarToCartesian(cx, cy, rSigns, ang);
-        const ptIn = polarToCartesian(cx, cy, rSigns - tickLen, ang);
+        const ptOut = polarToCartesian(cx, cy, rZodiacOuter, ang);
+        const ptIn = polarToCartesian(cx, cy, rZodiacOuter - tickLen, ang);
         const tLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         tLine.setAttribute('x1', ptOut.x);
         tLine.setAttribute('y1', ptOut.y);
@@ -384,24 +541,35 @@
         svg.appendChild(tLine);
       }
 
-      // 3. 繪製 12 宮位放射線 (House Cusps) 與 宮位號碼
-      const houseCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      houseCircle.setAttribute('cx', cx);
-      houseCircle.setAttribute('cy', cy);
-      houseCircle.setAttribute('r', rHouses);
-      houseCircle.setAttribute('fill', 'none');
-      houseCircle.setAttribute('stroke', '#E2E8F0');
-      houseCircle.setAttribute('stroke-width', '1');
-      svg.appendChild(houseCircle);
+      // 3. 繪製 12 宮位放射線 (House Cusps) 與 內圈宮位編號圓
+      const houseOuterCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      houseOuterCircle.setAttribute('cx', cx);
+      houseOuterCircle.setAttribute('cy', cy);
+      houseOuterCircle.setAttribute('r', rHouseOuter);
+      houseOuterCircle.setAttribute('fill', 'none');
+      houseOuterCircle.setAttribute('stroke', '#E8DCB8');
+      houseOuterCircle.setAttribute('stroke-width', '1.0');
+      svg.appendChild(houseOuterCircle);
 
+      const houseInnerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      houseInnerCircle.setAttribute('cx', cx);
+      houseInnerCircle.setAttribute('cy', cy);
+      houseInnerCircle.setAttribute('r', rHouseInner);
+      houseInnerCircle.setAttribute('fill', 'none');
+      houseInnerCircle.setAttribute('stroke', '#D8C7A0');
+      houseInnerCircle.setAttribute('stroke-width', '1.2');
+      svg.appendChild(houseInnerCircle);
+
+      // 繪製宮頭放射線
       houses.cusps.forEach((c, idx) => {
         const ang = lonToSvgAngle(c.longitude);
         const isAxis = [1, 4, 7, 10].includes(c.house);
-        const isPrimaryAxis = (c.house === 1 || c.house === 10); // AC & MC 加粗貫穿
+        const isAsc = (c.house === 1);
+        const isMc = (c.house === 10);
 
-        // 宮位放射線從 rHouses 到 rSigns (四軸延伸至盤外)
-        const startR = rHouses;
-        const endR = isAxis ? (rOuter + 22) : rSigns;
+        // 宮位放射線從 rHouseInner 到 rZodiacInner (四軸延伸貫穿至盤外)
+        const startR = rHouseInner;
+        const endR = isAxis ? (isBiWheelMode ? rWheelOuter + 14 : rZodiacOuter + 16) : rZodiacInner;
         const p1 = polarToCartesian(cx, cy, startR, ang);
         const p2 = polarToCartesian(cx, cy, endR, ang);
 
@@ -411,71 +579,125 @@
         line.setAttribute('x2', p2.x);
         line.setAttribute('y2', p2.y);
 
-        if (isPrimaryAxis) {
-          line.setAttribute('stroke', '#8A6B18');
-          line.setAttribute('stroke-width', '2.6');
+        if (isAsc || isMc) {
+          line.setAttribute('stroke', '#1E293B');
+          line.setAttribute('stroke-width', '2.2');
         } else if (isAxis) {
-          line.setAttribute('stroke', '#8A6B18');
-          line.setAttribute('stroke-width', '1.8');
+          line.setAttribute('stroke', '#334155');
+          line.setAttribute('stroke-width', '1.6');
         } else {
-          line.setAttribute('stroke', '#64748B');
+          line.setAttribute('stroke', '#C5A866');
           line.setAttribute('stroke-width', '0.9');
-          line.setAttribute('opacity', '0.85');
+          line.setAttribute('opacity', '0.9');
         }
         svg.appendChild(line);
 
-        // 宮位編號 1-12 (置於 rHouses 與中心之間)
+        // 宮位標籤號碼 1-12 (置於 rHouseInner 與 rHouseOuter 正中)
         const nextCusp = houses.cusps[idx === 11 ? 0 : idx + 1];
         const span = ((nextCusp.longitude - c.longitude + 360) % 360);
         const midCuspLon = (c.longitude + span / 2) % 360;
         const midAng = lonToSvgAngle(midCuspLon);
-        const numPos = polarToCartesian(cx, cy, (rHouses + rAspects) / 2, midAng);
+        const numPos = polarToCartesian(cx, cy, rHouseNum, midAng);
 
         const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         numText.setAttribute('x', numPos.x);
-        numText.setAttribute('y', numPos.y + 3.5);
-        numText.setAttribute('font-size', '10.5');
+        numText.setAttribute('y', numPos.y + 4);
+        numText.setAttribute('font-size', '12');
         numText.setAttribute('font-weight', 'bold');
-        numText.setAttribute('fill', '#475569');
+        numText.setAttribute('font-family', 'sans-serif');
+        numText.setAttribute('fill', '#334155');
         numText.setAttribute('text-anchor', 'middle');
         numText.textContent = c.house;
         svg.appendChild(numText);
+
+        // 在黃道外側標註該宮頭度數 (對標 AstroGold 標註，例如 27° ♒ 30')
+        const cuspTagPt = polarToCartesian(cx, cy, rZodiacOuter + 8, ang);
+        const cuspTag = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        cuspTag.setAttribute('x', cuspTagPt.x);
+        cuspTag.setAttribute('y', cuspTagPt.y + 2.5);
+        cuspTag.setAttribute('font-size', '7');
+        cuspTag.setAttribute('font-weight', 'bold');
+        cuspTag.setAttribute('fill', '#64748B');
+        cuspTag.setAttribute('text-anchor', 'middle');
+        cuspTag.textContent = `${c.degree}°`;
+        svg.appendChild(cuspTag);
       });
 
-      // 4. 外側軸點醒目標註 (AC, DC, MC, IC)
-      const axesInfo = [
-        { label: 'AC', degStr: `${houses.asc.degree}°${houses.asc.minute.toString().padStart(2, '0')}'`, ang: 180, isMajor: true },
-        { label: 'DC', degStr: `${houses.dsc.degree}°${houses.dsc.minute.toString().padStart(2, '0')}'`, ang: 0, isMajor: false },
-        { label: 'MC', degStr: `${houses.mc.degree}°${houses.mc.minute.toString().padStart(2, '0')}'`, ang: lonToSvgAngle(houses.mc.longitude), isMajor: true },
-        { label: 'IC', degStr: `${houses.ic.degree}°${houses.ic.minute.toString().padStart(2, '0')}'`, ang: lonToSvgAngle(houses.ic.longitude), isMajor: false }
-      ];
+      // 4. AstroGold 經典四大核心軸線醒目標籤 (As, Mc, Ds, Ic)
+      // 上升點 As：位於 180° 水平左側，大字體加粗，右側緊隨度數與彩色星座符號
+      const asPt = polarToCartesian(cx, cy, rZodiacOuter + 22, 180);
+      const asGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      
+      const asTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      asTitle.setAttribute('x', asPt.x - 2);
+      asTitle.setAttribute('y', asPt.y + 5);
+      asTitle.setAttribute('font-size', '19');
+      asTitle.setAttribute('font-weight', '900');
+      asTitle.setAttribute('fill', '#0F172A');
+      asTitle.setAttribute('text-anchor', 'end');
+      asTitle.textContent = 'As';
+      asGroup.appendChild(asTitle);
 
-      axesInfo.forEach(ax => {
-        const pt = polarToCartesian(cx, cy, rOuter + 14, ax.ang);
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const asDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      asDeg.setAttribute('x', asPt.x + 8);
+      asDeg.setAttribute('y', asPt.y + 4);
+      asDeg.setAttribute('font-size', '9');
+      asDeg.setAttribute('font-weight', 'bold');
+      asDeg.setAttribute('text-anchor', 'start');
+      const asSignColor = ZODIAC_ASTROGOLD[houses.asc.sign] || '#15803D';
+      asDeg.innerHTML = `
+        <tspan fill="#0F172A">${houses.asc.degree}°</tspan> 
+        <tspan fill="${asSignColor}" class="astro-glyph">${toTextGlyph(houses.asc.signSymbol)}</tspan> 
+        <tspan fill="#475569">${houses.asc.minute.toString().padStart(2, '0')}'</tspan>
+      `;
+      asGroup.appendChild(asDeg);
+      svg.appendChild(asGroup);
 
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', pt.x);
-        label.setAttribute('y', pt.y - 1);
-        label.setAttribute('font-size', ax.isMajor ? '12' : '11');
-        label.setAttribute('font-weight', '900');
-        label.setAttribute('fill', '#8A6B18');
-        label.setAttribute('text-anchor', 'middle');
-        label.textContent = ax.label;
-        g.appendChild(label);
+      // 天頂 Mc：位於 Mc 宮頭方位，大字體加粗
+      const mcAng = lonToSvgAngle(houses.mc.longitude);
+      const mcPt = polarToCartesian(cx, cy, rZodiacOuter + 22, mcAng);
+      const mcGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-        const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        sub.setAttribute('x', pt.x);
-        sub.setAttribute('y', pt.y + 9);
-        sub.setAttribute('font-size', '7.5');
-        sub.setAttribute('font-weight', 'bold');
-        sub.setAttribute('fill', '#64748B');
-        sub.setAttribute('text-anchor', 'middle');
-        sub.textContent = ax.degStr;
-        g.appendChild(sub);
+      const mcTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      mcTitle.setAttribute('x', mcPt.x);
+      mcTitle.setAttribute('y', mcPt.y - 3);
+      mcTitle.setAttribute('font-size', '17');
+      mcTitle.setAttribute('font-weight', '900');
+      mcTitle.setAttribute('fill', '#0F172A');
+      mcTitle.setAttribute('text-anchor', 'middle');
+      mcTitle.textContent = 'Mc';
+      mcGroup.appendChild(mcTitle);
 
-        svg.appendChild(g);
-      });
+      const mcDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      mcDeg.setAttribute('x', mcPt.x);
+      mcDeg.setAttribute('y', mcPt.y + 8);
+      mcDeg.setAttribute('font-size', '8.5');
+      mcDeg.setAttribute('font-weight', 'bold');
+      mcDeg.setAttribute('text-anchor', 'middle');
+      const mcSignColor = ZODIAC_ASTROGOLD[houses.mc.sign] || '#15803D';
+      mcDeg.innerHTML = `
+        <tspan fill="#0F172A">${houses.mc.degree}°</tspan> 
+        <tspan fill="${mcSignColor}" class="astro-glyph">${toTextGlyph(houses.mc.signSymbol)}</tspan> 
+        <tspan fill="#475569">${houses.mc.minute.toString().padStart(2, '0')}'</tspan>
+      `;
+      mcGroup.appendChild(mcDeg);
+      svg.appendChild(mcGroup);
+
+      // 下降點 Ds：位於 0° 水平右側
+      const dsPt = polarToCartesian(cx, cy, rZodiacOuter + 14, 0);
+      const dsDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      dsDeg.setAttribute('x', dsPt.x + 2);
+      dsDeg.setAttribute('y', dsPt.y + 4);
+      dsDeg.setAttribute('font-size', '8.5');
+      dsDeg.setAttribute('font-weight', 'bold');
+      dsDeg.setAttribute('text-anchor', 'start');
+      const dsSignColor = ZODIAC_ASTROGOLD[houses.dsc.sign] || '#1E3A8A';
+      dsDeg.innerHTML = `
+        <tspan fill="#475569">${houses.dsc.minute}'</tspan> 
+        <tspan fill="${dsSignColor}" class="astro-glyph">${toTextGlyph(houses.dsc.signSymbol)}</tspan> 
+        <tspan fill="#0F172A">${houses.dsc.degree}°</tspan>
+      `;
+      svg.appendChild(dsDeg);
 
       // 5. 內圈相位網 (Aspect Lines)
       const aspectLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -486,8 +708,8 @@
 
         const a1 = lonToSvgAngle(p1.longitude);
         const a2 = lonToSvgAngle(p2.longitude);
-        const pt1 = polarToCartesian(cx, cy, rAspects, a1);
-        const pt2 = polarToCartesian(cx, cy, rAspects, a2);
+        const pt1 = polarToCartesian(cx, cy, rHouseInner - 2, a1);
+        const pt2 = polarToCartesian(cx, cy, rHouseInner - 2, a2);
 
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', pt1.x);
@@ -495,58 +717,49 @@
         line.setAttribute('x2', pt2.x);
         line.setAttribute('y2', pt2.y);
 
-        // 硬相位紅線、軟相位藍線、梅花綠虛線
-        if (asp.angle === 90 || asp.angle === 180) {
-          line.setAttribute('stroke', '#EF4444');
-          line.setAttribute('stroke-width', '1.6');
+        // AstroGold 色彩：硬相位紅色、軟相位天藍/深藍、梅花相綠色
+        if (asp.angle === 90 || asp.angle === 180 || asp.angle === 0) {
+          line.setAttribute('stroke', '#E11D48');
+          line.setAttribute('stroke-width', '1.3');
           line.setAttribute('opacity', '0.85');
         } else if (asp.angle === 120 || asp.angle === 60) {
           line.setAttribute('stroke', '#2563EB');
-          line.setAttribute('stroke-width', '1.3');
+          line.setAttribute('stroke-width', '1.2');
           line.setAttribute('opacity', '0.85');
         } else if (asp.angle === 150) {
-          line.setAttribute('stroke', '#10B981');
-          line.setAttribute('stroke-width', '1.2');
-          line.setAttribute('stroke-dasharray', '3 3');
+          line.setAttribute('stroke', '#16A34A');
+          line.setAttribute('stroke-width', '1.1');
+          line.setAttribute('stroke-dasharray', '3 2.5');
           line.setAttribute('opacity', '0.8');
         } else {
           line.setAttribute('stroke', '#94A3B8');
-          line.setAttribute('stroke-width', '1');
-          line.setAttribute('stroke-dasharray', '2 2');
+          line.setAttribute('stroke-width', '0.9');
           line.setAttribute('opacity', '0.6');
         }
         aspectLayer.appendChild(line);
       });
       svg.appendChild(aspectLayer);
 
-      // 中心留白純白輪轂 (Hub) 避免線條交疊混亂
+      // 中心留白純白輪轂
       const centerHub = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       centerHub.setAttribute('cx', cx);
       centerHub.setAttribute('cy', cy);
       centerHub.setAttribute('r', rAspectHub);
-      centerHub.setAttribute('fill', '#FAF9F6');
-      centerHub.setAttribute('stroke', '#C8A97E');
+      centerHub.setAttribute('fill', '#FFFEEB');
+      centerHub.setAttribute('stroke', '#C5A866');
       centerHub.setAttribute('stroke-width', '1.2');
       svg.appendChild(centerHub);
 
-      // 6. 繪製內圈行星符號 (Planets Glyphs) + 精確指針刻度引導線 (Pointer Engine)
+      // 6. 繪製本命星盤 (Inner Wheel - Natal Planets) · AstroGold 經典直列垂直緊湊排版
       const planetKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
       
-      const PLANET_COLORS = {
-        'Sun': '#D97706',       // 太陽金橙
-        'Moon': '#2563EB',      // 月亮天藍
-        'Mercury': '#0D9488',   // 水星翡翠青
-        'Venus': '#059669',     // 金星翠綠
-        'Mars': '#DC2626',      // 火星赤紅
-        'Jupiter': '#4F46E5',   // 木星青紫
-        'Saturn': '#475569',    // 土星玄灰
-        'Uranus': '#0284C7',    // 天王孔雀藍
-        'Neptune': '#0891B2',   // 海王深海藍
-        'Pluto': '#991B1B',     // 冥王深絳紅
-        'NorthNode': '#334155'  // 北交玄青
+      const PLANET_COLORS_NATAL = {
+        'Sun': '#D97706', 'Moon': '#78350F', 'Mercury': '#0D9488', 'Venus': '#059669',
+        'Mars': '#DC2626', 'Jupiter': '#16A34A', 'Saturn': '#475569', 'Uranus': '#0284C7',
+        'Neptune': '#0891B2', 'Pluto': '#991B1B', 'NorthNode': '#0F172A'
       };
 
-      const pItems = planetKeys
+      const natalItems = planetKeys
         .map(k => {
           const p = planets[k];
           if (!p) return null;
@@ -555,113 +768,239 @@
             ...p,
             key: k,
             trueAng: trueAng,
-            dispAng: trueAng
+            dispAng: trueAng,
+            dispR: rNatalBase
           };
         })
         .filter(Boolean)
         .sort((a, b) => a.trueAng - b.trueAng);
 
-      // 彈簧鬆弛演算法：群集行星間隔至少 9.8°，徹底防止重疊
-      const minGap = 9.8;
-      for (let pass = 0; pass < 35; pass++) {
-        for (let i = 0; i < pItems.length - 1; i++) {
-          const p1 = pItems[i];
-          const p2 = pItems[i + 1];
+      // 彈簧鬆弛與多重同心半徑演算法 (群星聚集時扇面優雅錯開，100% 不重疊遮擋)
+      const minGap = 8.5;
+      for (let pass = 0; pass < 50; pass++) {
+        for (let i = 0; i < natalItems.length - 1; i++) {
+          const p1 = natalItems[i];
+          const p2 = natalItems[i + 1];
           const diff = p2.dispAng - p1.dispAng;
           if (diff < minGap && diff >= 0) {
             const overlap = (minGap - diff) / 2;
             p1.dispAng -= overlap;
             p2.dispAng += overlap;
+            // 緊鄰星曜採用高低雙軌交錯半徑
+            p1.dispR = rNatalBase + 12;
+            p2.dispR = rNatalBase - 10;
           }
         }
       }
 
-      pItems.forEach(p => {
-        const ptTrue = polarToCartesian(cx, cy, rSigns, p.trueAng);
-        const ptDisp = polarToCartesian(cx, cy, rPlanet, p.dispAng);
-        const pColor = PLANET_COLORS[p.key] || '#1E293B';
+      natalItems.forEach(p => {
+        const ptTrue = polarToCartesian(cx, cy, rZodiacInner, p.trueAng);
+        const ptDisp = polarToCartesian(cx, cy, p.dispR, p.dispAng);
+        const pColor = PLANET_COLORS_NATAL[p.key] || '#1E293B';
+        const signColor = ZODIAC_ASTROGOLD[p.sign] || '#1E293B';
 
-        // 指針引導線 (Pointer Line)：若有位移繪製淡金刻度引導線，無位移繪製 5px 定向刻度
+        // 刻度引導線 (Pointer Line)
+        const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tickLine.setAttribute('x1', ptTrue.x);
+        tickLine.setAttribute('y1', ptTrue.y);
+        tickLine.setAttribute('x2', ptDisp.x);
+        tickLine.setAttribute('y2', ptDisp.y);
+        tickLine.setAttribute('stroke', '#C5A866');
+        tickLine.setAttribute('stroke-width', '0.8');
         if (Math.abs(p.dispAng - p.trueAng) > 0.4) {
-          const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          tickLine.setAttribute('x1', ptTrue.x);
-          tickLine.setAttribute('y1', ptTrue.y);
-          tickLine.setAttribute('x2', ptDisp.x);
-          tickLine.setAttribute('y2', ptDisp.y);
-          tickLine.setAttribute('stroke', '#C8A97E');
-          tickLine.setAttribute('stroke-width', '0.9');
           tickLine.setAttribute('stroke-dasharray', '1.5 2');
           tickLine.setAttribute('opacity', '0.75');
-          svg.appendChild(tickLine);
         } else {
-          const tickIn = polarToCartesian(cx, cy, rSigns - 5, p.trueAng);
-          const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          tickLine.setAttribute('x1', ptTrue.x);
-          tickLine.setAttribute('y1', ptTrue.y);
-          tickLine.setAttribute('x2', tickIn.x);
-          tickLine.setAttribute('y2', tickIn.y);
-          tickLine.setAttribute('stroke', '#B8860B');
-          tickLine.setAttribute('stroke-width', '1.3');
-          svg.appendChild(tickLine);
+          tickLine.setAttribute('opacity', '0.95');
         }
+        svg.appendChild(tickLine);
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-        // 行星專屬符號 (大字號正統西方符號：☉ ☽ ☿ ♀ ♂ ♃ ♄ ♅ ♆ ♇ ☊)
+        // 行星符號 (大號加粗)
         const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         txt.setAttribute('x', ptDisp.x);
-        txt.setAttribute('y', ptDisp.y + 5);
-        txt.setAttribute('font-size', '16.5');
-        txt.setAttribute('font-weight', 'bold');
+        txt.setAttribute('y', ptDisp.y + 4);
+        txt.setAttribute('font-size', '16');
+        txt.setAttribute('font-weight', '900');
         txt.setAttribute('fill', pColor);
         txt.setAttribute('text-anchor', 'middle');
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
-        // 度數與分標註 (例如 05°10')
-        const degPt = polarToCartesian(cx, cy, rPlanet - 16, p.dispAng);
+        // AstroGold 經典緊湊格式度數標註：度數、星座小符號、分
+        const degPt = polarToCartesian(cx, cy, p.dispR - 14, p.dispAng);
         const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         degText.setAttribute('x', degPt.x);
         degText.setAttribute('y', degPt.y + 3);
-        degText.setAttribute('font-size', '8.5');
+        degText.setAttribute('font-size', '7.5');
         degText.setAttribute('font-family', 'sans-serif');
         degText.setAttribute('font-weight', 'bold');
-        degText.setAttribute('fill', '#334155');
         degText.setAttribute('text-anchor', 'middle');
-        degText.textContent = `${p.degree.toString().padStart(2, '0')}°${p.minute.toString().padStart(2, '0')}'`;
+
+        degText.innerHTML = `
+          <tspan fill="#0F172A">${p.degree.toString().padStart(2, '0')}°</tspan>
+          <tspan fill="${signColor}" class="astro-glyph">${toTextGlyph(p.signSymbol)}</tspan>
+          <tspan fill="#475569">${p.minute.toString().padStart(2, '0')}'</tspan>
+        `;
         g.appendChild(degText);
 
-        // 逆行標籤 (鮮明紅色 ℞)
+        // 逆行標記 ℞
         if (p.isRetrograde) {
           const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          rx.setAttribute('x', ptDisp.x + 9);
-          rx.setAttribute('y', ptDisp.y - 3);
-          rx.setAttribute('font-size', '8.5');
-          rx.setAttribute('font-weight', 'bold');
-          rx.setAttribute('fill', '#EF4444');
+          rx.setAttribute('x', ptDisp.x + 8);
+          rx.setAttribute('y', ptDisp.y - 4);
+          rx.setAttribute('font-size', '8');
+          rx.setAttribute('font-weight', '900');
+          rx.setAttribute('fill', '#DC2626');
           rx.textContent = '℞';
           g.appendChild(rx);
         }
 
         svg.appendChild(g);
       });
+
+      // 7. 繪製行運外輪 (Outer Wheel - Transits) · 對標 AstroGold 雙盤標準
+      if (isBiWheelMode && transitPlanets) {
+        const PLANET_COLORS_TRANSIT = {
+          'Neptune': '#E11D48', 'Saturn': '#991B1B', 'Uranus': '#0284C7', 'Jupiter': '#16A34A',
+          'Mars': '#DC2626', 'Sun': '#D97706', 'Mercury': '#B45309', 'Venus': '#059669',
+          'Moon': '#78350F', 'Pluto': '#881337', 'NorthNode': '#0F172A'
+        };
+
+        const transitItems = planetKeys
+          .map(k => {
+            const tp = transitPlanets[k];
+            if (!tp) return null;
+            const trueAng = lonToSvgAngle(tp.longitude);
+            return {
+              ...tp,
+              key: k,
+              trueAng: trueAng,
+              dispAng: trueAng
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.trueAng - b.trueAng);
+
+        // 行運星曜鬆弛避讓
+        for (let pass = 0; pass < 35; pass++) {
+          for (let i = 0; i < transitItems.length - 1; i++) {
+            const t1 = transitItems[i];
+            const t2 = transitItems[i + 1];
+            const diff = t2.dispAng - t1.dispAng;
+            if (diff < minGap && diff >= 0) {
+              const overlap = (minGap - diff) / 2;
+              t1.dispAng -= overlap;
+              t2.dispAng += overlap;
+            }
+          }
+        }
+
+        transitItems.forEach(tp => {
+          const ptZodiacOut = polarToCartesian(cx, cy, rZodiacOuter, tp.trueAng);
+          const ptDisp = polarToCartesian(cx, cy, rTransitRing, tp.dispAng);
+          const tpColor = PLANET_COLORS_TRANSIT[tp.key] || '#1E293B';
+          const signColor = ZODIAC_ASTROGOLD[tp.sign] || '#1E293B';
+
+          // 指向黃道外緣的細微刻度線
+          const tLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tLine.setAttribute('x1', ptZodiacOut.x);
+          tLine.setAttribute('y1', ptZodiacOut.y);
+          tLine.setAttribute('x2', ptDisp.x);
+          tLine.setAttribute('y2', ptDisp.y);
+          tLine.setAttribute('stroke', '#C5A866');
+          tLine.setAttribute('stroke-width', '0.8');
+          tLine.setAttribute('stroke-dasharray', '1.5 2');
+          tLine.setAttribute('opacity', '0.75');
+          svg.appendChild(tLine);
+
+          const tg = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+          // 行運星曜符號 (大號加粗)
+          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          txt.setAttribute('x', ptDisp.x);
+          txt.setAttribute('y', ptDisp.y + 4.5);
+          txt.setAttribute('font-size', '15.5');
+          txt.setAttribute('font-weight', '900');
+          txt.setAttribute('fill', tpColor);
+          txt.setAttribute('text-anchor', 'middle');
+          txt.textContent = tp.symbol;
+          tg.appendChild(txt);
+
+          // 行運度數與星座標註
+          const degPt = polarToCartesian(cx, cy, rTransitRing + 14, tp.dispAng);
+          const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          degText.setAttribute('x', degPt.x);
+          degText.setAttribute('y', degPt.y + 3);
+          degText.setAttribute('font-size', '7.5');
+          degText.setAttribute('font-family', 'sans-serif');
+          degText.setAttribute('font-weight', 'bold');
+          degText.setAttribute('text-anchor', 'middle');
+
+          degText.innerHTML = `
+            <tspan fill="#0F172A">${tp.degree.toString().padStart(2, '0')}°</tspan>
+            <tspan fill="${signColor}" class="astro-glyph">${toTextGlyph(tp.signSymbol)}</tspan>
+            <tspan fill="#475569">${tp.minute.toString().padStart(2, '0')}'</tspan>
+          `;
+          tg.appendChild(degText);
+
+          if (tp.isRetrograde) {
+            const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            rx.setAttribute('x', ptDisp.x + 8);
+            rx.setAttribute('y', ptDisp.y - 3);
+            rx.setAttribute('font-size', '8');
+            rx.setAttribute('font-weight', '900');
+            rx.setAttribute('fill', '#DC2626');
+            rx.textContent = '℞';
+            tg.appendChild(rx);
+          }
+
+          svg.appendChild(tg);
+        });
+      }
     }
 
-    // 主排盤函數
+    // 主排盤函數 (本命盤 + AstroGold 行運推運雙盤計算)
     function renderAstrologyChart() {
+      const userName = document.getElementById('user_name').value.trim() || 'YuYang';
+      const userGender = document.getElementById('user_gender').value;
       const dateStr = document.getElementById('birth_date').value;
       const timeStr = document.getElementById('birth_time').value;
       const city = getSelectedCity();
       const applyDST = document.getElementById('chk_dst').checked;
       const hSys = document.getElementById('house_system').value;
 
-      // 1. 精準換算 UTC Date
+      // 1. 精準換算本命盤 UTC Date
       const utcDate = calculateUTCDatetime(dateStr, timeStr, city.tz, applyDST);
 
-      // 2. 行星與宮位計算 (支援 Placidus / Whole Sign / Equal)
+      // 2. 本命盤行星與宮位計算
       const planets = AstroCalc.calculatePlanetaryPositions(utcDate);
       const houses = AstroCalc.calculateHousesAndAxes(utcDate, city.lat, city.lng, hSys);
       const aspects = AstroCalc.calculateAspects(planets);
+
+      // 3. 行運盤計算 (依當前推運時間 currentTransitDate)
+      const transitUtcDate = new Date(currentTransitDate.getTime() - city.tz * 3600000);
+      const transitPlanets = AstroCalc.calculatePlanetaryPositions(transitUtcDate);
+
+      // 4. 更新 AstroGold 經典雙盤抬頭資訊
+      const nDt = new Date(`${dateStr}T${timeStr}:00`);
+      const natalAstroInfo = formatAstroGoldDateTime(nDt, city.tz);
+      const transitAstroInfo = formatAstroGoldDateTime(currentTransitDate, city.tz);
+
+      const hSysName = hSys === 'whole_sign' ? 'Whole Sign' : (hSys === 'equal' ? 'Equal' : 'Placidus');
+
+      document.getElementById('disp_name').textContent = userName;
+      document.getElementById('disp_gender').textContent = userGender;
+      document.getElementById('disp_natal_date').textContent = natalAstroInfo.dateStr;
+      document.getElementById('disp_natal_time').textContent = natalAstroInfo.timeStr;
+      document.getElementById('disp_natal_place').textContent = `${city.name}, Taiwan`;
+      document.getElementById('disp_natal_hsys').textContent = hSysName;
+
+      document.getElementById('disp_transit_date').textContent = transitAstroInfo.dateStr;
+      document.getElementById('disp_transit_time').textContent = transitAstroInfo.timeStr;
+      document.getElementById('disp_transit_place').textContent = `${city.name}, Taiwan`;
+      document.getElementById('disp_transit_hsys').textContent = hSysName;
 
       // 更新分宮制標籤
       const hLabel = document.getElementById('house_type_label');
@@ -669,35 +1008,46 @@
         hLabel.textContent = hSys === 'whole_sign' ? '整宮制 (Whole Sign)' : (hSys === 'equal' ? '等宮制 (Equal)' : '普拉西度制 (Placidus)');
       }
 
-      // 3. 更新四軸指標卡
+      // 5. 更新四軸指標卡
+      const kpiAsc = document.getElementById('kpi_asc');
+      const kpiMc = document.getElementById('kpi_mc');
+      const kpiSun = document.getElementById('kpi_sun');
+      const kpiMoon = document.getElementById('kpi_moon');
+      if (kpiAsc) kpiAsc.textContent = houses.asc.formatted;
+      if (kpiMc) kpiMc.textContent = houses.mc.formatted;
+      if (kpiSun) kpiSun.textContent = planets.Sun.formatted;
+      if (kpiMoon) kpiMoon.textContent = planets.Moon.formatted;
+
       const summaryDiv = document.getElementById('astro_summary_cards');
-      summaryDiv.innerHTML = `
-        <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">上升點 (Ascendant)</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${houses.asc.formatted}</p>
-          <p class="text-[11px] text-slate-500 mt-1">人格面具與此生英雄旅程</p>
-        </div>
-        <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">天頂 (Midheaven · MC)</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${houses.mc.formatted}</p>
-          <p class="text-[11px] text-slate-500 mt-1">事業巔峰與社會成就標竿</p>
-        </div>
-        <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">太陽星座 (Sun Sign)</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${planets.Sun.formatted}</p>
-          <p class="text-[11px] text-slate-500 mt-1">生命意志核心與光芒綻放</p>
-        </div>
-        <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
-          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">月亮星座 (Moon Sign)</p>
-          <p class="text-sm sm:text-base font-black text-slate-800">${planets.Moon.formatted}</p>
-          <p class="text-[11px] text-slate-500 mt-1">潛意識情緒與靈魂安全感</p>
-        </div>
-      `;
+      if (summaryDiv && !kpiAsc) {
+        summaryDiv.innerHTML = `
+          <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">上升點 (Ascendant · As)</p>
+            <p class="text-sm sm:text-base font-black text-slate-800">${houses.asc.formatted}</p>
+            <p class="text-[11px] text-slate-500 mt-1">人格面具與此生英雄旅程</p>
+          </div>
+          <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">天頂 (Midheaven · Mc)</p>
+            <p class="text-sm sm:text-base font-black text-slate-800">${houses.mc.formatted}</p>
+            <p class="text-[11px] text-slate-500 mt-1">事業巔峰與社會成就標竿</p>
+          </div>
+          <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">太陽星座 (Sun Sign)</p>
+            <p class="text-sm sm:text-base font-black text-slate-800">${planets.Sun.formatted}</p>
+            <p class="text-[11px] text-slate-500 mt-1">生命意志核心與光芒綻放</p>
+          </div>
+          <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+            <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">月亮星座 (Moon Sign)</p>
+            <p class="text-sm sm:text-base font-black text-slate-800">${planets.Moon.formatted}</p>
+            <p class="text-[11px] text-slate-500 mt-1">潛意識情緒與靈魂安全感</p>
+          </div>
+        `;
+      }
 
-      // 4. 繪製圓形本命星盤
-      renderAstrologyWheel(planets, houses, aspects);
+      // 6. 繪製 AstroGold 圓形星盤 (雙輪模式)
+      renderAstrologyWheel(planets, houses, aspects, transitPlanets);
 
-      // 5. 生成行星落點表格
+      // 7. 生成行星落點表格
       const tableDiv = document.getElementById('planets_table_container');
       const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode', 'SouthNode'];
       
@@ -794,6 +1144,23 @@
       `;
     }
 
+    // AstroGold 推運步進函數
+    function stepTransit(direction) {
+      const stepUnit = document.getElementById('sel_transit_step').value;
+      if (stepUnit === 'hour') {
+        currentTransitDate.setHours(currentTransitDate.getHours() + direction);
+      } else if (stepUnit === 'day') {
+        currentTransitDate.setDate(currentTransitDate.getDate() + direction);
+      } else if (stepUnit === 'week') {
+        currentTransitDate.setDate(currentTransitDate.getDate() + direction * 7);
+      } else if (stepUnit === 'month') {
+        currentTransitDate.setMonth(currentTransitDate.getMonth() + direction);
+      } else if (stepUnit === 'year') {
+        currentTransitDate.setFullYear(currentTransitDate.getFullYear() + direction);
+      }
+      renderAstrologyChart();
+    }
+
     // 事件綁定
     document.getElementById('astro_form').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -804,6 +1171,19 @@
     document.getElementById('birth_city').addEventListener('change', updateGeoInfo);
     document.getElementById('chk_dst').addEventListener('change', updateGeoInfo);
     document.getElementById('house_system').addEventListener('change', renderAstrologyChart);
+
+    // AstroGold 工具列事件綁定
+    document.getElementById('btn_step_prev').addEventListener('click', () => stepTransit(-1));
+    document.getElementById('btn_step_next').addEventListener('click', () => stepTransit(1));
+    document.getElementById('btn_transit_reset').addEventListener('click', () => {
+      currentTransitDate = new Date();
+      renderAstrologyChart();
+    });
+    document.getElementById('btn_toggle_wheel_mode').addEventListener('click', () => {
+      isBiWheelMode = !isBiWheelMode;
+      document.getElementById('label_wheel_mode').textContent = isBiWheelMode ? '雙盤 (Natal + Transits)' : '單盤 (Natal Only)';
+      renderAstrologyChart();
+    });
 
     // 初始化
     window.addEventListener('DOMContentLoaded', () => {
