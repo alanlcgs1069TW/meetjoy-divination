@@ -3,22 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MeetJoy 文王六爻神卦排盤系統 (Preview)</title>
+  <title>MeetJoy 文王六爻神卦排盤系統 (三傳歲月日 · 手搖起卦 Pro)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body { font-family: 'Noto Serif TC', serif; }
+    .sans { font-family: 'Noto Sans TC', sans-serif; }
+    @keyframes coinSpin {
+      0% { transform: rotateY(0deg) scale(1); }
+      50% { transform: rotateY(720deg) scale(1.18); }
+      100% { transform: rotateY(1440deg) scale(1); }
+    }
+    .coin-spinning {
+      animation: coinSpin 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
   </style>
 </head>
-<body class="bg-[#f7f5ed] min-h-screen flex flex-col items-center p-0 m-0">
+<body class="bg-[#f7f5ed] min-h-screen flex flex-col items-center p-0 m-0 text-stone-900">
 
   <!-- 癒見幸福命理工作室全域導覽 -->
-  <nav class="w-full bg-[#2E3829] text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/40 shadow-md mb-6">
+  <nav class="w-full bg-[#2E3829] text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/40 shadow-md mb-6 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
     <div class="flex items-center gap-2 sm:gap-3">
       <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
         <span>🔮 癒見幸福 · 魔法神算</span>
       </a>
-      <span class="text-xs text-amber-200/60 hidden sm:inline">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+      <span class="text-xs text-amber-200/60 hidden sm:inline">| 魔法占星學院 · 文王六爻神卦實驗室</span>
     </div>
     <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto py-1">
       <a href="/liu-yao.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs whitespace-nowrap">文王六爻</a>
@@ -32,11 +42,37 @@
     </div>
   </nav>
 
-  <div class="w-full max-w-4xl px-3 sm:px-6 pb-12 flex justify-center">
-  <div id="mj_ly_preview_app" class="w-full"></div>
+  <div class="w-full max-w-4xl px-3 sm:px-6 pb-16 flex justify-center">
+    <div id="mj_ly_preview_app" class="w-full"></div>
   </div>
 
   <script>
+  // 天干與地支常數
+  const HEAVENLY_STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+  const EARTHLY_BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+  // 六十甲子
+  const JIA_ZI = [];
+  for (let i = 0; i < 60; i++) {
+    JIA_ZI.push(HEAVENLY_STEMS[i % 10] + EARTHLY_BRANCHES[i % 12]);
+  }
+
+  // 地支六沖
+  const OPPOSITE_BRANCHES = {
+    '子': '午', '丑': '未', '寅': '申', '卯': '酉', '辰': '戌', '巳': '亥',
+    '午': '子', '未': '丑', '申': '寅', '酉': '卯', '戌': '辰', '亥': '巳'
+  };
+
+  // 六十甲子旬空表 (按日干支索引除以10)
+  const XUN_KONG_DATA = [
+    { name: '甲子旬', kong: '戌亥空', branches: ['戌', '亥'] },
+    { name: '甲戌旬', kong: '申酉空', branches: ['申', '酉'] },
+    { name: '甲申旬', kong: '午未空', branches: ['午', '未'] },
+    { name: '甲午旬', kong: '辰巳空', branches: ['辰', '巳'] },
+    { name: '甲辰旬', kong: '寅卯空', branches: ['寅', '卯'] },
+    { name: '甲寅旬', kong: '子丑空', branches: ['子', '丑'] }
+  ];
+
   // 八卦二進制 (初爻在右/下: 0=陰, 1=陽)
   const TRIGRAMS = {
     '111': { name: '乾', element: '金', nature: '天', branches: ['子', '寅', '辰', '午', '申', '戌'] },
@@ -149,82 +185,329 @@
     '水': { '木': '子孫', '火': '妻財', '土': '官鬼', '金': '父母', '水': '兄弟' }
   };
 
+  // 三傳計算器 (歲建、月建、日辰、時辰、旬空)
+  function calculateSanChuan(dateObj) {
+    const y = dateObj.getFullYear();
+    const m = dateObj.getMonth() + 1;
+    const d = dateObj.getDate();
+    const h = dateObj.getHours();
+
+    // 1. 歲建 (年傳) - 立春換歲 (約 2 月 4 日)
+    let solarYear = y;
+    if (m < 2 || (m === 2 && d < 4)) {
+      solarYear = y - 1;
+    }
+    let yStemIdx = (solarYear - 4) % 10;
+    if (yStemIdx < 0) yStemIdx += 10;
+    let yBranchIdx = (solarYear - 4) % 12;
+    if (yBranchIdx < 0) yBranchIdx += 12;
+    const yearGZ = HEAVENLY_STEMS[yStemIdx] + EARTHLY_BRANCHES[yBranchIdx];
+
+    // 2. 月建 (月傳) - 依 24 節氣月令交節約數
+    const jieDays = [0, 5, 4, 5, 4, 5, 5, 6, 7, 7, 8, 7, 6];
+    let mBranchIdx;
+    if (m === 1) mBranchIdx = (d >= jieDays[1]) ? 1 : 0;
+    else if (m === 2) mBranchIdx = (d >= jieDays[2]) ? 2 : 1;
+    else if (m === 3) mBranchIdx = (d >= jieDays[3]) ? 3 : 2;
+    else if (m === 4) mBranchIdx = (d >= jieDays[4]) ? 4 : 3;
+    else if (m === 5) mBranchIdx = (d >= jieDays[5]) ? 5 : 4;
+    else if (m === 6) mBranchIdx = (d >= jieDays[6]) ? 6 : 5;
+    else if (m === 7) mBranchIdx = (d >= jieDays[7]) ? 7 : 6;
+    else if (m === 8) mBranchIdx = (d >= jieDays[8]) ? 8 : 7;
+    else if (m === 9) mBranchIdx = (d >= jieDays[9]) ? 9 : 8;
+    else if (m === 10) mBranchIdx = (d >= jieDays[10]) ? 10 : 9;
+    else if (m === 11) mBranchIdx = (d >= jieDays[11]) ? 11 : 10;
+    else mBranchIdx = (d >= jieDays[12]) ? 0 : 11;
+
+    // 五虎遁推月干
+    const offsetFromYin = (mBranchIdx - 2 + 12) % 12;
+    const startStemByYear = [2, 4, 6, 8, 0, 2, 4, 6, 8, 0][yStemIdx];
+    const mStemIdx = (startStemByYear + offsetFromYin) % 10;
+    const monthGZ = HEAVENLY_STEMS[mStemIdx] + EARTHLY_BRANCHES[mBranchIdx];
+
+    // 3. 日辰 (日傳) - 高精確度 60 甲子日辰 (以 2000-01-01 戊午為錨點)
+    const utcMs = Date.UTC(y, m - 1, d);
+    const anchorMs = Date.UTC(2000, 0, 1);
+    const diffDays = Math.round((utcMs - anchorMs) / 86400000);
+    let dayIdx = (54 + diffDays) % 60;
+    if (dayIdx < 0) dayIdx += 60;
+    const dayGZ = JIA_ZI[dayIdx];
+    const dayStem = dayGZ[0];
+    const dayBranch = dayGZ[1];
+
+    // 4. 旬空 (日空亡)
+    const xunIdx = Math.floor(dayIdx / 10);
+    const xunData = XUN_KONG_DATA[xunIdx];
+
+    // 5. 時辰 (時干支) - 五鼠遁元
+    const hBranchIdx = Math.floor((h + 1) / 2) % 12;
+    const dayStemIdx = HEAVENLY_STEMS.indexOf(dayStem);
+    const startHourStem = [0, 2, 4, 6, 8, 0, 2, 4, 6, 8][dayStemIdx];
+    const hStemIdx = (startHourStem + hBranchIdx) % 10;
+    const hourGZ = HEAVENLY_STEMS[hStemIdx] + EARTHLY_BRANCHES[hBranchIdx];
+
+    return {
+      yearGZ,
+      monthGZ,
+      dayGZ,
+      hourGZ,
+      yearStem: yearGZ[0],
+      yearBranch: yearGZ[1],
+      monthStem: monthGZ[0],
+      monthBranch: monthGZ[1],
+      dayStem,
+      dayBranch,
+      hourStem: hourGZ[0],
+      hourBranch: hourGZ[1],
+      xunName: xunData.name,
+      kongWang: xunData.kong,
+      kongBranches: xunData.branches
+    };
+  }
+
   let tossHistory = [];
+  let currentSanChuan = null;
 
   function initApp() {
     const el = document.getElementById('mj_ly_preview_app');
     if (!el) return;
 
+    const now = new Date();
+    const curDateStr = now.toISOString().split('T')[0];
+    const curTimeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+    currentSanChuan = calculateSanChuan(now);
+
     el.innerHTML = `
-      <div class="bg-[#faf8f2] border-2 border-stone-300 rounded-3xl p-6 md:p-10 shadow-2xl max-w-4xl mx-auto text-stone-900">
+      <div class="bg-[#faf8f2] border-2 border-stone-300 rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl max-w-4xl mx-auto text-stone-900">
+        
+        <!-- 頂部標題 -->
         <header class="text-center mb-6">
-          <div class="flex items-center justify-center gap-2 mb-1">
-            <div class="w-10 h-[2px] bg-red-900"></div>
-            <h1 class="text-3xl md:text-5xl font-black text-red-900 tracking-widest font-serif">文王六爻神卦排盤</h1>
-            <div class="w-10 h-[2px] bg-red-900"></div>
+          <div class="flex items-center justify-center gap-2 mb-1.5">
+            <div class="w-8 sm:w-12 h-[2px] bg-red-900"></div>
+            <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-red-950 tracking-widest font-serif">
+              文王六爻神卦排盤系統
+            </h1>
+            <div class="w-8 sm:w-12 h-[2px] bg-red-900"></div>
           </div>
-          <p class="text-stone-500 text-xs md:text-sm">京房八宮 • 納甲六親 • 六神司命 • 世應動變</p>
+          <p class="text-stone-600 text-xs sm:text-sm font-medium tracking-wide">
+            三傳歲月日主司 • 京房八宮納甲 • 六親六神定盤 • 動靜轉移斷天機
+          </p>
         </header>
 
-        <div class="bg-white border border-stone-200 rounded-2xl p-5 mb-6 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div>
-            <label class="block font-bold text-stone-600 mb-1">所問何事 (占事摘要)</label>
-            <input type="text" id="ly-question" placeholder="例如：本月事業決策/求財吉凶" class="w-full border border-stone-300 rounded-xl px-3.5 py-2 focus:border-red-800 outline-none">
-          </div>
-          <div>
-            <label class="block font-bold text-stone-600 mb-1">占卜日干 (定六神)</label>
-            <select id="ly-day-gan" class="w-full border border-stone-300 rounded-xl px-3.5 py-2 focus:border-red-800 outline-none bg-white">
-              <option value="甲">甲日 (青龍首)</option>
-              <option value="乙">乙日 (青龍首)</option>
-              <option value="丙">丙日 (朱雀首)</option>
-              <option value="丁">丁日 (朱雀首)</option>
-              <option value="戊" selected>戊日 (勾陳首)</option>
-              <option value="己">己日 (螣蛇首)</option>
-              <option value="庚">庚日 (白虎首)</option>
-              <option value="辛">辛日 (白虎首)</option>
-              <option value="壬">壬日 (玄武首)</option>
-              <option value="癸">癸日 (玄武首)</option>
-            </select>
-          </div>
-          <div class="flex items-end gap-2">
-            <button id="ly-btn-quick" type="button" class="flex-1 bg-stone-900 hover:bg-stone-800 text-amber-50 font-bold py-2.5 rounded-xl transition text-center shadow-md">
-              電腦一鍵起卦
-            </button>
-            <button id="ly-btn-reset" type="button" class="px-4 py-2.5 border border-stone-300 text-stone-600 hover:bg-stone-100 rounded-xl transition font-bold">
-              重置
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-5 mb-6 text-center shadow-xs">
-          <div class="text-xs font-bold text-amber-900 mb-2">【三枚銅錢手動搖卦法】進度：<span id="ly-toss-count" class="text-red-700 font-bold text-lg">0</span> / 6 次（由初爻至上爻依次擲出）</div>
+        <!-- 占事與三傳時空設定面板 -->
+        <div class="bg-white border border-stone-200 rounded-2xl p-5 mb-6 shadow-xs space-y-4">
           
-          <div class="flex justify-center gap-4 my-4" id="ly-coins-display">
-            <div class="w-14 h-14 rounded-full border-2 border-amber-700 bg-amber-100 flex items-center justify-center font-bold text-amber-900 shadow-md">字</div>
-            <div class="w-14 h-14 rounded-full border-2 border-amber-700 bg-amber-100 flex items-center justify-center font-bold text-amber-900 shadow-md">字</div>
-            <div class="w-14 h-14 rounded-full border-2 border-amber-700 bg-amber-100 flex items-center justify-center font-bold text-amber-900 shadow-md">背</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
+            <div class="sm:col-span-3">
+              <label class="block font-bold text-stone-700 mb-1">
+                <i class="fa-solid fa-feather text-amber-800 mr-1"></i> 所問何事 (心誠則靈 · 一事一占)
+              </label>
+              <input type="text" id="ly-question" placeholder="例如：本月事業轉職是否順遂、合作合約吉凶、投資決策" value="本月事業發展與機遇吉凶" class="w-full border border-stone-300 rounded-xl px-3.5 py-2.5 focus:border-red-800 focus:ring-1 focus:ring-red-800 outline-none text-sm font-medium">
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">起卦日期 (公曆)</label>
+              <input type="date" id="ly-date" value="${curDateStr}" class="w-full border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 outline-none bg-stone-50">
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">起卦時間 (時分)</label>
+              <div class="flex gap-1.5">
+                <input type="time" id="ly-time" value="${curTimeStr}" class="w-full border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 outline-none bg-stone-50">
+                <button type="button" id="ly-btn-now" class="px-2.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-[11px] font-bold whitespace-nowrap transition" title="設為現在時間">
+                  現在
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">占卜日干 (自動連動六神)</label>
+              <select id="ly-day-gan" class="w-full border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 outline-none bg-white">
+                <option value="甲">甲日 (青龍首)</option>
+                <option value="乙">乙日 (青龍首)</option>
+                <option value="丙">丙日 (朱雀首)</option>
+                <option value="丁">丁日 (朱雀首)</option>
+                <option value="戊">戊日 (勾陳首)</option>
+                <option value="己">己日 (螣蛇首)</option>
+                <option value="庚">庚日 (白虎首)</option>
+                <option value="辛">辛日 (白虎首)</option>
+                <option value="壬">壬日 (玄武首)</option>
+                <option value="癸">癸日 (玄武首)</option>
+              </select>
+            </div>
           </div>
 
-          <button id="ly-btn-toss" type="button" class="bg-red-900 hover:bg-red-800 text-amber-50 font-bold px-10 py-3 rounded-full shadow-lg transition active:scale-95 text-sm tracking-widest">
-            🪙 擲出下一爻
-          </button>
+          <!-- 三傳天機資訊看板 -->
+          <div id="ly-sanchuan-board" class="bg-gradient-to-r from-amber-50/80 via-stone-100 to-amber-50/80 border border-amber-300/80 rounded-xl p-3.5"></div>
+
         </div>
 
-        <div id="ly-result-area" class="hidden"></div>
+        <!-- 手搖起卦與電腦起卦互動區 -->
+        <div id="ly-shake-section" class="bg-white border-2 border-stone-300 rounded-2xl p-5 sm:p-7 mb-6 text-center shadow-md relative overflow-hidden">
+          
+          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-800 inline-block animate-pulse"></span>
+              <span class="text-xs sm:text-sm font-black text-stone-800 tracking-wider">
+                【古法三枚銅錢 · 虔誠手搖起卦法】
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="ly-btn-quick" type="button" class="px-3 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition flex items-center gap-1">
+                <span>⚡ 電腦一鍵起卦</span>
+              </button>
+              <button id="ly-btn-reset-top" type="button" class="px-3 py-1.5 rounded-lg border border-stone-300 hover:bg-stone-100 text-stone-600 text-xs font-bold transition flex items-center gap-1">
+                <span>🔄 重新起卦</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 搖卦進度提示 -->
+          <div class="text-xs font-medium text-stone-600 mb-3">
+            由下而上，初爻至上爻依次擲出 · 當前進度：
+            <span id="ly-toss-count" class="text-red-800 font-black text-xl px-1">0</span> / 6 次
+          </div>
+          
+          <!-- 三枚立體銅錢展示 -->
+          <div class="flex justify-center items-center gap-4 sm:gap-6 my-5" id="ly-coins-display">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
+              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">字</div>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
+              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">字</div>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
+              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">背</div>
+            </div>
+          </div>
+
+          <!-- 手搖操作主按鈕群組 -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4">
+            <button id="ly-btn-toss" type="button" class="w-full sm:w-auto min-w-[240px] bg-red-900 hover:bg-red-800 active:scale-95 text-amber-50 font-bold px-8 py-3.5 rounded-full shadow-lg transition duration-150 text-sm sm:text-base tracking-widest flex items-center justify-center gap-2">
+              <i class="fa-solid fa-coins"></i>
+              <span id="ly-toss-btn-text">🪙 擲出初爻</span>
+            </button>
+            <button id="ly-btn-recast" type="button" class="w-full sm:w-auto px-6 py-3.5 border-2 border-red-900 text-red-900 hover:bg-red-50 rounded-full text-xs sm:text-sm font-black transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>重新手搖起卦</span>
+            </button>
+          </div>
+
+          <!-- 已擲爻位即時縮影 (自下而上積爻) -->
+          <div id="ly-live-yao-stack" class="mt-6 pt-4 border-t border-stone-200 flex flex-col-reverse items-center gap-1.5 max-w-xs mx-auto text-xs"></div>
+
+        </div>
+
+        <!-- 六爻排盤結果展示區 -->
+        <div id="ly-result-area" class="hidden space-y-6"></div>
+
       </div>
     `;
 
     document.getElementById('ly-btn-toss').addEventListener('click', handleToss);
     document.getElementById('ly-btn-quick').addEventListener('click', handleQuickCast);
-    document.getElementById('ly-btn-reset').addEventListener('click', handleReset);
+    document.getElementById('ly-btn-reset-top').addEventListener('click', handleReset);
+    document.getElementById('ly-btn-recast').addEventListener('click', handleReset);
+    document.getElementById('ly-btn-now').addEventListener('click', setNowTime);
+
+    document.getElementById('ly-date').addEventListener('change', updateSanChuan);
+    document.getElementById('ly-time').addEventListener('change', updateSanChuan);
+    document.getElementById('ly-day-gan').addEventListener('change', () => {
+      renderSanChuanBoard();
+      if (tossHistory.length === 6) renderChart();
+    });
+
+    updateSanChuan();
+    updateTossUI();
+  }
+
+  function setNowTime() {
+    const now = new Date();
+    document.getElementById('ly-date').value = now.toISOString().split('T')[0];
+    document.getElementById('ly-time').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    updateSanChuan();
+    if (tossHistory.length === 6) renderChart();
+  }
+
+  function updateSanChuan() {
+    const dVal = document.getElementById('ly-date').value;
+    const tVal = document.getElementById('ly-time').value || '12:00';
+    if (!dVal) return;
+
+    const [y, m, d] = dVal.split('-').map(Number);
+    const [hh, mm] = tVal.split(':').map(Number);
+    const dateObj = new Date(y, m - 1, d, hh, mm);
+
+    currentSanChuan = calculateSanChuan(dateObj);
+
+    const dayGanSelect = document.getElementById('ly-day-gan');
+    if (dayGanSelect && currentSanChuan.dayStem) {
+      dayGanSelect.value = currentSanChuan.dayStem;
+    }
+
+    renderSanChuanBoard();
+  }
+
+  function renderSanChuanBoard() {
+    const board = document.getElementById('ly-sanchuan-board');
+    if (!board || !currentSanChuan) return;
+
+    const dayGan = document.getElementById('ly-day-gan').value;
+    const sixGods = SIX_GODS_MAP[dayGan] || SIX_GODS_MAP['戊'];
+
+    board.innerHTML = `
+      <div class="flex items-center justify-between border-b border-amber-200 pb-1.5 mb-2.5 text-xs">
+        <span class="font-black text-red-950 flex items-center gap-1.5">
+          <i class="fa-solid fa-compass text-amber-700"></i> 【三傳提綱司命】
+        </span>
+        <span class="text-stone-500 font-mono text-[11px]">${currentSanChuan.xunName} · 空亡【${currentSanChuan.kongWang}】</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
+          <div class="text-[10px] text-stone-500 font-bold mb-0.5">歲建 (年傳)</div>
+          <div class="text-sm font-black text-red-900 font-mono">${currentSanChuan.yearGZ} 年</div>
+          <div class="text-[10px] text-stone-400">太歲當權</div>
+        </div>
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
+          <div class="text-[10px] text-stone-500 font-bold mb-0.5">月建 (月傳)</div>
+          <div class="text-sm font-black text-amber-900 font-mono">${currentSanChuan.monthGZ} 月</div>
+          <div class="text-[10px] text-amber-700 font-bold">提綱月令</div>
+        </div>
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-300 ring-1 ring-amber-400/40 shadow-xs">
+          <div class="text-[10px] text-red-800 font-bold mb-0.5">日辰 (日傳)</div>
+          <div class="text-sm font-black text-red-950 font-mono">${currentSanChuan.dayGZ} 日</div>
+          <div class="text-[10px] text-red-700 font-bold">六爻司事</div>
+        </div>
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
+          <div class="text-[10px] text-stone-500 font-bold mb-0.5">時辰 (時支)</div>
+          <div class="text-sm font-black text-stone-800 font-mono">${currentSanChuan.hourGZ} 時</div>
+          <div class="text-[10px] text-stone-400">時支發應</div>
+        </div>
+        <div class="col-span-2 sm:col-span-1 bg-white/90 p-2 rounded-lg border border-purple-200 shadow-2xs">
+          <div class="text-[10px] text-purple-900 font-bold mb-0.5">日旬空亡</div>
+          <div class="text-sm font-black text-purple-900 font-mono">${currentSanChuan.kongWang}</div>
+          <div class="text-[10px] text-purple-700 font-bold">吉凶避忌</div>
+        </div>
+      </div>
+      <div class="mt-2 pt-2 border-t border-amber-200/50 flex flex-wrap items-center justify-between text-[11px] text-stone-600">
+        <div><span class="font-bold text-stone-800">六神排列：</span>${dayGan}日起【${sixGods[0]}】，依次：${sixGods.join(' ➔ ')}</div>
+        <div class="text-amber-900 font-bold">月令提拔生旺，日辰刑沖剋害生合神機</div>
+      </div>
+    `;
   }
 
   function handleToss() {
-    if (tossHistory.length >= 6) return;
+    if (tossHistory.length >= 6) {
+      handleReset();
+      return;
+    }
+
     const c1 = Math.random() < 0.5 ? 0 : 1;
     const c2 = Math.random() < 0.5 ? 0 : 1;
     const c3 = Math.random() < 0.5 ? 0 : 1;
     const sum = c1 + c2 + c3;
+    
     let val = 7;
     if (sum === 0) val = 6;
     else if (sum === 1) val = 7;
@@ -233,17 +516,18 @@
 
     tossHistory.push({ val, coins: [c1, c2, c3] });
 
-    const coinsHtml = [c1, c2, c3].map(c => `
-      <div class="w-14 h-14 rounded-full border-2 ${c === 1 ? 'border-amber-700 bg-amber-200 text-amber-900' : 'border-stone-500 bg-stone-100 text-stone-700'} flex items-center justify-center font-bold shadow-md transition animate-bounce">
-        ${c === 1 ? '背' : '字'}
+    const coinsEl = document.getElementById('ly-coins-display');
+    coinsEl.innerHTML = [c1, c2, c3].map(c => `
+      <div class="coin-spinning w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 ${c === 1 ? 'border-amber-700 bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 text-amber-950' : 'border-stone-500 bg-gradient-to-br from-stone-100 via-stone-200 to-stone-300 text-stone-800'} flex items-center justify-center font-black text-sm sm:text-base shadow-xl relative">
+        <div class="w-5 h-5 border-2 border-stone-800/40 bg-stone-50/90 rounded-xs flex items-center justify-center text-[10px] font-bold">
+          ${c === 1 ? '背' : '字'}
+        </div>
       </div>
     `).join('');
-    document.getElementById('ly-coins-display').innerHTML = coinsHtml;
-    document.getElementById('ly-toss-count').innerText = tossHistory.length;
+
+    updateTossUI();
 
     if (tossHistory.length === 6) {
-      document.getElementById('ly-btn-toss').disabled = true;
-      document.getElementById('ly-btn-toss').classList.add('opacity-50');
       renderChart();
     }
   }
@@ -259,19 +543,87 @@
       else val = 9;
       tossHistory.push({ val, coins: [1, 1, 1] });
     }
-    document.getElementById('ly-toss-count').innerText = '6';
-    document.getElementById('ly-btn-toss').disabled = true;
-    document.getElementById('ly-btn-toss').classList.add('opacity-50');
+    updateTossUI();
     renderChart();
   }
 
   function handleReset() {
     tossHistory = [];
-    document.getElementById('ly-toss-count').innerText = '0';
-    document.getElementById('ly-btn-toss').disabled = false;
-    document.getElementById('ly-btn-toss').classList.remove('opacity-50');
+    updateTossUI();
     document.getElementById('ly-result-area').classList.add('hidden');
     document.getElementById('ly-result-area').innerHTML = '';
+    
+    const shakeSec = document.getElementById('ly-shake-section');
+    if (shakeSec) {
+      shakeSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function updateTossUI() {
+    const count = tossHistory.length;
+    document.getElementById('ly-toss-count').innerText = count;
+
+    const btnTextEl = document.getElementById('ly-toss-btn-text');
+    const btnToss = document.getElementById('ly-btn-toss');
+
+    const stepLabels = [
+      '🪙 擲出初爻',
+      '🪙 擲出二爻',
+      '🪙 擲出三爻',
+      '🪙 擲出四爻',
+      '🪙 擲出五爻',
+      '🪙 擲出上爻 (定卦)'
+    ];
+
+    if (count < 6) {
+      btnTextEl.innerText = stepLabels[count];
+      btnToss.className = 'w-full sm:w-auto min-w-[240px] bg-red-900 hover:bg-red-800 active:scale-95 text-amber-50 font-bold px-8 py-3.5 rounded-full shadow-lg transition duration-150 text-sm sm:text-base tracking-widest flex items-center justify-center gap-2';
+    } else {
+      btnTextEl.innerText = '🔄 重新手搖起卦';
+      btnToss.className = 'w-full sm:w-auto min-w-[240px] bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white font-bold px-8 py-3.5 rounded-full shadow-lg transition duration-150 text-sm sm:text-base tracking-widest flex items-center justify-center gap-2';
+    }
+
+    const stackEl = document.getElementById('ly-live-yao-stack');
+    if (stackEl) {
+      const yaoNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+      const valLabels = {
+        6: { name: '老陰 ✕', desc: '動爻變陽', color: 'text-rose-700 font-black' },
+        7: { name: '少陽 ⚊', desc: '靜爻', color: 'text-stone-800 font-bold' },
+        8: { name: '少陰 ⚋', desc: '靜爻', color: 'text-stone-600 font-bold' },
+        9: { name: '老陽 〇', desc: '動爻變陰', color: 'text-red-700 font-black' }
+      };
+
+      if (count === 0) {
+        stackEl.innerHTML = '<span class="text-stone-400 text-xs">靜心誠意，點擊上方按鈕開始擲出第一爻</span>';
+      } else {
+        stackEl.innerHTML = tossHistory.map((t, idx) => {
+          const isYang = (t.val === 7 || t.val === 9);
+          const isDong = (t.val === 6 || t.val === 9);
+          const meta = valLabels[t.val];
+          return `
+            <div class="w-full flex items-center justify-between px-3 py-1 bg-stone-50 border border-stone-200 rounded-md">
+              <span class="font-bold text-stone-700 w-10">${yaoNames[idx]}</span>
+              <span class="w-20 text-center font-mono ${meta.color}">${meta.name}</span>
+              <div class="w-24 flex items-center justify-center">
+                ${isYang ? `
+                  <div class="w-16 h-2 bg-stone-800 rounded-xs flex items-center justify-center">
+                    ${isDong ? '<span class="text-[8px] text-amber-300 font-black">〇</span>' : ''}
+                  </div>
+                ` : `
+                  <div class="w-16 flex gap-1.5 justify-between">
+                    <div class="w-7 h-2 bg-stone-800 rounded-xs flex items-center justify-center">
+                      ${isDong ? '<span class="text-[7px] text-amber-300 font-black">✕</span>' : ''}
+                    </div>
+                    <div class="w-7 h-2 bg-stone-800 rounded-xs"></div>
+                  </div>
+                `}
+              </div>
+              <span class="text-[10px] ${isDong ? 'text-red-700 font-bold' : 'text-stone-400'} w-12 text-right">${isDong ? '發動' : '安靜'}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
   }
 
   function renderChart() {
@@ -327,6 +679,12 @@
       const biElem = BRANCH_ELEMENTS[biBranch];
       const biRelation = RELATIONS_RULES[benMeta.palaceElement][biElem];
 
+      const isYueJian = (bBranch === currentSanChuan.monthBranch);
+      const isYuePo = (OPPOSITE_BRANCHES[bBranch] === currentSanChuan.monthBranch);
+      const isRiChen = (bBranch === currentSanChuan.dayBranch);
+      const isRiChong = (OPPOSITE_BRANCHES[bBranch] === currentSanChuan.dayBranch);
+      const isKongWang = currentSanChuan.kongBranches && currentSanChuan.kongBranches.includes(bBranch);
+
       rows.push({
         idx: i + 1,
         yaoName: yaoNames[i],
@@ -339,6 +697,11 @@
         val: y.val,
         isShi,
         isYing,
+        isYueJian,
+        isYuePo,
+        isRiChen,
+        isRiChong,
+        isKongWang,
         biRelation,
         biBranch,
         biElem,
@@ -351,44 +714,88 @@
 
     container.innerHTML = `
       <div class="border-t-2 border-stone-300 pt-6 mt-6 animate-fadeIn">
-        <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-100 rounded-2xl p-4 mb-6 text-xs text-stone-700 shadow-xs">
-          <div><span class="font-bold text-stone-900">占事：</span>${question}</div>
-          <div><span class="font-bold text-stone-900">本卦宮位：</span>${benMeta.palace}宮（${benMeta.palaceElement}）</div>
-          <div><span class="font-bold text-stone-900">世應定位：</span>世在第${benMeta.shi}爻</div>
+        
+        <!-- 排盤控制列 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-900 text-amber-100 rounded-2xl px-5 py-3 mb-6 shadow-md">
+          <div class="flex items-center gap-2">
+            <span class="text-sm sm:text-base font-black">【六爻神卦排盤完成】</span>
+            <span class="text-xs text-amber-300/80">占事：${question}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="handleReset()" class="px-3.5 py-1.5 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>重新手搖起卦</span>
+            </button>
+            <button onclick="handleQuickCast()" class="px-3.5 py-1.5 bg-stone-700 hover:bg-stone-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-bolt"></i>
+              <span>重新電腦起卦</span>
+            </button>
+          </div>
         </div>
 
+        <!-- 三傳司令與本卦提綱卡 -->
+        <div class="bg-amber-50/90 border border-amber-300/90 rounded-2xl p-4 mb-6 text-xs text-stone-800 shadow-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/70 pb-2 mb-2 font-medium">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-red-900">三傳歲月日：</span>
+              <span class="bg-red-100 text-red-900 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.yearGZ}年</span>
+              <span class="bg-amber-200/80 text-amber-950 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.monthGZ}月</span>
+              <span class="bg-red-800 text-white px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.dayGZ}日</span>
+              <span class="bg-stone-200 text-stone-800 px-2 py-0.5 rounded font-mono">${currentSanChuan.hourGZ}時</span>
+            </div>
+            <div>
+              <span class="font-bold text-purple-900">日旬空亡：</span>
+              <span class="font-mono font-bold text-purple-950 bg-purple-100 px-2 py-0.5 rounded">${currentSanChuan.kongWang}</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-stone-600 text-[11px]">
+            <div><span class="font-bold text-stone-900">卦象歸屬：</span>${benMeta.palace}宮（${benMeta.palaceElement}） · 世在第 ${benMeta.shi} 爻</div>
+            <div><span class="font-bold text-stone-900">六神司命：</span>${dayGan}日首起【${sixGods[0]}】</div>
+          </div>
+        </div>
+
+        <!-- 本卦與之卦 (變卦) 左右對照 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- 左側：本卦 -->
           <div class="bg-white border-2 border-stone-300 rounded-2xl p-5 shadow-md">
-            <div class="text-center font-black text-xl text-red-900 mb-4 border-b border-stone-200 pb-3 flex items-center justify-center gap-2">
-              <span class="text-xs bg-red-800 text-white px-2 py-0.5 rounded font-serif">本卦</span>
+            <div class="text-center font-black text-xl text-red-950 mb-4 border-b border-stone-200 pb-3 flex items-center justify-center gap-2">
+              <span class="text-xs bg-red-900 text-white px-2 py-0.5 rounded font-serif">本卦</span>
               <span>${benMeta.name}</span>
             </div>
-            <div class="space-y-3.5">
+            <div class="space-y-3">
               ${rows.map(r => `
-                <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg ${r.isDong ? 'bg-red-50 border border-red-200' : 'hover:bg-stone-50'}">
-                  <div class="w-12 text-stone-500 font-bold">${r.god}</div>
-                  <div class="w-12 ${r.isShi ? 'text-red-700 font-bold' : r.isYing ? 'text-blue-700 font-bold' : 'text-stone-400'}">
+                <div class="flex items-center justify-between text-xs py-2 px-3 rounded-lg ${r.isDong ? 'bg-red-50/90 border border-red-200' : 'hover:bg-stone-50'}">
+                  <div class="w-12 text-stone-600 font-bold">${r.god}</div>
+                  <div class="w-10 ${r.isShi ? 'text-red-700 font-black' : r.isYing ? 'text-blue-700 font-bold' : 'text-stone-300'}">
                     ${r.isShi ? '【世】' : r.isYing ? '【應】' : ''}
                   </div>
-                  <div class="w-16 font-bold text-stone-700">${r.relation}</div>
-                  <div class="w-16 text-stone-800 font-mono">${r.branch}(${r.elem})</div>
-                  
+                  <div class="w-28 flex flex-col">
+                    <span class="font-black text-stone-800">${r.relation}</span>
+                    <span class="font-mono text-[11px] text-stone-600 flex items-center gap-1">
+                      ${r.branch}(${r.elem})
+                      ${r.isYueJian ? '<span class="px-1 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded">月建</span>' : ''}
+                      ${r.isYuePo ? '<span class="px-1 bg-rose-100 text-rose-800 text-[9px] font-bold rounded">月破</span>' : ''}
+                      ${r.isRiChen ? '<span class="px-1 bg-sky-100 text-sky-800 text-[9px] font-bold rounded">日辰</span>' : ''}
+                      ${r.isRiChong ? '<span class="px-1 bg-amber-100 text-amber-800 text-[9px] font-bold rounded">日沖</span>' : ''}
+                      ${r.isKongWang ? '<span class="px-1 bg-purple-100 text-purple-800 text-[9px] font-bold rounded">空亡</span>' : ''}
+                    </span>
+                  </div>
                   <div class="flex-1 flex items-center justify-center px-2">
                     ${r.isYang ? `
                       <div class="w-20 h-2.5 bg-stone-800 rounded-xs flex items-center justify-center">
-                        ${r.isDong ? '<span class="text-[10px] text-red-400 font-bold">〇</span>' : ''}
+                        ${r.isDong ? '<span class="text-[10px] text-red-400 font-black">〇</span>' : ''}
                       </div>
                     ` : `
                       <div class="w-20 flex gap-2 justify-between">
                         <div class="w-9 h-2.5 bg-stone-800 rounded-xs flex items-center justify-center">
-                          ${r.isDong ? '<span class="text-[9px] text-red-400 font-bold">✕</span>' : ''}
+                          ${r.isDong ? '<span class="text-[9px] text-red-400 font-black">✕</span>' : ''}
                         </div>
                         <div class="w-9 h-2.5 bg-stone-800 rounded-xs"></div>
                       </div>
                     `}
                   </div>
-
-                  <div class="w-10 text-right font-bold ${r.isDong ? 'text-red-700' : 'text-stone-400'}">
+                  <div class="w-10 text-right font-black ${r.isDong ? 'text-red-700' : 'text-stone-400'}">
                     ${r.isDong ? '動' : '靜'}
                   </div>
                 </div>
@@ -396,51 +803,81 @@
             </div>
           </div>
 
+          <!-- 右側：之卦 (變卦) -->
           <div class="bg-white border-2 border-stone-300 rounded-2xl p-5 shadow-md ${hasDong ? '' : 'opacity-60'}">
             <div class="text-center font-black text-xl text-stone-800 mb-4 border-b border-stone-200 pb-3 flex items-center justify-center gap-2">
               <span class="text-xs bg-stone-700 text-white px-2 py-0.5 rounded font-serif">之卦（變卦）</span>
               <span>${hasDong ? bianMeta.name : '（六爻皆靜，無變卦）'}</span>
             </div>
             ${hasDong ? `
-              <div class="space-y-3.5">
+              <div class="space-y-3">
                 ${rows.map(r => `
-                  <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg ${r.isDong ? 'bg-amber-50 border border-amber-200 font-bold' : ''}">
-                    <div class="w-16 text-stone-700">${r.isDong ? r.biRelation : '-'}</div>
-                    <div class="w-20 text-stone-800 font-mono">${r.isDong ? `${r.biBranch}(${r.biElem})` : '-'}</div>
+                  <div class="flex items-center justify-between text-xs py-2 px-3 rounded-lg ${r.isDong ? 'bg-amber-50/90 border border-amber-200 font-bold' : ''}">
+                    <div class="w-28 flex flex-col">
+                      <span class="text-stone-800 font-bold">${r.isDong ? r.biRelation : '-'}</span>
+                      <span class="font-mono text-[11px] text-stone-600">${r.isDong ? `${r.biBranch}(${r.biElem})` : ''}</span>
+                    </div>
                     <div class="flex-1 flex items-center justify-center px-2">
                       ${r.biYang ? `
-                        <div class="w-20 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-400'} rounded-xs"></div>
+                        <div class="w-20 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-300'} rounded-xs"></div>
                       ` : `
                         <div class="w-20 flex gap-2 justify-between">
-                          <div class="w-9 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-400'} rounded-xs"></div>
-                          <div class="w-9 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-400'} rounded-xs"></div>
+                          <div class="w-9 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-300'} rounded-xs"></div>
+                          <div class="w-9 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-300'} rounded-xs"></div>
                         </div>
                       `}
                     </div>
-                    <div class="w-16 text-right text-[11px] text-stone-400">
+                    <div class="w-16 text-right text-[11px] ${r.isDong ? 'text-red-800 font-black' : 'text-stone-400'}">
                       ${r.isDong ? '變出' : '不變'}
                     </div>
                   </div>
                 `).join('')}
               </div>
             ` : `
-              <div class="h-56 flex items-center justify-center text-xs text-stone-400 text-center leading-relaxed">
-                六爻皆靜，氣運專一穩固。<br>以本卦【${benMeta.name}】卦意與世應斷吉凶即可。
+              <div class="h-56 flex flex-col items-center justify-center text-xs text-stone-400 text-center leading-relaxed">
+                <i class="fa-solid fa-mountain-sun text-2xl mb-2 text-stone-300"></i>
+                <span>六爻皆靜，氣運專一穩固。<br>以本卦【${benMeta.name}】卦意與世應論斷吉凶即可。</span>
               </div>
             `}
           </div>
         </div>
 
-        <div class="mt-6 bg-red-50/80 border border-red-200 rounded-2xl p-4 text-xs text-stone-700 leading-relaxed shadow-xs">
-          <span class="font-bold text-red-900">【易道神斷心要】</span>
-          本卦得【${benMeta.name}】，${benMeta.palace}宮${benMeta.palaceElement}爻管事。世爻在第${benMeta.shi}爻，代表求問者自身實力與定力。
-          ${hasDong ? `動爻見${rows.filter(r=>r.isDong).map(r=>r.yaoName).join('、')}發動，預示事態轉移，之卦指向【${bianMeta.name}】。` : `卦無動爻，主靜不主動，宜順天應人。`}
+        <!-- 易道神斷心要卡片 -->
+        <div class="mt-6 bg-gradient-to-r from-red-50/90 via-amber-50/80 to-red-50/90 border border-red-200/90 rounded-2xl p-5 text-xs text-stone-800 leading-relaxed shadow-xs">
+          <div class="flex items-center gap-2 font-black text-red-950 text-sm mb-2">
+            <i class="fa-solid fa-scroll text-red-800"></i>
+            <span>【愛倫院長 · 易道三傳神斷心要】</span>
+          </div>
+          <p class="mb-2">
+            本卦得【<strong>${benMeta.name}</strong>】，歸於 <strong>${benMeta.palace}宮${benMeta.palaceElement}爻</strong> 主理。世爻在第 <strong>${benMeta.shi} 爻</strong>，代表求問者自身實力、定力與當前立足點；應爻為對手、外部機遇或所占人事。
+          </p>
+          <p class="mb-2">
+            <strong>三傳時空氣運：</strong>今日歲建在 <strong>${currentSanChuan.yearGZ}</strong>，月建在 <strong>${currentSanChuan.monthGZ}</strong>，日辰在 <strong>${currentSanChuan.dayGZ}</strong>，日旬空在 <strong>${currentSanChuan.kongWang}</strong>。
+            凡臨月建、日辰者旺相得力；遭月破者逢休囚無光；臨空亡者當前動能受阻，待出空之期。
+          </p>
+          <p>
+            ${hasDong ? `
+              卦中發動之爻為：<strong>${rows.filter(r => r.isDong).map(r => r.yaoName).join('、')}</strong>。動則必變，事態正處於關鍵轉折期，之卦指向【<strong>${bianMeta.name}</strong>】，宜依動爻六親轉化與變出之爻定行止！
+            ` : `
+              六爻皆靜無動爻，主靜守安常，順應天時，蓄勢待發，不宜盲動突進。
+            `}
+          </p>
+
+          <div class="mt-4 pt-3 border-t border-red-200/60 flex items-center justify-end gap-3">
+            <button onclick="handleReset()" class="px-4 py-2 bg-red-900 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+              <i class="fa-solid fa-coins"></i>
+              <span>重新手搖起卦</span>
+            </button>
+          </div>
         </div>
+
       </div>
     `;
+
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  initApp();
+  window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
