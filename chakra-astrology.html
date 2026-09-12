@@ -113,7 +113,7 @@
               <span id="heroWeekdayBadge" class="px-3 py-1 rounded-full text-xs font-black bg-[#C8A97E] text-stone-900 shadow-xs">
                 星期幾 · 本命星
               </span>
-              <span id="heroBurmeseBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-amber-200 border border-white/20">
+              <span id="heroSacredBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-amber-200 border border-white/20">
                 天命紀年與餘數
               </span>
             </div>
@@ -195,28 +195,169 @@
         </div>
       </div>
 
+      <!-- 2.5 神聖能量大三角與顯化軸全息解鎖卡 (Sacred Trines & Manifestation Axis) -->
+      <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#EADFC7]">
+          <div>
+            <h3 class="text-xl sm:text-2xl font-black text-[#1F261C] flex items-center gap-2">
+              <i class="fa-solid fa-shapes text-[#C8A97E]"></i>
+              <span>神聖能量大三角與顯化全息軸</span>
+            </h3>
+            <p class="text-xs text-stone-500 mt-1">
+              古占星七曜三合交感能量場。解構靈性願景昇華軸 (7-2-6)、世俗王者顯化軸 (3-4-5) 與無常核心樞紐 (1)。
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- 卡片 1: 主神聖大三角 (Grand Trine · 靈性昇華軸) -->
+          <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black px-2.5 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-200">
+                  主大三角 · 靈性昇華軸
+                </span>
+                <span id="gtHarmonyBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  和諧順遂
+                </span>
+              </div>
+              <h4 class="text-base font-black text-[#1F261C] mb-1">
+                頂輪 ⇄ 臍輪 ⇄ 海底輪 (House 7 - 2 - 6)
+              </h4>
+              <p class="text-xs text-stone-500 mb-3">
+                連結領袖宮(動機)、極端宮(逆境轉化)與病符宮(肉身扎根)的靈魂修煉大三角。
+              </p>
+              
+              <!-- 星曜組成 -->
+              <div class="p-3 rounded-xl bg-white border border-stone-200 mb-3 space-y-1.5 text-xs">
+                <div class="flex justify-between"><span class="text-stone-500">頂輪 (House 7 領袖)：</span><span id="gtP7" class="font-bold text-stone-800">太陽</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">臍輪 (House 2 極端)：</span><span id="gtP2" class="font-bold text-stone-800">火星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">海底輪 (House 6 病符)：</span><span id="gtP6" class="font-bold text-stone-800">太陰</span></div>
+              </div>
+
+              <!-- 行星交感狀態 -->
+              <div id="gtRelationsList" class="space-y-1 text-[11px] text-stone-600 mb-3">
+                <!-- 動態注入 -->
+              </div>
+            </div>
+            
+            <p id="gtDesc" class="text-xs text-stone-600 leading-relaxed pt-2 border-t border-stone-200">
+              <!-- 動態解析 -->
+            </p>
+          </div>
+
+          <!-- 卡片 2: 世俗王者顯化軸 (Worldly Manifestation Axis) -->
+          <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
+                  世俗王者顯化軸
+                </span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                  成就豐盛
+                </span>
+              </div>
+              <h4 class="text-base font-black text-[#1F261C] mb-1">
+                心輪 ⇄ 喉輪 ⇄ 眉心輪 (House 3 - 4 - 5)
+              </h4>
+              <p class="text-xs text-stone-500 mb-3">
+                連結名望宮(奮鬥成就)、財富宮(豐盛流通)與君王宮(王者格局)的世俗顯化金三角。
+              </p>
+
+              <!-- 星曜組成 -->
+              <div class="p-3 rounded-xl bg-white border border-stone-200 mb-3 space-y-1.5 text-xs">
+                <div class="flex justify-between"><span class="text-stone-500">心輪 (House 3 名望)：</span><span id="wmP3" class="font-bold text-stone-800">木星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">喉輪 (House 4 財富)：</span><span id="wmP4" class="font-bold text-stone-800">金星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">眉心輪 (House 5 君王)：</span><span id="wmP5" class="font-bold text-stone-800">土星</span></div>
+              </div>
+            </div>
+
+            <p id="wmDesc" class="text-xs text-stone-600 leading-relaxed pt-2 border-t border-stone-200">
+              心、喉、眉心三大脈輪相通，象徵以真誠慈悲立基、以自信表達開創資源，並具備如君王般縱覽全局的戰略定力。
+            </p>
+          </div>
+
+          <!-- 卡片 3: 生命軸心樞紐 (Pivot Center) 與次三角 -->
+          <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
+                  生命軸心樞紐
+                </span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-stone-200 text-stone-700">
+                  動態平衡
+                </span>
+              </div>
+              <h4 class="text-base font-black text-[#1F261C] mb-1">
+                太陽神經叢 · 無常宮 (House 1)
+              </h4>
+              <p class="text-xs text-stone-500 mb-3">
+                生命中流變與適應力的定盤星。調和靈性昇華大三角與世俗顯化軸的能量動態。
+              </p>
+
+              <!-- 樞紐星曜與次三角 -->
+              <div class="p-3 rounded-xl bg-white border border-stone-200 mb-3 space-y-2 text-xs">
+                <div class="flex justify-between items-center">
+                  <span class="text-stone-500">樞紐守護星曜：</span>
+                  <span id="pivotStar" class="font-black text-amber-800">水星 (Mercury)</span>
+                </div>
+                <div class="pt-2 border-t border-stone-100">
+                  <div class="text-[11px] font-bold text-stone-700 mb-0.5">次三角支援 (House 4-2-6)：</div>
+                  <div id="mtDesc" class="text-[11px] text-stone-500">以喉輪財富宮為支點，運用真誠溝通調和現實挑戰。</div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-xs text-stone-600 leading-relaxed pt-2 border-t border-stone-200">
+              當生活面臨無常起伏時，深呼吸放鬆腹部太陽神經叢，信任內在靈魂導航，將無常化為前進的風帆。
+            </p>
+          </div>
+
+        </div>
+      </div>
+
       <!-- 3. 108 年生命大運時間軸 (108-Year Major Life Periods) -->
       <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
         <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#EADFC7]">
           <div>
             <h3 class="text-xl sm:text-2xl font-black text-[#1F261C] flex items-center gap-2">
               <i class="fa-solid fa-timeline text-[#C8A97E]"></i>
+              <span>108 年生命大運時間軸</span>
+            </h3>
+            <p class="text-xs text-stone-500 mt-1">
+              從出生起算，依八曜神聖年限流轉。綠色光環為【當前流年大運】，掌握不同年齡階段的靈魂功課與機遇。
+            </p>
+          </div>
+        </div>
+
+        <div id="majorPeriodsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+          <!-- 動態填入 8 個大運卡片 -->
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-stone-200">
+          
+          <!-- 當前流年小運雙星 -->
+          <div class="bg-stone-50/80 p-5 rounded-2xl border border-stone-200">
+            <h4 class="text-base font-black text-[#1F261C] mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-[#8A6B18]"></i>
               <span>當前流年小運雙星</span>
             </h4>
-            <div class="space-y-3 text-xs">
-              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">
-                <span class="text-stone-400 font-semibold block mb-0.5">生日前小運星 (Before Birthday)：</span>
+            <p class="text-xs text-stone-500 mb-3">依據生日前後劃分之年度專屬輔佐星曜能量：</p>
+            <div class="space-y-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-white border border-stone-200 flex items-center justify-between">
+                <span class="text-stone-500">生日前小運星 (Before Birthday)：</span>
                 <span id="minorBeforeTxt" class="text-sm font-black text-[#2E3829]">金星 (Venus)</span>
               </div>
-              <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200">
-                <span class="text-amber-800/80 font-semibold block mb-0.5">生日後小運星 (After Birthday)：</span>
+              <div class="p-3 rounded-xl bg-amber-50/80 border border-amber-200 flex items-center justify-between">
+                <span class="text-amber-800">生日後小運星 (After Birthday)：</span>
                 <span id="minorAfterTxt" class="text-sm font-black text-[#8A6B18]">太陽 (Sun)</span>
               </div>
             </div>
           </div>
 
           <!-- 三刑凶煞預警雷達 -->
-          <div id="hostileCard" class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 shadow-sm">
+          <div id="hostileCard" class="bg-stone-50/80 p-5 rounded-2xl border border-stone-200">
             <div class="flex items-center gap-2 mb-2">
               <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
               <h4 class="text-base font-black text-[#1F261C]">三刑凶煞預警雷達</h4>
@@ -343,7 +484,7 @@
 
       // 1. Hero Card
       document.getElementById('heroWeekdayBadge').innerText = `${res.birthPlanet.weekdayZh} · 本命星`;
-      document.getElementById('heroBurmeseBadge').innerText = `${res.burmese.chartDesc} · 神聖紀年 ${res.burmese.burmeseYear} (天命餘數 ${res.burmese.remainder})`;
+      document.getElementById('heroSacredBadge').innerText = `${res.sacred.chartDesc} · 神聖紀年 ${res.sacred.sacredYear} (天命餘數 ${res.sacred.remainder})`;
       document.getElementById('heroBirthPlanet').innerText = res.birthPlanet.zh;
       document.getElementById('heroNatalHouseName').innerText = `${res.natalHouse.info.zhName} (House ${res.natalHouse.number})`;
       document.getElementById('heroChakraMapping').innerText = `核心脈輪：${res.natalHouse.info.chakra} · ${res.natalHouse.info.keywords}`;
@@ -381,6 +522,34 @@
 
       // 預設展示本命落點宮位詳情
       selectHouseDetail(res.natalHouse.number);
+
+      // 2.5 神聖能量大三角與顯化全息軸
+      document.getElementById('gtHarmonyBadge').innerText = res.grandTrine.isHarmonious ? '和諧順遂' : '深刻淬礪';
+      document.getElementById('gtHarmonyBadge').className = `text-[11px] font-bold px-2 py-0.5 rounded-full ${
+        res.grandTrine.isHarmonious ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+      }`;
+      document.getElementById('gtP7').innerText = res.grandTrine.planetsZh[0];
+      document.getElementById('gtP2').innerText = res.grandTrine.planetsZh[1];
+      document.getElementById('gtP6').innerText = res.grandTrine.planetsZh[2];
+
+      const relListEl = document.getElementById('gtRelationsList');
+      relListEl.innerHTML = res.grandTrine.relationships.map(r => `
+        <div class="flex items-center justify-between p-1.5 rounded-lg bg-stone-100/70 border border-stone-200">
+          <span>${r.pair}</span>
+          <span class="font-bold ${r.type === 'friend' || r.type === 'positive' ? 'text-emerald-700' : (r.type === 'enemy' || r.type === 'negative' ? 'text-rose-700' : 'text-stone-600')}">${r.text}</span>
+        </div>
+      `).join('');
+      document.getElementById('gtDesc').innerText = res.grandTrine.description;
+
+      // 世俗王者顯化軸
+      document.getElementById('wmP3').innerText = res.worldlyAxis.planetsZh[0];
+      document.getElementById('wmP4').innerText = res.worldlyAxis.planetsZh[1];
+      document.getElementById('wmP5').innerText = res.worldlyAxis.planetsZh[2];
+      document.getElementById('wmDesc').innerText = res.worldlyAxis.description;
+
+      // 樞紐中心
+      document.getElementById('pivotStar').innerText = `${res.pivotCenter.planetZh} (${res.pivotCenter.planet})`;
+      document.getElementById('mtDesc').innerText = res.minorTrine.description;
 
       // 3. 108 年大運列表
       const majorListEl = document.getElementById('majorPeriodsList');

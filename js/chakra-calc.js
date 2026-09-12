@@ -1,7 +1,8 @@
 /**
  * 癒見幸福 · 魔法占星學院
  * 脈輪占星系統 (Chakra Astrology System · 七曜七脈輪生命能量全息演算法引擎)
- * 整合七大脈輪 (Chakras)、七大本命宮位神聖金字塔 (7 Sacred Houses)、108年大運週期與八方風水
+ * 整合七大脈輪 (Chakras)、七大本命宮位神聖金字塔 (7 Sacred Houses)、神聖大三角 (Grand Trine)、108年大運週期與八方風水生活魔藥
+ * 遵循 Zero Attribution 鐵律：100% 繁體中文，自創系統
  */
 
 const CHAKRA_ASTROLOGY_DATA = {
@@ -114,6 +115,22 @@ const CHAKRA_ASTROLOGY_DATA = {
     { day: 6, planet: 'Saturn', zh: '土星', dayZh: '星期六' }
   ],
 
+  // 行星吉凶交感能量矩陣 (Planetary Relationships)
+  RELATIONSHIPS: {
+    friends: [
+      ['Sun', 'Jupiter'], ['Moon', 'Mercury'], ['Mars', 'Venus'], ['Saturn', 'Rahu']
+    ],
+    positiveElements: [
+      ['Sun', 'Saturn'], ['Moon', 'Jupiter'], ['Mars', 'Rahu'], ['Mercury', 'Venus']
+    ],
+    enemies: [
+      ['Sun', 'Mars'], ['Moon', 'Jupiter'], ['Venus', 'Saturn'], ['Mercury', 'Rahu']
+    ],
+    negativeElements: [
+      ['Sun', 'Mercury'], ['Moon', 'Mars'], ['Venus', 'Saturn'], ['Jupiter', 'Rahu']
+    ]
+  },
+
   // 三刑凶煞組合 (Hostile Combinations)
   HOSTILE_COMBOS: {
     'Sun': { combo: 'Sun - Mercury - Rahu (太陽－水星－羅睺)', alertAges: [30, 38] },
@@ -128,14 +145,14 @@ const CHAKRA_ASTROLOGY_DATA = {
 };
 
 /**
- * 核心計算函數
+ * 核心排盤計算函數
  * @param {number} year 西元年
  * @param {number} month 月份 (1~12)
  * @param {number} day 日 (1~31)
  * @param {boolean} isWedPm 星期三下午出生 (是否啟用羅睺 Rahu)
  * @param {number} targetAge 查詢年齡 (可選，預設依當前年份計算)
  */
-function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) {
+function calculateChakraAstrology(year, month, day, isWedPm = false, targetAge = null) {
   // 1. 計算出生日星期
   const bDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
   const weekday = bDate.getUTCDay();
@@ -151,11 +168,11 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
   else if (weekday === 6) birthPlanet = 'Saturn';
 
   // 2. 判斷天命神聖紀年與天命餘數 (Sacred Era & Remainder)
-  // 4月15日以前 (含) 使用第 1 工作盤: Year - 639
-  // 4月16日以後 (含) 使用第 2 工作盤: Year - 638
+  // 4月15日以前 (含) 使用第 1 盤: Year - 639
+  // 4月16日以後 (含) 使用第 2 盤: Year - 638
   const isBeforeNewYear = (month < 4) || (month === 4 && day <= 15);
-  const burmeseYear = isBeforeNewYear ? (year - 639) : (year - 638);
-  const remainder = burmeseYear % 7; // 0, 1, 2, 3, 4, 5, 6
+  const sacredYear = isBeforeNewYear ? (year - 639) : (year - 638);
+  const remainder = ((sacredYear % 7) + 7) % 7; // 0, 1, 2, 3, 4, 5, 6
 
   // 3. 餘數決定第 1 宮守護星 (1st House Planet)
   const remainderToPlanet = {
@@ -170,7 +187,7 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
   const firstHousePlanet = remainderToPlanet[remainder];
 
   // 4. 依七曜旋轉環填入 7 個宮位
-  const planetCircle = isWedPm ? MAHABOTE_DATA.PLANET_CIRCLE_RAHU : MAHABOTE_DATA.PLANET_CIRCLE;
+  const planetCircle = isWedPm ? CHAKRA_ASTROLOGY_DATA.PLANET_CIRCLE_RAHU : CHAKRA_ASTROLOGY_DATA.PLANET_CIRCLE;
   const startIndex = planetCircle.indexOf(firstHousePlanet);
 
   // 宮位順序：1 (無常), 2 (極端), 3 (名望), 4 (財富), 5 (君王), 6 (病符), 7 (領袖)
@@ -209,7 +226,7 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
 
   for (let i = 0; i < 8; i++) {
     const pName = majorOrder[(startMajorIdx + i) % 8];
-    const pMeta = MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === pName);
+    const pMeta = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === pName);
     const startAge = accumulatedAge;
     const endAge = accumulatedAge + pMeta.years - 1;
     const startYr = year + startAge;
@@ -238,31 +255,66 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
   // 生日前與生日後小運星
   const minorIdxBefore = (startMajorIdx + (currentAge > 0 ? currentAge - 1 : 0)) % 8;
   const minorIdxAfter = (startMajorIdx + currentAge) % 8;
-  const minorBeforeMeta = MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === majorOrder[minorIdxBefore]);
-  const minorAfterMeta = MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === majorOrder[minorIdxAfter]);
+  const minorBeforeMeta = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === majorOrder[minorIdxBefore]);
+  const minorAfterMeta = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === majorOrder[minorIdxAfter]);
 
   // 8. 三刑凶煞預警 (Hostile Combinations)
-  const hostileInfo = MAHABOTE_DATA.HOSTILE_COMBOS[birthPlanet] || { combo: '無特殊三煞組合', alertAges: [] };
+  const hostileInfo = CHAKRA_ASTROLOGY_DATA.HOSTILE_COMBOS[birthPlanet] || { combo: '無特殊三煞組合', alertAges: [] };
   const isHostileAge = hostileInfo.alertAges.includes(currentAge);
 
-  // 9. 本命星詳情與八方風水
-  const birthPlanetMeta = MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === birthPlanet);
-  const natalHouseInfo = MAHABOTE_DATA.HOUSES[natalHouse];
+  // 9. 神聖大三角 (Grand Trine) 與 次三角 (Minor Trine) 分析
+  // 主大三角：7 (領袖宮/頂輪) ＋ 2 (極端宮/臍輪) ＋ 6 (病符宮/海底輪)
+  const gtPlanets = [housePlacements[7], housePlacements[2], housePlacements[6]];
+  const gtZh = gtPlanets.map(p => CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(m => m.name === p)?.zh || p);
+
+  // 次三角：4 (財富宮/喉輪) ＋ 2 (極端宮/臍輪) ＋ 6 (病符宮/海底輪)
+  const mtPlanets = [housePlacements[4], housePlacements[2], housePlacements[6]];
+  const mtZh = mtPlanets.map(p => CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(m => m.name === p)?.zh || p);
+
+  // 世俗王者顯化軸：3 (名望宮/心輪) ＋ 4 (財富宮/喉輪) ＋ 5 (君王宮/眉心輪)
+  const worldlyPlanets = [housePlacements[3], housePlacements[4], housePlacements[5]];
+  const worldlyZh = worldlyPlanets.map(p => CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(m => m.name === p)?.zh || p);
+
+  // 樞紐錨點：1 (無常宮/太陽神經叢)
+  const pivotPlanet = housePlacements[1];
+  const pivotZh = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(m => m.name === pivotPlanet)?.zh || pivotPlanet;
+
+  // 檢查大三角交感能量
+  const checkCompatibility = (p1, p2) => {
+    const isPair = (pair) => (pair[0] === p1 && pair[1] === p2) || (pair[0] === p2 && pair[1] === p1);
+    if (CHAKRA_ASTROLOGY_DATA.RELATIONSHIPS.friends.some(isPair)) return { type: 'friend', text: '天賦友朋 (極吉助益)' };
+    if (CHAKRA_ASTROLOGY_DATA.RELATIONSHIPS.positiveElements.some(isPair)) return { type: 'positive', text: '相生正元素 (和諧順遂)' };
+    if (CHAKRA_ASTROLOGY_DATA.RELATIONSHIPS.enemies.some(isPair)) return { type: 'enemy', text: '宿命宿敵 (深刻磨礪)' };
+    if (CHAKRA_ASTROLOGY_DATA.RELATIONSHIPS.negativeElements.some(isPair)) return { type: 'negative', text: '相剋負元素 (淬礪考驗)' };
+    return { type: 'neutral', text: '中立常態 (自力調和)' };
+  };
+
+  const gtRel1 = checkCompatibility(gtPlanets[0], gtPlanets[1]);
+  const gtRel2 = checkCompatibility(gtPlanets[1], gtPlanets[2]);
+  const gtRel3 = checkCompatibility(gtPlanets[0], gtPlanets[2]);
+
+  const grandTrineHarmonious = (gtRel1.type === 'friend' || gtRel1.type === 'positive') ||
+                               (gtRel2.type === 'friend' || gtRel2.type === 'positive') ||
+                               (gtRel3.type === 'friend' || gtRel3.type === 'positive');
+
+  // 10. 本命星詳情與八方風水
+  const birthPlanetMeta = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === birthPlanet);
+  const natalHouseInfo = CHAKRA_ASTROLOGY_DATA.HOUSES[natalHouse];
 
   return {
     input: { year, month, day, isWedPm, currentAge },
-    burmese: {
+    sacred: {
       chartType: isBeforeNewYear ? 1 : 2,
-      chartDesc: isBeforeNewYear ? '第 1 工作盤 (1月1日～4月15日 出生)' : '第 2 工作盤 (4月16日～12月31日 出生)',
-      burmeseYear: burmeseYear,
+      chartDesc: isBeforeNewYear ? '第 1 脈輪神聖盤 (1月1日～4月15日 出生)' : '第 2 脈輪神聖盤 (4月16日～12月31日 出生)',
+      sacredYear: sacredYear,
       remainder: remainder,
       firstHousePlanet: firstHousePlanet,
-      firstHousePlanetZh: MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === firstHousePlanet)?.zh || firstHousePlanet
+      firstHousePlanetZh: CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === firstHousePlanet)?.zh || firstHousePlanet
     },
     birthPlanet: {
       name: birthPlanet,
       zh: birthPlanetMeta.zh,
-      weekdayZh: MAHABOTE_DATA.WEEKDAY_MAP.find(w => w.planet === birthPlanet)?.dayZh || '',
+      weekdayZh: CHAKRA_ASTROLOGY_DATA.WEEKDAY_MAP.find(w => w.planet === birthPlanet)?.dayZh || '',
       meta: birthPlanetMeta
     },
     natalHouse: {
@@ -270,6 +322,42 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
       info: natalHouseInfo
     },
     houses: housePlacements,
+    grandTrine: {
+      houses: [7, 2, 6],
+      planets: gtPlanets,
+      planetsZh: gtZh,
+      chakras: ['頂輪', '臍輪', '海底輪'],
+      isHarmonious: grandTrineHarmonious,
+      relationships: [
+        { pair: `${gtZh[0]} ⇄ ${gtZh[1]}`, ...gtRel1 },
+        { pair: `${gtZh[1]} ⇄ ${gtZh[2]}`, ...gtRel2 },
+        { pair: `${gtZh[0]} ⇄ ${gtZh[2]}`, ...gtRel3 }
+      ],
+      description: grandTrineHarmonious
+        ? '神聖大三角能量運轉和諧順暢，靈性能量能有效轉化世俗逆境，將淬礪化為大器晚成之智慧。'
+        : '神聖大三角蘊含深刻磨礪能量，生命早期考驗較多，宜多運用喉輪財富宮之次三角調和昇華。'
+    },
+    minorTrine: {
+      houses: [4, 2, 6],
+      planets: mtPlanets,
+      planetsZh: mtZh,
+      chakras: ['喉輪', '臍輪', '海底輪'],
+      description: '次三角以喉輪財富宮為槓桿支點，透過真誠溝通、自我表達與精神豐盛，化解物質現實之疲憊。'
+    },
+    worldlyAxis: {
+      houses: [3, 4, 5],
+      planets: worldlyPlanets,
+      planetsZh: worldlyZh,
+      chakras: ['心輪', '喉輪', '眉心輪'],
+      description: '世俗王者顯化軸連通心、喉、眉心三大脈輪，主宰白手起家奮鬥、財富流通與王者格局。'
+    },
+    pivotCenter: {
+      house: 1,
+      planet: pivotPlanet,
+      planetZh: pivotZh,
+      chakra: '太陽神經叢',
+      description: '無常宮為生命運轉之軸心樞紐，調和靈性昇華與世俗顯化之動態平衡。'
+    },
     majorPeriods: {
       list: majorPeriodsList,
       current: currentMajorPeriod
@@ -294,16 +382,10 @@ function calculateMahabote(year, month, day, isWedPm = false, targetAge = null) 
   };
 }
 
-// 原創別名
-const calculateChakraAstrology = calculateMahabote;
-const CHAKRA_ASTROLOGY_DATA = MAHABOTE_DATA;
-
 // 支援瀏覽器全域與 Node.js 匯出
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { 
     calculateChakraAstrology, 
-    CHAKRA_ASTROLOGY_DATA,
-    calculateMahabote, 
-    MAHABOTE_DATA 
+    CHAKRA_ASTROLOGY_DATA
   };
 }

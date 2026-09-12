@@ -79,7 +79,6 @@
     { id: '21-45', g1: 21, g2: 45, c1: 'Heart', c2: 'Throat', name: '金錢金庫領主通道' },
     { id: '26-44', g1: 26, g2: 44, c1: 'Heart', c2: 'Spleen', name: '說服傳遞行銷通道' },
     { id: '40-37', g1: 40, g2: 37, c1: 'Heart', c2: 'Solar Plexus', name: '社群契約溫情通道' },
-    { id: '51-25', g1: 51, g2: 25, c1: 'Heart', c2: 'G', name: '發起超越通道' },
     { id: '12-22', g1: 12, g2: 22, c1: 'Throat', c2: 'Solar Plexus', name: '開放浪漫藝術通道' },
     { id: '35-36', g1: 35, g2: 36, c1: 'Throat', c2: 'Solar Plexus', name: '無常體驗冒險通道' },
     { id: '16-48', g1: 16, g2: 48, c1: 'Throat', c2: 'Spleen', name: '才華深度波長通道' },
