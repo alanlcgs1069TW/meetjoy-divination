@@ -6,8 +6,8 @@
 
 const CITIES_DB = [
   // 台灣主要城市 (預設群組)
-  { group: '台灣 (Taiwan)', id: 'tw_taipei', name: '台北市 (Taipei)', lat: 25.0330, lng: 121.5654, tz: 8, country: 'TW' },
-  { group: '台灣 (Taiwan)', id: 'tw_new_taipei', name: '新北市 (New Taipei)', lat: 25.0169, lng: 121.4627, tz: 8, country: 'TW' },
+  { group: '台灣 (Taiwan)', id: 'tw_taipei', name: '台北市 (Taipei · 121°31′E 25°03′N)', lat: 25.0500, lng: 121.5167, tz: 8, country: 'TW' },
+  { group: '台灣 (Taiwan)', id: 'tw_new_taipei', name: '新北市 (New Taipei · 121°28′E 25°01′N)', lat: 25.0169, lng: 121.4627, tz: 8, country: 'TW' },
   { group: '台灣 (Taiwan)', id: 'tw_taoyuan', name: '桃園市 (Taoyuan)', lat: 24.9936, lng: 121.3009, tz: 8, country: 'TW' },
   { group: '台灣 (Taiwan)', id: 'tw_taichung', name: '台中市 (Taichung)', lat: 24.1477, lng: 120.6736, tz: 8, country: 'TW' },
   { group: '台灣 (Taiwan)', id: 'tw_tainan', name: '台南市 (Tainan)', lat: 22.9997, lng: 120.2270, tz: 8, country: 'TW' },

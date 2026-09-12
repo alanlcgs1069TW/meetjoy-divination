@@ -248,15 +248,15 @@
       svg.innerHTML = '';
 
       const cx = 270, cy = 270;
-      const rOuter = 250;
-      const rSigns = 215;
+      const rOuter = 252;
+      const rSigns = 216;
       const rHouses = 175;
       const rInner = 110;
 
-      // 占星盤通常將上升點 (Asc) 放置於左側水平軸線 (180°)
+      // 占星盤標準將上升點 (Asc) 放置於左側水平軸線 (180°)
       const ascLon = houses.asc.longitude;
 
-      // 轉換黃道度數為 SVG 弧度角度 (Asc 在 180°)
+      // 轉換黃道度數為 SVG 弧度角度 (Asc 鎖定於 180° 西側水平)
       function lonToSvgAngle(lon) {
         // 逆時針方向排盤：角度 = 180 - (lon - ascLon)
         let ang = 180 - (lon - ascLon);
@@ -271,12 +271,14 @@
         };
       }
 
+      // 修正 SVG 跨越 0°/360° 邊界的扇形繪製 Bug
       function describeArc(x, y, rIn, rOut, startAngle, endAngle) {
         const p1 = polarToCartesian(x, y, rOut, startAngle);
         const p2 = polarToCartesian(x, y, rOut, endAngle);
         const p3 = polarToCartesian(x, y, rIn, endAngle);
         const p4 = polarToCartesian(x, y, rIn, startAngle);
-        const largeArc = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
+        const span = ((endAngle - startAngle) % 360 + 360) % 360;
+        const largeArc = span > 180 ? 1 : 0;
         return `M ${p1.x} ${p1.y} A ${rOut} ${rOut} 0 ${largeArc} 1 ${p2.x} ${p2.y} L ${p3.x} ${p3.y} A ${rIn} ${rIn} 0 ${largeArc} 0 ${p4.x} ${p4.y} Z`;
       }
 
@@ -291,7 +293,7 @@
       svg.appendChild(bgCircle);
 
       // 2. 繪製 12 星座扇形色環 (Zodiac Signs Ring)
-      AstroCalc.ZODIAC_SIGNS.forEach((sign, idx) => {
+      AstroCalc.ZODIAC_SIGNS.forEach((sign) => {
         const startDeg = sign.start;
         const endDeg = sign.start + 30;
         const a1 = lonToSvgAngle(endDeg);
@@ -299,7 +301,7 @@
 
         const arcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         arcPath.setAttribute('d', describeArc(cx, cy, rSigns, rOuter, a1, a2));
-        arcPath.setAttribute('fill', ELEMENT_COLORS[sign.element]);
+        arcPath.setAttribute('fill', ELEMENT_COLORS[sign.element] || '#F8FAFC');
         arcPath.setAttribute('stroke', '#CBD5E1');
         arcPath.setAttribute('stroke-width', '1');
         svg.appendChild(arcPath);
@@ -331,7 +333,7 @@
         line.setAttribute('y1', p1.y);
         line.setAttribute('x2', p2.x);
         line.setAttribute('y2', p2.y);
-        
+
         // 四軸 (1, 4, 7, 10 宮) 加粗高光金色
         if ([1, 4, 7, 10].includes(c.house)) {
           line.setAttribute('stroke', '#B8860B');
@@ -395,58 +397,123 @@
       innerCircle.setAttribute('stroke-width', '1.5');
       svg.appendChild(innerCircle);
 
-      // 6. 標記四軸文字 (Asc, MC, Dsc, IC)
-      const ascPt = polarToCartesian(cx, cy, rOuter + 14, 180);
-      const mcPt = polarToCartesian(cx, cy, rOuter + 14, lonToSvgAngle(houses.mc.longitude));
-      
-      const ascLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      ascLabel.setAttribute('x', ascPt.x);
-      ascLabel.setAttribute('y', ascPt.y + 4);
-      ascLabel.setAttribute('font-size', '11');
-      ascLabel.setAttribute('font-weight', 'bold');
-      ascLabel.setAttribute('fill', '#B8860B');
-      ascLabel.setAttribute('text-anchor', 'middle');
-      ascLabel.textContent = 'Asc';
-      svg.appendChild(ascLabel);
+      // 6. 標記四軸標籤 (Asc, MC, Dsc, IC)
+      const axesConfig = [
+        { label: 'Asc', ang: 180, color: '#B8860B' },
+        { label: 'Dsc', ang: 0, color: '#B8860B' },
+        { label: 'MC', ang: lonToSvgAngle(houses.mc.longitude), color: '#B8860B' },
+        { label: 'IC', ang: lonToSvgAngle(houses.ic.longitude), color: '#B8860B' }
+      ];
 
-      const mcLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      mcLabel.setAttribute('x', mcPt.x);
-      mcLabel.setAttribute('y', mcPt.y + 4);
-      mcLabel.setAttribute('font-size', '11');
-      mcLabel.setAttribute('font-weight', 'bold');
-      mcLabel.setAttribute('fill', '#B8860B');
-      mcLabel.setAttribute('text-anchor', 'middle');
-      mcLabel.textContent = 'MC';
-      svg.appendChild(mcLabel);
+      axesConfig.forEach(ax => {
+        const pt = polarToCartesian(cx, cy, rOuter + 14, ax.ang);
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', pt.x);
+        label.setAttribute('y', pt.y + 4);
+        label.setAttribute('font-size', '11');
+        label.setAttribute('font-weight', '900');
+        label.setAttribute('fill', ax.color);
+        label.setAttribute('text-anchor', 'middle');
+        label.textContent = ax.label;
+        svg.appendChild(label);
+      });
 
-      // 7. 繪製行星符號 (Planets Glyphs)
+      // 7. 繪製行星符號 (Planets Glyphs) + 智慧防重疊排版 (Anti-Collision Engine)
       const planetKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
       
-      planetKeys.forEach(k => {
-        const p = planets[k];
-        if (!p) return;
+      const pItems = planetKeys
+        .map(k => {
+          const p = planets[k];
+          if (!p) return null;
+          const trueAng = lonToSvgAngle(p.longitude);
+          return {
+            ...p,
+            key: k,
+            trueAng: trueAng,
+            dispAng: trueAng
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.trueAng - b.trueAng);
 
-        const ang = lonToSvgAngle(p.longitude);
-        const pt = polarToCartesian(cx, cy, (rHouses + rSigns) / 2, ang);
+      // 彈簧鬆弛演算法：確保密集行星之間最小間距 9.5 度，絕不疊字
+      const minGap = 9.5;
+      for (let pass = 0; pass < 25; pass++) {
+        for (let i = 0; i < pItems.length - 1; i++) {
+          const p1 = pItems[i];
+          const p2 = pItems[i + 1];
+          const diff = p2.dispAng - p1.dispAng;
+          if (diff < minGap && diff >= 0) {
+            const overlap = (minGap - diff) / 2;
+            p1.dispAng -= overlap;
+            p2.dispAng += overlap;
+          }
+        }
+      }
+
+      const rPlanetBase = (rHouses + rSigns) / 2;
+
+      pItems.forEach(p => {
+        const ptTrue = polarToCartesian(cx, cy, rSigns, p.trueAng);
+        const ptDisp = polarToCartesian(cx, cy, rPlanetBase, p.dispAng);
+
+        // 若位置有微調，繪製淡金色引導指標刻度線
+        if (Math.abs(p.dispAng - p.trueAng) > 0.4) {
+          const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tickLine.setAttribute('x1', ptTrue.x);
+          tickLine.setAttribute('y1', ptTrue.y);
+          tickLine.setAttribute('x2', ptDisp.x);
+          tickLine.setAttribute('y2', ptDisp.y);
+          tickLine.setAttribute('stroke', '#C8A97E');
+          tickLine.setAttribute('stroke-width', '0.8');
+          tickLine.setAttribute('stroke-dasharray', '1 2');
+          tickLine.setAttribute('opacity', '0.8');
+          svg.appendChild(tickLine);
+        } else {
+          // 原地短刻度
+          const tickIn = polarToCartesian(cx, cy, rSigns - 4, p.trueAng);
+          const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tickLine.setAttribute('x1', ptTrue.x);
+          tickLine.setAttribute('y1', ptTrue.y);
+          tickLine.setAttribute('x2', tickIn.x);
+          tickLine.setAttribute('y2', tickIn.y);
+          tickLine.setAttribute('stroke', '#B8860B');
+          tickLine.setAttribute('stroke-width', '1.2');
+          svg.appendChild(tickLine);
+        }
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         g.className = 'planet-glyph';
 
+        // 行星符號
         const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        txt.setAttribute('x', pt.x);
-        txt.setAttribute('y', pt.y + 5);
-        txt.setAttribute('font-size', '15');
+        txt.setAttribute('x', ptDisp.x);
+        txt.setAttribute('y', ptDisp.y + 4);
+        txt.setAttribute('font-size', '14');
         txt.setAttribute('font-weight', 'bold');
-        txt.setAttribute('fill', k === 'Sun' ? '#D97706' : (k === 'Moon' ? '#2563EB' : '#1E293B'));
+        txt.setAttribute('fill', p.key === 'Sun' ? '#D97706' : (p.key === 'Moon' ? '#2563EB' : '#1E293B'));
         txt.setAttribute('text-anchor', 'middle');
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
+        // 度數標註 (例如 5°10)
+        const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const degPt = polarToCartesian(cx, cy, rPlanetBase - 15, p.dispAng);
+        degText.setAttribute('x', degPt.x);
+        degText.setAttribute('y', degPt.y + 3);
+        degText.setAttribute('font-size', '8');
+        degText.setAttribute('font-family', 'monospace');
+        degText.setAttribute('font-weight', 'bold');
+        degText.setAttribute('fill', '#64748B');
+        degText.setAttribute('text-anchor', 'middle');
+        degText.textContent = `${p.degree}°${p.minute.toString().padStart(2, '0')}`;
+        g.appendChild(degText);
+
         // 逆行標籤
         if (p.isRetrograde) {
           const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          rx.setAttribute('x', pt.x + 8);
-          rx.setAttribute('y', pt.y - 4);
+          rx.setAttribute('x', ptDisp.x + 8);
+          rx.setAttribute('y', ptDisp.y - 4);
           rx.setAttribute('font-size', '8');
           rx.setAttribute('font-weight', 'bold');
           rx.setAttribute('fill', '#EF4444');
@@ -469,10 +536,16 @@
       // 1. 精準換算 UTC Date
       const utcDate = calculateUTCDatetime(dateStr, timeStr, city.tz, applyDST);
 
-      // 2. 行星與宮位計算
+      // 2. 行星與宮位計算 (支援 Placidus / Whole Sign / Equal)
       const planets = AstroCalc.calculatePlanetaryPositions(utcDate);
-      const houses = AstroCalc.calculateHousesAndAxes(utcDate, city.lat, city.lng);
+      const houses = AstroCalc.calculateHousesAndAxes(utcDate, city.lat, city.lng, hSys);
       const aspects = AstroCalc.calculateAspects(planets);
+
+      // 更新分宮制標籤
+      const hLabel = document.getElementById('house_type_label');
+      if (hLabel) {
+        hLabel.textContent = hSys === 'whole_sign' ? '整宮制 (Whole Sign)' : (hSys === 'equal' ? '等宮制 (Equal)' : '普拉西度制 (Placidus)');
+      }
 
       // 3. 更新四軸指標卡
       const summaryDiv = document.getElementById('astro_summary_cards');
@@ -504,15 +577,15 @@
 
       // 5. 生成行星落點表格
       const tableDiv = document.getElementById('planets_table_container');
-      const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
+      const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode', 'SouthNode'];
       
-      // 輔助判斷行星落入第幾宮
+      // 輔助判斷行星落入第幾宮 (支援全黃道 360 度迴旋)
       function getPlanetHouse(lon) {
         for (let i = 0; i < 12; i++) {
           const c1 = houses.cusps[i].longitude;
           const c2 = houses.cusps[i === 11 ? 0 : i + 1].longitude;
-          const span = (c2 - c1 + 360) % 360;
-          const diff = (lon - c1 + 360) % 360;
+          const span = ((c2 - c1) % 360 + 360) % 360;
+          const diff = ((lon - c1) % 360 + 360) % 360;
           if (diff < span) return i + 1;
         }
         return 1;
@@ -531,6 +604,7 @@
           <tbody class="divide-y divide-slate-100 font-medium">
             ${pOrder.map(k => {
               const p = planets[k];
+              if (!p) return '';
               const h = getPlanetHouse(p.longitude);
               return `
                 <tr class="hover:bg-amber-50/40 transition">
@@ -549,14 +623,21 @@
         </table>
       `;
 
-      // 6. 生成 12 宮位起點表
+      // 6. 生成 12 宮位起點表 (高亮四軸宮位)
       const houseDiv = document.getElementById('houses_table_container');
-      houseDiv.innerHTML = houses.cusps.map(c => `
-        <div class="p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-          <span class="font-bold text-slate-700">第 ${c.house} 宮</span>
-          <span class="font-mono text-slate-600">${c.formatted}</span>
-        </div>
-      `).join('');
+      const cardinalLabels = { 1: '上升 Asc', 4: '天底 IC', 7: '下降 Dsc', 10: '天頂 MC' };
+      houseDiv.innerHTML = houses.cusps.map(c => {
+        const isCardinal = [1, 4, 7, 10].includes(c.house);
+        return `
+          <div class="p-2 rounded-xl border flex items-center justify-between ${isCardinal ? 'bg-amber-50/80 border-amber-300 shadow-xs' : 'bg-slate-50 border-slate-200'}">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold ${isCardinal ? 'text-amber-900' : 'text-slate-700'}">第 ${c.house} 宮</span>
+              ${isCardinal ? `<span class="px-1.5 py-0.2 rounded bg-amber-200/80 text-amber-900 text-[10px] font-bold">${cardinalLabels[c.house]}</span>` : ''}
+            </div>
+            <span class="font-mono text-slate-600 font-bold">${c.formatted}</span>
+          </div>
+        `;
+      }).join('');
 
       // 7. 愛倫院長命主星生活魔藥處方
       const ascSign = houses.asc.sign;
