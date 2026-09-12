@@ -633,33 +633,44 @@
     const sixGods = SIX_GODS_MAP[dayGan] || SIX_GODS_MAP['戊'];
     const question = document.getElementById('ly-question').value || '未填寫占問事項';
 
-    let benBin = '';
-    let bianBin = '';
+    // tossHistory[0] 是初爻，tossHistory[1] 是二爻 ... tossHistory[5] 是上爻（由下至上起卦）
     const yaoStates = [];
-
     for (let i = 0; i < 6; i++) {
       const v = tossHistory[i].val;
       const isYang = (v === 7 || v === 9);
       const isDong = (v === 6 || v === 9);
-      benBin += isYang ? '1' : '0';
       const bianYang = isDong ? !isYang : isYang;
-      bianBin += bianYang ? '1' : '0';
-      yaoStates.push({ val: v, isYang, isDong });
+      yaoStates.push({ val: v, isYang, isDong, bianYang });
     }
+
+    // 內卦（下卦）：初爻(0)、二爻(1)、三爻(2) -> 八卦讀卦為自上而下（三爻、二爻、初爻）
+    const lowerKey = (yaoStates[2].isYang ? '1' : '0') + (yaoStates[1].isYang ? '1' : '0') + (yaoStates[0].isYang ? '1' : '0');
+    // 外卦（上卦）：四爻(3)、五爻(4)、上爻(5) -> 八卦讀卦為自上而下（上爻、五爻、四爻）
+    const upperKey = (yaoStates[5].isYang ? '1' : '0') + (yaoStates[4].isYang ? '1' : '0') + (yaoStates[3].isYang ? '1' : '0');
+
+    // 之卦（變卦）內外卦
+    const bLowerKey = (yaoStates[2].bianYang ? '1' : '0') + (yaoStates[1].bianYang ? '1' : '0') + (yaoStates[0].bianYang ? '1' : '0');
+    const bUpperKey = (yaoStates[5].bianYang ? '1' : '0') + (yaoStates[4].bianYang ? '1' : '0') + (yaoStates[3].bianYang ? '1' : '0');
+
+    // 六十四卦查詢鍵：自上而下讀卦（外卦在上，內卦在下；即上爻、五爻、四爻、三爻、二爻、初爻）
+    const benBin = upperKey + lowerKey;
+    const bianBin = bUpperKey + bLowerKey;
 
     const benMeta = HEXAGRAM_PALACES[benBin] || { name: '未知卦', palace: '乾', palaceElement: '金', shi: 1 };
     const bianMeta = HEXAGRAM_PALACES[bianBin] || { name: '未知卦', palace: '坤', palaceElement: '土', shi: 1 };
     const hasDong = yaoStates.some(y => y.isDong);
 
-    const lowerTri = TRIGRAMS[benBin.substring(0, 3)];
-    const upperTri = TRIGRAMS[benBin.substring(3, 6)];
+    // 裝卦納甲地支（京房易初爻到上爻）：
+    // lowerTri.branches[0~2] 為內卦初、二、三爻；upperTri.branches[3~5] 為外卦四、五、六爻
+    const lowerTri = TRIGRAMS[lowerKey];
+    const upperTri = TRIGRAMS[upperKey];
     const benBranches = [
       lowerTri.branches[0], lowerTri.branches[1], lowerTri.branches[2],
       upperTri.branches[3], upperTri.branches[4], upperTri.branches[5]
     ];
 
-    const bLowerTri = TRIGRAMS[bianBin.substring(0, 3)];
-    const bUpperTri = TRIGRAMS[bianBin.substring(3, 6)];
+    const bLowerTri = TRIGRAMS[bLowerKey];
+    const bUpperTri = TRIGRAMS[bUpperKey];
     const bianBranches = [
       bLowerTri.branches[0], bLowerTri.branches[1], bLowerTri.branches[2],
       bUpperTri.branches[3], bUpperTri.branches[4], bUpperTri.branches[5]
@@ -668,6 +679,7 @@
     const rows = [];
     const yaoNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
 
+    // 讀卦與視覺呈現：由上而下（上爻 i=5 降至 初爻 i=0）
     for (let i = 5; i >= 0; i--) {
       const bBranch = benBranches[i];
       const bElem = BRANCH_ELEMENTS[bBranch];
@@ -707,7 +719,7 @@
         biRelation,
         biBranch,
         biElem,
-        biYang: (bianBin[i] === '1')
+        biYang: y.bianYang
       });
     }
 
@@ -772,6 +784,7 @@
             <div class="space-y-3">
               ${rows.map(r => `
                 <div class="flex items-center justify-between text-xs py-2 px-3 rounded-lg ${r.isDong ? 'bg-red-50/90 border border-red-200' : 'hover:bg-stone-50'}">
+                  <span class="w-8 text-stone-400 font-mono text-[11px] font-bold">${r.yaoName}</span>
                   <div class="w-12 text-stone-600 font-bold">${r.god}</div>
                   <div class="w-10 ${r.isShi ? 'text-red-700 font-black' : r.isYing ? 'text-blue-700 font-bold' : 'text-stone-300'}">
                     ${r.isShi ? '【世】' : r.isYing ? '【應】' : ''}
@@ -819,6 +832,7 @@
               <div class="space-y-3">
                 ${rows.map(r => `
                   <div class="flex items-center justify-between text-xs py-2 px-3 rounded-lg ${r.isDong ? 'bg-amber-50/90 border border-amber-200 font-bold' : ''}">
+                    <span class="w-8 text-stone-400 font-mono text-[11px] font-bold">${r.yaoName}</span>
                     <div class="w-28 flex flex-col">
                       <span class="text-stone-800 font-bold">${r.isDong ? r.biRelation : '-'}</span>
                       <span class="font-mono text-[11px] text-stone-600">${r.isDong ? `${r.biBranch}(${r.biElem})` : ''}</span>
