@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>撲克命牌系統 · 生命之書神聖牌陣 ｜ 癒見幸福 · 魔法占星學院</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+    .sans { font-family: 'Noto Sans TC', sans-serif; }
+    .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(83, 99, 73, 0.15); }
+    .playing-card-shadow { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0, 0, 0, 0.08); }
+  </style>
+</head>
+<body class="bg-[#F5F2EB] min-h-screen flex flex-col items-center p-0 m-0 text-[#242E1F]">
+
+  <!-- 全域導覽條 (七大排盤矩陣) -->
+  <nav class="w-full bg-[#1E261D] text-amber-50 py-3.5 px-3 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/50 shadow-lg mb-6 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <span>🔮 癒見幸福 · 魔法神算</span>
+      </a>
+      <span class="text-xs text-amber-200/60 hidden lg:inline">| 魔法占星學院 · 撲克命牌實驗室</span>
+    </div>
+    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto py-1">
+      <a href="/destiny-cards.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs whitespace-nowrap">撲克命牌</a>
+      <a href="/chakra-astrology.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">脈輪占星</a>
+      <a href="/astrology.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">西洋占星</a>
+      <a href="/human-design.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">人類圖</a>
+      <a href="/xiao-liu-ren.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">四盤小六壬</a>
+      <a href="/liu-yao.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">文王六爻</a>
+      <a href="/gene-keys.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">基因天命</a>
+      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-1 sm:ml-2 px-2.5 sm:px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold whitespace-nowrap shadow-xs">預約諮詢 ↗</a>
+    </div>
+  </nav>
+
+  <main class="w-full max-w-6xl px-3 sm:px-6 pb-20">
+
+    <!-- 標題與排盤表單 -->
+    <div class="mb-8 bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EADFC7] pb-5 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EADFC7] text-[#536349] text-xs font-bold tracking-widest uppercase mb-2">
+            <span>Cardology · 古迦勒底生命之書神聖牌陣</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-black text-[#1F261C] tracking-wide">
+            撲克命牌系統排盤
+          </h1>
+          <p class="text-xs sm:text-sm text-stone-600 mt-1">
+            52 張神聖撲克象徵 52 週時間神聖密碼。精準解鎖您的本命牌、星座統治牌、業力挑戰與恩典，以及一年 7 大 52 天行星週期流動。
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="loadSampleCard(1)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition">
+            範例一 (1月15日)
+          </button>
+          <button type="button" onclick="loadSampleCard(2)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition">
+            範例二 (8月18日)
+          </button>
+        </div>
+      </div>
+
+      <!-- 輸入表單 -->
+      <form id="destinyCardForm" onsubmit="handleCalculateCards(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">您的姓名 / 稱呼</label>
+          <input type="text" id="cardNameInput" placeholder="例如：愛倫 (可不填)" value="學員個案" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">出生日期 (公曆) *</label>
+          <input type="date" id="cardDateInput" required value="1988-08-18" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">欲推算之年齡 / 流年歲數</label>
+          <input type="number" id="cardAgeInput" min="0" max="90" placeholder="預設依當前年齡" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        </div>
+
+        <div class="sm:col-span-3 flex justify-end mt-2">
+          <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-clone"></i>
+            <span>解開生命撲克密碼</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 排盤結果展示區 (動態填入) -->
+    <div id="cardsResultContainer" class="space-y-8 hidden">
+
+      <!-- 1. 核心本命牌大卡 Hero Banner -->
+      <div class="bg-gradient-to-br from-[#1E261D] via-[#2A3427] to-[#1E261D] text-amber-50 rounded-3xl p-6 sm:p-8 shadow-xl border border-[#C8A97E]/60 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+          
+          <!-- 左側：本命牌立體卡片展示 -->
+          <div class="flex items-center gap-6">
+            <div id="heroCardVisual" class="w-28 sm:w-36 h-40 sm:h-52 rounded-2xl bg-white text-stone-900 border-4 border-amber-300/80 playing-card-shadow flex flex-col justify-between p-3 relative overflow-hidden transform hover:scale-105 transition">
+              <!-- 撲克牌視覺 -->
+            </div>
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full text-xs font-bold bg-[#C8A97E] text-stone-900 mb-2">
+                <span>本命誕生牌 (Birth Card)</span>
+              </div>
+              <h2 id="heroCardTitle" class="text-3xl sm:text-4xl font-black text-[#F7E7CE] tracking-wide mb-1">
+                紅心 K (King of Hearts)
+              </h2>
+              <div id="heroSuitDesc" class="text-sm text-amber-200/90 font-medium">
+                水元素 · 情感、關係與愛之靈魂召喚
+              </div>
+              <p id="heroSunSignInfo" class="text-xs text-stone-300 mt-2">
+                西洋太陽星座：獅子座 (Leo) · 守護星：太陽 (Sun)
+              </p>
+            </div>
+          </div>
+
+          <!-- 右側：四花色元素哲學簡說 -->
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 max-w-sm w-full text-xs space-y-2">
+            <div class="text-amber-300 font-bold border-b border-white/10 pb-1.5 flex items-center justify-between">
+              <span>四大花色靈魂原形</span>
+              <span id="heroCardCodeTag" class="text-amber-200 font-mono text-[11px]">KH</span>
+            </div>
+            <p id="heroArchetypeDesc" class="text-amber-100/80 leading-relaxed">
+              撲克牌中的 52 張牌是宇宙原型的全息縮影。紅心掌管情感心靈，梅花掌管思想智識，方塊掌管物質價值，黑桃掌管意志淬礪。
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2. 三大靈魂伴星牌組 (行星統治牌、第一業力牌、第二業力牌) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- 行星統治牌 (Planetary Ruling Card) -->
+        <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 shadow-sm card-hover">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+              星座統治星
+            </span>
+            <span class="text-xs text-stone-400">第二自我面貌</span>
+          </div>
+          <div class="flex items-center gap-4 my-3">
+            <div id="rulingCardVisual" class="w-16 h-24 rounded-xl bg-white border-2 border-stone-300 shadow-sm flex flex-col justify-between p-2 text-center shrink-0"></div>
+            <div>
+              <h4 id="rulingCardName" class="text-lg font-black text-[#1F261C]">梅花 8</h4>
+              <p id="rulingSignName" class="text-xs text-stone-500 mt-0.5">對應獅子座統治星</p>
+            </div>
+          </div>
+          <p id="rulingCardDesc" class="text-xs text-stone-600 leading-relaxed border-t border-stone-100 pt-3">
+            行星統治牌代表您在世俗社會中展現的行動風格與特質，是實現本命牌天賦的重要副手。
+          </p>
+        </div>
+
+        <!-- 第一業力牌 (First Karma Card) -->
+        <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 shadow-sm card-hover">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+              第一業力牌 (付出/挑戰)
+            </span>
+            <span class="text-xs text-stone-400">欠債/功課</span>
+          </div>
+          <div class="flex items-center gap-4 my-3">
+            <div id="karma1Visual" class="w-16 h-24 rounded-xl bg-white border-2 border-stone-300 shadow-sm flex flex-col justify-between p-2 text-center shrink-0"></div>
+            <div>
+              <h4 id="karma1Name" class="text-lg font-black text-[#1F261C]">方塊 7</h4>
+              <p class="text-xs text-stone-500 mt-0.5">挑戰與償還之牌</p>
+            </div>
+          </div>
+          <p id="karma1Desc" class="text-xs text-stone-600 leading-relaxed border-t border-stone-100 pt-3">
+            代表前世或內在需要向外界付出的能量特質。遇到此牌代表的人事物，通常會感到較具挑戰或需要承擔責任。
+          </p>
+        </div>
+
+        <!-- 第二業力牌 (Second Karma Card) -->
+        <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 shadow-sm card-hover">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              第二業力牌 (收穫/天賦)
+            </span>
+            <span class="text-xs text-stone-400">恩典/支持</span>
+          </div>
+          <div class="flex items-center gap-4 my-3">
+            <div id="karma2Visual" class="w-16 h-24 rounded-xl bg-white border-2 border-stone-300 shadow-sm flex flex-col justify-between p-2 text-center shrink-0"></div>
+            <div>
+              <h4 id="karma2Name" class="text-lg font-black text-[#1F261C]">黑桃 J</h4>
+              <p class="text-xs text-stone-500 mt-0.5">禮物與滋養之牌</p>
+            </div>
+          </div>
+          <p id="karma2Desc" class="text-xs text-stone-600 leading-relaxed border-t border-stone-100 pt-3">
+            代表宇宙饋贈給您的天賦庫存。遇到此牌象徵的人事往往為您帶來資源、靈感與毫無保留的支持。
+          </p>
+        </div>
+
+      </div>
+
+      <!-- 3. 年度 52 天 7 行星週期牌陣 (52-Day Planetary Periods) -->
+      <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-[#EADFC7]">
+          <div>
+            <h3 class="text-xl sm:text-2xl font-black text-[#1F261C] flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-[#C8A97E]"></i>
+              <span>年度 52 天七大行星週期牌陣</span>
+            </h3>
+            <p class="text-xs text-stone-500 mt-1">從您的生日開始，每 52 天切換一次行星運勢主導。綠色邊框為【當前正處於的週期】</p>
+          </div>
+          <div class="text-xs font-bold bg-stone-100 text-stone-700 px-3 py-1.5 rounded-xl border border-stone-200" id="currentAgePlateTag">
+            太陽第 0 號牌陣 (Age 0)
+          </div>
+        </div>
+
+        <!-- 7 大週期橫向卡片網格 -->
+        <div id="periodsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+          <!-- 動態填入 7 大週期 -->
+        </div>
+      </div>
+
+      <!-- 4. 年度核心關鍵四牌 (Yearly Four Anchor Cards) -->
+      <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="mb-5 pb-3 border-b border-[#EADFC7]">
+          <h3 class="text-xl font-black text-[#1F261C] flex items-center gap-2">
+            <i class="fa-solid fa-anchor text-[#C8A97E]"></i>
+            <span>本年度四大定位錨點牌</span>
+          </h3>
+          <p class="text-xs text-stone-500 mt-0.5">貫穿整年度的核心精神指引與潛在深層挑戰</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
+            <div class="text-xs font-bold text-amber-800 mb-1">長期牌 (Long Range)</div>
+            <div id="anchorLongRange" class="text-base font-black text-[#1F261C] mb-1">黑桃 A</div>
+            <p class="text-[11px] text-stone-500 leading-relaxed">一整年的大背景底色與年度核心主軸。</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
+            <div class="text-xs font-bold text-rose-800 mb-1">冥王星牌 (Pluto)</div>
+            <div id="anchorPluto" class="text-base font-black text-[#1F261C] mb-1">紅心 2</div>
+            <p class="text-[11px] text-stone-500 leading-relaxed">年度最深層的轉化課題與潛意識恐懼挑戰。</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
+            <div class="text-xs font-bold text-emerald-800 mb-1">結果牌 (Result)</div>
+            <div id="anchorResult" class="text-base font-black text-[#1F261C] mb-1">黑桃 8</div>
+            <p class="text-[11px] text-stone-500 leading-relaxed">克服挑戰後所能收穫的最高榮耀與突破成果。</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-stone-50/80 border border-stone-200">
+            <div class="text-xs font-bold text-indigo-800 mb-1">環境/置換牌 (Environment)</div>
+            <div id="anchorEnv" class="text-base font-black text-[#1F261C] mb-1">方塊 10</div>
+            <p class="text-[11px] text-stone-500 leading-relaxed">圍繞在您身邊的外部環境、人際機遇與貴人氛圍。</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 5. 愛倫院長生活魔藥處方 -->
+      <div class="bg-gradient-to-r from-[#F7E7CE]/30 via-[#EADFC7]/40 to-[#F7E7CE]/30 border-2 border-[#C8A97E]/70 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-10 h-10 rounded-full bg-[#C8A97E] text-stone-900 flex items-center justify-center font-black text-lg shadow-sm">
+            🔮
+          </span>
+          <div>
+            <h3 class="text-xl font-black text-[#1F261C]">愛倫院長 · 撲克命牌調頻生活魔藥處方</h3>
+            <p class="text-xs text-stone-600">依據本命花色原形與年度當前行星週期，量身配置的日常轉化藥方</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="text-xs font-bold text-[#8A6B18] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-leaf"></i> 花色能量平衡指引
+            </div>
+            <p id="cardsSuitPotion" class="text-xs text-stone-700 leading-relaxed font-medium">
+              動態調配中...
+            </p>
+          </div>
+
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="text-xs font-bold text-[#536349] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-clock"></i> 當前週期調頻要訣
+            </div>
+            <p id="cardsPeriodPotion" class="text-xs text-stone-700 leading-relaxed font-medium">
+              動態調配中...
+            </p>
+          </div>
+
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="text-xs font-bold text-[#9B3B4C] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-feather-pointed"></i> 每日顯化金句盒
+            </div>
+            <p id="cardsQuoteBox" class="text-xs text-stone-700 leading-relaxed italic font-serif">
+              動態調配中...
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/js/destiny-cards-data.js"></script>
+  <script src="/js/destiny-cards-engine.js"></script>
+  <script>
+    let currentCardsResult = null;
+
+    function loadSampleCard(type) {
+      if (type === 1) {
+        document.getElementById('cardDateInput').value = '1985-01-15';
+        document.getElementById('cardAgeInput').value = 39;
+      } else {
+        document.getElementById('cardDateInput').value = '1988-08-18';
+        document.getElementById('cardAgeInput').value = 36;
+      }
+      handleCalculateCards(new Event('submit'));
+    }
+
+    function renderMiniCardHTML(card, size = 'md') {
+      const isRed = (card.suit === 'H' || card.suit === 'D');
+      const textColor = isRed ? 'text-red-600' : 'text-stone-900';
+      const borderColor = isRed ? 'border-red-200' : 'border-stone-300';
+      const symbol = card.symbol || '';
+      const rank = card.rank || '';
+
+      // 圖檔優先
+      const imgPath = `/images/cards/${card.img}`;
+
+      return `
+        <div class="w-full h-full flex flex-col justify-between items-center bg-white rounded-lg p-1 text-center font-bold ${textColor} ${borderColor}">
+          <div class="w-full flex justify-between items-center text-[11px] leading-none px-0.5">
+            <span>${rank}</span>
+            <span>${symbol}</span>
+          </div>
+          <div class="my-auto flex flex-col items-center justify-center">
+            <img src="${imgPath}" alt="${card.zh}" class="w-10 h-14 object-contain rounded shadow-xs" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="text-2xl hidden">${symbol}</span>
+          </div>
+          <div class="w-full flex justify-between items-center text-[11px] leading-none px-0.5 rotate-180">
+            <span>${rank}</span>
+            <span>${symbol}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleCalculateCards(e) {
+      if (e) e.preventDefault();
+      const dateVal = document.getElementById('cardDateInput').value;
+      if (!dateVal) return;
+
+      const [y, m, d] = dateVal.split('-').map(Number);
+      const ageVal = document.getElementById('cardAgeInput').value ? parseInt(document.getElementById('cardAgeInput').value, 10) : null;
+
+      currentCardsResult = calculateDestinyCard(y, m, d, ageVal);
+      renderCardsResult(currentCardsResult);
+    }
+
+    function renderCardsResult(res) {
+      document.getElementById('cardsResultContainer').classList.remove('hidden');
+
+      // 1. Hero Card
+      const bc = res.birthCard;
+      const isRed = (bc.suit === 'H' || bc.suit === 'D');
+      document.getElementById('heroCardVisual').className = `w-28 sm:w-36 h-40 sm:h-52 rounded-2xl bg-white ${isRed ? 'text-red-600' : 'text-stone-900'} border-4 border-amber-300/80 playing-card-shadow flex flex-col justify-between p-3 relative overflow-hidden transform hover:scale-105 transition`;
+      document.getElementById('heroCardVisual').innerHTML = `
+        <div class="flex justify-between items-center text-sm sm:text-base font-black">
+          <span>${bc.rank}</span>
+          <span>${bc.symbol}</span>
+        </div>
+        <div class="my-auto flex flex-col items-center justify-center">
+          <img src="/images/cards/${bc.img}" alt="${bc.zh}" class="w-16 sm:w-20 h-24 sm:h-28 object-contain rounded-md shadow-xs mb-1" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span class="text-4xl hidden">${bc.symbol}</span>
+        </div>
+        <div class="flex justify-between items-center text-sm sm:text-base font-black rotate-180">
+          <span>${bc.rank}</span>
+          <span>${bc.symbol}</span>
+        </div>
+      `;
+
+      document.getElementById('heroCardTitle').innerText = bc.zh;
+      document.getElementById('heroSuitDesc').innerText = `${bc.suitZh} (${bc.element})`;
+      document.getElementById('heroSunSignInfo').innerText = `西洋太陽星座：${res.sunSign.name} · 守護星：${res.sunSign.ruler}`;
+      document.getElementById('heroCardCodeTag').innerText = bc.code;
+
+      // 2. 伴星牌組
+      document.getElementById('rulingCardVisual').innerHTML = renderMiniCardHTML(res.planetaryRuler);
+      document.getElementById('rulingCardName').innerText = res.planetaryRuler.zh;
+      document.getElementById('rulingSignName').innerText = `對應 ${res.sunSign.name}`;
+
+      document.getElementById('karma1Visual').innerHTML = renderMiniCardHTML(res.karmaCards.first);
+      document.getElementById('karma1Name').innerText = res.karmaCards.first.zh;
+
+      document.getElementById('karma2Visual').innerHTML = renderMiniCardHTML(res.karmaCards.second);
+      document.getElementById('karma2Name').innerText = res.karmaCards.second.zh;
+
+      // 3. 52天 7 大週期
+      document.getElementById('currentAgePlateTag').innerText = res.yearlyCards.plateName;
+      const periodsGridEl = document.getElementById('periodsGrid');
+      periodsGridEl.innerHTML = res.periods.map(p => `
+        <div class="p-3 rounded-2xl border transition text-center flex flex-col justify-between ${
+          p.isCurrentPeriod 
+            ? 'bg-amber-50/90 border-amber-500 ring-2 ring-amber-400/40 shadow-sm' 
+            : 'bg-stone-50 border-stone-200'
+        }">
+          <div>
+            <div class="text-[10px] font-bold text-[#8A6B18] mb-0.5">${p.planetZh.split(' ')[0]}</div>
+            <div class="text-[10px] text-stone-500 mb-2">${p.dateRange}</div>
+          </div>
+          <div class="w-16 h-24 mx-auto my-1.5">
+            ${renderMiniCardHTML(p.card)}
+          </div>
+          <div>
+            <div class="text-xs font-black text-[#1F261C] mt-1">${p.card.rank} ${p.card.symbol}</div>
+            <div class="text-[10px] text-stone-500 line-clamp-1">${p.card.suitZh}</div>
+            ${p.isCurrentPeriod ? '<span class="mt-1.5 inline-block text-[10px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-full">當前進行</span>' : ''}
+          </div>
+        </div>
+      `).join('');
+
+      // 4. 年度四大定位牌
+      document.getElementById('anchorLongRange').innerText = res.yearlyCards.lifeCard.zh;
+      document.getElementById('anchorPluto').innerText = res.yearlyCards.plutoCard.zh;
+      document.getElementById('anchorResult').innerText = res.yearlyCards.resultCard.zh;
+      document.getElementById('anchorEnv').innerText = res.yearlyCards.environmentCard.zh;
+
+      // 5. 愛倫院長魔藥處方
+      const suitPotions = {
+        'H': '紅心人情感豐沛且直覺敏銳。建議使用巴哈「岩薔薇 (Rock Rose)」安定驚惶情緒，或調和伊蘭精油，滋潤心輪，敞開對愛的信任。',
+        'C': '梅花人天生智識好奇、熱愛學習與分享。建議使用巴哈「白栗 (White Chestnut)」平息思緒過度運轉，擴香尤加利與薄荷，提振清晰思考。',
+        'D': '方塊人務實且重視價值實踐。建議使用巴哈「橡樹 (Oak)」學會放鬆緊繃肩頸，搭配甜橙與乳香，讓豐盛能量自然流動。',
+        'S': '黑桃人具備最強悍的意志力與靈性轉化力。建議使用巴哈「胡桃 (Walnut)」保護能量場免受外在動盪干擾，擴香雪松安定根基。'
+      };
+      document.getElementById('cardsSuitPotion').innerText = suitPotions[bc.suit] || '保持身心平衡，每日靜心定錨。';
+      
+      const currP = res.periods.find(p => p.isCurrentPeriod) || res.periods[0];
+      document.getElementById('cardsPeriodPotion').innerText = `目前處於「${currP.planetZh}」。此時能量聚焦於【${currP.theme}】，宜順應宇宙節律，積極投入當期核心事務。`;
+
+      document.getElementById('cardsQuoteBox').innerText = `「在 ${bc.zh} 的神聖牌陣中，我看見靈魂的智慧藍圖；每一次流轉，都是通往完滿自我的慈悲恩典。」`;
+
+      document.getElementById('cardsResultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      handleCalculateCards();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>脈輪占星系統 · 緬甸小占星 Mahabote ｜ 癒見幸福 · 魔法占星學院</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+    .sans { font-family: 'Noto Sans TC', sans-serif; }
+    .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(83, 99, 73, 0.12); }
+    .gold-glow { box-shadow: 0 0 25px rgba(200, 169, 126, 0.45); }
+    .active-chakra { animation: pulseGlow 2.5s infinite ease-in-out; }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(200, 169, 126, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(200, 169, 126, 0.85); }
+    }
+  </style>
+</head>
+<body class="bg-[#F5F2EB] min-h-screen flex flex-col items-center p-0 m-0 text-[#242E1F]">
+
+  <!-- 全域導覽條 (七大排盤矩陣) -->
+  <nav class="w-full bg-[#1E261D] text-amber-50 py-3.5 px-3 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/50 shadow-lg mb-6 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <span>🔮 癒見幸福 · 魔法神算</span>
+      </a>
+      <span class="text-xs text-amber-200/60 hidden lg:inline">| 魔法占星學院 · 脈輪占星實驗室</span>
+    </div>
+    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto py-1">
+      <a href="/chakra-astrology.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs whitespace-nowrap">脈輪占星</a>
+      <a href="/destiny-cards.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">撲克命牌</a>
+      <a href="/astrology.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">西洋占星</a>
+      <a href="/human-design.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">人類圖</a>
+      <a href="/xiao-liu-ren.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">四盤小六壬</a>
+      <a href="/liu-yao.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">文王六爻</a>
+      <a href="/gene-keys.html" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition whitespace-nowrap">基因天命</a>
+      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-1 sm:ml-2 px-2.5 sm:px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold whitespace-nowrap shadow-xs">預約諮詢 ↗</a>
+    </div>
+  </nav>
+
+  <main class="w-full max-w-6xl px-3 sm:px-6 pb-20">
+
+    <!-- 標題與排盤表單 -->
+    <div class="mb-8 bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EADFC7] pb-5 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EADFC7] text-[#536349] text-xs font-bold tracking-widest uppercase mb-2">
+            <span>Mahabote × 7 Chakras · 東方古占星大典</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-black text-[#1F261C] tracking-wide">
+            脈輪占星系統排盤
+          </h1>
+          <p class="text-xs sm:text-sm text-stone-600 mt-1">
+            源自千年緬甸古法小占星（Mahabote）。透過七曜七宮映射人體七大脈輪，推算 108 年大運軌跡、三刑凶煞雷達與八方風水生活魔藥。
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="loadSample(1)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition">
+            範例一 (工作盤1)
+          </button>
+          <button type="button" onclick="loadSample(2)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition">
+            範例二 (工作盤2)
+          </button>
+        </div>
+      </div>
+
+      <!-- 輸入表單 -->
+      <form id="mahaboteForm" onsubmit="handleCalculate(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">您的姓名 / 稱呼</label>
+          <input type="text" id="nameInput" placeholder="例如：里中 (可不填)" value="個案學員" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">出生日期 (公曆) *</label>
+          <input type="date" id="dateInput" required value="1988-08-18" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">星期三出生時間區間</label>
+          <select id="wedTimeSelect" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+            <option value="am">上午 00:00～12:00 (守護星：水星 Mercury)</option>
+            <option value="pm">下午 12:00～24:00 (守護星：羅睺 Rahu)</option>
+          </select>
+          <p class="text-[11px] text-stone-400 mt-1">※ 僅星期三出生者需判定水星或羅睺</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">欲推算之年齡 / 流年歲數</label>
+          <input type="number" id="ageInput" min="0" max="108" placeholder="預設依當前年齡" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        </div>
+
+        <div class="sm:col-span-2 lg:col-span-4 flex justify-end mt-2">
+          <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-dharmachakra"></i>
+            <span>一鍵起盤 · 展開脈輪占星盤</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 排盤結果展示區 (動態填入) -->
+    <div id="resultContainer" class="space-y-8 hidden">
+
+      <!-- 1. 本命星與脈輪核心 Hero Card -->
+      <div id="heroCard" class="bg-gradient-to-br from-[#2E3829] via-[#3B4835] to-[#1E261D] text-amber-50 rounded-3xl p-6 sm:p-8 shadow-xl border border-[#C8A97E]/60 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl pointer-events-none">
+          <i class="fa-solid fa-om"></i>
+        </div>
+        <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span id="heroWeekdayBadge" class="px-3 py-1 rounded-full text-xs font-black bg-[#C8A97E] text-stone-900 shadow-xs">
+                星期幾 · 本命星
+              </span>
+              <span id="heroBurmeseBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-amber-200 border border-white/20">
+                緬甸曆資訊
+              </span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-black tracking-wide text-[#F7E7CE] flex items-center gap-3">
+              <span id="heroBirthPlanet">本命星名</span>
+              <span class="text-xs sm:text-sm font-normal text-amber-200/80">落入</span>
+              <span id="heroNatalHouseName" class="text-amber-300">本命宮位</span>
+            </h2>
+            <p id="heroChakraMapping" class="text-sm sm:text-base text-amber-100/90 mt-2 font-medium">
+              對應人體脈輪：頂輪 / 眉心輪 ...
+            </p>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/15 w-full md:w-auto min-w-[280px]">
+            <div class="text-xs text-amber-200/70 font-semibold mb-2">本命星象學理屬性</div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div><span class="text-amber-300/80">星曜性質：</span><span id="heroNature" class="font-bold">吉星</span></div>
+              <div><span class="text-amber-300/80">陰陽特質：</span><span id="heroGender" class="font-bold">陽性</span></div>
+              <div><span class="text-amber-300/80">核心元素：</span><span id="heroElement" class="font-bold">活炭烈火</span></div>
+              <div><span class="text-amber-300/80">大運年限：</span><span id="heroYears" class="font-bold">6 年</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 七大脈輪神聖金字塔盤 (The 7-Chakra Mahabote Pyramid) -->
+      <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#EADFC7]">
+          <div>
+            <h3 class="text-xl sm:text-2xl font-black text-[#1F261C] flex items-center gap-2">
+              <i class="fa-solid fa-cubes-stacked text-[#C8A97E]"></i>
+              <span>七大脈輪神聖占星盤</span>
+            </h3>
+            <p class="text-xs text-stone-500 mt-1">金色光環與呼吸光為您的【本命星落點宮位】，點擊任意宮位查看深度脈輪解析與生活魔藥</p>
+          </div>
+        </div>
+
+        <!-- 金字塔三層排盤佈局 -->
+        <div class="flex flex-col items-center gap-4 max-w-3xl mx-auto py-4">
+          
+          <!-- 頂層：第 7 宮 領袖宮 (頂輪) -->
+          <div class="w-full flex justify-center">
+            <div id="house_card_7" onclick="selectHouseDetail(7)" class="w-full sm:w-72 p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+          </div>
+
+          <!-- 中層：第 3 宮 名望宮 (心輪) | 第 4 宮 財富宮 (喉輪) | 第 5 宮 君王宮 (眉心輪) -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+            <div id="house_card_4" onclick="selectHouseDetail(4)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+            <div id="house_card_5" onclick="selectHouseDetail(5)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+          </div>
+
+          <!-- 底層：第 2 宮 極端宮 (臍輪) | 第 1 宮 無常宮 (太陽神經叢) | 第 6 宮 病符宮 (海底輪) -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+            <div id="house_card_1" onclick="selectHouseDetail(1)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+            <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 點擊展開之宮位與脈輪深度解析框 -->
+        <div id="houseDetailBox" class="mt-8 bg-[#F9F7F2] border border-[#C8A97E]/60 rounded-2xl p-6 transition">
+          <!-- 動態載入選中宮位 -->
+        </div>
+      </div>
+
+      <!-- 3. 大運時間軸與流年小運 (108-Year Major Periods & Minor Periods) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- 左側 2 欄：108 年大運週期時間軸 -->
+        <div class="lg:col-span-2 bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-[#EADFC7]">
+            <h3 class="text-xl font-black text-[#1F261C] flex items-center gap-2">
+              <i class="fa-solid fa-timeline text-[#C8A97E]"></i>
+              <span>108 年大運週期軌跡</span>
+            </h3>
+            <span class="text-xs bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-full border border-amber-300">
+              大運總長 108 年
+            </span>
+          </div>
+          <p class="text-xs text-stone-500 mb-6">從出生星曜開始啟動大運循環，綠色加框標籤為您目前年齡所處的重大人生週期。</p>
+
+          <div id="majorPeriodsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- 動態填入 8 大週期 -->
+          </div>
+        </div>
+
+        <!-- 右側 1 欄：流年小運與三刑凶煞預警雷達 -->
+        <div class="space-y-6">
+          
+          <!-- 流年小運卡 -->
+          <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 shadow-sm">
+            <h4 class="text-lg font-black text-[#1F261C] mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-arrows-split-up-and-left text-[#C8A97E]"></i>
+              <span>當前流年小運雙星</span>
+            </h4>
+            <div class="space-y-3 text-xs">
+              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">
+                <span class="text-stone-400 font-semibold block mb-0.5">生日前小運星 (Before Birthday)：</span>
+                <span id="minorBeforeTxt" class="text-sm font-black text-[#2E3829]">金星 (Venus)</span>
+              </div>
+              <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200">
+                <span class="text-amber-800/80 font-semibold block mb-0.5">生日後小運星 (After Birthday)：</span>
+                <span id="minorAfterTxt" class="text-sm font-black text-[#8A6B18]">太陽 (Sun)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 三刑凶煞預警雷達 -->
+          <div id="hostileCard" class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+              <h4 class="text-base font-black text-[#1F261C]">三刑凶煞預警雷達</h4>
+            </div>
+            <p class="text-xs text-stone-600 leading-relaxed mb-3">
+              本命星特定之凶煞組合，當大運與小運同時觸發時，為人生劇烈淬礪轉折點：
+            </p>
+            <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 font-bold mb-3" id="hostileComboTxt">
+              組合：Sun - Mercury - Rahu
+            </div>
+            <div class="text-xs text-stone-600">
+              <span class="font-semibold text-stone-700">高敏感考驗年齡：</span>
+              <span id="hostileAgesTxt" class="font-bold text-rose-700">30 歲、38 歲</span>
+            </div>
+            <div id="hostileCurrentAlert" class="mt-3 text-xs font-bold p-2.5 rounded-lg">
+              <!-- 是否當前處於凶煞期 -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 4. 八方風水吉凶方位羅盤 (Directional Compass) -->
+      <div class="bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-[#EADFC7]">
+          <div>
+            <h3 class="text-xl sm:text-2xl font-black text-[#1F261C] flex items-center gap-2">
+              <i class="fa-solid fa-compass text-[#C8A97E]"></i>
+              <span>八方吉凶風水羅盤指南</span>
+            </h3>
+            <p class="text-xs text-stone-500 mt-1">
+              依據 Mahabote 八曜方位神聖佈局，掌握事業求財、健康養生、靈修靜心與避忌動土之精確方位。
+            </p>
+          </div>
+        </div>
+
+        <div id="directionalGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          <!-- 動態填入 8 個方位卡片 -->
+        </div>
+      </div>
+
+      <!-- 5. 愛倫院長生活魔藥處方 -->
+      <div class="bg-gradient-to-r from-[#F7E7CE]/30 via-[#EADFC7]/40 to-[#F7E7CE]/30 border-2 border-[#C8A97E]/70 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-10 h-10 rounded-full bg-[#C8A97E] text-stone-900 flex items-center justify-center font-black text-lg shadow-sm">
+            🌿
+          </span>
+          <div>
+            <h3 class="text-xl font-black text-[#1F261C]">愛倫院長 · 七脈輪生活魔藥調頻處方</h3>
+            <p class="text-xs text-stone-600">針對您的本命落入宮位與核心脈輪，量身調配的日常能量儀式</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="text-xs font-bold text-[#8A6B18] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-seedling"></i> 巴哈花精調頻指引
+            </div>
+            <p id="potionBachTxt" class="text-xs text-stone-700 leading-relaxed font-medium">
+              依據宮位動態推薦
+            </p>
+          </div>
+
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="text-xs font-bold text-[#536349] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-spray-can-sparkles"></i> 芳療植物精油配方
+            </div>
+            <p id="potionAromaTxt" class="text-xs text-stone-700 leading-relaxed font-medium">
+              依據星曜元素動態推薦
+            </p>
+          </div>
+
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="text-xs font-bold text-[#9B3B4C] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-feather"></i> 每日正念顯化金句
+            </div>
+            <p id="potionQuoteTxt" class="text-xs text-stone-700 leading-relaxed italic font-serif">
+              依據脈輪動態賦能
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/js/mahabote-calc.js"></script>
+  <script>
+    let currentResult = null;
+
+    // 快速填入範例
+    function loadSample(type) {
+      if (type === 1) {
+        // Donna Quinn (Workchart 1)
+        document.getElementById('dateInput').value = '1949-01-15';
+        document.getElementById('wedTimeSelect').value = 'am';
+        document.getElementById('ageInput').value = 68;
+      } else {
+        // Augie Abbatiello (Workchart 2)
+        document.getElementById('dateInput').value = '1928-07-01';
+        document.getElementById('wedTimeSelect').value = 'am';
+        document.getElementById('ageInput').value = 89;
+      }
+      handleCalculate(new Event('submit'));
+    }
+
+    function handleCalculate(e) {
+      if (e) e.preventDefault();
+      const dateVal = document.getElementById('dateInput').value;
+      if (!dateVal) return;
+
+      const [y, m, d] = dateVal.split('-').map(Number);
+      const isWedPm = document.getElementById('wedTimeSelect').value === 'pm';
+      const ageVal = document.getElementById('ageInput').value ? parseInt(document.getElementById('ageInput').value, 10) : null;
+
+      currentResult = calculateMahabote(y, m, d, isWedPm, ageVal);
+      renderResults(currentResult);
+    }
+
+    function renderResults(res) {
+      document.getElementById('resultContainer').classList.remove('hidden');
+
+      // 1. Hero Card
+      document.getElementById('heroWeekdayBadge').innerText = `${res.birthPlanet.weekdayZh} · 本命星`;
+      document.getElementById('heroBurmeseBadge').innerText = `${res.burmese.chartDesc} · 緬甸紀年 ${res.burmese.burmeseYear} (餘數 ${res.burmese.remainder})`;
+      document.getElementById('heroBirthPlanet').innerText = res.birthPlanet.zh;
+      document.getElementById('heroNatalHouseName').innerText = `${res.natalHouse.info.zhName} (House ${res.natalHouse.number})`;
+      document.getElementById('heroChakraMapping').innerText = `核心脈輪：${res.natalHouse.info.chakra} · ${res.natalHouse.info.keywords}`;
+
+      document.getElementById('heroNature').innerText = res.birthPlanet.meta.nature;
+      document.getElementById('heroGender').innerText = res.birthPlanet.meta.gender;
+      document.getElementById('heroElement').innerText = res.birthPlanet.meta.element;
+      document.getElementById('heroYears').innerText = `${res.birthPlanet.meta.years} 年`;
+
+      // 2. 七大宮位金字塔
+      const houses = [7, 3, 4, 5, 2, 1, 6];
+      houses.forEach(hNum => {
+        const pName = res.houses[hNum];
+        const pMeta = MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === pName);
+        const hInfo = MAHABOTE_DATA.HOUSES[hNum];
+        const isNatal = (res.natalHouse.number === hNum);
+
+        const cardEl = document.getElementById(`house_card_${hNum}`);
+        if (!cardEl) return;
+
+        cardEl.className = `p-4 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative ${
+          isNatal 
+            ? 'bg-amber-50/90 border-[#C8A97E] gold-glow active-chakra' 
+            : 'bg-white border-stone-200 hover:border-stone-400'
+        }`;
+
+        cardEl.innerHTML = `
+          ${isNatal ? '<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-[#C8A97E] text-stone-900 text-[10px] font-black tracking-widest uppercase shadow-xs">★ 本命星落點</div>' : ''}
+          <div class="text-[11px] font-bold text-stone-500 mb-1">House ${hNum} · ${hInfo.zhName}</div>
+          <div class="text-xs font-semibold px-2 py-0.5 rounded-full inline-block mb-2 ${hInfo.badgeColor}">${hInfo.chakra.split(' ')[0]}</div>
+          <div class="text-lg sm:text-xl font-black text-[#1F261C] mb-1">${pMeta.zh}</div>
+          <div class="text-[11px] text-stone-500">${pMeta.element}</div>
+        `;
+      });
+
+      // 預設展示本命落點宮位詳情
+      selectHouseDetail(res.natalHouse.number);
+
+      // 3. 108 年大運列表
+      const majorListEl = document.getElementById('majorPeriodsList');
+      majorListEl.innerHTML = res.majorPeriods.list.map(p => `
+        <div class="p-3.5 rounded-2xl border transition ${
+          p.isCurrent 
+            ? 'bg-emerald-50/90 border-emerald-500 ring-2 ring-emerald-400/30' 
+            : 'bg-stone-50/60 border-stone-200 text-stone-600'
+        }">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-sm text-[#1F261C] flex items-center gap-1.5">
+              <span>${p.zh}大運</span>
+              <span class="text-xs font-normal text-stone-500">(${p.years}年)</span>
+            </span>
+            ${p.isCurrent ? '<span class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-full">當前大運</span>' : ''}
+          </div>
+          <div class="text-xs text-stone-500">年齡：${p.startAge} 歲 ～ ${p.endAge} 歲 (${p.startYear}年 ～ ${p.endYear}年)</div>
+        </div>
+      `).join('');
+
+      // 小運雙星
+      document.getElementById('minorBeforeTxt').innerText = `${res.minorPeriods.before.zh} (${res.minorPeriods.before.age} 歲時段)`;
+      document.getElementById('minorAfterTxt').innerText = `${res.minorPeriods.after.zh} (${res.minorPeriods.after.age} 歲時段)`;
+
+      // 三刑凶煞雷達
+      document.getElementById('hostileComboTxt').innerText = `凶煞組合：${res.hostile.combo}`;
+      document.getElementById('hostileAgesTxt').innerText = res.hostile.alertAges.length > 0 ? res.hostile.alertAges.map(a => `${a} 歲`).join('、') : '無特別凶煞年齡標註';
+      
+      const alertEl = document.getElementById('hostileCurrentAlert');
+      if (res.hostile.isCurrentAlert) {
+        alertEl.className = 'mt-3 text-xs font-bold p-2.5 rounded-lg bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1.5';
+        alertEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 提醒：您當前年齡正處於此星曜凶煞淬礪考驗期，宜沉潛定心、重視保養。';
+      } else {
+        alertEl.className = 'mt-3 text-xs font-bold p-2.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5';
+        alertEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> 當前年齡不在特定三刑凶煞高危險峰值期，能量運行平順。';
+      }
+
+      // 4. 八方風水羅盤網格
+      const dirGridEl = document.getElementById('directionalGrid');
+      dirGridEl.innerHTML = MAHABOTE_DATA.MAJOR_PERIODS.map(p => {
+        const isBirthDir = (p.name === res.birthPlanet.name);
+        return `
+          <div class="p-4 rounded-2xl border transition ${
+            isBirthDir ? 'bg-amber-50/80 border-[#C8A97E] shadow-sm' : 'bg-stone-50/70 border-stone-200'
+          }">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold text-[#8A6B18]">${p.dirZh} (${p.direction.split(' ')[0]})</span>
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.nature.includes('吉') ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-700'}">${p.nature.split(' ')[0]}</span>
+            </div>
+            <div class="text-base font-black text-[#1F261C] mb-1">${p.zh} (${p.name})</div>
+            <div class="text-xs text-stone-500 mb-2">元素特質：${p.element}</div>
+            <div class="text-[11px] text-stone-600 border-t border-stone-200/80 pt-2 leading-relaxed">
+              ${isBirthDir ? '<b class="text-[#8A6B18]">★ 本命貴人方：</b>最利個人能量定錨與事業願景。' : '宜靜心調頻，留意此方位氣場整潔。'}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 5. 愛倫院長生活魔藥處方
+      const hInfo = res.natalHouse.info;
+      document.getElementById('potionBachTxt').innerText = hInfo.potion;
+      document.getElementById('potionAromaTxt').innerText = `搭配 ${res.birthPlanet.meta.element.split(' ')[0]} 屬性，建議擴香檜木、雪松或佛手柑，助益本命 ${res.birthPlanet.zh} 穩定綻放。`;
+      document.getElementById('potionQuoteTxt').innerText = `「在${hInfo.zhName}的淬礪中，我看見神聖秩序；當${hInfo.chakra.split(' ')[0]}澄澈點亮，萬事皆在愛中安放。」`;
+
+      // 平滑滾動到結果
+      document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function selectHouseDetail(hNum) {
+      if (!currentResult) return;
+      const hInfo = MAHABOTE_DATA.HOUSES[hNum];
+      const pName = currentResult.houses[hNum];
+      const pMeta = MAHABOTE_DATA.MAJOR_PERIODS.find(p => p.name === pName);
+      const isNatal = (currentResult.natalHouse.number === hNum);
+
+      const detailEl = document.getElementById('houseDetailBox');
+      detailEl.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EADFC7] pb-3 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-base sm:text-lg font-black text-[#1F261C]">House ${hNum} · ${hInfo.zhName}</span>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${hInfo.badgeColor}">${hInfo.chakra}</span>
+            ${isNatal ? '<span class="text-xs bg-[#C8A97E] text-stone-900 font-bold px-2 py-0.5 rounded-full">★ 您的本命宮位</span>' : ''}
+          </div>
+          <div class="text-xs font-bold text-[#8A6B18]">當前落入星曜：${pMeta.zh} (${pName})</div>
+        </div>
+        <p class="text-xs sm:text-sm text-stone-700 leading-relaxed mb-3">${hInfo.description}</p>
+        <div class="bg-white/80 p-3.5 rounded-xl border border-stone-200/80 text-xs">
+          <b class="text-[#536349]">🌿 宮位生活魔藥處方：</b>
+          <span class="text-stone-700">${hInfo.potion}</span>
+        </div>
+      `;
+    }
+
+    // 頁面載入時自動運算預設值
+    window.addEventListener('DOMContentLoaded', () => {
+      handleCalculate();
+    });
+  </script>
+</body>
+</html>
