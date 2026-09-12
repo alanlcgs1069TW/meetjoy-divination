@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetJoy 基因天命黃金之路 (The Golden Path)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+    .mj-sphere {
+      position: absolute;
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      border: 2.5px solid #FFFFFF;
+      box-shadow: 0 8px 20px rgba(41, 69, 60, 0.25);
+      color: #FFFFFF;
+      font-weight: 700;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+    .mj-sphere:hover, .mj-sphere.is-active {
+      transform: translate(-50%, -50%) scale(1.14);
+      box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.5), 0 10px 24px rgba(41, 69, 60, 0.4);
+    }
+    .sphere-activation { background: linear-gradient(135deg, #2E3829, #4A5D40); }
+    .sphere-venus { background: linear-gradient(135deg, #7A2E3B, #9B3B4C); }
+    .sphere-pearl { background: linear-gradient(135deg, #2B4E63, #3A6985); }
+  </style>
+</head>
+<body class="bg-[#F4EFE6] min-h-screen flex flex-col items-center p-0 m-0 text-[#25342F]">
+
+  <!-- 全域導覽條 -->
+  <nav class="w-full bg-[#2E3829] text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/40 shadow-md mb-6">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <span>🔮 癒見幸福 · 魔法神算</span>
+      </a>
+      <span class="text-xs text-amber-200/60 hidden sm:inline">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+    </div>
+    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium">
+      <a href="/astrology.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">西洋占星</a>
+      <a href="/human-design.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">人類圖</a>
+      <a href="/xiao-liu-ren.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">四盤小六壬</a>
+      <a href="/liu-yao.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">文王六爻</a>
+      <a href="/gene-keys.html" class="px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs">基因天命</a>
+      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-2 px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold">預約諮詢 ↗</a>
+    </div>
+  </nav>
+
+  <main class="w-full max-w-5xl px-3 sm:px-6 pb-16">
+    <!-- 標題與排盤輸入 -->
+    <div class="text-center mb-8 bg-white/70 backdrop-blur border border-[#E8DFC5] rounded-2xl p-6 shadow-sm">
+      <p class="text-xs tracking-[0.25em] font-bold text-[#8A6B18] uppercase mb-1">MEETJOY · THE GOLDEN PATH</p>
+      <h1 class="text-2xl sm:text-4xl font-black text-[#2E3829] tracking-wider mb-2">基因天命：把生命讀成一條金色的路</h1>
+      <p class="text-xs sm:text-sm text-stone-600 max-w-xl mx-auto">
+        每一個陰影，都藏著一個可以練習回來的天賦。在三大序列的旋律中，找回身心靈的原始和諧。
+      </p>
+
+      <form id="gk_form" class="flex flex-wrap items-center justify-center gap-3 mt-6">
+        <div class="flex items-center gap-2 bg-[#FBF9F4] border border-[#D9C99E] rounded-xl px-3 py-2">
+          <span class="text-xs font-bold text-stone-500">出生日期</span>
+          <input type="date" id="gk_date" required value="1990-05-20" class="bg-transparent text-sm font-bold text-stone-800 outline-none">
+        </div>
+        <div class="flex items-center gap-2 bg-[#FBF9F4] border border-[#D9C99E] rounded-xl px-3 py-2">
+          <span class="text-xs font-bold text-stone-500">出生時間</span>
+          <input type="time" id="gk_time" required value="12:30" class="bg-transparent text-sm font-bold text-stone-800 outline-none">
+        </div>
+        <button type="submit" class="bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 font-bold px-5 py-2.5 rounded-xl shadow transition text-sm border border-amber-900/40">
+          展開我的黃金之路
+        </button>
+      </form>
+    </div>
+
+    <!-- 序列圖例指示 -->
+    <div class="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6 text-xs font-bold">
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded-full bg-[#3E4B37] shadow-xs"></span>
+        <span>激活序列 (Activation)</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded-full bg-[#8A3343] shadow-xs"></span>
+        <span>金星序列 (Venus)</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded-full bg-[#31566D] shadow-xs"></span>
+        <span>珍珠序列 (Pearl)</span>
+      </div>
+    </div>
+
+    <!-- 核心地圖與詳解 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/80 border border-[#E8DFC5] rounded-3xl p-6 sm:p-8 shadow-sm">
+      <!-- 互動羅盤輪 -->
+      <div class="lg:col-span-7 flex justify-center">
+        <div id="wheel_box" class="relative w-[340px] sm:w-[440px] h-[340px] sm:h-[440px] rounded-full border border-[#D5C287] shadow-inner bg-radial from-[#FFFDF6] to-transparent flex items-center justify-center">
+          <!-- 幾何環裝飾 -->
+          <div class="absolute inset-8 rounded-full border border-dashed border-[#D4AF37]/50 pointer-events-none"></div>
+          <div class="absolute inset-20 rounded-full border border-[#D4AF37]/30 pointer-events-none"></div>
+          <div class="text-center pointer-events-none z-0">
+            <span class="text-[10px] tracking-widest text-[#896C1D] block">THE GOLDEN PATH</span>
+            <span class="text-xs font-black text-[#2E3829]">黃金之路</span>
+          </div>
+          <!-- 球體容器 -->
+          <div id="spheres_layer" class="absolute inset-0"></div>
+        </div>
+      </div>
+
+      <!-- 詳解卡片區 -->
+      <div class="lg:col-span-5 flex flex-col justify-center min-h-[360px] bg-[#FFFDF8] border-l-4 border-[#C8A97E] border-y border-r border-[#E8DFC5] rounded-2xl p-6 shadow-sm">
+        <div id="gk_detail">
+          <span class="text-xs font-bold text-stone-400 block mb-1">點選左側天命球</span>
+          <h3 class="text-xl font-black text-[#2E3829] mb-4">展開頻率三位一體</h3>
+          <p class="text-sm text-stone-600">每個基因天命都是一組神聖的音叉，點選天命球，接收這趟黃金之路送給你的魔藥調頻指引。</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SERIAL = [59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29];
+
+    const DATA = {
+      1:['熵減／枯竭','新鮮／原創','美'],2:['迷失','方向','合一'],3:['混亂','創新','純真'],4:['不寬容','理解','寬恕'],
+      5:['急躁','耐心','永恆'],6:['衝突','外交','和平'],7:['分裂','指引','德性'],8:['平庸','風格','精緻'],
+      9:['惰性','專注','堅定'],10:['自我執著','自然','存在'],11:['晦暗','理想主義','光明'],12:['虛榮','辨識','純淨'],
+      13:['不和','洞察','同理'],14:['妥協','能力','豐盛'],15:['遲鈍','磁性','開花'],16:['冷漠','多才','精通'],
+      17:['意見','遠見','全知'],18:['審判','正直','完美'],19:['共依附','敏感','犧牲'],20:['膚淺','自信','臨在'],
+      21:['控制','權威','英勇'],22:['不名譽','優雅','恩典'],23:['複雜','簡樸','本質'],24:['成癮','創造力','寂靜'],
+      25:['收縮','接納','普世之愛'],26:['驕傲','巧思','隱形'],27:['自私','利他','無私'],28:['無目的','全心投入','不朽'],
+      29:['半途而廢','承諾','奉獻'],30:['渴望','輕盈','狂喜'],31:['傲慢','領導','謙遜'],32:['失敗','保存','敬畏'],
+      33:['遺忘','覺知','正念'],34:['力量濫用','力量','莊嚴'],35:['飢渴','冒險','無限'],36:['動盪','人道','慈悲'],
+      37:['脆弱','平等','溫柔'],38:['奮鬥','堅毅','榮耀'],39:['挑釁','活力','解放'],40:['疲憊','決心','神性意志'],
+      41:['幻想','預期','發出'],42:['期望','超脫','慶典'],43:['耳聾','洞見','頓悟'],44:['干擾','團隊合作','共時性'],
+      45:['支配','協同','聖餐'],46:['嚴肅','喜悅','狂喜'],47:['壓抑','轉化','超越'],48:['不足','足智多謀','智慧'],
+      49:['反應','革命','重生'],50:['腐敗','平衡','和諧'],51:['激動','主動','覺醒'],52:['壓力','克制','靜止'],
+      53:['不成熟','擴展','超越'],54:['貪婪','抱負','上昇'],55:['受害','自由','自由'],56:['分心','豐富','陶醉'],
+      57:['不安','直覺','清明'],58:['不滿','活力','喜悅'],59:['不誠實','親密','透明'],60:['限制','務實','正義'],
+      61:['心理困擾','靈感','神聖'],62:['智識','精確','無瑕'],63:['懷疑','探究','真理'],64:['混亂','想像力','明晰']
+    };
+
+    function mod(n, m) { return ((n % m) + m) % m; }
+    function degToRad(d) { return d * Math.PI / 180; }
+
+    function sunLon(dt) {
+      const d = (dt.getTime() / 86400000 + 2440587.5) - 2451545.0;
+      const g = mod(357.529 + 0.98560028 * d, 360);
+      return mod(280.459 + 0.98564736 * d + 1.915 * Math.sin(degToRad(g)) + 0.020 * Math.sin(degToRad(2 * g)), 360);
+    }
+
+    function calcGate(deg) {
+      return SERIAL[Math.floor(mod(deg, 360) / 5.625)];
+    }
+
+    function calculateGeneKeys(dateStr, timeStr) {
+      const dt = new Date(dateStr + 'T' + timeStr + ':00Z');
+      const dDays = (dt.getTime() / 86400000 + 2440587.5) - 2451545.0;
+      const pSun = sunLon(dt);
+
+      const pPos = {
+        'Sun': pSun, 'Earth': mod(pSun + 180, 360),
+        'Moon': mod(218.316 + 13.176396 * dDays, 360),
+        'Mercury': mod(252.251 + 4.092334 * dDays, 360),
+        'Jupiter': mod(34.351 + 0.0830868 * dDays, 360)
+      };
+
+      const desDt = new Date(dt.getTime() - 88.5 * 86400000);
+      const dDaysDes = (desDt.getTime() / 86400000 + 2440587.5) - 2451545.0;
+      const dSun = sunLon(desDt);
+
+      const dPos = {
+        'Sun': dSun, 'Earth': mod(dSun + 180, 360),
+        'Moon': mod(218.316 + 13.176396 * dDaysDes, 360),
+        'Venus': mod(181.979 + 1.602130 * dDaysDes, 360),
+        'Mars': mod(355.433 + 0.524039 * dDaysDes, 360),
+        'Jupiter': mod(34.351 + 0.0830868 * dDaysDes, 360)
+      };
+
+      const mkItem = (name, gate, seq, colorClass) => {
+        const item = DATA[gate] || ['混亂', '創造', '神聖'];
+        return {
+          name: name,
+          gate: gate,
+          seq: seq,
+          colorClass: colorClass,
+          shadow: item[0],
+          gift: item[1],
+          siddhi: item[2],
+          mantra: '當「' + item[0] + '」在心裡升起時，別急著批判它；帶著一個溫柔的深呼吸，讓它蛻變成你的「' + item[1] + '」。'
+        };
+      };
+
+      return [
+        // 激活序列 (綠色)
+        mkItem('畢生使命', calcGate(pPos.Sun), '激活序列', 'sphere-activation'),
+        mkItem('進化挑戰', calcGate(pPos.Earth), '激活序列', 'sphere-activation'),
+        mkItem('輻射光彩', calcGate(dPos.Sun), '激活序列', 'sphere-activation'),
+        mkItem('生命目的', calcGate(dPos.Earth), '激活序列', 'sphere-activation'),
+
+        // 金星序列 (酒紅)
+        mkItem('吸引力', calcGate(dPos.Moon), '金星序列', 'sphere-venus'),
+        mkItem('智商 IQ', calcGate(pPos.Mercury), '金星序列', 'sphere-venus'),
+        mkItem('情商 EQ', calcGate(dPos.Venus), '金星序列', 'sphere-venus'),
+        mkItem('靈商 SQ', calcGate(dPos.Jupiter), '金星序列', 'sphere-venus'),
+        mkItem('核心創傷', calcGate(dPos.Mars), '金星序列', 'sphere-venus'),
+
+        // 珍珠序列 (藍色)
+        mkItem('天職召喚', calcGate(dPos.Mars), '珍珠序列', 'sphere-pearl'),
+        mkItem('文化場域', calcGate(dPos.Jupiter), '珍珠序列', 'sphere-pearl'),
+        mkItem('靈魂品牌', calcGate(pPos.Sun), '珍珠序列', 'sphere-pearl'),
+        mkItem('珍珠豐盛', calcGate(pPos.Jupiter), '珍珠序列', 'sphere-pearl')
+      ];
+    }
+
+    function renderSpheres(items) {
+      const container = document.getElementById('spheres_layer');
+      container.innerHTML = '';
+
+      items.forEach((item, idx) => {
+        const angle = (idx / items.length) * Math.PI * 2 - Math.PI / 2;
+        // 半徑分層
+        const radius = idx < 4 ? 38 : idx < 9 ? 44 : 26;
+        const x = 50 + Math.cos(angle) * radius;
+        const y = 50 + Math.sin(angle) * radius;
+
+        const sphere = document.createElement('div');
+        sphere.className = 'mj-sphere ' + item.colorClass;
+        sphere.style.left = x + '%';
+        sphere.style.top = y + '%';
+        sphere.innerHTML = '<span class="text-[9px] opacity-80 leading-none">' + item.name + '</span><span class="text-xs font-black">' + item.gate + '</span>';
+
+        sphere.onclick = () => showDetail(item, sphere);
+        container.appendChild(sphere);
+      });
+
+      // 預設展開第一個
+      if (items.length > 0) {
+        showDetail(items[0], container.children[0]);
+      }
+    }
+
+    function showDetail(item, element) {
+      document.querySelectorAll('.mj-sphere').forEach(s => s.classList.remove('is-active'));
+      if (element) element.classList.add('is-active');
+
+      const detail = document.getElementById('gk_detail');
+      detail.innerHTML = 
+        '<div class="flex items-center gap-2 mb-2">' +
+          '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white ' + 
+            (item.seq==='激活序列'?'bg-[#3E4B37]':item.seq==='金星序列'?'bg-[#8A3343]':'bg-[#31566D]') + '">' + item.seq + '</span>' +
+          '<span class="text-xs font-bold text-stone-500">' + item.name + '</span>' +
+        '</div>' +
+        '<h3 class="text-2xl font-black text-[#2E3829] mb-4">天命 ' + item.gate + ' 號：' + item.gift + '</h3>' +
+        '<div class="space-y-2 border-y border-stone-200 py-3 mb-4 text-xs sm:text-sm">' +
+          '<div class="flex justify-between"><b>陰影頻率 (Shadow)</b><span class="text-rose-800 font-bold">' + item.shadow + '</span></div>' +
+          '<div class="flex justify-between"><b>天賦頻率 (Gift)</b><span class="text-emerald-800 font-bold">' + item.gift + '</span></div>' +
+          '<div class="flex justify-between"><b>悉地頻率 (Siddhi)</b><span class="text-amber-800 font-bold">' + item.siddhi + '</span></div>' +
+        '</div>' +
+        '<div class="bg-[#FBF9F4] border-l-4 border-[#C8A97E] p-3.5 rounded-r-xl text-xs sm:text-sm text-stone-700 leading-relaxed">' +
+          '<span class="font-bold text-[#8A6B18] block mb-1">🪄 愛倫院長的生活魔藥處方：</span>' +
+          item.mantra +
+        '</div>';
+    }
+
+    document.getElementById('gk_form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = document.getElementById('gk_date').value;
+      const time = document.getElementById('gk_time').value;
+      renderSpheres(calculateGeneKeys(date, time));
+    });
+
+    // 初始化
+    renderSpheres(calculateGeneKeys('1990-05-20', '12:30'));
+  </script>
+</body>
+</html>

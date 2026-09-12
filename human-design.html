@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetJoy 人類圖立體能量排盤大典 (Bodygraph Atelier Pro)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <!-- 本地純靜態天文引擎 -->
+  <script src="./js/astronomy.browser.min.js"></script>
+  <script src="./js/geo-cities.js"></script>
+  <script src="./js/astro-calc.js"></script>
+
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+    .cinzel { font-family: 'Cinzel', serif; }
+    .crystal-facet { transition: all 0.25s ease; }
+    .crystal-center { cursor: pointer; transition: transform 0.2s ease, filter 0.25s ease; }
+    .crystal-center:hover { filter: drop-shadow(0 4px 12px rgba(184, 134, 11, 0.45)); transform: scale(1.015); }
+    .badge-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-[#EEF2F6] min-h-screen flex flex-col items-center p-0 m-0 text-[#1E293B]">
+
+  <!-- 全域導覽條 -->
+  <nav class="w-full bg-[#1E261D] text-amber-50 py-3.5 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/50 shadow-lg mb-6 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <span>🔮 癒見幸福 · 魔法神算</span>
+      </a>
+      <span class="text-xs text-amber-200/60 hidden md:inline">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+    </div>
+    <div class="flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm font-medium">
+      <a href="/astrology.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">西洋占星</a>
+      <a href="/human-design.html" class="px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs">人類圖</a>
+      <a href="/xiao-liu-ren.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">四盤小六壬</a>
+      <a href="/liu-yao.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">文王六爻</a>
+      <a href="/gene-keys.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">基因天命</a>
+      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-2 px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold shadow-xs">預約諮詢 ↗</a>
+    </div>
+  </nav>
+
+  <main class="w-full max-w-6xl px-3 sm:px-6 pb-20">
+    
+    <!-- 標題與嚴格排盤流程輸入表單 -->
+    <div class="mb-8 bg-white/90 backdrop-blur-md border border-[#D9E2EC] rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div class="text-center max-w-2xl mx-auto mb-6">
+        <p class="text-xs tracking-[0.3em] font-bold text-[#987315] uppercase mb-1 cinzel">HUMAN DESIGN BODYGRAPH ATELIER PRO</p>
+        <h1 class="text-2xl sm:text-4xl font-black text-[#1E293B] tracking-wide mb-2">人類圖立體能量水晶大典</h1>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          嚴格遵循瑞士天文星曆標準，角秒級太陽倒退 88° 精準推導；整合出生地經緯度與歷史夏令時間校驗，重現 3D 立體水晶多面體人體圖。
+        </p>
+      </div>
+
+      <!-- 嚴格排盤表單 -->
+      <form id="hd_form" class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-4 sm:p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+          
+          <!-- 出生日期 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 出生公曆日期 (Date)</label>
+            <input type="date" id="birth_date" required value="1990-05-20" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+          </div>
+
+          <!-- 出生時間 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. 出生時分 (Time · 24H)</label>
+            <input type="time" id="birth_time" required value="12:30" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+          </div>
+
+          <!-- 出生地點選擇 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 出生城市 (Place of Birth)</label>
+            <select id="birth_city" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+              <!-- JS 自動動態填充全球城市庫 -->
+            </select>
+          </div>
+
+          <!-- 操作按鈕 -->
+          <div class="flex gap-2">
+            <button type="submit" class="flex-1 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 font-bold py-2.5 px-4 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-1.5 border border-amber-900/30">
+              <span>✨ 繪製人體圖</span>
+            </button>
+            <button type="button" id="btn_sample" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-3 py-2.5 rounded-xl text-xs transition" title="載入 7933 範例">
+              範例
+            </button>
+          </div>
+        </div>
+
+        <!-- 夏令時間與經緯度資訊列 -->
+        <div class="mt-4 pt-3 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+          <div class="flex items-center gap-2">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="chk_dst" class="sr-only peer">
+              <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#987315]"></div>
+              <span class="ml-2 font-medium text-slate-700">歷史夏令時間 (DST) 扣減 1 小時</span>
+            </label>
+            <span id="dst_auto_tag" class="hidden px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[11px]">系統自動辨識符合</span>
+          </div>
+
+          <div id="geo_info_text" class="font-mono text-slate-600">
+            座標：東經 121°33' 北緯 25°02' ｜ 時區：UTC+8 ｜ 真太陽時校準中...
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- 核心數據指標卡 (Type, Profile, Authority, Definition) -->
+    <div id="chart_summary_cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-8">
+      <!-- 動態填入 4 大核心標籤 -->
+    </div>
+
+    <!-- 人類圖核心主舞台：左側設計盤 ＋ 中央 3D 水晶人體圖 ＋ 右側個性盤 -->
+    <div class="bg-gradient-to-b from-[#DCE7F0] via-[#E8F0F7] to-[#DFEAF3] border border-[#CAD8E6] rounded-3xl p-4 sm:p-8 shadow-md">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        
+        <!-- 左側：紅色設計盤 (Design · 潛意識) -->
+        <div class="lg:col-span-3 flex flex-col items-center lg:items-end order-2 lg:order-1">
+          
+          <!-- 設計盤標題與兩顆紅色方向箭頭 -->
+          <div class="w-full max-w-[220px] mb-3 flex items-center justify-between border-b border-rose-300/80 pb-2">
+            <span class="text-xs font-black tracking-wider text-rose-800 uppercase flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 設計 (潛意識)
+            </span>
+            <div class="flex items-center gap-2">
+              <span id="arrow_brain" class="text-lg text-rose-600 transition" title="大腦運作方向">◀</span>
+              <span id="arrow_environment" class="text-lg text-rose-600 transition" title="環境/消化方向">◀</span>
+            </div>
+          </div>
+
+          <!-- 紅色星曜閘門清單 -->
+          <div id="design_planet_list" class="w-full max-w-[220px] space-y-1.5 font-mono text-xs">
+            <!-- 動態渲染 13 顆星曜 -->
+          </div>
+        </div>
+
+        <!-- 中央：立體水晶多面體人體圖 (3D Faceted BodyGraph) -->
+        <div class="lg:col-span-6 flex flex-col items-center order-1 lg:order-2">
+          
+          <div class="w-full max-w-[420px] relative drop-shadow-xl select-none">
+            
+            <svg id="bodygraph_svg" viewBox="0 0 380 620" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <!-- 斑馬紋雙通道 (Both Design & Personality) 條紋圖案 -->
+                <pattern id="zebra_both" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="0" x2="0" y2="10" stroke="#C53030" stroke-width="5" />
+                  <line x1="5" y1="0" x2="5" y2="10" stroke="#1B365D" stroke-width="5" />
+                </pattern>
+
+                <!-- 水晶高光立體濾鏡 -->
+                <linearGradient id="crystal_white" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+                  <stop offset="40%" stop-color="#F1F5F9" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#CBD5E1" stop-opacity="0.8"/>
+                </linearGradient>
+
+                <!-- 薦骨立體紅漸層 (對標 7933) -->
+                <linearGradient id="crystal_sacral" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#E57373"/>
+                  <stop offset="45%" stop-color="#C65353"/>
+                  <stop offset="100%" stop-color="#8E2E2E"/>
+                </linearGradient>
+
+                <!-- 根部立體棕褐金漸層 (對標 7933) -->
+                <linearGradient id="crystal_root" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#CDB397"/>
+                  <stop offset="45%" stop-color="#A88B68"/>
+                  <stop offset="100%" stop-color="#6F583D"/>
+                </linearGradient>
+
+                <!-- 脾直覺立體棕灰漸層 -->
+                <linearGradient id="crystal_spleen" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#D7CCC8"/>
+                  <stop offset="50%" stop-color="#A1887F"/>
+                  <stop offset="100%" stop-color="#5D4037"/>
+                </linearGradient>
+
+                <!-- 情緒立體琥珀金漸層 -->
+                <linearGradient id="crystal_solar" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FFE082"/>
+                  <stop offset="50%" stop-color="#FFB300"/>
+                  <stop offset="100%" stop-color="#E65100"/>
+                </linearGradient>
+
+                <!-- 喉輪立體金棕漸層 -->
+                <linearGradient id="crystal_throat" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#E6D3A3"/>
+                  <stop offset="50%" stop-color="#C8A97E"/>
+                  <stop offset="100%" stop-color="#8C6D37"/>
+                </linearGradient>
+
+                <!-- G中心立體香檳金鑽石 -->
+                <linearGradient id="crystal_g" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FFF9C4"/>
+                  <stop offset="50%" stop-color="#FBC02D"/>
+                  <stop offset="100%" stop-color="#F57F17"/>
+                </linearGradient>
+
+                <!-- 心輪立體赤紅寶石 -->
+                <linearGradient id="crystal_heart" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#EF9A9A"/>
+                  <stop offset="50%" stop-color="#E53935"/>
+                  <stop offset="100%" stop-color="#B71C1C"/>
+                </linearGradient>
+
+                <!-- 邏輯立體翡翠綠 -->
+                <linearGradient id="crystal_ajna" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#A5D6A7"/>
+                  <stop offset="50%" stop-color="#43A047"/>
+                  <stop offset="100%" stop-color="#1B5E20"/>
+                </linearGradient>
+
+                <!-- 頭部立體金黃尖頂 -->
+                <linearGradient id="crystal_head" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FFF59D"/>
+                  <stop offset="50%" stop-color="#FDD835"/>
+                  <stop offset="100%" stop-color="#F57F17"/>
+                </linearGradient>
+              </defs>
+
+              <!-- 底層微光大橢圓環 (對標 7933 背景光環) -->
+              <ellipse cx="190" cy="360" rx="145" ry="175" fill="none" stroke="#CBD5E1" stroke-width="4" opacity="0.6"/>
+              <ellipse cx="190" cy="330" rx="120" ry="110" fill="none" stroke="#CBD5E1" stroke-width="3" opacity="0.5"/>
+
+              <!-- 36 條通道管線層 (底層線路) -->
+              <g id="svg_channels_layer" stroke-linecap="round">
+                <!-- 由 JS 動態繪製 36 條雙向管道，支援紅、藍、紅黑斑馬條紋 -->
+              </g>
+
+              <!-- 九大中心水晶多面體幾何層 -->
+              <g id="svg_centers_layer">
+                <!-- 1. 頭部中心 (Head) 尖頂多面水晶錐 (x: 190, y: 70) -->
+                <g class="crystal-center" data-center="Head" id="center_Head">
+                  <polygon points="190,28 152,70 190,88 228,70" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="190,28 152,70 190,88" fill="#FFFFFF" opacity="0.4"/>
+                  <!-- 閘門切面 64, 61, 63 -->
+                  <polygon id="gate_facet_64" points="152,70 174,80 166,96 146,84" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="160" y="84" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_64">64</text>
+
+                  <polygon id="gate_facet_61" points="176,82 204,82 200,98 180,98" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="92" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_61">61</text>
+
+                  <polygon id="gate_facet_63" points="206,80 228,70 234,84 214,96" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="220" y="84" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_63">63</text>
+                </g>
+
+                <!-- 2. 邏輯中心 (Ajna) 倒尖多面水晶錐 (x: 190, y: 138) -->
+                <g class="crystal-center" data-center="Ajna" id="center_Ajna">
+                  <polygon points="150,112 230,112 190,168" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="150,112 190,126 190,168" fill="#FFFFFF" opacity="0.35"/>
+                  
+                  <!-- 閘門 47, 24, 4 / 17, 43, 11 -->
+                  <polygon id="gate_facet_47" points="152,114 176,114 172,126 150,122" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="162" y="122" font-size="8.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_47">47</text>
+
+                  <polygon id="gate_facet_24" points="178,114 202,114 200,126 180,126" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="122" font-size="8.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_24">24</text>
+
+                  <polygon id="gate_facet_4" points="204,114 228,114 230,122 208,126" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="218" y="122" font-size="8.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_4">4</text>
+
+                  <polygon id="gate_facet_17" points="160,136 178,144 174,154 158,146" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="168" y="148" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_17">17</text>
+
+                  <polygon id="gate_facet_43" points="182,146 198,146 194,162 186,162" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="156" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_43">43</text>
+
+                  <polygon id="gate_facet_11" points="202,144 220,136 222,146 206,154" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="212" y="148" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_11">11</text>
+                </g>
+
+                <!-- 3. 喉輪中心 (Throat) 方錐多面切割 (x: 190, y: 220) -->
+                <g class="crystal-center" data-center="Throat" id="center_Throat">
+                  <polygon points="160,186 220,186 228,240 152,240" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="160,186 190,204 152,240" fill="#FFFFFF" opacity="0.3"/>
+                  
+                  <!-- 頂部門戶 62, 23, 56 -->
+                  <polygon id="gate_facet_62" points="160,186 178,186 174,200 158,198" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="168" y="196" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_62">62</text>
+
+                  <polygon id="gate_facet_23" points="180,186 200,186 200,200 180,200" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="196" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_23">23</text>
+
+                  <polygon id="gate_facet_56" points="202,186 220,186 222,198 206,200" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="212" y="196" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_56">56</text>
+
+                  <!-- 側翼與底部門戶 35, 12, 45, 33, 8, 31, 20, 16 -->
+                  <polygon id="gate_facet_16" points="154,204 168,206 166,220 152,218" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="160" y="214" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_16">16</text>
+
+                  <polygon id="gate_facet_20" points="152,222 166,222 164,236 150,236" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="158" y="231" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_20">20</text>
+
+                  <polygon id="gate_facet_31" points="154,238 174,238 172,248 152,248" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="162" y="246" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_31">31</text>
+
+                  <polygon id="gate_facet_8" points="178,238 202,238 202,250 178,250" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="246" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_8">8</text>
+
+                  <polygon id="gate_facet_33" points="206,238 226,238 228,248 208,248" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="218" y="246" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_33">33</text>
+
+                  <polygon id="gate_facet_45" points="212,222 226,222 228,236 214,236" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="220" y="231" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_45">45</text>
+
+                  <polygon id="gate_facet_12" points="212,204 226,204 228,218 214,218" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="220" y="214" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_12">12</text>
+
+                  <polygon id="gate_facet_35" points="214,190 228,190 230,202 216,202" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="222" y="198" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_35">35</text>
+                </g>
+
+                <!-- 4. G中心 (Identity) 鑽石多面切割 (x: 190, y: 320) -->
+                <g class="crystal-center" data-center="G" id="center_G">
+                  <polygon points="190,270 232,320 190,370 148,320" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="190,270 190,370 148,320" fill="#FFFFFF" opacity="0.35"/>
+                  
+                  <!-- 閘門 1, 13, 25, 46 / 2, 15, 10, 7 -->
+                  <polygon id="gate_facet_1" points="182,274 198,274 202,292 178,292" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="286" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_1">1</text>
+
+                  <polygon id="gate_facet_13" points="206,288 224,304 212,316 196,300" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="210" y="304" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_13">13</text>
+
+                  <polygon id="gate_facet_25" points="214,324 230,336 216,350 200,338" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="215" y="338" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_25">25</text>
+
+                  <polygon id="gate_facet_2" points="182,348 198,348 194,366 186,366" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="190" y="360" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_2">2</text>
+
+                  <polygon id="gate_facet_15" points="166,338 180,348 168,362 154,352" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="166" y="352" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_15">15</text>
+
+                  <polygon id="gate_facet_10" points="152,324 168,312 180,326 164,338" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="164" y="326" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_10">10</text>
+
+                  <polygon id="gate_facet_7" points="156,298 174,286 186,298 168,310" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="168" y="302" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_7">7</text>
+
+                  <polygon id="gate_facet_46" points="198,338 214,350 206,362 192,350" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="204" y="352" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_46">46</text>
+                </g>
+
+                <!-- 5. 意志力中心 (Heart / Ego) 偏右傾斜小多面體 (x: 254, y: 350) -->
+                <g class="crystal-center" data-center="Heart" id="center_Heart">
+                  <polygon points="236,336 276,332 284,374 246,368" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="236,336 260,352 246,368" fill="#FFFFFF" opacity="0.3"/>
+                  
+                  <polygon id="gate_facet_21" points="258,332 274,332 280,348 264,348" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="268" y="342" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_21">21</text>
+
+                  <polygon id="gate_facet_51" points="242,342 256,342 254,356 240,356" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="248" y="350" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_51">51</text>
+
+                  <polygon id="gate_facet_26" points="246,358 260,358 258,370 244,370" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="252" y="366" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_26">26</text>
+
+                  <polygon id="gate_facet_40" points="266,356 282,356 280,372 264,372" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="274" y="366" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_40">40</text>
+                </g>
+
+                <!-- 6. 薦骨中心 (Sacral) 中央立體立方體 (x: 190, y: 440 · 7933 著色核心) -->
+                <g class="crystal-center" data-center="Sacral" id="center_Sacral">
+                  <!-- 正面主立方 (8 邊角倒角多面體) -->
+                  <polygon points="160,402 220,402 230,422 230,470 220,488 160,488 150,470 150,422" fill="url(#crystal_sacral)" stroke="#8E2E2E" stroke-width="1.5" class="crystal-base"/>
+                  <!-- 頂部與側部 3D 高光切面 -->
+                  <polygon points="160,402 190,414 220,402 230,422 190,432 150,422" fill="#FFFFFF" opacity="0.25"/>
+                  <polygon points="150,422 190,432 190,480 150,470" fill="#000000" opacity="0.15"/>
+
+                  <!-- 門戶 5, 14, 29 / 34, 27, 42, 3, 9, 59 -->
+                  <polygon id="gate_facet_5" points="156,406 176,406 174,420 154,420" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="165" y="416" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_5">5</text>
+
+                  <polygon id="gate_facet_14" points="180,406 200,406 200,420 180,420" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="190" y="416" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_14">14</text>
+
+                  <polygon id="gate_facet_29" points="204,406 224,406 226,420 206,420" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="215" y="416" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_29">29</text>
+
+                  <polygon id="gate_facet_34" points="152,428 168,428 168,442 152,442" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="160" y="438" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_34">34</text>
+
+                  <polygon id="gate_facet_27" points="152,450 168,450 168,464 152,464" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="160" y="459" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_27">27</text>
+
+                  <polygon id="gate_facet_42" points="156,468 174,468 174,484 156,484" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="165" y="478" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_42">42</text>
+
+                  <polygon id="gate_facet_3" points="178,468 202,468 202,484 178,484" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="190" y="478" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_3">3</text>
+
+                  <polygon id="gate_facet_9" points="206,468 224,468 224,484 206,484" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="215" y="478" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_9">9</text>
+
+                  <polygon id="gate_facet_59" points="212,442 228,442 228,458 212,458" fill="#E2E8F0" stroke="#8E2E2E" stroke-width="0.8"/>
+                  <text x="220" y="452" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_59">59</text>
+                </g>
+
+                <!-- 7. 根部中心 (Root) 底部立體多面方柱 (x: 190, y: 550 · 7933 著色核心) -->
+                <g class="crystal-center" data-center="Root" id="center_Root">
+                  <polygon points="160,518 220,518 228,542 228,582 216,598 164,598 152,582 152,542" fill="url(#crystal_root)" stroke="#6F583D" stroke-width="1.5" class="crystal-base"/>
+                  <polygon points="160,518 190,530 220,518 228,542 190,550 152,542" fill="#FFFFFF" opacity="0.3"/>
+                  <polygon points="152,542 190,550 190,594 164,598" fill="#000000" opacity="0.15"/>
+
+                  <!-- 門戶 53, 60, 52 / 54, 19, 38, 39, 58, 41 -->
+                  <polygon id="gate_facet_53" points="156,522 174,522 172,536 154,536" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="164" y="531" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_53">53</text>
+
+                  <polygon id="gate_facet_60" points="178,522 202,522 202,536 178,536" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="190" y="531" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_60">60</text>
+
+                  <polygon id="gate_facet_52" points="206,522 224,522 226,536 208,536" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="216" y="531" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_52">52</text>
+
+                  <polygon id="gate_facet_54" points="154,544 170,544 170,558 154,558" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="162" y="553" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_54">54</text>
+
+                  <polygon id="gate_facet_38" points="156,564 172,564 172,580 156,580" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="164" y="574" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_38">38</text>
+
+                  <polygon id="gate_facet_58" points="166,584 182,584 182,596 166,596" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="174" y="592" font-size="7" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_58">58</text>
+
+                  <polygon id="gate_facet_41" points="204,584 220,584 218,596 202,596" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="210" y="592" font-size="7" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_41">41</text>
+
+                  <polygon id="gate_facet_39" points="212,564 226,564 224,580 210,580" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="218" y="574" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_39">39</text>
+
+                  <polygon id="gate_facet_19" points="212,544 226,544 226,558 212,558" fill="#E2E8F0" stroke="#6F583D" stroke-width="0.8"/>
+                  <text x="219" y="553" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_19">19</text>
+                </g>
+
+                <!-- 8. 直覺脾中心 (Spleen) 左側多面立體柱 (x: 95, y: 440) -->
+                <g class="crystal-center" data-center="Spleen" id="center_Spleen">
+                  <polygon points="56,410 116,424 116,478 56,492" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="56,410 88,432 56,492" fill="#FFFFFF" opacity="0.3"/>
+                  
+                  <polygon id="gate_facet_48" points="62,416 80,420 78,434 60,430" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="70" y="427" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_48">48</text>
+
+                  <polygon id="gate_facet_57" points="82,422 100,426 98,440 80,436" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="90" y="432" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_57">57</text>
+
+                  <polygon id="gate_facet_44" points="102,428 116,432 116,446 100,444" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="108" y="440" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_44">44</text>
+
+                  <polygon id="gate_facet_50" points="102,450 116,450 116,464 100,464" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="108" y="459" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_50">50</text>
+
+                  <polygon id="gate_facet_32" points="98,466 114,466 112,478 96,478" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="105" y="474" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_32">32</text>
+
+                  <polygon id="gate_facet_28" points="78,468 94,468 90,482 74,480" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="84" y="476" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_28">28</text>
+
+                  <polygon id="gate_facet_18" points="58,474 74,474 72,488 56,486" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="65" y="483" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_18">18</text>
+                </g>
+
+                <!-- 9. 情緒中心 (Solar Plexus) 右側多面立體柱 (x: 285, y: 440) -->
+                <g class="crystal-center" data-center="Solar Plexus" id="center_Solar_Plexus">
+                  <polygon points="264,424 324,410 324,492 264,478" fill="url(#crystal_white)" stroke="#94A3B8" stroke-width="1.2" class="crystal-base"/>
+                  <polygon points="324,410 292,432 324,492" fill="#FFFFFF" opacity="0.3"/>
+                  
+                  <polygon id="gate_facet_36" points="296,420 318,416 322,430 300,434" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="310" y="427" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_36">36</text>
+
+                  <polygon id="gate_facet_22" points="278,426 294,422 296,436 280,438" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="287" y="432" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_22">22</text>
+
+                  <polygon id="gate_facet_37" points="266,430 278,430 278,444 266,444" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="272" y="439" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_37">37</text>
+
+                  <polygon id="gate_facet_6" points="266,450 278,450 278,464 266,464" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="272" y="459" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_6">6</text>
+
+                  <polygon id="gate_facet_49" points="268,468 282,468 284,480 270,480" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="276" y="476" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_49">49</text>
+
+                  <polygon id="gate_facet_55" points="286,470 304,470 306,484 288,482" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="296" y="478" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_55">55</text>
+
+                  <polygon id="gate_facet_30" points="308,472 324,472 324,488 308,486" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+                  <text x="316" y="482" font-size="7.5" font-weight="bold" fill="#334155" text-anchor="middle" id="gate_text_30">30</text>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <!-- 點選中心的生活魔藥調頻指引抽屜 -->
+          <div id="center_drawer" class="w-full mt-5 p-4 rounded-2xl bg-white border-l-4 border-[#C8A97E] border-t border-r border-b border-slate-200 shadow-sm text-xs sm:text-sm text-slate-700">
+            💡 點選上方任何一個能量中心多面體，閱讀愛倫院長的生活魔藥當下調頻提醒。
+          </div>
+        </div>
+
+        <!-- 右側：深藍/黑色意識盤 (Personality · 顯意識) -->
+        <div class="lg:col-span-3 flex flex-col items-center lg:items-start order-3">
+          
+          <!-- 意識盤標題與兩顆深藍色方向箭頭 -->
+          <div class="w-full max-w-[220px] mb-3 flex items-center justify-between border-b border-slate-400/80 pb-2">
+            <div class="flex items-center gap-2">
+              <span id="arrow_view" class="text-lg text-slate-800 transition" title="人生視角方向">▶</span>
+              <span id="arrow_motivation" class="text-lg text-slate-800 transition" title="動機心智方向">▶</span>
+            </div>
+            <span class="text-xs font-black tracking-wider text-slate-900 uppercase flex items-center gap-1.5">
+              個性 (顯意識) <span class="w-2.5 h-2.5 rounded-full bg-slate-900"></span>
+            </span>
+          </div>
+
+          <!-- 黑色星曜閘門清單 -->
+          <div id="personality_planet_list" class="w-full max-w-[220px] space-y-1.5 font-mono text-xs">
+            <!-- 動態渲染 13 顆星曜 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 下方深度能量分析手冊區 (通道、輪迴交叉、策略、生活魔藥) -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- 通道與定義 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="font-bold text-base text-slate-900 mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
+          <span>⚡ 已定義天賦通道 (Defined Channels)</span>
+        </h3>
+        <div id="channels_detail_list" class="space-y-3 text-xs sm:text-sm text-slate-600"></div>
+      </div>
+
+      <!-- 策略與內在權威生活處方 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="font-bold text-base text-slate-900 mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
+          <span>🌿 愛倫院長的生活魔藥處方</span>
+        </h3>
+        <div id="life_rx_container" class="space-y-3 text-xs sm:text-sm text-slate-600"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 能量中心中心座標與顏色映射
+    const CENTER_COLORS = {
+      'Sacral': 'url(#crystal_sacral)',
+      'Root': 'url(#crystal_root)',
+      'Solar Plexus': 'url(#crystal_solar)',
+      'Spleen': 'url(#crystal_spleen)',
+      'Heart': 'url(#crystal_heart)',
+      'G': 'url(#crystal_g)',
+      'Throat': 'url(#crystal_throat)',
+      'Ajna': 'url(#crystal_ajna)',
+      'Head': 'url(#crystal_head)'
+    };
+
+    const CENTER_STROKES = {
+      'Sacral': '#8E2E2E',
+      'Root': '#6F583D',
+      'Solar Plexus': '#E65100',
+      'Spleen': '#5D4037',
+      'Heart': '#B71C1C',
+      'G': '#F57F17',
+      'Throat': '#8C6D37',
+      'Ajna': '#1B5E20',
+      'Head': '#F57F17'
+    };
+
+    const CENTER_NAMES = {
+      'Head': '頭部中心 (Head)',
+      'Ajna': '邏輯中心 (Ajna)',
+      'Throat': '喉嚨中心 (Throat)',
+      'G': 'G中心 (Identity)',
+      'Heart': '意志力/心輪 (Heart/Ego)',
+      'Solar Plexus': '情緒中心 (Solar Plexus)',
+      'Sacral': '薦骨中心 (Sacral)',
+      'Spleen': '脾臟直覺中心 (Spleen)',
+      'Root': '根部中心 (Root)'
+    };
+
+    const CENTER_RX = {
+      'Head': '【頭部中心調頻】：靈感是微風，不要把它當成必須即刻完成的待辦清單。練習只挑選能讓內心真正歡喜的靈感深究。',
+      'Ajna': '【邏輯中心調頻】：觀點只是心智的濾鏡，而非絕對真理。允許別人有不同的邏輯，放下必須「說服他人」的內耗。',
+      'Throat': '【喉嚨中心調頻】：你的聲音帶有真實力量。等待被邀請與時機成熟時再發言，會比急著證明存在感更加穿透人心。',
+      'G': '【G中心調頻】：方向感與愛從來不需要向外追趕。待在令你身體感到放鬆美好的環境，屬於你的命定之人自然會出現。',
+      'Heart': '【意志力中心調頻】：意志力是短跑衝刺鞋，不是 24 小時睡衣。承諾前先誠實檢驗能量，永遠不需要向世界證明自己夠好。',
+      'Solar Plexus': '【情緒中心調頻】：當下沒有絕對的真理。在情緒波的高峰與低谷中不作重大決定，給自己一杯茶的時間等待清晰。',
+      'Sacral': '【薦骨中心調頻】：腹部深處的直覺反應（嗯哼 vs 嗯哼不）是你的靈魂導航。只對真正點燃你活力的事物說 Yes！',
+      'Spleen': '【脾臟中心調頻】：直覺的提醒像微風拂過，只在當下瞬間響起一次。學會在嘈雜的世界中靜下來，信任身體的第一感覺。',
+      'Root': '【根部中心調頻】：腎上腺素的壓力是火箭引擎，不是方向盤。不要為了逃避焦慮而倉促做事，先深呼吸站穩腳跟。'
+    };
+
+    // 通道兩端閘門在 SVG 上的連接座標點
+    const GATE_COORDS = {
+      64: [160, 84], 61: [190, 92], 63: [220, 84],
+      47: [162, 122], 24: [190, 122], 4: [218, 122],
+      17: [168, 148], 43: [190, 156], 11: [212, 148],
+      62: [168, 196], 23: [190, 196], 56: [212, 196],
+      16: [160, 214], 20: [158, 231], 31: [162, 246],
+      8: [190, 246], 33: [218, 246], 45: [220, 231],
+      12: [220, 214], 35: [222, 198],
+      1: [190, 286], 13: [210, 304], 25: [215, 338],
+      2: [190, 360], 15: [166, 352], 10: [164, 326],
+      7: [168, 302], 46: [204, 352],
+      21: [268, 342], 51: [248, 350], 26: [252, 366], 40: [274, 366],
+      5: [165, 416], 14: [190, 416], 29: [215, 416],
+      34: [160, 438], 27: [160, 459], 42: [165, 478],
+      3: [190, 478], 9: [215, 478], 59: [220, 452],
+      53: [164, 531], 60: [190, 531], 52: [216, 531],
+      54: [162, 553], 38: [164, 574], 58: [174, 592],
+      41: [210, 592], 39: [218, 574], 19: [219, 553],
+      48: [70, 427], 57: [90, 432], 44: [108, 440],
+      50: [108, 459], 32: [105, 474], 28: [84, 476], 18: [65, 483],
+      36: [310, 427], 22: [287, 432], 37: [272, 439],
+      6: [272, 459], 49: [276, 476], 55: [296, 478], 30: [316, 482]
+    };
+
+    const PLANET_SYMBOLS = {
+      'Sun': '☉ 太陽', 'Earth': '⊕ 地球', 'NorthNode': '☊ 北交', 'SouthNode': '☋ 南交',
+      'Moon': '☽ 月亮', 'Mercury': '☿ 水星', 'Venus': '♀ 金星', 'Mars': '♂ 火星',
+      'Jupiter': '♃ 木星', 'Saturn': '♄ 土星', 'Uranus': '♅ 天王', 'Neptune': '♆ 海王', 'Pluto': '♇ 冥王'
+    };
+
+    // 初始化出生城市下拉選單
+    function initCityDropdown() {
+      const select = document.getElementById('birth_city');
+      select.innerHTML = '';
+      
+      let curGroup = '';
+      let optGroup = null;
+
+      CITIES_DB.forEach(c => {
+        if (c.group !== curGroup) {
+          curGroup = c.group;
+          optGroup = document.createElement('optgroup');
+          optGroup.label = curGroup;
+          select.appendChild(optGroup);
+        }
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        if (c.id === 'tw_taipei') opt.selected = true;
+        optGroup.appendChild(opt);
+      });
+
+      updateGeoInfo();
+    }
+
+    function getSelectedCity() {
+      const cid = document.getElementById('birth_city').value;
+      return CITIES_DB.find(c => c.id === cid) || CITIES_DB[0];
+    }
+
+    function updateGeoInfo() {
+      const city = getSelectedCity();
+      const dateStr = document.getElementById('birth_date').value;
+      const isDST = isTaiwanDST(dateStr) && city.country === 'TW';
+
+      const chk = document.getElementById('chk_dst');
+      const dstTag = document.getElementById('dst_auto_tag');
+      if (isDST) {
+        chk.checked = true;
+        dstTag.classList.remove('hidden');
+      } else {
+        chk.checked = false;
+        dstTag.classList.add('hidden');
+      }
+
+      const geoText = document.getElementById('geo_info_text');
+      const latDir = city.lat >= 0 ? '北緯' : '南緯';
+      const lngDir = city.lng >= 0 ? '東經' : '西經';
+      geoText.textContent = `座標：${lngDir} ${Math.abs(city.lng).toFixed(2)}° ${latDir} ${Math.abs(city.lat).toFixed(2)}° ｜ 時區：UTC${city.tz >= 0 ? '+' : ''}${city.tz} ${chk.checked ? '(DST -1h 生效)' : ''}`;
+    }
+
+    // 繪製與更新排盤
+    function renderHumanDesignChart() {
+      const dateStr = document.getElementById('birth_date').value;
+      const timeStr = document.getElementById('birth_time').value;
+      const city = getSelectedCity();
+      const applyDST = document.getElementById('chk_dst').checked;
+
+      // 1. 精準換算 UTC Date
+      const utcDate = calculateUTCDatetime(dateStr, timeStr, city.tz, applyDST);
+
+      // 2. 調用核心排盤引擎
+      const hd = AstroCalc.calculateHumanDesignChart(utcDate);
+
+      // 3. 更新指標卡
+      const summaryDiv = document.getElementById('chart_summary_cards');
+      summaryDiv.innerHTML = `
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">能量類型 Type</p>
+          <p class="text-sm sm:text-base font-black text-slate-800">${hd.type}</p>
+          <p class="text-[11px] text-slate-500 mt-1">策略：${hd.strategy.split('(')[0]}</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">人生角色 Profile</p>
+          <p class="text-sm sm:text-base font-black text-slate-800">${hd.profile}</p>
+          <p class="text-[11px] text-slate-500 mt-1">意識 / 潛意識天賦爻線</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">內在權威 Authority</p>
+          <p class="text-sm sm:text-base font-black text-slate-800">${hd.authority.split('——')[0].trim()}</p>
+          <p class="text-[11px] text-slate-500 mt-1">決策最高智慧指南</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">輪迴交叉 Cross</p>
+          <p class="text-sm sm:text-base font-black text-slate-800">${hd.crossGates}</p>
+          <p class="text-[11px] text-slate-500 mt-1">主要靈魂命定軸線</p>
+        </div>
+      `;
+
+      // 4. 更新左右兩側星曜列表
+      const designDiv = document.getElementById('design_planet_list');
+      const personDiv = document.getElementById('personality_planet_list');
+      designDiv.innerHTML = '';
+      personDiv.innerHTML = '';
+
+      const planetOrder = ['Sun', 'Earth', 'NorthNode', 'SouthNode', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'];
+
+      planetOrder.forEach(k => {
+        const d = hd.design[k];
+        const p = hd.personality[k];
+
+        // 紅色設計盤
+        const dRow = document.createElement('div');
+        dRow.className = 'flex items-center justify-between p-1.5 rounded-lg bg-rose-50/70 border border-rose-200/60';
+        dRow.innerHTML = `
+          <span class="font-bold text-rose-800">${PLANET_SYMBOLS[k]}</span>
+          <span class="font-black text-rose-900 bg-rose-200/70 px-2 py-0.5 rounded">${d.gate}.${d.line}</span>
+        `;
+        designDiv.appendChild(dRow);
+
+        // 黑色意識盤
+        const pRow = document.createElement('div');
+        pRow.className = 'flex items-center justify-between p-1.5 rounded-lg bg-slate-100/90 border border-slate-300/60';
+        pRow.innerHTML = `
+          <span class="font-black text-slate-900 bg-slate-200 px-2 py-0.5 rounded">${p.gate}.${p.line}</span>
+          <span class="font-bold text-slate-800">${PLANET_SYMBOLS[k]}</span>
+        `;
+        personDiv.appendChild(pRow);
+      });
+
+      // 5. 更新四顆箭頭方向
+      document.getElementById('arrow_brain').textContent = hd.variables.brain === 'left' ? '◀' : '▶';
+      document.getElementById('arrow_environment').textContent = hd.variables.environment === 'left' ? '◀' : '▶';
+      document.getElementById('arrow_view').textContent = hd.variables.view === 'left' ? '◀' : '▶';
+      document.getElementById('arrow_motivation').textContent = hd.variables.motivation === 'left' ? '◀' : '▶';
+
+      // 6. 更新九大中心立體著色
+      const defCenters = new Set(hd.definedCenters);
+      Object.keys(HD_CENTERS).forEach(cKey => {
+        const gEl = document.getElementById(`center_${cKey.replace(' ', '_')}`);
+        if (!gEl) return;
+        const basePoly = gEl.querySelector('.crystal-base');
+        if (defCenters.has(cKey)) {
+          basePoly.setAttribute('fill', CENTER_COLORS[cKey]);
+          basePoly.setAttribute('stroke', CENTER_STROKES[cKey]);
+          basePoly.setAttribute('stroke-width', '1.8');
+        } else {
+          basePoly.setAttribute('fill', 'url(#crystal_white)');
+          basePoly.setAttribute('stroke', '#94A3B8');
+          basePoly.setAttribute('stroke-width', '1.2');
+        }
+      });
+
+      // 7. 更新 64 閘門切面填色 (啟動閘門填深藍色 #1B365D，字體變白色)
+      for (let g = 1; g <= 64; g++) {
+        const fEl = document.getElementById(`gate_facet_${g}`);
+        const tEl = document.getElementById(`gate_text_${g}`);
+        if (!fEl || !tEl) continue;
+
+        if (hd.activeGates.all.has(g)) {
+          fEl.setAttribute('fill', '#1B365D');
+          fEl.setAttribute('stroke', '#0F172A');
+          tEl.setAttribute('fill', '#FFFFFF');
+        } else {
+          fEl.setAttribute('fill', '#E2E8F0');
+          fEl.setAttribute('stroke', '#94A3B8');
+          tEl.setAttribute('fill', '#334155');
+        }
+      }
+
+      // 8. 繪製 36 條通道立體管道 (紅 / 藍 / 斑馬條紋)
+      const chLayer = document.getElementById('svg_channels_layer');
+      chLayer.innerHTML = '';
+
+      // 先繪製 36 條管道底線
+      HD_CHANNELS.forEach(ch => {
+        const p1 = GATE_COORDS[ch.g1];
+        const p2 = GATE_COORDS[ch.g2];
+        if (!p1 || !p2) return;
+
+        // 底色未定義管道
+        const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        baseLine.setAttribute('x1', p1[0]);
+        baseLine.setAttribute('y1', p1[1]);
+        baseLine.setAttribute('x2', p2[0]);
+        baseLine.setAttribute('y2', p2[1]);
+        baseLine.setAttribute('stroke', '#CBD5E1');
+        baseLine.setAttribute('stroke-width', '4');
+        baseLine.setAttribute('opacity', '0.45');
+        chLayer.appendChild(baseLine);
+      });
+
+      // 繪製啟動通道
+      hd.definedChannels.forEach(ch => {
+        const p1 = GATE_COORDS[ch.g1];
+        const p2 = GATE_COORDS[ch.g2];
+        if (!p1 || !p2) return;
+
+        const activeLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        activeLine.setAttribute('x1', p1[0]);
+        activeLine.setAttribute('y1', p1[1]);
+        activeLine.setAttribute('x2', p2[0]);
+        activeLine.setAttribute('y2', p2[1]);
+        activeLine.setAttribute('stroke-width', '5.5');
+
+        if (ch.type === 'both') {
+          activeLine.setAttribute('stroke', 'url(#zebra_both)');
+        } else if (ch.type === 'design') {
+          activeLine.setAttribute('stroke', '#C53030'); // 純紅
+        } else {
+          activeLine.setAttribute('stroke', '#1B365D'); // 純深藍
+        }
+
+        chLayer.appendChild(activeLine);
+      });
+
+      // 9. 更新通道詳細清單
+      const chDetailDiv = document.getElementById('channels_detail_list');
+      if (hd.definedChannels.length === 0) {
+        chDetailDiv.innerHTML = '<p class="text-slate-400 italic">目前無完全連通之通道（無定義或投射能量）</p>';
+      } else {
+        chDetailDiv.innerHTML = hd.definedChannels.map(c => `
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+            <div>
+              <span class="font-black text-slate-800 text-sm">${c.name} (${c.id})</span>
+              <p class="text-[11px] text-slate-500 mt-0.5">${CENTER_NAMES[c.c1]} ⇄ ${CENTER_NAMES[c.c2]}</p>
+            </div>
+            <span class="badge-pill ${c.type === 'both' ? 'bg-amber-100 text-amber-900 border border-amber-300' : (c.type === 'design' ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-900')}">
+              ${c.type === 'both' ? '雙重啟動 (紅黑)' : (c.type === 'design' ? '潛意識 (紅)' : '意識 (黑)')}
+            </span>
+          </div>
+        `).join('');
+      }
+
+      // 10. 愛倫院長生活魔藥處方
+      const rxDiv = document.getElementById('life_rx_container');
+      rxDiv.innerHTML = `
+        <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 text-amber-900">
+          <p class="font-bold text-xs uppercase tracking-wider mb-1">🌿 核心策略處方</p>
+          <p class="font-medium">${hd.strategy}。學會在對的世界裡放慢腳步，當身體發出由衷的訊號，再全力全心啟動。</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-rose-50/70 border border-rose-200 text-rose-900">
+          <p class="font-bold text-xs uppercase tracking-wider mb-1">🛡️ 非自己主題覺察</p>
+          <p class="font-medium">當你感覺到「${hd.notSelf}」席捲而來時，這不是失敗，而是靈魂在提醒你：你剛才又在用頭腦勉強自己做不屬於你的事了。</p>
+        </div>
+      `;
+    }
+
+    // 點擊能量中心互動事件
+    document.querySelectorAll('.crystal-center').forEach(el => {
+      el.addEventListener('click', () => {
+        const cKey = el.dataset.center;
+        const drawer = document.getElementById('center_drawer');
+        drawer.innerHTML = `
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="w-3 h-3 rounded-full bg-[#C8A97E]"></span>
+            <strong class="text-sm font-bold text-slate-900">${CENTER_NAMES[cKey]}</strong>
+          </div>
+          <p class="leading-relaxed">${CENTER_RX[cKey]}</p>
+        `;
+      });
+    });
+
+    // 表單事件監聽
+    document.getElementById('hd_form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      renderHumanDesignChart();
+    });
+
+    document.getElementById('birth_date').addEventListener('change', updateGeoInfo);
+    document.getElementById('birth_city').addEventListener('change', updateGeoInfo);
+    document.getElementById('chk_dst').addEventListener('change', updateGeoInfo);
+
+    // 範例按鈕 (還原 7933 截圖命盤 1990-05-20 12:30 台北)
+    document.getElementById('btn_sample').addEventListener('click', () => {
+      document.getElementById('birth_date').value = '1990-05-20';
+      document.getElementById('birth_time').value = '12:30';
+      document.getElementById('birth_city').value = 'tw_taipei';
+      updateGeoInfo();
+      renderHumanDesignChart();
+    });
+
+    // 初始化載入
+    window.addEventListener('DOMContentLoaded', () => {
+      initCityDropdown();
+      renderHumanDesignChart();
+    });
+  </script>
+</body>
+</html>

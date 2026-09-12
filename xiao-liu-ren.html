@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetJoy 四盤小六壬神數排盤系統 (Mobile & Desktop Pro)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+  </style>
+</head>
+<body class="bg-[#F4EFE6] min-h-screen flex flex-col items-center p-0 m-0">
+
+  <!-- 癒見幸福命理工作室全域導覽 -->
+  <nav class="w-full bg-[#2E3829] text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/40 shadow-md mb-6">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <span>🔮 癒見幸福 · 魔法神算</span>
+      </a>
+      <span class="text-xs text-amber-200/60 hidden sm:inline">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+    </div>
+    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium">
+      <a href="/astrology.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">西洋占星</a>
+      <a href="/human-design.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">人類圖</a>
+      <a href="/xiao-liu-ren.html" class="px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs">四盤小六壬</a>
+      <a href="/liu-yao.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">文王六爻</a>
+      <a href="/gene-keys.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">基因天命</a>
+      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-2 px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold">預約諮詢 ↗</a>
+    </div>
+  </nav>
+
+  <div class="w-full max-w-5xl px-2 sm:px-4 md:px-8 pb-12 flex justify-center">
+  <div id="root" class="w-full"></div>
+  </div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const IconWrapper = ({ children, size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        {children}
+      </svg>
+    );
+
+    const Clock = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconWrapper>;
+    const Hash = (props) => <IconWrapper {...props}><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></IconWrapper>;
+    const RotateCcw = (props) => <IconWrapper {...props}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconWrapper>;
+    const Info = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></IconWrapper>;
+    const Sparkles = (props) => <IconWrapper {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></IconWrapper>;
+    const Compass = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></IconWrapper>;
+
+    const EARTHLY_BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+    const BRANCH_ELEMENTS = {
+      '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+      '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'
+    };
+
+    const BRANCH_YIN_YANG = {
+      '子': '阳', '丑': '阴', '寅': '阳', '卯': '阴', '辰': '阳', '巳': '阴',
+      '午': '阳', '未': '阴', '申': '阳', '酉': '阴', '戌': '阳', '亥': '阴'
+    };
+
+    const PALACES_DATA = [
+      { id: 1, name: '大安', element: '木', repBranch: '卯', trigram: '震/巽', desc: '身不動時，屬木，青龍。身心安定、基業穩固、謀事有成、貴人迎門。', colorClass: 'text-emerald-800' },
+      { id: 2, name: '留連', element: '火', repBranch: '午', trigram: '離', desc: '卒未歸時，屬火，玄武。凡事拖延、糾纏牽制、宜靜不宜動、慎防口舌。', colorClass: 'text-rose-700' },
+      { id: 3, name: '速喜', element: '土', repBranch: '未', trigram: '坤', desc: '人便至時，屬土，朱雀。喜事立至、時機成熟、感情和諧、迅速落實。', colorClass: 'text-amber-800' },
+      { id: 4, name: '赤口', element: '金', repBranch: '酉', trigram: '兌/乾', desc: '官事凶時，屬金，白虎。是非紛擾、剛強受挫、行事宜慎、防刀兵爭執。', colorClass: 'text-yellow-700' },
+      { id: 5, name: '小吉', element: '水', repBranch: '子', trigram: '坎', desc: '人來喜時，屬水，六合。和合吉利、商旅亨通、漸入佳境、善緣相助。', colorClass: 'text-sky-800' },
+      { id: 6, name: '空亡', element: '土', repBranch: '丑', trigram: '艮', desc: '音信稀時，屬土，勾陳。阻滯沉潛、靜候時機、落空虛幻、宜修心守正。', colorClass: 'text-stone-600' },
+    ];
+
+    const SIX_GODS_SEQ = ['青龍', '朱雀', '勾陳', '騰蛇', '白虎', '玄武'];
+    const FIVE_STARS_SEQ = ['木星', '火星', '土星', '金星', '水星', '空']; 
+    const TWELVE_PHASES = ['長生', '沐浴', '冠帶', '臨官', '帝旺', '衰', '病', '死', '墓', '絕', '胎', '養'];
+
+    const getPhase = (branchElement, palaceBranch) => {
+      const branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+      let startBranch = '';
+      if (branchElement === '木') startBranch = '亥';
+      else if (branchElement === '火') startBranch = '寅';
+      else if (branchElement === '金') startBranch = '巳';
+      else if (branchElement === '水' || branchElement === '土') startBranch = '申';
+      if (!startBranch) return '';
+      const startIdx = branches.indexOf(startBranch);
+      const targetIdx = branches.indexOf(palaceBranch);
+      const phaseIdx = (targetIdx - startIdx + 12) % 12;
+      return TWELVE_PHASES[phaseIdx];
+    };
+
+    const getRelation = (selfElement, targetElement) => {
+      if (selfElement === targetElement) return '兄弟';
+      const relations = {
+        '木': { '火': '子孫', '土': '妻財', '金': '官鬼', '水': '父母' },
+        '火': { '土': '子孫', '金': '妻財', '水': '官鬼', '木': '父母' },
+        '土': { '金': '子孫', '水': '妻財', '木': '官鬼', '火': '父母' },
+        '金': { '水': '子孫', '木': '妻財', '火': '官鬼', '土': '父母' },
+        '水': { '木': '子孫', '火': '妻財', '土': '官鬼', '金': '父母' },
+      };
+      return relations[selfElement][targetElement];
+    };
+
+    const getSpecialBrotherBranch = (selfBranchIdx) => {
+      const branchName = EARTHLY_BRANCHES[selfBranchIdx];
+      if (['寅', '申', '巳', '亥'].includes(branchName)) return (selfBranchIdx + 8) % 12;
+      if (['子', '午', '卯', '酉'].includes(branchName)) return (selfBranchIdx + 4) % 12;
+      return -1;
+    };
+
+    const getStartingGodIndex = (branch) => {
+      if (['寅', '卯'].includes(branch)) return 0;
+      if (['巳', '午'].includes(branch)) return 1;
+      if (['丑', '辰'].includes(branch)) return 2;
+      if (['未', '戌'].includes(branch)) return 3;
+      if (['申', '酉'].includes(branch)) return 4;
+      if (['亥', '子'].includes(branch)) return 5;
+      return 0; 
+    };
+
+    const getSkyHexagram = (branch) => {
+      const element = BRANCH_ELEMENTS[branch];
+      const yinYang = BRANCH_YIN_YANG[branch];
+      if (element === '金') return '天澤履'; 
+      if (element === '水') return '天水訟';
+      if (element === '土') return '天地否';
+      if (element === '火') return '天火同人';
+      if (element === '木') return yinYang === '阳' ? '天雷無妄' : '天風姤';
+      return '';
+    };
+
+    const getVerb = (subject, object) => {
+      if (subject === object) return '比和';
+      const relations = {
+        '木': { '火': '生', '土': '剋', '金': '被剋', '水': '被生' },
+        '火': { '土': '生', '金': '剋', '水': '被剋', '木': '被生' },
+        '土': { '金': '生', '水': '剋', '木': '被剋', '火': '被生' },
+        '金': { '水': '生', '木': '剋', '火': '被剋', '土': '被生' },
+        '水': { '木': '生', '火': '剋', '土': '被剋', '金': '被生' },
+      };
+      return relations[subject][object] || '-';
+    };
+
+    const relationColor = (relation) => {
+      switch (relation) {
+        case '自身': return 'bg-gradient-to-r from-red-800 to-amber-900 text-amber-50 border-amber-500 shadow-xs'; 
+        case '兄弟': return 'bg-stone-100 text-stone-700 border-stone-300';
+        case '父母': return 'bg-amber-100/80 text-amber-900 border-amber-300';
+        case '子孫': return 'bg-emerald-100 text-emerald-900 border-emerald-300';
+        case '官鬼': return 'bg-stone-900 text-stone-100 border-stone-700';
+        case '妻財': return 'bg-rose-100 text-rose-900 border-rose-300';
+        default: return 'bg-stone-50 text-stone-500 border-stone-200';
+      }
+    };
+
+    const App = () => {
+      const [mode, setMode] = useState('date');
+      const [num1, setNum1] = useState('');
+      const [num2, setNum2] = useState('');
+      const [lunarDay, setLunarDay] = useState(1);
+      const [timeBranchIdx, setTimeBranchIdx] = useState(0); 
+      const [result, setResult] = useState(null);
+      const [mobileTab, setMobileTab] = useState('matrix');
+
+      useEffect(() => {
+        const today = new Date();
+        setLunarDay(today.getDate()); 
+        const hour = today.getHours();
+        const branchIndex = Math.floor((hour + 1) / 2) % 12;
+        setTimeBranchIdx(branchIndex);
+      }, []);
+
+      const calculate = () => {
+        let n1 = 0, n2 = 0, selfElement = '', selfLabel = '', calcTimeBranchIdx = 0; 
+        if (mode === 'number') {
+          const val1 = parseInt(num1) || 0, val2 = parseInt(num2) || 0;
+          if (val1 <= 0 || val2 <= 0) { alert("請輸入大於 0 的有效數字"); return; }
+          n1 = val1; n2 = val2;
+          calcTimeBranchIdx = (n2 - 1) % 12;
+          if (calcTimeBranchIdx < 0) calcTimeBranchIdx += 12;
+        } else {
+          n1 = lunarDay; n2 = timeBranchIdx + 1; 
+          calcTimeBranchIdx = timeBranchIdx;
+        }
+
+        const index1 = (n1 - 1) % 6;
+        const palace1 = PALACES_DATA[index1]; 
+        const index2 = (index1 + n2 - 1) % 6;
+        const palace2 = PALACES_DATA[index2]; 
+        const branchName = EARTHLY_BRANCHES[calcTimeBranchIdx];
+        selfElement = BRANCH_ELEMENTS[branchName];
+        selfLabel = mode === 'number' ? `${n2}數（${branchName}/${selfElement}）` : `${branchName}時（${selfElement}）`;
+
+        let offsetDay = (index1 - index2 + 6) % 6;
+        let dayBranchIdx = (calcTimeBranchIdx + offsetDay * 2) % 12;
+        let dayPalaceBranch = EARTHLY_BRANCHES[dayBranchIdx];
+        let startGodIdx = dayPalaceBranch ? getStartingGodIndex(dayPalaceBranch) : 0;
+        const specialBrotherBranchIdx = getSpecialBrotherBranch(calcTimeBranchIdx);
+
+        const calculatedPalaces = PALACES_DATA.map((p, i) => {
+          let offset = (i - index2 + 6) % 6;
+          let currentBranchIdx = (calcTimeBranchIdx + offset * 2) % 12;
+          let dynamicBranch = EARTHLY_BRANCHES[currentBranchIdx];
+          let dynamicElement = BRANCH_ELEMENTS[dynamicBranch];
+          const isSelfPalace = p.id === palace2.id;
+          let relation = isSelfPalace ? '自身' : (currentBranchIdx === specialBrotherBranchIdx ? '兄弟' : getRelation(selfElement, dynamicElement));
+          let selfPalaceRelation = isSelfPalace ? getRelation(dynamicElement, p.element) : '';
+          let offsetFromDay = (i - index1 + 6) % 6;
+          let sixGod = SIX_GODS_SEQ[(startGodIdx + offsetFromDay) % 6];
+          let fiveStar = FIVE_STARS_SEQ[offsetFromDay];
+          let skyLabel = (fiveStar === '空') ? getSkyHexagram(dynamicBranch) : '';
+          const phase = getPhase(dynamicElement, p.repBranch);
+          return { ...p, relation, selfPalaceRelation, dynamicBranch, dynamicElement, isSelfPalace, isDayPalace: p.id === palace1.id, sixGod, fiveStar, skyLabel, phase };
+        });
+
+        setResult({ n1, n2, palace1, palace2, selfElement, selfLabel, grid: calculatedPalaces });
+      };
+
+      const displayOrderIndices = [1, 2, 3, 0, 5, 4];
+
+      return (
+        <div className="bg-[#FAF8F5] text-stone-900 font-serif p-4 sm:p-6 md:p-8 rounded-3xl border border-[#E8E0D2] shadow-2xl relative overflow-hidden">
+          
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-600 via-[#C8A97E] to-stone-800"></div>
+
+          <header className="text-center mt-2 mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFE9DF] text-[#536349] text-[11px] font-bold tracking-widest uppercase mb-2">
+              <Compass size={13} />
+              <span>MeetJoy Divination Atelier</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-widest text-[#2E3829] font-serif">
+              四盤小六壬神數排盤
+            </h1>
+            <p className="text-stone-500 font-medium tracking-wider text-xs sm:text-sm mt-1">
+              地盤(六宮) • 人盤(六親) • 神盤(六神) • 星盤(五星) • 十二長生神煞
+            </p>
+          </header>
+
+          <div className="max-w-xl mx-auto bg-white/95 border border-[#E8E0D2] rounded-2xl p-5 sm:p-6 shadow-sm mb-7">
+            <div className="flex justify-center mb-5">
+              <div className="bg-stone-100 p-1 rounded-full flex shadow-inner text-xs">
+                <button
+                  type="button"
+                  onClick={() => setMode('date')}
+                  className={`px-5 sm:px-6 py-2 rounded-full transition-all flex items-center gap-1.5 font-bold ${
+                    mode === 'date' ? 'bg-[#536349] text-white shadow-md' : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <Clock size={14} />
+                  日時起盤
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('number')}
+                  className={`px-5 sm:px-6 py-2 rounded-full transition-all flex items-center gap-1.5 font-bold ${
+                    mode === 'number' ? 'bg-[#536349] text-white shadow-md' : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <Hash size={14} />
+                  數字起盤
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+              {mode === 'date' ? (
+                <React.Fragment>
+                  <div>
+                    <label className="block text-xs font-bold text-stone-600 mb-1">農曆占卜日 (1~30)</label>
+                    <div className="flex items-center border border-stone-300 rounded-xl px-3 bg-stone-50/50 focus-within:border-[#536349] focus-within:bg-white transition">
+                      <span className="text-stone-400 mr-2 text-sm font-bold">初</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="30"
+                        value={lunarDay}
+                        onChange={(e) => setLunarDay(parseInt(e.target.value) || 1)}
+                        className="w-full bg-transparent py-2.5 text-center text-lg font-bold text-stone-800 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-stone-600 mb-1">占卜時辰</label>
+                    <select
+                      value={timeBranchIdx}
+                      onChange={(e) => setTimeBranchIdx(parseInt(e.target.value))}
+                      className="w-full border border-stone-300 rounded-xl py-2.5 px-3 text-center text-base sm:text-lg font-bold text-stone-800 outline-none bg-stone-50/50 focus:border-[#536349] focus:bg-white transition cursor-pointer"
+                    >
+                      {EARTHLY_BRANCHES.map((b, i) => (
+                        <option key={i} value={i}>{b}時 ({i===0?'23-01':`${(i*2)-1}-${(i*2)+1}`}點)</option>
+                      ))}
+                    </select>
+                  </div>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <div>
+                    <label className="block text-xs font-bold text-stone-600 mb-1">數字一 (日數)</label>
+                    <input
+                      type="number"
+                      value={num1}
+                      onChange={(e) => setNum1(e.target.value)}
+                      className="w-full border border-stone-300 rounded-xl py-2.5 px-3 text-center text-lg font-bold text-stone-800 outline-none bg-stone-50/50 focus:border-[#536349] focus:bg-white transition"
+                      placeholder="例：8"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-stone-600 mb-1">數字二 (時數)</label>
+                    <input
+                      type="number"
+                      value={num2}
+                      onChange={(e) => setNum2(e.target.value)}
+                      className="w-full border border-stone-300 rounded-xl py-2.5 px-3 text-center text-lg font-bold text-stone-800 outline-none bg-stone-50/50 focus:border-[#536349] focus:bg-white transition"
+                      placeholder="例：6"
+                    />
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={calculate}
+              className="w-full bg-gradient-to-r from-[#2E3829] to-[#1F261C] hover:from-[#3E4B37] hover:to-[#2E3829] text-amber-50 font-bold py-3.5 rounded-xl shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 border border-amber-900/30 text-base tracking-widest"
+            >
+              <RotateCcw size={18} />
+              <span>開始起盤排卦</span>
+            </button>
+          </div>
+
+          {result && (
+            <div className="animate-fadeIn">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-5">
+                <div className="bg-white border border-[#E8E0D2] px-4 py-2 rounded-full shadow-xs text-xs text-stone-700 flex items-center gap-2">
+                  <Info size={14} className="text-[#536349]" />
+                  <span>
+                    自身定位：<span className="font-bold text-stone-900">{result.selfLabel}</span>
+                  </span>
+                  <span className="text-stone-300">|</span>
+                  <span>
+                    時落宮：<span className="font-black text-amber-900">{result.palace2.name}</span>
+                  </span>
+                  <span className="text-stone-300">|</span>
+                  <span>
+                    日落宮：<span className="font-bold text-stone-700">{result.palace1.name}</span>
+                  </span>
+                </div>
+
+                <div className="sm:hidden flex bg-stone-200 p-0.5 rounded-lg text-[11px] font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setMobileTab('matrix')}
+                    className={`px-3 py-1 rounded-md transition ${mobileTab === 'matrix' ? 'bg-white text-stone-900 shadow-xs' : 'text-stone-500'}`}
+                  >
+                    矩陣盤面
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileTab('list')}
+                    className={`px-3 py-1 rounded-md transition ${mobileTab === 'list' ? 'bg-white text-stone-900 shadow-xs' : 'text-stone-500'}`}
+                  >
+                    逐宮詳解
+                  </button>
+                </div>
+              </div>
+
+              <div className={`
+                ${mobileTab === 'matrix' 
+                  ? 'grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5' 
+                  : 'flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:gap-4'}
+                mb-6
+              `}>
+                {displayOrderIndices.map((idx) => {
+                  const palace = result.grid[idx];
+                  const isSelfPalace = palace.isSelfPalace;
+
+                  return (
+                    <div 
+                      key={palace.id}
+                      className={`
+                        relative flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border-2 transition-all duration-300 min-h-[230px] sm:min-h-[260px] md:min-h-[280px]
+                        ${isSelfPalace 
+                          ? 'bg-[#FFF8EE] border-[#C8A97E] shadow-md ring-2 ring-[#C8A97E]/30 scale-[1.01] z-10' 
+                          : 'bg-white border-[#E8E0D2] shadow-xs hover:border-stone-400 hover:shadow-sm'}
+                      `}
+                    >
+                      <div className="flex items-start justify-between gap-1 mb-2">
+                        <div className="flex flex-col leading-tight">
+                          <span className="text-[10px] sm:text-xs text-stone-500">{palace.trigram}</span>
+                          <span className={`font-black text-xs sm:text-sm ${
+                            palace.element === '木' ? 'text-emerald-700' :
+                            palace.element === '火' ? 'text-rose-700' :
+                            palace.element === '土' ? 'text-amber-700' :
+                            palace.element === '金' ? 'text-yellow-700' : 'text-sky-700'
+                          }`}>
+                            {palace.element}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-1">
+                          {isSelfPalace && (
+                            <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-red-800 to-amber-900 text-amber-100 text-[10px] font-bold shadow-xs">
+                              ★ 時落宮
+                            </span>
+                          )}
+                          {palace.isDayPalace && (
+                            <span className="px-1.5 py-0.5 rounded-full bg-stone-700 text-stone-100 text-[9px] font-bold">
+                              日宮
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-center gap-2 sm:gap-4 my-1 bg-stone-50/80 rounded-xl py-1 px-2 border border-stone-100">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] text-stone-400">星</span>
+                          <span className="text-xs sm:text-sm font-black text-amber-900">{palace.fiveStar}</span>
+                        </div>
+                        <span className="text-stone-300">|</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] text-stone-400">神</span>
+                          <span className="text-xs sm:text-sm font-black text-purple-900">{palace.sixGod}</span>
+                        </div>
+                      </div>
+
+                      <div className="my-2 flex items-center justify-between gap-2 px-1">
+                        <div className="flex flex-col items-center">
+                          <div className="text-2xl sm:text-4xl font-serif font-black text-stone-800 leading-none">
+                            {palace.dynamicBranch}
+                          </div>
+                          <span className="text-[10px] text-stone-500 font-bold mt-0.5">({palace.dynamicElement})</span>
+                          <span className="mt-1 px-1.5 py-0.2 rounded bg-stone-100 text-stone-600 text-[9px] sm:text-[10px] border border-stone-200">
+                            {palace.phase}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center flex-1">
+                          <div className={`px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-xl border text-sm sm:text-xl md:text-2xl font-black tracking-wider text-center ${relationColor(palace.relation)}`}>
+                            {palace.relation}
+                          </div>
+                          <div className="text-[9px] sm:text-[11px] text-stone-400 mt-1 text-center whitespace-nowrap">
+                            {result.selfElement} {getVerb(result.selfElement, palace.dynamicElement)} {palace.dynamicElement}
+                          </div>
+                          {palace.skyLabel && (
+                            <div className="mt-1 text-[9px] sm:text-[10px] font-bold text-stone-700 bg-amber-100/70 px-2 py-0.5 rounded-full border border-amber-300">
+                              {palace.skyLabel}
+                            </div>
+                          )}
+                        </div>
+
+                        {isSelfPalace && (
+                          <div className="flex flex-col items-center justify-center p-1 bg-amber-100/60 border border-amber-300 rounded-lg text-[9px] text-amber-950 w-7 sm:w-8 text-center leading-tight">
+                            <span className="text-[8px] text-stone-400">對宮</span>
+                            <span className="font-bold">{palace.dynamicBranch}</span>
+                            <span className="text-stone-400 scale-75">▼</span>
+                            <span className="font-bold">{palace.name}</span>
+                            <span className="font-black text-red-900 mt-0.5">{palace.selfPalaceRelation}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="pt-2 border-t border-stone-100/80 text-center">
+                        <div className={`text-lg sm:text-2xl font-black font-serif tracking-widest ${palace.colorClass}`}>
+                          {palace.name}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className="bg-gradient-to-br from-[#FFFDF9] to-[#F5EFEB] border border-[#E2D6C5] rounded-2xl p-4 sm:p-5 shadow-sm text-xs sm:text-sm text-stone-700 leading-relaxed">
+                <div className="flex items-center gap-2 font-black text-amber-900 text-sm sm:text-base mb-1.5">
+                  <Sparkles size={16} className="text-amber-700" />
+                  <span>【四盤神數 · 生活魔藥解析】</span>
+                </div>
+                <p>
+                  <b className="text-stone-900">落宮總論：</b>占事落於【<span className="text-amber-900 font-bold">{result.palace2.name}</span>】宮，{result.palace2.desc}。
+                </p>
+                <p className="mt-1">
+                  <b className="text-stone-900">生剋大象：</b>求測自身屬【<span className="font-bold">{result.selfElement}</span>】，臨{result.palace2.name}（五行屬{result.palace2.element}），呈「{result.selfElement} {getVerb(result.selfElement, result.palace2.element)} {result.palace2.element}」之氣運機先。
+                </p>
+              </div>
+            </div>
+          )}
+
+          <footer className="mt-7 text-center text-[11px] text-stone-400 flex items-center justify-center gap-1.5">
+            <Compass size={13} className="text-stone-400" />
+            <span>癒見幸福療身心靈推廣中心 • 四盤小六壬神數排盤系統</span>
+          </footer>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

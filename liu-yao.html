@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetJoy 文王六爻神卦排盤系統 (Preview)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+  </style>
+</head>
+<body class="bg-[#f7f5ed] min-h-screen flex flex-col items-center p-0 m-0">
+
+  <!-- 癒見幸福命理工作室全域導覽 -->
+  <nav class="w-full bg-[#2E3829] text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#C8A97E]/40 shadow-md mb-6">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <span>🔮 癒見幸福 · 魔法神算</span>
+      </a>
+      <span class="text-xs text-amber-200/60 hidden sm:inline">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+    </div>
+    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium">
+      <a href="/astrology.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">西洋占星</a>
+      <a href="/human-design.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">人類圖</a>
+      <a href="/xiao-liu-ren.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">四盤小六壬</a>
+      <a href="/liu-yao.html" class="px-3 py-1.5 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs">文王六爻</a>
+      <a href="/gene-keys.html" class="px-3 py-1.5 rounded-lg text-amber-100 hover:bg-white/10 transition">基因天命</a>
+      <a href="https://meetjoy-booking.pages.dev" target="_blank" class="ml-2 px-3 py-1.5 bg-[#4A5D40] text-amber-100 rounded-lg hover:bg-[#5E7552] transition text-xs font-bold">預約諮詢 ↗</a>
+    </div>
+  </nav>
+
+  <div class="w-full max-w-4xl px-3 sm:px-6 pb-12 flex justify-center">
+  <div id="mj_ly_preview_app" class="w-full"></div>
+  </div>
+
+  <script>
+  // 八卦二進制 (初爻在右/下: 0=陰, 1=陽)
+  const TRIGRAMS = {
+    '111': { name: '乾', element: '金', nature: '天', branches: ['子', '寅', '辰', '午', '申', '戌'] },
+    '011': { name: '兌', element: '金', nature: '澤', branches: ['巳', '卯', '丑', '亥', '酉', '未'] },
+    '101': { name: '離', element: '火', nature: '火', branches: ['卯', '丑', '亥', '酉', '未', '巳'] },
+    '001': { name: '震', element: '木', nature: '雷', branches: ['子', '寅', '辰', '午', '申', '戌'] },
+    '110': { name: '巽', element: '木', nature: '風', branches: ['丑', '亥', '酉', '未', '巳', '卯'] },
+    '010': { name: '坎', element: '水', nature: '水', branches: ['寅', '辰', '午', '申', '戌', '子'] },
+    '100': { name: '艮', element: '土', nature: '山', branches: ['辰', '午', '申', '戌', '子', '寅'] },
+    '000': { name: '坤', element: '土', nature: '地', branches: ['未', '巳', '卯', '丑', '亥', '酉'] }
+  };
+
+  const BRANCH_ELEMENTS = {
+    '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+    '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'
+  };
+
+  const SIX_GODS_MAP = {
+    '甲': ['青龍', '朱雀', '勾陳', '螣蛇', '白虎', '玄武'],
+    '乙': ['青龍', '朱雀', '勾陳', '螣蛇', '白虎', '玄武'],
+    '丙': ['朱雀', '勾陳', '螣蛇', '白虎', '玄武', '青龍'],
+    '丁': ['朱雀', '勾陳', '螣蛇', '白虎', '玄武', '青龍'],
+    '戊': ['勾陳', '螣蛇', '白虎', '玄武', '青龍', '朱雀'],
+    '己': ['螣蛇', '白虎', '玄武', '青龍', '朱雀', '勾陳'],
+    '庚': ['白虎', '玄武', '青龍', '朱雀', '勾陳', '螣蛇'],
+    '辛': ['白虎', '玄武', '青龍', '朱雀', '勾陳', '螣蛇'],
+    '壬': ['玄武', '青龍', '朱雀', '勾陳', '螣蛇', '白虎'],
+    '癸': ['玄武', '青龍', '朱雀', '勾陳', '螣蛇', '白虎']
+  };
+
+  const HEXAGRAM_PALACES = {
+    '111111': { name: '乾為天', palace: '乾', palaceElement: '金', shi: 6 },
+    '111110': { name: '天風姤', palace: '乾', palaceElement: '金', shi: 1 },
+    '111100': { name: '天山遁', palace: '乾', palaceElement: '金', shi: 2 },
+    '111000': { name: '天地否', palace: '乾', palaceElement: '金', shi: 3 },
+    '110000': { name: '風地觀', palace: '乾', palaceElement: '金', shi: 4 },
+    '100000': { name: '山地剝', palace: '乾', palaceElement: '金', shi: 5 },
+    '101000': { name: '火地晉', palace: '乾', palaceElement: '金', shi: 4 },
+    '101111': { name: '火天大有', palace: '乾', palaceElement: '金', shi: 3 },
+
+    '010010': { name: '坎為水', palace: '坎', palaceElement: '水', shi: 6 },
+    '010011': { name: '水澤節', palace: '坎', palaceElement: '水', shi: 1 },
+    '010001': { name: '水雷屯', palace: '坎', palaceElement: '水', shi: 2 },
+    '010101': { name: '水火既濟', palace: '坎', palaceElement: '水', shi: 3 },
+    '011101': { name: '澤火革', palace: '坎', palaceElement: '水', shi: 4 },
+    '001101': { name: '雷火豐', palace: '坎', palaceElement: '水', shi: 5 },
+    '000101': { name: '地火明夷', palace: '坎', palaceElement: '水', shi: 4 },
+    '000010': { name: '地水師', palace: '坎', palaceElement: '水', shi: 3 },
+
+    '100100': { name: '艮為山', palace: '艮', palaceElement: '土', shi: 6 },
+    '100101': { name: '山火賁', palace: '艮', palaceElement: '土', shi: 1 },
+    '100111': { name: '山天大畜', palace: '艮', palaceElement: '土', shi: 2 },
+    '100011': { name: '山澤損', palace: '艮', palaceElement: '土', shi: 3 },
+    '101011': { name: '火澤睽', palace: '艮', palaceElement: '土', shi: 4 },
+    '111011': { name: '天澤履', palace: '艮', palaceElement: '土', shi: 5 },
+    '110011': { name: '風澤中孚', palace: '艮', palaceElement: '土', shi: 4 },
+    '110100': { name: '風山漸', palace: '艮', palaceElement: '土', shi: 3 },
+
+    '001001': { name: '震為雷', palace: '震', palaceElement: '木', shi: 6 },
+    '001000': { name: '雷地豫', palace: '震', palaceElement: '木', shi: 1 },
+    '001010': { name: '雷水解', palace: '震', palaceElement: '木', shi: 2 },
+    '001110': { name: '雷風恆', palace: '震', palaceElement: '木', shi: 3 },
+    '000110': { name: '地風升', palace: '震', palaceElement: '木', shi: 4 },
+    '010110': { name: '水風井', palace: '震', palaceElement: '木', shi: 5 },
+    '011110': { name: '澤風大過', palace: '震', palaceElement: '木', shi: 4 },
+    '011001': { name: '澤雷隨', palace: '震', palaceElement: '木', shi: 3 },
+
+    '110110': { name: '巽為風', palace: '巽', palaceElement: '木', shi: 6 },
+    '110111': { name: '風天小畜', palace: '巽', palaceElement: '木', shi: 1 },
+    '110101': { name: '風火家人', palace: '巽', palaceElement: '木', shi: 2 },
+    '110001': { name: '風雷益', palace: '巽', palaceElement: '木', shi: 3 },
+    '111001': { name: '天雷無妄', palace: '巽', palaceElement: '木', shi: 4 },
+    '101001': { name: '火雷噬嗑', palace: '巽', palaceElement: '木', shi: 5 },
+    '100001': { name: '山雷頤', palace: '巽', palaceElement: '木', shi: 4 },
+    '100110': { name: '山風蠱', palace: '巽', palaceElement: '木', shi: 3 },
+
+    '101101': { name: '離為火', palace: '離', palaceElement: '火', shi: 6 },
+    '101100': { name: '火山旅', palace: '離', palaceElement: '火', shi: 1 },
+    '101110': { name: '火風鼎', palace: '離', palaceElement: '火', shi: 2 },
+    '101010': { name: '火水未濟', palace: '離', palaceElement: '火', shi: 3 },
+    '100010': { name: '山水蒙', palace: '離', palaceElement: '火', shi: 4 },
+    '110010': { name: '風水渙', palace: '離', palaceElement: '火', shi: 5 },
+    '111010': { name: '天水訟', palace: '離', palaceElement: '火', shi: 4 },
+    '111101': { name: '天火同人', palace: '離', palaceElement: '火', shi: 3 },
+
+    '000000': { name: '坤為地', palace: '坤', palaceElement: '土', shi: 6 },
+    '000001': { name: '地雷復', palace: '坤', palaceElement: '土', shi: 1 },
+    '000011': { name: '地澤臨', palace: '坤', palaceElement: '土', shi: 2 },
+    '000111': { name: '地天泰', palace: '坤', palaceElement: '土', shi: 3 },
+    '001111': { name: '雷天大壯', palace: '坤', palaceElement: '土', shi: 4 },
+    '011111': { name: '澤天夬', palace: '坤', palaceElement: '土', shi: 5 },
+    '010111': { name: '水天需', palace: '坤', palaceElement: '土', shi: 4 },
+    '010000': { name: '水地比', palace: '坤', palaceElement: '土', shi: 3 },
+
+    '011011': { name: '兌為澤', palace: '兌', palaceElement: '金', shi: 6 },
+    '011010': { name: '澤水困', palace: '兌', palaceElement: '金', shi: 1 },
+    '011000': { name: '澤地萃', palace: '兌', palaceElement: '金', shi: 2 },
+    '011100': { name: '澤山咸', palace: '兌', palaceElement: '金', shi: 3 },
+    '010100': { name: '水山蹇', palace: '兌', palaceElement: '金', shi: 4 },
+    '000100': { name: '地山謙', palace: '兌', palaceElement: '金', shi: 5 },
+    '001100': { name: '雷山小過', palace: '兌', palaceElement: '金', shi: 4 },
+    '001011': { name: '雷澤歸妹', palace: '兌', palaceElement: '金', shi: 3 }
+  };
+
+  const RELATIONS_RULES = {
+    '木': { '火': '子孫', '土': '妻財', '金': '官鬼', '水': '父母', '木': '兄弟' },
+    '火': { '土': '子孫', '金': '妻財', '水': '官鬼', '木': '父母', '火': '兄弟' },
+    '土': { '金': '子孫', '水': '妻財', '木': '官鬼', '火': '父母', '土': '兄弟' },
+    '金': { '水': '子孫', '木': '妻財', '火': '官鬼', '土': '父母', '金': '兄弟' },
+    '水': { '木': '子孫', '火': '妻財', '土': '官鬼', '金': '父母', '水': '兄弟' }
+  };
+
+  let tossHistory = [];
+
+  function initApp() {
+    const el = document.getElementById('mj_ly_preview_app');
+    if (!el) return;
+
+    el.innerHTML = `
+      <div class="bg-[#faf8f2] border-2 border-stone-300 rounded-3xl p-6 md:p-10 shadow-2xl max-w-4xl mx-auto text-stone-900">
+        <header class="text-center mb-6">
+          <div class="flex items-center justify-center gap-2 mb-1">
+            <div class="w-10 h-[2px] bg-red-900"></div>
+            <h1 class="text-3xl md:text-5xl font-black text-red-900 tracking-widest font-serif">文王六爻神卦排盤</h1>
+            <div class="w-10 h-[2px] bg-red-900"></div>
+          </div>
+          <p class="text-stone-500 text-xs md:text-sm">京房八宮 • 納甲六親 • 六神司命 • 世應動變</p>
+        </header>
+
+        <div class="bg-white border border-stone-200 rounded-2xl p-5 mb-6 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">所問何事 (占事摘要)</label>
+            <input type="text" id="ly-question" placeholder="例如：本月事業決策/求財吉凶" class="w-full border border-stone-300 rounded-xl px-3.5 py-2 focus:border-red-800 outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-stone-600 mb-1">占卜日干 (定六神)</label>
+            <select id="ly-day-gan" class="w-full border border-stone-300 rounded-xl px-3.5 py-2 focus:border-red-800 outline-none bg-white">
+              <option value="甲">甲日 (青龍首)</option>
+              <option value="乙">乙日 (青龍首)</option>
+              <option value="丙">丙日 (朱雀首)</option>
+              <option value="丁">丁日 (朱雀首)</option>
+              <option value="戊" selected>戊日 (勾陳首)</option>
+              <option value="己">己日 (螣蛇首)</option>
+              <option value="庚">庚日 (白虎首)</option>
+              <option value="辛">辛日 (白虎首)</option>
+              <option value="壬">壬日 (玄武首)</option>
+              <option value="癸">癸日 (玄武首)</option>
+            </select>
+          </div>
+          <div class="flex items-end gap-2">
+            <button id="ly-btn-quick" type="button" class="flex-1 bg-stone-900 hover:bg-stone-800 text-amber-50 font-bold py-2.5 rounded-xl transition text-center shadow-md">
+              電腦一鍵起卦
+            </button>
+            <button id="ly-btn-reset" type="button" class="px-4 py-2.5 border border-stone-300 text-stone-600 hover:bg-stone-100 rounded-xl transition font-bold">
+              重置
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-5 mb-6 text-center shadow-xs">
+          <div class="text-xs font-bold text-amber-900 mb-2">【三枚銅錢手動搖卦法】進度：<span id="ly-toss-count" class="text-red-700 font-bold text-lg">0</span> / 6 次（由初爻至上爻依次擲出）</div>
+          
+          <div class="flex justify-center gap-4 my-4" id="ly-coins-display">
+            <div class="w-14 h-14 rounded-full border-2 border-amber-700 bg-amber-100 flex items-center justify-center font-bold text-amber-900 shadow-md">字</div>
+            <div class="w-14 h-14 rounded-full border-2 border-amber-700 bg-amber-100 flex items-center justify-center font-bold text-amber-900 shadow-md">字</div>
+            <div class="w-14 h-14 rounded-full border-2 border-amber-700 bg-amber-100 flex items-center justify-center font-bold text-amber-900 shadow-md">背</div>
+          </div>
+
+          <button id="ly-btn-toss" type="button" class="bg-red-900 hover:bg-red-800 text-amber-50 font-bold px-10 py-3 rounded-full shadow-lg transition active:scale-95 text-sm tracking-widest">
+            🪙 擲出下一爻
+          </button>
+        </div>
+
+        <div id="ly-result-area" class="hidden"></div>
+      </div>
+    `;
+
+    document.getElementById('ly-btn-toss').addEventListener('click', handleToss);
+    document.getElementById('ly-btn-quick').addEventListener('click', handleQuickCast);
+    document.getElementById('ly-btn-reset').addEventListener('click', handleReset);
+  }
+
+  function handleToss() {
+    if (tossHistory.length >= 6) return;
+    const c1 = Math.random() < 0.5 ? 0 : 1;
+    const c2 = Math.random() < 0.5 ? 0 : 1;
+    const c3 = Math.random() < 0.5 ? 0 : 1;
+    const sum = c1 + c2 + c3;
+    let val = 7;
+    if (sum === 0) val = 6;
+    else if (sum === 1) val = 7;
+    else if (sum === 2) val = 8;
+    else if (sum === 3) val = 9;
+
+    tossHistory.push({ val, coins: [c1, c2, c3] });
+
+    const coinsHtml = [c1, c2, c3].map(c => `
+      <div class="w-14 h-14 rounded-full border-2 ${c === 1 ? 'border-amber-700 bg-amber-200 text-amber-900' : 'border-stone-500 bg-stone-100 text-stone-700'} flex items-center justify-center font-bold shadow-md transition animate-bounce">
+        ${c === 1 ? '背' : '字'}
+      </div>
+    `).join('');
+    document.getElementById('ly-coins-display').innerHTML = coinsHtml;
+    document.getElementById('ly-toss-count').innerText = tossHistory.length;
+
+    if (tossHistory.length === 6) {
+      document.getElementById('ly-btn-toss').disabled = true;
+      document.getElementById('ly-btn-toss').classList.add('opacity-50');
+      renderChart();
+    }
+  }
+
+  function handleQuickCast() {
+    handleReset();
+    for (let i = 0; i < 6; i++) {
+      const r = Math.random();
+      let val = 7;
+      if (r < 0.15) val = 6;
+      else if (r < 0.50) val = 7;
+      else if (r < 0.85) val = 8;
+      else val = 9;
+      tossHistory.push({ val, coins: [1, 1, 1] });
+    }
+    document.getElementById('ly-toss-count').innerText = '6';
+    document.getElementById('ly-btn-toss').disabled = true;
+    document.getElementById('ly-btn-toss').classList.add('opacity-50');
+    renderChart();
+  }
+
+  function handleReset() {
+    tossHistory = [];
+    document.getElementById('ly-toss-count').innerText = '0';
+    document.getElementById('ly-btn-toss').disabled = false;
+    document.getElementById('ly-btn-toss').classList.remove('opacity-50');
+    document.getElementById('ly-result-area').classList.add('hidden');
+    document.getElementById('ly-result-area').innerHTML = '';
+  }
+
+  function renderChart() {
+    const dayGan = document.getElementById('ly-day-gan').value;
+    const sixGods = SIX_GODS_MAP[dayGan] || SIX_GODS_MAP['戊'];
+    const question = document.getElementById('ly-question').value || '未填寫占問事項';
+
+    let benBin = '';
+    let bianBin = '';
+    const yaoStates = [];
+
+    for (let i = 0; i < 6; i++) {
+      const v = tossHistory[i].val;
+      const isYang = (v === 7 || v === 9);
+      const isDong = (v === 6 || v === 9);
+      benBin += isYang ? '1' : '0';
+      const bianYang = isDong ? !isYang : isYang;
+      bianBin += bianYang ? '1' : '0';
+      yaoStates.push({ val: v, isYang, isDong });
+    }
+
+    const benMeta = HEXAGRAM_PALACES[benBin] || { name: '未知卦', palace: '乾', palaceElement: '金', shi: 1 };
+    const bianMeta = HEXAGRAM_PALACES[bianBin] || { name: '未知卦', palace: '坤', palaceElement: '土', shi: 1 };
+    const hasDong = yaoStates.some(y => y.isDong);
+
+    const lowerTri = TRIGRAMS[benBin.substring(0, 3)];
+    const upperTri = TRIGRAMS[benBin.substring(3, 6)];
+    const benBranches = [
+      lowerTri.branches[0], lowerTri.branches[1], lowerTri.branches[2],
+      upperTri.branches[3], upperTri.branches[4], upperTri.branches[5]
+    ];
+
+    const bLowerTri = TRIGRAMS[bianBin.substring(0, 3)];
+    const bUpperTri = TRIGRAMS[bianBin.substring(3, 6)];
+    const bianBranches = [
+      bLowerTri.branches[0], bLowerTri.branches[1], bLowerTri.branches[2],
+      bUpperTri.branches[3], bUpperTri.branches[4], bUpperTri.branches[5]
+    ];
+
+    const rows = [];
+    const yaoNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+
+    for (let i = 5; i >= 0; i--) {
+      const bBranch = benBranches[i];
+      const bElem = BRANCH_ELEMENTS[bBranch];
+      const relation = RELATIONS_RULES[benMeta.palaceElement][bElem];
+      const isShi = (benMeta.shi === (i + 1));
+      const isYing = ((benMeta.shi + 3) % 6 || 6) === (i + 1);
+      const god = sixGods[i];
+      const y = yaoStates[i];
+
+      const biBranch = bianBranches[i];
+      const biElem = BRANCH_ELEMENTS[biBranch];
+      const biRelation = RELATIONS_RULES[benMeta.palaceElement][biElem];
+
+      rows.push({
+        idx: i + 1,
+        yaoName: yaoNames[i],
+        god,
+        relation,
+        branch: bBranch,
+        elem: bElem,
+        isYang: y.isYang,
+        isDong: y.isDong,
+        val: y.val,
+        isShi,
+        isYing,
+        biRelation,
+        biBranch,
+        biElem,
+        biYang: (bianBin[i] === '1')
+      });
+    }
+
+    const container = document.getElementById('ly-result-area');
+    container.classList.remove('hidden');
+
+    container.innerHTML = `
+      <div class="border-t-2 border-stone-300 pt-6 mt-6 animate-fadeIn">
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-100 rounded-2xl p-4 mb-6 text-xs text-stone-700 shadow-xs">
+          <div><span class="font-bold text-stone-900">占事：</span>${question}</div>
+          <div><span class="font-bold text-stone-900">本卦宮位：</span>${benMeta.palace}宮（${benMeta.palaceElement}）</div>
+          <div><span class="font-bold text-stone-900">世應定位：</span>世在第${benMeta.shi}爻</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white border-2 border-stone-300 rounded-2xl p-5 shadow-md">
+            <div class="text-center font-black text-xl text-red-900 mb-4 border-b border-stone-200 pb-3 flex items-center justify-center gap-2">
+              <span class="text-xs bg-red-800 text-white px-2 py-0.5 rounded font-serif">本卦</span>
+              <span>${benMeta.name}</span>
+            </div>
+            <div class="space-y-3.5">
+              ${rows.map(r => `
+                <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg ${r.isDong ? 'bg-red-50 border border-red-200' : 'hover:bg-stone-50'}">
+                  <div class="w-12 text-stone-500 font-bold">${r.god}</div>
+                  <div class="w-12 ${r.isShi ? 'text-red-700 font-bold' : r.isYing ? 'text-blue-700 font-bold' : 'text-stone-400'}">
+                    ${r.isShi ? '【世】' : r.isYing ? '【應】' : ''}
+                  </div>
+                  <div class="w-16 font-bold text-stone-700">${r.relation}</div>
+                  <div class="w-16 text-stone-800 font-mono">${r.branch}(${r.elem})</div>
+                  
+                  <div class="flex-1 flex items-center justify-center px-2">
+                    ${r.isYang ? `
+                      <div class="w-20 h-2.5 bg-stone-800 rounded-xs flex items-center justify-center">
+                        ${r.isDong ? '<span class="text-[10px] text-red-400 font-bold">〇</span>' : ''}
+                      </div>
+                    ` : `
+                      <div class="w-20 flex gap-2 justify-between">
+                        <div class="w-9 h-2.5 bg-stone-800 rounded-xs flex items-center justify-center">
+                          ${r.isDong ? '<span class="text-[9px] text-red-400 font-bold">✕</span>' : ''}
+                        </div>
+                        <div class="w-9 h-2.5 bg-stone-800 rounded-xs"></div>
+                      </div>
+                    `}
+                  </div>
+
+                  <div class="w-10 text-right font-bold ${r.isDong ? 'text-red-700' : 'text-stone-400'}">
+                    ${r.isDong ? '動' : '靜'}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="bg-white border-2 border-stone-300 rounded-2xl p-5 shadow-md ${hasDong ? '' : 'opacity-60'}">
+            <div class="text-center font-black text-xl text-stone-800 mb-4 border-b border-stone-200 pb-3 flex items-center justify-center gap-2">
+              <span class="text-xs bg-stone-700 text-white px-2 py-0.5 rounded font-serif">之卦（變卦）</span>
+              <span>${hasDong ? bianMeta.name : '（六爻皆靜，無變卦）'}</span>
+            </div>
+            ${hasDong ? `
+              <div class="space-y-3.5">
+                ${rows.map(r => `
+                  <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg ${r.isDong ? 'bg-amber-50 border border-amber-200 font-bold' : ''}">
+                    <div class="w-16 text-stone-700">${r.isDong ? r.biRelation : '-'}</div>
+                    <div class="w-20 text-stone-800 font-mono">${r.isDong ? `${r.biBranch}(${r.biElem})` : '-'}</div>
+                    <div class="flex-1 flex items-center justify-center px-2">
+                      ${r.biYang ? `
+                        <div class="w-20 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-400'} rounded-xs"></div>
+                      ` : `
+                        <div class="w-20 flex gap-2 justify-between">
+                          <div class="w-9 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-400'} rounded-xs"></div>
+                          <div class="w-9 h-2.5 ${r.isDong ? 'bg-red-700' : 'bg-stone-400'} rounded-xs"></div>
+                        </div>
+                      `}
+                    </div>
+                    <div class="w-16 text-right text-[11px] text-stone-400">
+                      ${r.isDong ? '變出' : '不變'}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : `
+              <div class="h-56 flex items-center justify-center text-xs text-stone-400 text-center leading-relaxed">
+                六爻皆靜，氣運專一穩固。<br>以本卦【${benMeta.name}】卦意與世應斷吉凶即可。
+              </div>
+            `}
+          </div>
+        </div>
+
+        <div class="mt-6 bg-red-50/80 border border-red-200 rounded-2xl p-4 text-xs text-stone-700 leading-relaxed shadow-xs">
+          <span class="font-bold text-red-900">【易道神斷心要】</span>
+          本卦得【${benMeta.name}】，${benMeta.palace}宮${benMeta.palaceElement}爻管事。世爻在第${benMeta.shi}爻，代表求問者自身實力與定力。
+          ${hasDong ? `動爻見${rows.filter(r=>r.isDong).map(r=>r.yaoName).join('、')}發動，預示事態轉移，之卦指向【${bianMeta.name}】。` : `卦無動爻，主靜不主動，宜順天應人。`}
+        </div>
+      </div>
+    `;
+  }
+
+  initApp();
+  </script>
+</body>
+</html>

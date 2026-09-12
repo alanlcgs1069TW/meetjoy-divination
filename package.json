@@ -1,0 +1,17 @@
+{
+  "name": "meetjoy-divination",
+  "version": "1.0.0",
+  "description": "癒見幸福 · 魔法占星學院命理排盤系統",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler pages deploy . --project-name=meetjoy-divination"
+  },
+  "keywords": [
+    "astrology",
+    "human-design",
+    "divination",
+    "meetjoy"
+  ],
+  "author": "MeetJoy Atelier",
+  "license": "UNLICENSED"
+}
