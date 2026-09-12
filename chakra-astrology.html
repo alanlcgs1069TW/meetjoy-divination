@@ -53,15 +53,15 @@
             脈輪占星系統排盤
           </h1>
           <p class="text-xs sm:text-sm text-stone-600 mt-1">
-            癒見幸福獨創之「七曜七脈輪生命能量全息系統」。透過七曜神聖七宮深度映射人體七大脈輪（頂輪至海底輪），精準推算 108 年大運週期軌跡、三刑凶煞雷達與八方風水生活魔藥調頻處方。
+            癒見幸福獨創之「七曜七脈輪生命能量全息系統」。透過七曜神聖七宮深度映射人體七大脈輪（海底輪 House 1 至頂輪 House 7），精準推算 108 年大運週期軌跡、三刑凶煞雷達與八方風水生活魔藥調頻處方。
           </p>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="loadSample(1)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition">
-            範例一 (工作盤1)
+            範例一 (經典盤1)
           </button>
           <button type="button" onclick="loadSample(2)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-[#EADFC7] text-[#2E3829] transition">
-            範例二 (工作盤2)
+            範例二 (經典盤2)
           </button>
         </div>
       </div>
@@ -157,38 +157,38 @@
           </div>
         </div>
 
-        <!-- 金字塔三層排盤佈局 -->
+        <!-- 金字塔三層排盤佈局 (海底輪 House 1 至頂輪 House 7 登階金字塔) -->
         <div class="flex flex-col items-center gap-4 max-w-3xl mx-auto py-4">
           
-          <!-- 頂層：第 7 宮 領袖宮 (頂輪) -->
+          <!-- 頂層：第 7 宮 領袖宮 (頂輪 · 崇高天命) -->
           <div class="w-full flex justify-center">
             <div id="house_card_7" onclick="selectHouseDetail(7)" class="w-full sm:w-72 p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
               <!-- 動態內容 -->
             </div>
           </div>
 
-          <!-- 中層：第 3 宮 名望宮 (心輪) ｜ 第 4 宮 財富宮 (喉輪) ｜ 第 5 宮 君王宮 (眉心輪) -->
+          <!-- 中層：第 4 宮 財富宮 (心輪) ｜ 第 5 宮 君王宮 (喉輪) ｜ 第 6 宮 病符宮 (眉心輪) -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-            <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
             <div id="house_card_4" onclick="selectHouseDetail(4)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
               <!-- 動態內容 -->
             </div>
             <div id="house_card_5" onclick="selectHouseDetail(5)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
               <!-- 動態內容 -->
             </div>
-          </div>
-
-          <!-- 底層：第 2 宮 極端宮 (臍輪) ｜ 第 1 宮 無常宮 (太陽神經叢) ｜ 第 6 宮 病符宮 (海底輪) -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-            <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+            <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
               <!-- 動態內容 -->
             </div>
+          </div>
+
+          <!-- 底層：第 1 宮 無常宮 (海底輪) ｜ 第 2 宮 極端宮 (臍輪) ｜ 第 3 宮 名望宮 (太陽神經叢) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
             <div id="house_card_1" onclick="selectHouseDetail(1)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
               <!-- 動態內容 -->
             </div>
-            <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+            <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
+              <!-- 動態內容 -->
+            </div>
+            <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
               <!-- 動態內容 -->
             </div>
           </div>
@@ -210,36 +210,36 @@
               <span>神聖能量大三角與顯化全息軸</span>
             </h3>
             <p class="text-xs text-stone-500 mt-1">
-              古占星七曜三合交感能量場。解構靈性願景昇華軸 (7-2-6)、世俗王者顯化軸 (3-4-5) 與無常核心樞紐 (1)。
+              脈輪占星七曜交感能量場。解構天地中軸神聖大三角 (7-4-1)、世俗意志王者顯化軸 (3-5-6) 與生命創造情感樞紐 (2)。
             </p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <!-- 卡片 1: 主神聖大三角 (Grand Trine · 靈性昇華軸) -->
+          <!-- 卡片 1: 主神聖大三角 (Grand Trine · 天地中軸昇華軸) -->
           <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-black px-2.5 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-200">
-                  主大三角 · 靈性昇華軸
+                  主大三角 · 天地中軸昇華軸
                 </span>
                 <span id="gtHarmonyBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                   和諧順遂
                 </span>
               </div>
               <h4 class="text-base font-black text-[#1F261C] mb-1">
-                頂輪 ⇄ 臍輪 ⇄ 海底輪 (House 7 - 2 - 6)
+                頂輪 ⇄ 心輪 ⇄ 海底輪 (House 7 - 4 - 1)
               </h4>
               <p class="text-xs text-stone-500 mb-3">
-                連結領袖宮(動機)、極端宮(逆境轉化)與病符宮(肉身扎根)的靈魂修煉大三角。
+                連結領袖宮(天命願景)、財富宮(心靈慈悲)與無常宮(肉身扎根)的天地中軸大三角。
               </p>
               
               <!-- 星曜組成 -->
               <div class="p-3 rounded-xl bg-white border border-stone-200 mb-3 space-y-1.5 text-xs">
                 <div class="flex justify-between"><span class="text-stone-500">頂輪 (House 7 領袖)：</span><span id="gtP7" class="font-bold text-stone-800">太陽</span></div>
-                <div class="flex justify-between"><span class="text-stone-500">臍輪 (House 2 極端)：</span><span id="gtP2" class="font-bold text-stone-800">火星</span></div>
-                <div class="flex justify-between"><span class="text-stone-500">海底輪 (House 6 病符)：</span><span id="gtP6" class="font-bold text-stone-800">太陰</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">心輪 (House 4 財富)：</span><span id="gtP4" class="font-bold text-stone-800">火星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">海底輪 (House 1 無常)：</span><span id="gtP1" class="font-bold text-stone-800">太陰</span></div>
               </div>
 
               <!-- 行星交感狀態 -->
@@ -253,70 +253,70 @@
             </p>
           </div>
 
-          <!-- 卡片 2: 世俗王者顯化軸 (Worldly Manifestation Axis) -->
+          <!-- 卡片 2: 世俗意志與王者顯化軸 (Worldly Manifestation Axis) -->
           <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-black px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
-                  世俗王者顯化軸
+                  世俗意志與王者顯化軸
                 </span>
                 <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
                   成就豐盛
                 </span>
               </div>
               <h4 class="text-base font-black text-[#1F261C] mb-1">
-                心輪 ⇄ 喉輪 ⇄ 眉心輪 (House 3 - 4 - 5)
+                太陽神經叢 ⇄ 喉輪 ⇄ 眉心輪 (House 3 - 5 - 6)
               </h4>
               <p class="text-xs text-stone-500 mb-3">
-                連結名望宮(奮鬥成就)、財富宮(豐盛流通)與君王宮(王者格局)的世俗顯化金三角。
+                連結名望宮(自信奮鬥)、君王宮(王者發聲)與病符宮(照破盲點)的世俗顯化金三角。
               </p>
 
               <!-- 星曜組成 -->
               <div class="p-3 rounded-xl bg-white border border-stone-200 mb-3 space-y-1.5 text-xs">
-                <div class="flex justify-between"><span class="text-stone-500">心輪 (House 3 名望)：</span><span id="wmP3" class="font-bold text-stone-800">木星</span></div>
-                <div class="flex justify-between"><span class="text-stone-500">喉輪 (House 4 財富)：</span><span id="wmP4" class="font-bold text-stone-800">金星</span></div>
-                <div class="flex justify-between"><span class="text-stone-500">眉心輪 (House 5 君王)：</span><span id="wmP5" class="font-bold text-stone-800">土星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">太陽神經叢 (House 3 名望)：</span><span id="wmP3" class="font-bold text-stone-800">木星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">喉輪 (House 5 君王)：</span><span id="wmP5" class="font-bold text-stone-800">金星</span></div>
+                <div class="flex justify-between"><span class="text-stone-500">眉心輪 (House 6 病符)：</span><span id="wmP6" class="font-bold text-stone-800">土星</span></div>
               </div>
             </div>
 
             <p id="wmDesc" class="text-xs text-stone-600 leading-relaxed pt-2 border-t border-stone-200">
-              心、喉、眉心三大脈輪相通，象徵以真誠慈悲立基、以自信表達開創資源，並具備如君王般縱覽全局的戰略定力。
+              太陽神經叢、喉輪與眉心輪相通，象徵以自信行動立基、以真誠發聲開創資源，並具備如君王縱覽全局的戰略定力。
             </p>
           </div>
 
-          <!-- 卡片 3: 生命軸心樞紐 (Pivot Center) 與次三角 -->
+          <!-- 卡片 3: 生命創造與情感轉化樞紐 (Pivot Center) 與次三角 -->
           <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-black px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
-                  生命軸心樞紐
+                  創造與情感轉化樞紐
                 </span>
                 <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-stone-200 text-stone-700">
                   動態平衡
                 </span>
               </div>
               <h4 class="text-base font-black text-[#1F261C] mb-1">
-                太陽神經叢 · 無常宮 (House 1)
+                臍輪 · 極端宮 (House 2)
               </h4>
               <p class="text-xs text-stone-500 mb-3">
-                生命中流變與適應力的定盤星。調和靈性昇華大三角與世俗顯化軸的能量動態。
+                深層情感流動、親密關係與創造熱情之定盤星。調和天地中軸大三角與世俗顯化軸。
               </p>
 
               <!-- 樞紐星曜與次三角 -->
               <div class="p-3 rounded-xl bg-white border border-stone-200 mb-3 space-y-2 text-xs">
                 <div class="flex justify-between items-center">
                   <span class="text-stone-500">樞紐守護星曜：</span>
-                  <span id="pivotStar" class="font-black text-amber-800">水星 (Mercury)</span>
+                  <span id="pivotStar" class="font-black text-amber-800">火星 (Mars)</span>
                 </div>
                 <div class="pt-2 border-t border-stone-100">
-                  <div class="text-[11px] font-bold text-stone-700 mb-0.5">次三角支援 (House 4-2-6)：</div>
-                  <div id="mtDesc" class="text-[11px] text-stone-500">以喉輪財富宮為支點，運用真誠溝通調和現實挑戰。</div>
+                  <div class="text-[11px] font-bold text-stone-700 mb-0.5">次三角支援 (House 1-2-3)：</div>
+                  <div id="mtDesc" class="text-[11px] text-stone-500">下三輪大地基石三角，以海底輪扎根大地調和現實挑戰。</div>
                 </div>
               </div>
             </div>
 
             <p class="text-xs text-stone-600 leading-relaxed pt-2 border-t border-stone-200">
-              當生活面臨無常起伏時，深呼吸放鬆腹部太陽神經叢，信任內在靈魂導航，將無常化為前進的風帆。
+              當生命面臨深層情感轉折或考驗時，深呼吸聚焦下丹田臍輪，信任內在靈魂韌性，將淬礪化為前進的創造火種。
             </p>
           </div>
 
@@ -500,8 +500,8 @@
       document.getElementById('heroElement').innerText = res.birthPlanet.meta.element;
       document.getElementById('heroYears').innerText = `${res.birthPlanet.meta.years} 年`;
 
-      // 2. 七大宮位金字塔
-      const houses = [7, 3, 4, 5, 2, 1, 6];
+      // 2. 七大宮位金字塔 (1 到 7 登階)
+      const houses = [7, 4, 5, 6, 1, 2, 3];
       houses.forEach(hNum => {
         const pName = res.houses[hNum];
         const pMeta = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === pName);
@@ -535,8 +535,8 @@
         res.grandTrine.isHarmonious ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
       }`;
       document.getElementById('gtP7').innerText = res.grandTrine.planetsZh[0];
-      document.getElementById('gtP2').innerText = res.grandTrine.planetsZh[1];
-      document.getElementById('gtP6').innerText = res.grandTrine.planetsZh[2];
+      document.getElementById('gtP4').innerText = res.grandTrine.planetsZh[1];
+      document.getElementById('gtP1').innerText = res.grandTrine.planetsZh[2];
 
       const relListEl = document.getElementById('gtRelationsList');
       relListEl.innerHTML = res.grandTrine.relationships.map(r => `
@@ -549,8 +549,8 @@
 
       // 世俗王者顯化軸
       document.getElementById('wmP3').innerText = res.worldlyAxis.planetsZh[0];
-      document.getElementById('wmP4').innerText = res.worldlyAxis.planetsZh[1];
-      document.getElementById('wmP5').innerText = res.worldlyAxis.planetsZh[2];
+      document.getElementById('wmP5').innerText = res.worldlyAxis.planetsZh[1];
+      document.getElementById('wmP6').innerText = res.worldlyAxis.planetsZh[2];
       document.getElementById('wmDesc').innerText = res.worldlyAxis.description;
 
       // 樞紐中心
