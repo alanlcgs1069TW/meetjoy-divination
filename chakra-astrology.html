@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="./js/meetjoy-pdf.js"></script>
   <style>
     body { font-family: 'Noto Serif TC', serif; }
     .sans { font-family: 'Noto Sans TC', sans-serif; }
@@ -90,8 +91,12 @@
           <input type="number" id="ageInput" min="0" max="108" placeholder="預設依當前年齡" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
         </div>
 
-        <div class="sm:col-span-2 lg:col-span-4 flex justify-end mt-2">
-          <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+        <div class="sm:col-span-2 lg:col-span-4 flex flex-wrap items-center justify-end gap-2.5 mt-2">
+          <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '七曜七脈輪生命能量全息盤' })" class="px-5 py-3 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 border border-amber-900/20 text-sm">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>匯出 PDF 報告</span>
+          </button>
+          <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
             <i class="fa-solid fa-dharmachakra"></i>
             <span>一鍵起盤 · 展開脈輪占星盤</span>
           </button>

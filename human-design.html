@@ -7,10 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <!-- 本地純靜態天文引擎 -->
+  <!-- 本地純靜態天文引擎與 PDF 輸出引擎 -->
   <script src="./js/astronomy.browser.min.js"></script>
   <script src="./js/geo-cities.js"></script>
   <script src="./js/astro-calc.js"></script>
+  <script src="./js/meetjoy-pdf.js"></script>
 
   <style>
     body { font-family: 'Noto Serif TC', serif; }
@@ -81,10 +82,13 @@
 
           <!-- 操作按鈕 -->
           <div class="flex gap-2">
-            <button type="submit" class="flex-1 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 font-bold py-2.5 px-4 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-1.5 border border-amber-900/30">
-              <span>✨ 繪製人類圖</span>
+            <button type="submit" class="flex-1 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 font-bold py-2.5 px-3 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center justify-center gap-1.5 border border-amber-900/30 whitespace-nowrap">
+              <span>✨ 繪製</span>
             </button>
-            <button type="button" id="btn_sample" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-3 py-2.5 rounded-xl text-xs transition" title="載入 7933 範例">
+            <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '人類圖立體能量水晶大典' })" class="bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold px-3 py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1 shadow-xs border border-amber-900/20 whitespace-nowrap" title="匯出高畫質 PDF 命盤報告">
+              <span>📥 PDF</span>
+            </button>
+            <button type="button" id="btn_sample" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-2.5 py-2.5 rounded-xl text-xs transition whitespace-nowrap" title="載入 7933 範例">
               範例
             </button>
           </div>
@@ -337,6 +341,19 @@
         </h3>
         <div id="life_rx_container" class="space-y-3 text-xs sm:text-sm text-slate-600"></div>
       </div>
+    </div>
+
+    <!-- 匯出與列印 PDF 報告工具列 -->
+    <div class="mt-8 flex flex-wrap items-center justify-between gap-4 bg-white/90 border border-[#CBD5E1] rounded-2xl p-4 sm:p-5 shadow-sm no-print">
+      <div>
+        <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+          <span>📄 下載保存人類圖鑑定報告</span>
+        </h4>
+        <p class="text-xs text-slate-500 mt-0.5">採用高畫質向量排版標準，完整收納立體水晶人體圖、五大核心指標與天賦魔藥。</p>
+      </div>
+      <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '人類圖立體能量水晶大典' })" class="bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center gap-2 border border-amber-900/20">
+        <span>📥 生成 PDF 命盤報告</span>
+      </button>
     </div>
   </main>
 

@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="./js/meetjoy-pdf.js"></script>
   <style>
     body { font-family: 'Noto Serif TC', serif; }
     .sans { font-family: 'Noto Sans TC', sans-serif; }
@@ -721,14 +722,18 @@
             <span class="text-sm sm:text-base font-black">【六爻神卦排盤完成】</span>
             <span class="text-xs text-amber-300/80">占事：${question}</span>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="handleReset()" class="px-3.5 py-1.5 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-rotate-right"></i>
-              <span>重新手搖起卦</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="MeetJoyPDF.exportPDF({ title: '文王六爻神卦排盤報告' })" class="px-3.5 py-1.5 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>匯出 PDF</span>
             </button>
-            <button onclick="handleQuickCast()" class="px-3.5 py-1.5 bg-stone-700 hover:bg-stone-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <button onclick="handleReset()" class="px-3.5 py-1.5 bg-stone-700 hover:bg-stone-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>重新手搖</span>
+            </button>
+            <button onclick="handleQuickCast()" class="px-3.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
               <i class="fa-solid fa-bolt"></i>
-              <span>重新電腦起卦</span>
+              <span>重新電腦</span>
             </button>
           </div>
         </div>

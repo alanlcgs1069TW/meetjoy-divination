@@ -13,6 +13,7 @@
   <script src="./js/geo-cities.js"></script>
   <script src="./js/astro-calc.js"></script>
   <script src="./js/gene-keys-data.js"></script>
+  <script src="./js/meetjoy-pdf.js"></script>
 
   <style>
     body {
@@ -213,9 +214,14 @@
         </button>
       </div>
 
-      <button type="submit" class="px-5 py-2 rounded-xl bg-[#987315] hover:bg-[#806010] text-white font-bold transition shadow-xs flex items-center gap-1.5 ml-auto">
-        <span>🪐 繪製全息天命圖</span>
-      </button>
+      <div class="flex items-center gap-2 ml-auto">
+        <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '基因天命黃金之路全息天命圖' })" class="px-3.5 py-2 rounded-xl bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold transition shadow-xs flex items-center gap-1.5 border border-amber-900/20 text-xs sm:text-sm" title="匯出 PDF 鑑定報告">
+          <span>📥 匯出 PDF</span>
+        </button>
+        <button type="submit" class="px-5 py-2 rounded-xl bg-[#987315] hover:bg-[#806010] text-white font-bold transition shadow-xs flex items-center gap-1.5 text-xs sm:text-sm">
+          <span>🪐 繪製全息天命圖</span>
+        </button>
+      </div>
     </form>
   </section>
 
