@@ -374,13 +374,13 @@
           <!-- 三枚立體銅錢展示 -->
           <div class="flex justify-center items-center gap-4 sm:gap-6 my-5" id="ly-coins-display">
             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
-              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">字</div>
+              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">地</div>
             </div>
             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
-              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">字</div>
+              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">地</div>
             </div>
             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
-              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">背</div>
+              <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">天</div>
             </div>
           </div>
 
@@ -522,7 +522,7 @@
     coinsEl.innerHTML = [c1, c2, c3].map(c => `
       <div class="coin-spinning w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 ${c === 1 ? 'border-amber-700 bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 text-amber-950' : 'border-stone-500 bg-gradient-to-br from-stone-100 via-stone-200 to-stone-300 text-stone-800'} flex items-center justify-center font-black text-sm sm:text-base shadow-xl relative">
         <div class="w-5 h-5 border-2 border-stone-800/40 bg-stone-50/90 rounded-xs flex items-center justify-center text-[10px] font-bold">
-          ${c === 1 ? '背' : '字'}
+          ${c === 1 ? '天' : '地'}
         </div>
       </div>
     `).join('');
@@ -552,6 +552,22 @@
   function handleReset() {
     tossHistory = [];
     updateTossUI();
+    
+    const coinsEl = document.getElementById('ly-coins-display');
+    if (coinsEl) {
+      coinsEl.innerHTML = `
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
+          <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">地</div>
+        </div>
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
+          <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">地</div>
+        </div>
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-amber-600 bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center font-black text-amber-900 text-sm sm:text-base shadow-lg relative">
+          <div class="w-5 h-5 border-2 border-amber-700 bg-amber-50/80 rounded-xs flex items-center justify-center text-[9px]">天</div>
+        </div>
+      `;
+    }
+
     document.getElementById('ly-result-area').classList.add('hidden');
     document.getElementById('ly-result-area').innerHTML = '';
     
