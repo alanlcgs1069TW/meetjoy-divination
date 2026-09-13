@@ -19,6 +19,12 @@
     body { font-family: 'Noto Serif TC', serif; }
     .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     .card-hover:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(83, 99, 73, 0.15); border-color: #C8A97E; }
+    .card-desc {
+      text-wrap: pretty;
+      line-break: strict;
+      word-break: break-word;
+      text-align: justify;
+    }
   </style>
 </head>
 <body class="bg-[#F4EFE6] min-h-screen flex flex-col items-center p-0 m-0 text-[#2E3829]">
@@ -60,172 +66,197 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mb-12">
 
       <!-- 0. 西洋地占神聖排盤 (New & Featured) -->
-      <a href="/geomancy.html" class="card-hover block bg-[#fffdfa] border-2 border-[#C8A97E] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
+      <a href="/geomancy.html" class="card-hover flex flex-col justify-between bg-[#fffdfa] border-2 border-[#C8A97E] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#C8A97E]/20 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-amber-100 text-stone-900 text-xs font-black border border-amber-300 flex items-center gap-1">
-            <span>✨ 全新上線</span> · 大地之針全息神數
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#8A6B18] transition">立即起卦 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-amber-100 text-stone-900 text-xs font-black border border-amber-300 whitespace-nowrap shrink-0">
+              ✨ 全新上線 · 大地之針
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#8A6B18] transition shrink-0 whitespace-nowrap">立即起卦 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">西洋地占神聖排盤</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            四位母親展開 16 卦神聖家族樹。獨創「盾盤家族樹、十二宮位盤、行星能量場」三大視圖切換，嚴謹異或 XOR 演算、左右證人與法官因果審判，附贈生活魔藥調頻處方。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">西洋地占神聖排盤</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          四位母親展開 16 卦神聖家族樹。獨創「盾盤家族樹、十二宮位盤、行星能量場」三大視圖切換，嚴謹異或 XOR 演算、左右證人與法官因果審判，附贈生活魔藥調頻處方。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-amber-100 text-stone-900 px-2 py-0.5 rounded font-black">盾盤16卦</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">十二宮位</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">沙盤戳點法</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-amber-100/60">
+          <span class="bg-amber-100 text-stone-900 px-2.5 py-0.5 rounded-md font-black whitespace-nowrap">盾盤16卦</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">十二宮位</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">沙盤戳點法</span>
         </div>
       </a>
 
       <!-- 紫微斗數星盤大典 -->
-      <a href="/ziwei.html" class="card-hover block bg-[#fffdf8] border-2 border-[#C8A97E] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
+      <a href="/ziwei.html" class="card-hover flex flex-col justify-between bg-[#fffdf8] border-2 border-[#C8A97E] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#C8A97E]/20 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-900 text-xs font-black border border-amber-300">東方星曜 · 十二宮命盤</span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#8A6B18] transition">立即排盤 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-900 text-xs font-black border border-amber-300 whitespace-nowrap shrink-0">東方星曜 · 十二宮命盤</span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#8A6B18] transition shrink-0 whitespace-nowrap">立即排盤 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">紫微斗數星盤大典</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">完整安定十四主星、六吉六煞、生年四化與五行局；十二宮盤支援大限、流年提示，以及點選宮位的三方四正生活解讀。</p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">紫微斗數星盤大典</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">完整安定十四主星、六吉六煞、生年四化與五行局；十二宮盤支援大限、流年提示，以及點選宮位的三方四正生活解讀。</p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500"><span class="bg-amber-50 text-amber-800 px-2 py-0.5 rounded">十四主星</span><span class="bg-stone-100 px-2 py-0.5 rounded">三方四正</span><span class="bg-stone-100 px-2 py-0.5 rounded">PDF 匯出</span></div>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-amber-100/60">
+          <span class="bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-md whitespace-nowrap">十四主星</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">三方四正</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">PDF 匯出</span>
+        </div>
       </a>
 
       <!-- 1. 脈輪占星系統 (New & Featured) -->
-      <a href="/chakra-astrology.html" class="card-hover block bg-white border-2 border-[#9333ea]/50 rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
+      <a href="/chakra-astrology.html" class="card-hover flex flex-col justify-between bg-white border-2 border-[#9333ea]/50 rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#9333ea]/10 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-900 text-xs font-black border border-purple-300 flex items-center gap-1">
-            <span>✨ 全新上線</span> · 七曜七脈輪神聖天命
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#9333ea] transition">立即起盤 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-900 text-xs font-black border border-purple-300 whitespace-nowrap shrink-0">
+              ✨ 全新上線 · 七曜脈輪
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#9333ea] transition shrink-0 whitespace-nowrap">立即起盤 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#9333ea] transition">脈輪占星系統排盤</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            七曜映射人體七大脈輪（頂輪至海底輪）。精算天命盤餘數、七宮神聖金字塔、108 年大運週期軌跡、三刑凶煞預警雷達與八方風水生活魔藥。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#9333ea] transition">脈輪占星系統排盤</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          七曜映射人體七大脈輪（頂輪至海底輪）。精算天命盤餘數、七宮神聖金字塔、108 年大運週期軌跡、三刑凶煞預警雷達與八方風水生活魔藥。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-purple-50 text-purple-800 px-2 py-0.5 rounded">七脈輪金字塔</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">108年大運</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">八方風水</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-purple-100/60">
+          <span class="bg-purple-50 text-purple-800 px-2.5 py-0.5 rounded-md whitespace-nowrap">七脈輪金字塔</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">108年大運</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">八方風水</span>
         </div>
       </a>
 
       <!-- 2. 撲克命牌系統 (New & Featured) -->
-      <a href="/destiny-cards.html" class="card-hover block bg-white border-2 border-[#dc2626]/50 rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
+      <a href="/destiny-cards.html" class="card-hover flex flex-col justify-between bg-white border-2 border-[#dc2626]/50 rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-md">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#dc2626]/10 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-red-100 text-red-900 text-xs font-black border border-red-300 flex items-center gap-1">
-            <span>✨ 全新上線</span> · 生命之書神聖牌陣
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#dc2626] transition">立即解牌 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-red-100 text-red-900 text-xs font-black border border-red-300 whitespace-nowrap shrink-0">
+              ✨ 全新上線 · 撲克命牌
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#dc2626] transition shrink-0 whitespace-nowrap">立即解牌 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#dc2626] transition">撲克命牌系統排盤</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            52 張神聖撲克全息密碼。精準解鎖本命誕生牌（Birth Card）、星座統治牌、第一/第二業力牌（Karma Cards）、以及年度 7 大 52 天行星週期牌陣。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#dc2626] transition">撲克命牌系統排盤</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          52 張神聖撲克全息密碼。精準解鎖本命誕生牌（Birth Card）、星座統治牌、第一/第二業力牌（Karma Cards），以及年度 7 大 52 天行星週期牌陣。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-red-50 text-red-800 px-2 py-0.5 rounded">高清手繪牌面</span>
-          <span class="bg-amber-50 text-amber-800 px-2 py-0.5 rounded">本命誕生牌</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">52天行星週期</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">業力挑戰/恩典</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-red-100/60">
+          <span class="bg-red-50 text-red-800 px-2.5 py-0.5 rounded-md whitespace-nowrap">高清手繪牌面</span>
+          <span class="bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-md whitespace-nowrap">本命誕生牌</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">52天行星週期</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">業力挑戰/恩典</span>
         </div>
       </a>
 
       <!-- 3. 西洋占星本命星盤大典 -->
-      <a href="/astrology.html" class="card-hover block bg-white border border-[#C8A97E]/70 rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
+      <a href="/astrology.html" class="card-hover flex flex-col justify-between bg-white border border-[#C8A97E]/70 rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#C8A97E]/15 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-900 text-xs font-black border border-amber-200 flex items-center gap-1">
-            瑞士星曆級雙環星盤
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#8A6B18] transition">立即排盤 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-900 text-xs font-black border border-amber-200 whitespace-nowrap shrink-0">
+              瑞士星曆 · 雙環星盤
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#8A6B18] transition shrink-0 whitespace-nowrap">立即排盤 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">西洋占星本命星盤大典</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            NASA JPL / VSOP87 高精度純前端星曆推導。嚴格經緯度與時區歷史夏令時間校正，繪製專業雙環圓形星盤、Placidus 普拉西度 12 宮位、四軸與主相位網，附贈命主星生活魔藥處方。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">西洋占星本命星盤大典</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          NASA JPL / VSOP87 高精度純前端星曆推導。嚴格經緯度與時區歷史夏令時間校正，繪製專業雙環圓形星盤、Placidus 普拉西度 12 宮位、四軸與主相位網，附贈命主星生活魔藥處方。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-amber-50 text-amber-800 px-2 py-0.5 rounded">雙環 SVG 圓盤</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">Placidus 宮位</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">魔藥處方</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-stone-100/80">
+          <span class="bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-md whitespace-nowrap">雙環 SVG 圓盤</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">Placidus 宮位</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">生活魔藥處方</span>
         </div>
       </a>
 
       <!-- 4. 人類圖能量排盤 -->
-      <a href="/human-design.html" class="card-hover block bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
+      <a href="/human-design.html" class="card-hover flex flex-col justify-between bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#536349]/5 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-stone-100 text-stone-800 text-xs font-black border border-stone-300">
-            正統頂級規格 · 雙軌平滑寬通道
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#536349] transition">立即開啟 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-stone-100 text-stone-800 text-xs font-black border border-stone-300 whitespace-nowrap shrink-0">
+              正統規格 · 雙軌平滑通道
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#536349] transition shrink-0 whitespace-nowrap">立即開啟 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#536349] transition">人類圖能量排盤工作室</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            嚴格出生地經緯度與夏令時間校準。角秒級太陽倒退 88° 瞬間推導設計盤。正統 9 大能量中心色彩、64 閘門黑底白字高亮徽章、8px 雙軌貝茲平滑管道（支援半通道獨立著色與斑馬紋）與頭頂四箭頭 Variables。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#536349] transition">人類圖能量排盤工作室</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          嚴格出生地經緯度與夏令時間校準。角秒級太陽倒退 88° 瞬間推導設計盤。正統 9 大能量中心色彩、64 閘門黑底白字高亮徽章、8px 雙軌貝茲平滑管道（支援半通道獨立著色與斑馬紋）與頭頂四箭頭 Variables。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded">正統 9 大中心</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">64 閘門高亮徽章</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">雙軌平滑管道</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-stone-100/80">
+          <span class="bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-md whitespace-nowrap">正統 9 大中心</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">64 閘門高亮徽章</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">雙軌平滑管道</span>
         </div>
       </a>
 
       <!-- 5. 四盤小六壬神數 -->
-      <a href="/xiao-liu-ren.html" class="card-hover block bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
+      <a href="/xiao-liu-ren.html" class="card-hover flex flex-col justify-between bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#536349]/5 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-black border border-emerald-200">
-            東方神數 · 手機極限優化
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#536349] transition">立即開啟 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-black border border-emerald-200 whitespace-nowrap shrink-0">
+              東方神數 · 手機極致優化
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#536349] transition shrink-0 whitespace-nowrap">立即開啟 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#536349] transition">四盤小六壬神數排盤</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            地盤、人盤、神盤、星盤四盤同參。整合日落宮與時落宮、五星六神、十二長生與六親定位。獨創手機端「矩陣盤面 / 逐宮詳解」切換，徹底告別字體重疊。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#536349] transition">四盤小六壬神數排盤</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          地盤、人盤、神盤、星盤四盤同參。整合日落宮與時落宮、五星六神、十二長生與六親定位。獨創手機端「矩陣盤面 / 逐宮詳解」切換，徹底告別字體重疊。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-stone-100 px-2 py-0.5 rounded">短碼 [meetjoy_xiao_liu_ren]</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">RWD 自適應</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-stone-100/80">
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">短碼支援</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">四盤同參</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">RWD 自適應</span>
         </div>
       </a>
 
       <!-- 6. 文王六爻神卦 -->
-      <a href="/liu-yao.html" class="card-hover block bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
+      <a href="/liu-yao.html" class="card-hover flex flex-col justify-between bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#C8A97E]/10 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-black border border-amber-200">
-            周易經典 · 3D 銅錢互動
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#C8A97E] transition">立即開啟 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-black border border-amber-200 whitespace-nowrap shrink-0">
+              周易經典 · 3D 銅錢搖卦
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#C8A97E] transition shrink-0 whitespace-nowrap">立即開啟 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">文王六爻神卦排盤</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            真實三枚銅錢 3D 翻轉互動搖卦或一鍵電腦起卦。自動推導京房八宮世應、納甲裝支、定六親、配日干六神，並提供本卦與動變之卦並列對照解讀。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#8A6B18] transition">文王六爻神卦排盤</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          真實三枚銅錢 3D 翻轉互動搖卦或一鍵電腦起卦。自動推導京房八宮世應、納甲裝支、定六親、配日干六神，並提供本卦與動變之卦並列對照解讀。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-stone-100 px-2 py-0.5 rounded">短碼 [meetjoy_liu_yao]</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">3D 搖卦動畫</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-stone-100/80">
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">短碼支援</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">3D 搖卦動畫</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">京房八宮</span>
         </div>
       </a>
 
       <!-- 7. 基因天命黃金之路 -->
-      <a href="/gene-keys.html" class="card-hover block bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
+      <a href="/gene-keys.html" class="card-hover flex flex-col justify-between bg-white border border-[#E8DFC5] rounded-3xl p-6 sm:p-7 relative overflow-hidden group shadow-xs">
         <div class="absolute top-0 right-0 w-28 h-28 bg-[#9B3B4C]/5 rounded-bl-full pointer-events-none transition group-hover:scale-110"></div>
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 rounded-full bg-rose-50 text-rose-800 text-xs font-black border border-rose-200">
-            意識躍升 · 黃金之路地圖
-          </span>
-          <span class="text-xs font-bold text-stone-400 group-hover:text-[#9B3B4C] transition">立即開啟 ➔</span>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-rose-50 text-rose-800 text-xs font-black border border-rose-200 whitespace-nowrap shrink-0">
+              意識躍升 · 黃金之路地圖
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#9B3B4C] transition shrink-0 whitespace-nowrap">立即開啟 ➔</span>
+          </div>
+          <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#9B3B4C] transition">基因天命黃金之路</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-5">
+            展開激活序列、金星序列、珍珠序列三大旋律。內建完整 1–64 號「陰影 ➔ 天賦 ➔ 悉地」神聖字典，在互動羅盤輪中領取專屬調頻處方。
+          </p>
         </div>
-        <h2 class="text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#9B3B4C] transition">基因天命黃金之路</h2>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-          展開激活序列、金星序列、珍珠序列三大旋律。內建完整 1–64 號「陰影 ➔ 天賦 ➔ 悉地」神聖字典，在互動羅盤輪中領取專屬調頻處方。
-        </p>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-stone-500">
-          <span class="bg-stone-100 px-2 py-0.5 rounded">短碼 [meetjoy_gene_keys]</span>
-          <span class="bg-stone-100 px-2 py-0.5 rounded">64 鍵頻率字典</span>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-stone-100/80">
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">三大序列</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">64 鍵神聖字典</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">天命調頻處方</span>
         </div>
       </a>
 
