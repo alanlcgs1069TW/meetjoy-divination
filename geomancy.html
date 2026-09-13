@@ -29,46 +29,75 @@
     .gold-border { border-color: #C8A97E; }
     .gold-glow { box-shadow: 0 0 20px rgba(200, 169, 126, 0.3); }
     
-    /* 地占圖形珠子樣式 (太極陰陽圓珠 / 黑曜石) */
+    /* 地占圖形珠子樣式 (太極陰陽圓珠 / 黑曜石 · 手機/桌面完美自適應) */
     .geomancy-dots {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      padding: 5px 0;
+      gap: 3px;
+      padding: 2px 0;
     }
     .dot-line {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 44px;
-      height: 12px;
-      gap: 12px;
+      width: 28px;
+      height: 9px;
+      gap: 7px;
     }
     .bead {
-      width: 10px;
-      height: 10px;
+      width: 7.5px;
+      height: 7.5px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #556B4C, #1E261D);
-      box-shadow: 0 1.5px 3px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.4);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.4);
       transition: all 0.2s ease;
     }
     .bead-yin-yang {
       background: radial-gradient(circle at 35% 35%, #F7E7CE, #2E3829);
-      box-shadow: 0 1.5px 3px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
     }
     
-    /* 盾盤節點卡片 */
+    @media (min-width: 640px) {
+      .geomancy-dots {
+        gap: 5px;
+        padding: 4px 0;
+      }
+      .dot-line {
+        width: 42px;
+        height: 12px;
+        gap: 12px;
+      }
+      .bead {
+        width: 10px;
+        height: 10px;
+      }
+    }
+    
+    /* 盾盤節點卡片 · 統一幾何高度與水平垂直對齊 */
     .shield-card {
       background: #FFFFFF;
       border: 1.5px solid #E2D9C8;
-      border-radius: 16px;
-      padding: 8px 6px;
+      border-radius: 12px;
+      padding: 6px 2px;
       text-align: center;
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 86px;
+      box-sizing: border-box;
+    }
+    @media (min-width: 640px) {
+      .shield-card {
+        border-radius: 16px;
+        padding: 8px 6px;
+        min-height: 108px;
+      }
     }
     .shield-card:hover {
       border-color: #C8A97E;
@@ -276,97 +305,149 @@
       <div class="lg:col-span-8 space-y-6">
 
         <!-- 視圖一：盾盤 (Shield Chart) -->
-        <div id="view_shield" class="bg-white/95 border border-[#E2D9C8] rounded-3xl p-4 sm:p-7 shadow-sm">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-5">
+        <div id="view_shield" class="bg-white/95 border border-[#E2D9C8] rounded-2xl sm:rounded-3xl p-2 sm:p-7 shadow-sm">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-2.5 mb-4 sm:mb-6 px-1">
             <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-[#C8A97E]"></span>
-              <h3 class="font-black text-base sm:text-lg text-[#1F261C]">神聖盾盤家族樹 (The Shield Tree)</h3>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#C8A97E]"></span>
+              <h3 class="font-black text-sm sm:text-lg text-[#1F261C]">神聖盾盤家族樹 (The Shield Tree)</h3>
             </div>
-            <span class="text-xs text-stone-400">由右至左排列 · 嚴謹異或 XOR 演算法</span>
+            <span class="text-[10px] sm:text-xs text-stone-400">由右至左排列 · 異或 XOR 演算法</span>
           </div>
 
           <!-- 第一層：8 位母女 (D8~D5 | M4~M1) -->
-          <div class="mb-5">
-            <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 mb-1.5 px-1">
-              <span>四女兒 (Daughters 8–5) ← 橫向四線提取</span>
-              <span>四母親 (Mothers 4–1) ← 神聖源頭</span>
+          <div class="mb-4 sm:mb-6">
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-stone-500 mb-1.5 px-0.5 sm:px-1">
+              <span class="truncate">四女兒 <span class="hidden sm:inline">(Daughters 8–5) ← 橫向四線提取</span><span class="sm:hidden">(8–5)</span></span>
+              <span class="truncate text-right">四母親 <span class="hidden sm:inline">(Mothers 4–1) ← 神聖源頭</span><span class="sm:hidden">(4–1)</span></span>
             </div>
-            <div class="grid grid-cols-8 gap-1.5 sm:gap-2.5">
-              <div id="slot_d8" onclick="selectSlot('d8')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">VIII 女4</div><div class="geomancy-dots" id="dots_d8"></div><div class="text-xs font-black text-stone-800" id="name_d8">--</div></div>
-              <div id="slot_d7" onclick="selectSlot('d7')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">VII 女3</div><div class="geomancy-dots" id="dots_d7"></div><div class="text-xs font-black text-stone-800" id="name_d7">--</div></div>
-              <div id="slot_d6" onclick="selectSlot('d6')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">VI 女2</div><div class="geomancy-dots" id="dots_d6"></div><div class="text-xs font-black text-stone-800" id="name_d6">--</div></div>
-              <div id="slot_d5" onclick="selectSlot('d5')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">V 女1</div><div class="geomancy-dots" id="dots_d5"></div><div class="text-xs font-black text-stone-800" id="name_d5">--</div></div>
-              <div id="slot_m4" onclick="selectSlot('m4')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">IV 母4</div><div class="geomancy-dots" id="dots_m4"></div><div class="text-xs font-black text-stone-800" id="name_m4">--</div></div>
-              <div id="slot_m3" onclick="selectSlot('m3')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">III 母3</div><div class="geomancy-dots" id="dots_m3"></div><div class="text-xs font-black text-stone-800" id="name_m3">--</div></div>
-              <div id="slot_m2" onclick="selectSlot('m2')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">II 母2</div><div class="geomancy-dots" id="dots_m2"></div><div class="text-xs font-black text-stone-800" id="name_m2">--</div></div>
-              <div id="slot_m1" onclick="selectSlot('m1')" class="shield-card bg-amber-50/40 border-amber-200"><div class="text-[10px] font-bold text-amber-800">I 母1</div><div class="geomancy-dots" id="dots_m1"></div><div class="text-xs font-black text-stone-800" id="name_m1">--</div></div>
-            </div>
-          </div>
-
-          <!-- 第二層：4 位姪女 (N12, N11 | N10, N9) -->
-          <div class="mb-5 px-4 sm:px-12">
-            <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 mb-1.5 px-1">
-              <span>女兒相生姪女 (N12, N11)</span>
-              <span>母親相生姪女 (N10, N9)</span>
-            </div>
-            <div class="grid grid-cols-4 gap-2 sm:gap-4">
-              <div id="slot_n12" onclick="selectSlot('n12')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">XII 姪4 (D7+8)</div><div class="geomancy-dots" id="dots_n12"></div><div class="text-xs font-black text-stone-800" id="name_n12">--</div></div>
-              <div id="slot_n11" onclick="selectSlot('n11')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">XI 姪3 (D5+6)</div><div class="geomancy-dots" id="dots_n11"></div><div class="text-xs font-black text-stone-800" id="name_n11">--</div></div>
-              <div id="slot_n10" onclick="selectSlot('n10')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">X 姪2 (M3+4)</div><div class="geomancy-dots" id="dots_n10"></div><div class="text-xs font-black text-stone-800" id="name_n10">--</div></div>
-              <div id="slot_n9" onclick="selectSlot('n9')" class="shield-card"><div class="text-[10px] font-bold text-stone-400">IX 姪1 (M1+2)</div><div class="geomancy-dots" id="dots_n9"></div><div class="text-xs font-black text-stone-800" id="name_n9">--</div></div>
-            </div>
-          </div>
-
-          <!-- 第三層：2 位證人 (Left Witness 14, Right Witness 13) -->
-          <div class="mb-5 px-10 sm:px-20">
-            <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 mb-1.5 px-1">
-              <span class="text-blue-700 font-black">左證人 XIV (外在局勢 / 對方)</span>
-              <span class="text-emerald-700 font-black">右證人 XIII (提問者 / 動機)</span>
-            </div>
-            <div class="grid grid-cols-2 gap-4 sm:gap-8">
-              <div id="slot_w14" onclick="selectSlot('w14')" class="shield-card border-blue-200 bg-blue-50/20">
-                <div class="text-[11px] font-bold text-blue-800">XIV 左證人 (Left)</div>
-                <div class="geomancy-dots" id="dots_w14"></div>
-                <div class="text-sm font-black text-stone-900" id="name_w14">--</div>
-                <div class="text-[10px] text-stone-500 mt-1">外在局勢與對方狀態</div>
+            <div class="grid grid-cols-8 gap-1 sm:gap-2.5">
+              <div id="slot_d8" onclick="selectSlot('d8')" class="shield-card col-span-1">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">VIII </span>女4</div>
+                <div class="geomancy-dots" id="dots_d8"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_d8">--</div>
               </div>
-              <div id="slot_w13" onclick="selectSlot('w13')" class="shield-card border-emerald-200 bg-emerald-50/20">
-                <div class="text-[11px] font-bold text-emerald-800">XIII 右證人 (Right)</div>
-                <div class="geomancy-dots" id="dots_w13"></div>
-                <div class="text-sm font-black text-stone-900" id="name_w13">--</div>
-                <div class="text-[10px] text-stone-500 mt-1">提問者心境與主觀條件</div>
+              <div id="slot_d7" onclick="selectSlot('d7')" class="shield-card col-span-1">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">VII </span>女3</div>
+                <div class="geomancy-dots" id="dots_d7"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_d7">--</div>
+              </div>
+              <div id="slot_d6" onclick="selectSlot('d6')" class="shield-card col-span-1">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">VI </span>女2</div>
+                <div class="geomancy-dots" id="dots_d6"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_d6">--</div>
+              </div>
+              <div id="slot_d5" onclick="selectSlot('d5')" class="shield-card col-span-1">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">V </span>女1</div>
+                <div class="geomancy-dots" id="dots_d5"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_d5">--</div>
+              </div>
+              <div id="slot_m4" onclick="selectSlot('m4')" class="shield-card col-span-1 bg-amber-50/40 border-amber-200">
+                <div class="text-[9px] sm:text-[11px] font-bold text-amber-800 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">IV </span>母4</div>
+                <div class="geomancy-dots" id="dots_m4"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_m4">--</div>
+              </div>
+              <div id="slot_m3" onclick="selectSlot('m3')" class="shield-card col-span-1 bg-amber-50/40 border-amber-200">
+                <div class="text-[9px] sm:text-[11px] font-bold text-amber-800 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">III </span>母3</div>
+                <div class="geomancy-dots" id="dots_m3"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_m3">--</div>
+              </div>
+              <div id="slot_m2" onclick="selectSlot('m2')" class="shield-card col-span-1 bg-amber-50/40 border-amber-200">
+                <div class="text-[9px] sm:text-[11px] font-bold text-amber-800 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">II </span>母2</div>
+                <div class="geomancy-dots" id="dots_m2"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_m2">--</div>
+              </div>
+              <div id="slot_m1" onclick="selectSlot('m1')" class="shield-card col-span-1 bg-amber-50/40 border-amber-200">
+                <div class="text-[9px] sm:text-[11px] font-bold text-amber-800 whitespace-nowrap overflow-hidden text-ellipsis w-full"><span class="hidden sm:inline">I </span>母1</div>
+                <div class="geomancy-dots" id="dots_m1"></div>
+                <div class="text-[11px] sm:text-xs font-black text-stone-800 whitespace-nowrap" id="name_m1">--</div>
               </div>
             </div>
           </div>
 
-          <!-- 第四層：法官 (Judge 15) -->
-          <div class="mb-5 max-w-xs mx-auto">
-            <div class="text-center text-[11px] font-bold text-amber-900 mb-1.5">
+          <!-- 第二層：4 位姪女 (N12, N11 | N10, N9 · 嚴格跨 2 欄居中對齊上方) -->
+          <div class="mb-4 sm:mb-6">
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-stone-500 mb-1.5 px-0.5 sm:px-1">
+              <span class="truncate">女兒相生姪女 <span class="hidden sm:inline">(N12, N11)</span><span class="sm:hidden">(12, 11)</span></span>
+              <span class="truncate text-right">母親相生姪女 <span class="hidden sm:inline">(N10, N9)</span><span class="sm:hidden">(10, 9)</span></span>
+            </div>
+            <div class="grid grid-cols-8 gap-1 sm:gap-2.5">
+              <div id="slot_n12" onclick="selectSlot('n12')" class="shield-card col-span-2">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full">XII 姪4 <span class="hidden sm:inline">(D7+8)</span></div>
+                <div class="geomancy-dots" id="dots_n12"></div>
+                <div class="text-xs sm:text-sm font-black text-stone-800 whitespace-nowrap" id="name_n12">--</div>
+              </div>
+              <div id="slot_n11" onclick="selectSlot('n11')" class="shield-card col-span-2">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full">XI 姪3 <span class="hidden sm:inline">(D5+6)</span></div>
+                <div class="geomancy-dots" id="dots_n11"></div>
+                <div class="text-xs sm:text-sm font-black text-stone-800 whitespace-nowrap" id="name_n11">--</div>
+              </div>
+              <div id="slot_n10" onclick="selectSlot('n10')" class="shield-card col-span-2">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full">X 姪2 <span class="hidden sm:inline">(M3+4)</span></div>
+                <div class="geomancy-dots" id="dots_n10"></div>
+                <div class="text-xs sm:text-sm font-black text-stone-800 whitespace-nowrap" id="name_n10">--</div>
+              </div>
+              <div id="slot_n9" onclick="selectSlot('n9')" class="shield-card col-span-2">
+                <div class="text-[9px] sm:text-[11px] font-bold text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis w-full">IX 姪1 <span class="hidden sm:inline">(M1+2)</span></div>
+                <div class="geomancy-dots" id="dots_n9"></div>
+                <div class="text-xs sm:text-sm font-black text-stone-800 whitespace-nowrap" id="name_n9">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 第三層：2 位證人 (Left Witness 14, Right Witness 13 · 嚴格跨 4 欄居中對齊上方) -->
+          <div class="mb-4 sm:mb-6">
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-stone-500 mb-1.5 px-0.5 sm:px-1">
+              <span class="text-blue-700 font-black truncate">左證人 XIV <span class="hidden sm:inline">(外在局勢 / 對方)</span><span class="sm:hidden">(局勢)</span></span>
+              <span class="text-emerald-700 font-black truncate text-right">右證人 XIII <span class="hidden sm:inline">(提問者 / 動機)</span><span class="sm:hidden">(主觀)</span></span>
+            </div>
+            <div class="grid grid-cols-8 gap-1.5 sm:gap-3">
+              <div id="slot_w14" onclick="selectSlot('w14')" class="shield-card col-span-4 border-blue-200 bg-blue-50/20 py-2 sm:py-3">
+                <div class="text-[10px] sm:text-xs font-bold text-blue-800 whitespace-nowrap">XIV 左證人 (Left)</div>
+                <div class="geomancy-dots my-0.5" id="dots_w14"></div>
+                <div class="text-xs sm:text-sm font-black text-stone-900 whitespace-nowrap" id="name_w14">--</div>
+                <div class="text-[9px] sm:text-[10px] text-stone-500 mt-0.5 hidden sm:block">外在局勢與對方狀態</div>
+              </div>
+              <div id="slot_w13" onclick="selectSlot('w13')" class="shield-card col-span-4 border-emerald-200 bg-emerald-50/20 py-2 sm:py-3">
+                <div class="text-[10px] sm:text-xs font-bold text-emerald-800 whitespace-nowrap">XIII 右證人 (Right)</div>
+                <div class="geomancy-dots my-0.5" id="dots_w13"></div>
+                <div class="text-xs sm:text-sm font-black text-stone-900 whitespace-nowrap" id="name_w13">--</div>
+                <div class="text-[9px] sm:text-[10px] text-stone-500 mt-0.5 hidden sm:block">提問者心境與主觀條件</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 第四層：法官 (Judge 15 · 置於中央 6 欄或 4 欄，中心線絕對垂直平分) -->
+          <div class="mb-4 sm:mb-6">
+            <div class="text-center text-[10px] sm:text-[11px] font-bold text-amber-900 mb-1.5">
               <span>✦ 全盤核心最終審判 ✦</span>
             </div>
-            <div id="slot_j15" onclick="selectSlot('j15')" class="shield-card border-2 border-[#B8860B] bg-gradient-to-b from-amber-50/60 to-white shadow-md">
-              <div class="inline-block px-2.5 py-0.5 rounded-full bg-[#B8860B] text-white text-[10px] font-black tracking-wider uppercase mb-1">
-                XV 法官 (The Judge)
+            <div class="grid grid-cols-8 gap-1.5 sm:gap-3">
+              <div id="slot_j15" onclick="selectSlot('j15')" class="shield-card col-start-2 col-span-6 sm:col-start-3 sm:col-span-4 border-2 border-[#B8860B] bg-gradient-to-b from-amber-50/60 to-white shadow-md py-2.5 sm:py-3.5">
+                <div class="inline-block px-2.5 py-0.5 rounded-full bg-[#B8860B] text-white text-[9px] sm:text-[10px] font-black tracking-wider uppercase mb-1">
+                  XV 法官 (The Judge)
+                </div>
+                <div class="geomancy-dots scale-105 sm:scale-110 my-0.5" id="dots_j15"></div>
+                <div class="text-sm sm:text-base font-black text-[#1F261C] whitespace-nowrap" id="name_j15">--</div>
+                <div class="text-[10px] sm:text-[11px] font-bold text-[#8A6B18] mt-0.5" id="sub_j15">--</div>
               </div>
-              <div class="geomancy-dots scale-110 my-1" id="dots_j15"></div>
-              <div class="text-base font-black text-[#1F261C]" id="name_j15">--</div>
-              <div class="text-[11px] font-bold text-[#8A6B18] mt-1" id="sub_j15">--</div>
             </div>
           </div>
 
           <!-- 第五層：調解者 / 審判之審判 (Judge of Judges 16) -->
-          <div class="pt-4 border-t border-dashed border-stone-200 flex flex-col items-center">
-            <div class="text-xs font-bold text-stone-500 mb-2 flex items-center gap-1.5">
+          <div class="pt-3 sm:pt-4 border-t border-dashed border-stone-200">
+            <div class="text-center text-[10px] sm:text-xs font-bold text-stone-500 mb-2 flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-scale-balanced text-stone-400"></i>
-              <span>第十六卦 · 調解者 / 審判之審判 (Judge of Judges = 法官 + 母1)</span>
+              <span>第十六卦 · 調解者 / 審判之審判 (法官 + 母1)</span>
             </div>
-            <div id="slot_r16" onclick="selectSlot('r16')" class="shield-card max-w-sm w-full border border-purple-200 bg-purple-50/20 flex items-center justify-between px-5 py-3">
-              <div class="text-left">
-                <div class="text-[10px] font-bold text-purple-700">XVI 調解法官 (Reconciler)</div>
-                <div class="text-sm font-black text-stone-900" id="name_r16">--</div>
-                <div class="text-[11px] text-stone-500" id="sub_r16">破局之鑰</div>
+            <div class="grid grid-cols-8 gap-1.5 sm:gap-3">
+              <div id="slot_r16" onclick="selectSlot('r16')" class="shield-card col-span-8 sm:col-start-2 sm:col-span-6 border border-purple-200 bg-purple-50/20 flex flex-row items-center justify-between px-3 sm:px-6 py-2 sm:py-3 min-h-[58px] sm:min-h-[66px]">
+                <div class="text-left">
+                  <div class="text-[9px] sm:text-[10px] font-bold text-purple-700">XVI 調解法官 (Reconciler)</div>
+                  <div class="text-xs sm:text-sm font-black text-stone-900" id="name_r16">--</div>
+                  <div class="text-[10px] sm:text-[11px] text-stone-500 truncate" id="sub_r16">破局之鑰</div>
+                </div>
+                <div class="geomancy-dots" id="dots_r16"></div>
               </div>
-              <div class="geomancy-dots" id="dots_r16"></div>
             </div>
           </div>
         </div>
