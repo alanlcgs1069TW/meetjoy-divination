@@ -1157,7 +1157,7 @@
       
       const favEl = document.getElementById('detailFavorable');
       favEl.textContent = fig.favorable || '平';
-      favEl.className = (fig.favorable && fig.favorable.includes('吉')) ? "font-bold text-emerald-600" : ((fig.favorable && fig.favorable.includes('凶')) ? "font-bold text-rose-600" : "font-bold text-stone-700");
+      favEl.className = (fig.favorable && fig.favorable.includes('吉')) ? "font-bold text-emerald-700" : ((fig.favorable && fig.favorable.includes('凶')) ? "font-black text-red-800" : "font-bold text-stone-700");
 
       document.getElementById('detailKeyword').textContent = fig.keyword || '';
       document.getElementById('detailStory').textContent = fig.story || '';
@@ -1227,7 +1227,7 @@
           <td class="p-2.5 font-black text-stone-900">${fig.zh}</td>
           <td class="p-2.5 text-stone-500 italic font-serif">${fig.latin}</td>
           <td class="p-2.5">${fig.element} · ${fig.planet}</td>
-          <td class="p-2.5 font-bold ${fig.favorable.includes('吉') ? 'text-emerald-600' : (fig.favorable.includes('凶') ? 'text-rose-600' : 'text-stone-600')}">${fig.favorable}</td>
+          <td class="p-2.5 font-bold ${fig.favorable.includes('吉') ? 'text-emerald-700' : (fig.favorable.includes('凶') ? 'text-red-800 font-black' : 'text-stone-700')}">${fig.favorable}</td>
         `;
         tbody.appendChild(tr);
       }

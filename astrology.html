@@ -203,29 +203,31 @@
           </div>
         </div>
 
-        <!-- 2. 癒見占星魔法 經典雙欄資訊抬頭 (Inner Wheel & Outer Wheel) -->
-        <div class="w-full px-5 pt-3.5 pb-2 grid grid-cols-2 gap-4 text-[#1E293B] border-b border-[#EFE3C3] select-none text-xs bg-[#FFFEEB]">
+        <!-- 2. 癒見占星魔法 經典雙欄資訊抬頭 (Inner Wheel & Outer Wheel) · 比照紫微斗數大字體 -->
+        <div class="w-full px-6 pt-4 pb-3 grid grid-cols-2 gap-4 text-[#1E293B] border-b-2 border-[#EFE3C3] select-none bg-[#FFFEEB]">
           <!-- 左欄：Natal Inner Wheel -->
-          <div id="divination_header_natal" class="leading-tight">
-            <h2 class="text-lg sm:text-xl font-black text-black" id="disp_name">YuYang</h2>
-            <p class="font-bold text-slate-800 text-[12px]" id="disp_gender">Male</p>
-            <p class="font-bold text-slate-900 text-[12px]">Inner Wheel</p>
-            <p class="text-slate-700 font-mono text-[11px]" id="disp_natal_date">Jan 27 1990, Sat</p>
-            <p class="text-slate-700 font-mono text-[11px]" id="disp_natal_time">11:36 AM AWST -8:00</p>
-            <p class="text-slate-700 font-mono text-[11px]" id="disp_natal_place">T'ai-pei, Taiwan</p>
-            <p class="text-slate-500 italic text-[11px]">Tropical</p>
-            <p class="text-slate-500 italic text-[11px]" id="disp_natal_hsys">Placidus</p>
+          <div id="divination_header_natal" class="leading-normal">
+            <h2 class="text-xl sm:text-2xl font-black text-slate-950 mb-0.5" id="disp_name">YuYang</h2>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-black text-slate-900 text-sm" id="disp_gender">Male</span>
+              <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black text-xs">Inner 本命內盤</span>
+            </div>
+            <p class="text-slate-900 font-mono font-bold text-xs sm:text-sm" id="disp_natal_date">Jan 27 1990, Sat</p>
+            <p class="text-slate-800 font-mono font-bold text-xs sm:text-sm" id="disp_natal_time">11:36 AM AWST -8:00</p>
+            <p class="text-slate-800 font-bold text-xs sm:text-sm" id="disp_natal_place">T'ai-pei, Taiwan</p>
+            <p class="text-stone-600 font-bold text-xs">回歸黃道 (Tropical) · <span id="disp_natal_hsys" class="text-amber-800 font-black">普拉西度制</span></p>
           </div>
           <!-- 右欄：Transits Outer Wheel -->
-          <div id="divination_header_transit" class="text-right leading-tight">
-            <h2 class="text-lg sm:text-xl font-black text-black">Transits</h2>
-            <p class="font-bold text-slate-800 text-[12px]">Event</p>
-            <p class="font-bold text-slate-900 text-[12px]">Outer Wheel</p>
-            <p class="text-slate-700 font-mono text-[11px]" id="disp_transit_date">Aug 25 2026, Tue</p>
-            <p class="text-slate-700 font-mono text-[11px]" id="disp_transit_time">9:56:25 PM AWST -8:00</p>
-            <p class="text-slate-700 font-mono text-[11px]" id="disp_transit_place">T'ai-pei, Taiwan</p>
-            <p class="text-slate-500 italic text-[11px]">Tropical</p>
-            <p class="text-slate-500 italic text-[11px]" id="disp_transit_hsys">Placidus</p>
+          <div id="divination_header_transit" class="text-right leading-normal">
+            <h2 class="text-xl sm:text-2xl font-black text-slate-950 mb-0.5">Transits</h2>
+            <div class="flex items-center justify-end gap-2 mb-1">
+              <span class="px-2 py-0.5 rounded bg-sky-200/80 text-sky-950 font-black text-xs">Outer 行運外盤</span>
+              <span class="font-black text-slate-900 text-sm">即時推運</span>
+            </div>
+            <p class="text-slate-900 font-mono font-bold text-xs sm:text-sm" id="disp_transit_date">Aug 25 2026, Tue</p>
+            <p class="text-slate-800 font-mono font-bold text-xs sm:text-sm" id="disp_transit_time">9:56:25 PM AWST -8:00</p>
+            <p class="text-slate-800 font-bold text-xs sm:text-sm" id="disp_transit_place">T'ai-pei, Taiwan</p>
+            <p class="text-stone-600 font-bold text-xs">動態星象 · <span id="disp_transit_hsys" class="text-amber-800 font-black">同宮推演</span></p>
           </div>
         </div>
 
@@ -236,23 +238,23 @@
           </svg>
         </div>
 
-        <!-- 圖例 -->
-        <div class="w-full bg-[#FAF5DF] border-t border-[#EFE3C3] px-4 py-2.5 flex flex-wrap justify-center gap-3 text-[11px] font-bold text-slate-700">
-          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#E11D48]"></span> 0° 合相 / 90° 刑相 / 180° 衝相</span>
-          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span> 120° 三分拱相</span>
-          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#0D9488]"></span> 60° 六分相</span>
-          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-0.5 border-t border-dashed border-[#16A34A]"></span> 150° 梅花補相</span>
+        <!-- 圖例 (大字體加粗，對比醒目) -->
+        <div class="w-full bg-[#FAF5DF] border-t-2 border-[#EFE3C3] px-4 py-3 flex flex-wrap justify-center gap-4 text-xs sm:text-sm font-black text-slate-900">
+          <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-[#991B1B] shadow-2xs"></span> 0°合 / 90°刑 / 180°衝 (硬相位)</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-[#1D4ED8] shadow-2xs"></span> 120° 三分拱相</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-[#0D9488] shadow-2xs"></span> 60° 六分相</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-4 h-1 border-t-2 border-dashed border-[#15803D]"></span> 150° 梅花補相</span>
         </div>
       </div>
 
       <!-- 右欄：行星宮位與相位清冊 -->
       <div class="lg:col-span-5 space-y-6">
         
-        <!-- 行星落點明細表 -->
-        <div class="bg-white border border-[#E2D9C8] rounded-3xl p-6 shadow-sm">
-          <h3 class="font-bold text-sm sm:text-base text-slate-900 mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
-            <span>🪐 行星落點與宮位明細</span>
-            <span class="text-xs text-slate-400 font-normal">黃道經度精確到分</span>
+        <!-- 行星落點明細表 · 比照紫微斗數大器排版 -->
+        <div class="bg-white border-2 border-[#E2D9C8] rounded-3xl p-6 sm:p-7 shadow-sm">
+          <h3 class="font-black text-lg sm:text-xl text-slate-950 mb-4 flex items-center justify-between border-b-2 border-amber-200 pb-3">
+            <span class="flex items-center gap-2">🪐 <span>行星落點與宮位明細</span></span>
+            <span class="text-xs sm:text-sm text-stone-600 font-bold bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">精確度：0°00'</span>
           </h3>
           <div id="planets_table_container" class="overflow-x-auto">
             <!-- 動態生成行星表格 -->
@@ -260,22 +262,22 @@
         </div>
 
         <!-- 12 宮位起始度數表 -->
-        <div class="bg-white border border-[#E2D9C8] rounded-3xl p-6 shadow-sm">
-          <h3 class="font-bold text-sm sm:text-base text-slate-900 mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
-            <span>🏛️ 十二宮位起點 (House Cusps)</span>
-            <span id="house_type_label" class="text-xs text-[#987315] font-bold">普拉西度制</span>
+        <div class="bg-white border-2 border-[#E2D9C8] rounded-3xl p-6 sm:p-7 shadow-sm">
+          <h3 class="font-black text-lg sm:text-xl text-slate-950 mb-4 flex items-center justify-between border-b-2 border-amber-200 pb-3">
+            <span class="flex items-center gap-2">🏛️ <span>十二宮位起點 (House Cusps)</span></span>
+            <span id="house_type_label" class="text-xs sm:text-sm text-[#8A5800] font-black bg-amber-100 px-3 py-1 rounded-lg border border-amber-300">普拉西度制</span>
           </h3>
-          <div id="houses_table_container" class="grid grid-cols-2 gap-2 text-xs">
+          <div id="houses_table_container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <!-- 動態生成 12 宮位起點 -->
           </div>
         </div>
 
         <!-- 愛倫院長生活魔藥調頻處方 -->
-        <div class="bg-gradient-to-br from-[#FAF7F0] to-[#F3EEE0] border border-[#D9CDB8] rounded-3xl p-6 shadow-sm">
-          <h3 class="font-bold text-base text-[#2E3829] mb-3 flex items-center gap-2 border-b border-amber-900/10 pb-2">
+        <div class="bg-gradient-to-br from-[#FFFDF8] via-[#FAF6ED] to-[#F3EEE0] border-2 border-[#D9CDB8] rounded-3xl p-6 sm:p-7 shadow-sm">
+          <h3 class="font-black text-lg sm:text-xl text-[#1E261D] mb-4 flex items-center gap-2 border-b-2 border-amber-300 pb-3">
             <span>🌿 愛倫院長命主星生活魔藥處方</span>
           </h3>
-          <div id="astro_rx_container" class="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <div id="astro_rx_container" class="space-y-4">
             <!-- 動態生成命主星與靈魂旅程調頻 -->
           </div>
         </div>
@@ -423,11 +425,11 @@
         return `M ${p1.x} ${p1.y} A ${rOut} ${rOut} 0 ${largeArc} 1 ${p2.x} ${p2.y} L ${p3.x} ${p3.y} A ${rIn} ${rIn} 0 ${largeArc} 0 ${p4.x} ${p4.y} Z`;
       }
 
-      // 癒見占星魔法 12 星座色彩對照 (經典四元素高飽和純色)
+      // 癒見占星魔法 12 星座色彩對照 (經典四元素高飽和純色 · 火象採用寶石深緋紅 #991B1B，對比極致銳利)
       const ZODIAC_CLASSIC_COLORS = {
-        '白羊座': '#DC2626', '金牛座': '#15803D', '雙子座': '#0284C7', '巨蟹座': '#0F766E',
-        '獅子座': '#DC2626', '處女座': '#15803D', '天秤座': '#0284C7', '天蠍座': '#1E3A8A',
-        '射手座': '#DC2626', '摩羯座': '#15803D', '水瓶座': '#0284C7', '雙魚座': '#1E3A8A'
+        '白羊座': '#991B1B', '金牛座': '#15803D', '雙子座': '#0369A1', '巨蟹座': '#0F766E',
+        '獅子座': '#991B1B', '處女座': '#15803D', '天秤座': '#0369A1', '天蠍座': '#1E3A8A',
+        '射手座': '#991B1B', '摩羯座': '#15803D', '水瓶座': '#0369A1', '雙魚座': '#1E3A8A'
       };
 
       // 1. 底層 癒見占星魔法 經典象牙黃背景圓盤
@@ -460,7 +462,7 @@
       innerZodiacBorder.setAttribute('stroke-width', '1.2');
       svg.appendChild(innerZodiacBorder);
 
-      // 2. 繪製 12 星座扇形區間與正統彩色向量星座符號
+      // 2. 繪製 12 星座扇形區間與正統彩色向量星座符號 (放大至 33px 加粗)
       AstroCalc.ZODIAC_SIGNS.forEach((sign) => {
         const a1 = lonToSvgAngle(sign.start + 30);
         const a2 = lonToSvgAngle(sign.start);
@@ -486,15 +488,15 @@
         bLine.setAttribute('stroke-width', '1.2');
         svg.appendChild(bLine);
 
-        // 星座符號 (加入 \uFE0E 強制純向量文字輸出，套用 癒見占星魔法 專屬紅綠藍色彩)
+        // 星座符號 (大號加粗 33px，向量清晰無比)
         const midLon = sign.start + 15;
         const midAng = lonToSvgAngle(midLon);
         const pos = polarToCartesian(cx, cy, rZodiacMid, midAng);
 
         const signText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         signText.setAttribute('x', pos.x);
-        signText.setAttribute('y', pos.y + 9.5);
-        signText.setAttribute('font-size', '28');
+        signText.setAttribute('y', pos.y + 11.5);
+        signText.setAttribute('font-size', '33');
         signText.setAttribute('font-weight', '900');
         signText.setAttribute('fill', signColor);
         signText.setAttribute('text-anchor', 'middle');
@@ -509,24 +511,24 @@
         if (deg % 30 === 0) continue; // 交界線已繪製
 
         let tickLen = 2.5;
-        let strokeColor = '#CBD5E1';
-        let strokeW = '0.6';
+        let strokeColor = '#94A3B8';
+        let strokeW = '0.7';
 
         if (deg % 10 === 0) {
-          tickLen = 6.0;
-          strokeColor = '#475569';
-          strokeW = '1.2';
+          tickLen = 6.5;
+          strokeColor = '#1E293B';
+          strokeW = '1.4';
           
-          // 在黃道圈內標註 10° 與 20° 數字刻度
+          // 在黃道圈內標註 10° 與 20° 數字刻度 (加粗至 10.5px，深色清晰)
           const degInSign = deg % 30;
           const numPt = polarToCartesian(cx, cy, rZodiacOuter - 9, ang);
           const numTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           numTxt.setAttribute('x', numPt.x);
-          numTxt.setAttribute('y', numPt.y + 3);
-          numTxt.setAttribute('font-size', '9');
-          numTxt.setAttribute('font-weight', 'bold');
+          numTxt.setAttribute('y', numPt.y + 3.5);
+          numTxt.setAttribute('font-size', '10.5');
+          numTxt.setAttribute('font-weight', '900');
           numTxt.setAttribute('font-family', 'ui-monospace, monospace');
-          numTxt.setAttribute('fill', '#475569');
+          numTxt.setAttribute('fill', '#0F172A');
           numTxt.setAttribute('text-anchor', 'middle');
           numTxt.textContent = `${degInSign}°`;
           svg.appendChild(numTxt);
@@ -608,37 +610,37 @@
 
         const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         numText.setAttribute('x', numPos.x);
-        numText.setAttribute('y', numPos.y + 6);
-        numText.setAttribute('font-size', '17');
+        numText.setAttribute('y', numPos.y + 7.5);
+        numText.setAttribute('font-size', '21');
         numText.setAttribute('font-weight', '900');
         numText.setAttribute('font-family', 'sans-serif');
-        numText.setAttribute('fill', '#1E293B');
+        numText.setAttribute('fill', '#0F172A');
         numText.setAttribute('text-anchor', 'middle');
         numText.textContent = c.house;
         svg.appendChild(numText);
 
-        // 在黃道外側標註該宮頭度數 (放大至 10px，加粗)
-        const cuspTagPt = polarToCartesian(cx, cy, rZodiacOuter + 8, ang);
+        // 在黃道外側標註該宮頭度數 (放大至 11.5px，字重 900)
+        const cuspTagPt = polarToCartesian(cx, cy, rZodiacOuter + 9, ang);
         const cuspTag = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         cuspTag.setAttribute('x', cuspTagPt.x);
-        cuspTag.setAttribute('y', cuspTagPt.y + 3.5);
-        cuspTag.setAttribute('font-size', '10');
+        cuspTag.setAttribute('y', cuspTagPt.y + 4);
+        cuspTag.setAttribute('font-size', '11.5');
         cuspTag.setAttribute('font-weight', '900');
-        cuspTag.setAttribute('fill', '#475569');
+        cuspTag.setAttribute('fill', '#1E293B');
         cuspTag.setAttribute('text-anchor', 'middle');
         cuspTag.textContent = `${c.degree}°`;
         svg.appendChild(cuspTag);
       });
 
       // 4. 癒見占星魔法 經典四大核心軸線醒目標籤 (As, Mc, Ds, Ic)
-      // 上升點 As：位於 180° 水平左側，大字體加粗，右側緊隨度數與彩色星座符號
-      const asPt = polarToCartesian(cx, cy, rZodiacOuter + 22, 180);
+      // 上升點 As：位於 180° 水平左側，大字體加粗 28px，右側緊隨度數與彩色星座符號
+      const asPt = polarToCartesian(cx, cy, rZodiacOuter + 24, 180);
       const asGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       
       const asTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       asTitle.setAttribute('x', asPt.x - 4);
-      asTitle.setAttribute('y', asPt.y + 7);
-      asTitle.setAttribute('font-size', '25');
+      asTitle.setAttribute('y', asPt.y + 8);
+      asTitle.setAttribute('font-size', '28');
       asTitle.setAttribute('font-weight', '900');
       asTitle.setAttribute('fill', '#0F172A');
       asTitle.setAttribute('text-anchor', 'end');
@@ -647,28 +649,28 @@
 
       const asDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       asDeg.setAttribute('x', asPt.x + 8);
-      asDeg.setAttribute('y', asPt.y + 4.5);
-      asDeg.setAttribute('font-size', '12');
+      asDeg.setAttribute('y', asPt.y + 5);
+      asDeg.setAttribute('font-size', '13.5');
       asDeg.setAttribute('font-weight', '900');
       asDeg.setAttribute('text-anchor', 'start');
       const asSignColor = ZODIAC_CLASSIC_COLORS[houses.asc.sign] || '#15803D';
       asDeg.innerHTML = `
         <tspan fill="#0F172A">${houses.asc.degree}°</tspan> 
         <tspan fill="${asSignColor}" class="astro-glyph">${toTextGlyph(houses.asc.signSymbol)}</tspan> 
-        <tspan fill="#334155">${houses.asc.minute.toString().padStart(2, '0')}'</tspan>
+        <tspan fill="#1E293B">${houses.asc.minute.toString().padStart(2, '0')}'</tspan>
       `;
       asGroup.appendChild(asDeg);
       svg.appendChild(asGroup);
 
-      // 天頂 Mc：位於 Mc 宮頭方位，大字體加粗
+      // 天頂 Mc：位於 Mc 宮頭方位，大字體加粗 26px
       const mcAng = lonToSvgAngle(houses.mc.longitude);
-      const mcPt = polarToCartesian(cx, cy, rZodiacOuter + 22, mcAng);
+      const mcPt = polarToCartesian(cx, cy, rZodiacOuter + 24, mcAng);
       const mcGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
       const mcTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       mcTitle.setAttribute('x', mcPt.x);
       mcTitle.setAttribute('y', mcPt.y - 4);
-      mcTitle.setAttribute('font-size', '23');
+      mcTitle.setAttribute('font-size', '26');
       mcTitle.setAttribute('font-weight', '900');
       mcTitle.setAttribute('fill', '#0F172A');
       mcTitle.setAttribute('text-anchor', 'middle');
@@ -677,30 +679,30 @@
 
       const mcDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       mcDeg.setAttribute('x', mcPt.x);
-      mcDeg.setAttribute('y', mcPt.y + 11);
-      mcDeg.setAttribute('font-size', '11.5');
+      mcDeg.setAttribute('y', mcPt.y + 12);
+      mcDeg.setAttribute('font-size', '13.5');
       mcDeg.setAttribute('font-weight', '900');
       mcDeg.setAttribute('text-anchor', 'middle');
       const mcSignColor = ZODIAC_CLASSIC_COLORS[houses.mc.sign] || '#15803D';
       mcDeg.innerHTML = `
         <tspan fill="#0F172A">${houses.mc.degree}°</tspan> 
         <tspan fill="${mcSignColor}" class="astro-glyph">${toTextGlyph(houses.mc.signSymbol)}</tspan> 
-        <tspan fill="#334155">${houses.mc.minute.toString().padStart(2, '0')}'</tspan>
+        <tspan fill="#1E293B">${houses.mc.minute.toString().padStart(2, '0')}'</tspan>
       `;
       mcGroup.appendChild(mcDeg);
       svg.appendChild(mcGroup);
 
       // 下降點 Ds：位於 0° 水平右側
-      const dsPt = polarToCartesian(cx, cy, rZodiacOuter + 14, 0);
+      const dsPt = polarToCartesian(cx, cy, rZodiacOuter + 16, 0);
       const dsDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       dsDeg.setAttribute('x', dsPt.x + 2);
-      dsDeg.setAttribute('y', dsPt.y + 4.5);
-      dsDeg.setAttribute('font-size', '11.5');
+      dsDeg.setAttribute('y', dsPt.y + 5);
+      dsDeg.setAttribute('font-size', '13.5');
       dsDeg.setAttribute('font-weight', '900');
       dsDeg.setAttribute('text-anchor', 'start');
       const dsSignColor = ZODIAC_CLASSIC_COLORS[houses.dsc.sign] || '#1E3A8A';
       dsDeg.innerHTML = `
-        <tspan fill="#334155">${houses.dsc.minute}'</tspan> 
+        <tspan fill="#1E293B">${houses.dsc.minute}'</tspan> 
         <tspan fill="${dsSignColor}" class="astro-glyph">${toTextGlyph(houses.dsc.signSymbol)}</tspan> 
         <tspan fill="#0F172A">${houses.dsc.degree}°</tspan>
       `;
@@ -724,24 +726,24 @@
         line.setAttribute('x2', pt2.x);
         line.setAttribute('y2', pt2.y);
 
-        // 癒見占星魔法 色彩：硬相位紅色、軟相位天藍/深藍、梅花相綠色
+        // 癒見占星魔法 色彩：硬相位深緋紅、軟相位皇家深藍、梅花相翡翠綠 (粗線高飽和，比照紫微斗數絕對清晰)
         if (asp.angle === 90 || asp.angle === 180 || asp.angle === 0) {
-          line.setAttribute('stroke', '#E11D48');
-          line.setAttribute('stroke-width', '1.3');
-          line.setAttribute('opacity', '0.85');
+          line.setAttribute('stroke', '#991B1B');
+          line.setAttribute('stroke-width', '2.4');
+          line.setAttribute('opacity', '1.0');
         } else if (asp.angle === 120 || asp.angle === 60) {
-          line.setAttribute('stroke', '#2563EB');
-          line.setAttribute('stroke-width', '1.2');
-          line.setAttribute('opacity', '0.85');
+          line.setAttribute('stroke', '#1D4ED8');
+          line.setAttribute('stroke-width', '2.2');
+          line.setAttribute('opacity', '0.95');
         } else if (asp.angle === 150) {
-          line.setAttribute('stroke', '#16A34A');
-          line.setAttribute('stroke-width', '1.1');
-          line.setAttribute('stroke-dasharray', '3 2.5');
-          line.setAttribute('opacity', '0.8');
+          line.setAttribute('stroke', '#15803D');
+          line.setAttribute('stroke-width', '2.0');
+          line.setAttribute('stroke-dasharray', '3.5 3');
+          line.setAttribute('opacity', '0.95');
         } else {
-          line.setAttribute('stroke', '#94A3B8');
-          line.setAttribute('stroke-width', '0.9');
-          line.setAttribute('opacity', '0.6');
+          line.setAttribute('stroke', '#64748B');
+          line.setAttribute('stroke-width', '1.2');
+          line.setAttribute('opacity', '0.7');
         }
         aspectLayer.appendChild(line);
       });
@@ -761,9 +763,9 @@
       const planetKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
       
       const PLANET_COLORS_NATAL = {
-        'Sun': '#D97706', 'Moon': '#78350F', 'Mercury': '#0D9488', 'Venus': '#059669',
-        'Mars': '#DC2626', 'Jupiter': '#16A34A', 'Saturn': '#475569', 'Uranus': '#0284C7',
-        'Neptune': '#0891B2', 'Pluto': '#991B1B', 'NorthNode': '#0F172A'
+        'Sun': '#B45309', 'Moon': '#78350F', 'Mercury': '#0D9488', 'Venus': '#059669',
+        'Mars': '#991B1B', 'Jupiter': '#15803D', 'Saturn': '#1E293B', 'Uranus': '#0284C7',
+        'Neptune': '#0891B2', 'Pluto': '#7F1D1D', 'NorthNode': '#0F172A'
       };
 
       const natalItems = planetKeys
@@ -783,8 +785,8 @@
         .sort((a, b) => a.trueAng - b.trueAng);
 
       // 彈簧鬆弛與多重同心半徑演算法 (群星聚集時扇面優雅錯開，100% 不重疊遮擋)
-      const minGap = 9.8;
-      for (let pass = 0; pass < 50; pass++) {
+      const minGap = 10.5;
+      for (let pass = 0; pass < 55; pass++) {
         for (let i = 0; i < natalItems.length - 1; i++) {
           const p1 = natalItems[i];
           const p2 = natalItems[i + 1];
@@ -794,8 +796,8 @@
             p1.dispAng -= overlap;
             p2.dispAng += overlap;
             // 緊鄰星曜採用高低雙軌交錯半徑
-            p1.dispR = rNatalBase + 14;
-            p2.dispR = rNatalBase - 12;
+            p1.dispR = rNatalBase + 15;
+            p2.dispR = rNatalBase - 13;
           }
         }
       }
@@ -813,7 +815,7 @@
         tickLine.setAttribute('x2', ptDisp.x);
         tickLine.setAttribute('y2', ptDisp.y);
         tickLine.setAttribute('stroke', '#C5A866');
-        tickLine.setAttribute('stroke-width', '0.8');
+        tickLine.setAttribute('stroke-width', '1.0');
         if (Math.abs(p.dispAng - p.trueAng) > 0.4) {
           tickLine.setAttribute('stroke-dasharray', '1.5 2');
           tickLine.setAttribute('opacity', '0.75');
@@ -824,42 +826,42 @@
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-        // 行星符號 (大號加粗，由 16px 放大至 21px)
+        // 行星符號 (大號加粗，放大至 25px，比照紫微斗數顯眼)
         const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         txt.setAttribute('x', ptDisp.x);
-        txt.setAttribute('y', ptDisp.y + 6);
-        txt.setAttribute('font-size', '21');
+        txt.setAttribute('y', ptDisp.y + 7.5);
+        txt.setAttribute('font-size', '25');
         txt.setAttribute('font-weight', '900');
         txt.setAttribute('fill', pColor);
         txt.setAttribute('text-anchor', 'middle');
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
-        // 癒見占星魔法 經典緊湊格式度數標註：度數、星座小符號、分 (由 7.5px 放大至 11.5px)
-        const degPt = polarToCartesian(cx, cy, p.dispR - 18, p.dispAng);
+        // 癒見占星魔法 經典緊湊格式度數標註：度數、星座小符號、分 (放大至 13.5px 粗體)
+        const degPt = polarToCartesian(cx, cy, p.dispR - 20, p.dispAng);
         const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         degText.setAttribute('x', degPt.x);
-        degText.setAttribute('y', degPt.y + 4);
-        degText.setAttribute('font-size', '11.5');
+        degText.setAttribute('y', degPt.y + 4.5);
+        degText.setAttribute('font-size', '13.5');
         degText.setAttribute('font-family', 'sans-serif');
-        degText.setAttribute('font-weight', 'bold');
+        degText.setAttribute('font-weight', '900');
         degText.setAttribute('text-anchor', 'middle');
 
         degText.innerHTML = `
           <tspan fill="#0F172A">${p.degree.toString().padStart(2, '0')}°</tspan>
           <tspan fill="${signColor}" class="astro-glyph">${toTextGlyph(p.signSymbol)}</tspan>
-          <tspan fill="#475569">${p.minute.toString().padStart(2, '0')}'</tspan>
+          <tspan fill="#1E293B">${p.minute.toString().padStart(2, '0')}'</tspan>
         `;
         g.appendChild(degText);
 
-        // 逆行標記 ℞ (由 8px 放大至 10.5px)
+        // 逆行標記 ℞ (深寶石紅 #991B1B，放大至 13px 加粗)
         if (p.isRetrograde) {
           const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          rx.setAttribute('x', ptDisp.x + 10);
-          rx.setAttribute('y', ptDisp.y - 6);
-          rx.setAttribute('font-size', '10.5');
+          rx.setAttribute('x', ptDisp.x + 11);
+          rx.setAttribute('y', ptDisp.y - 7);
+          rx.setAttribute('font-size', '13');
           rx.setAttribute('font-weight', '900');
-          rx.setAttribute('fill', '#DC2626');
+          rx.setAttribute('fill', '#991B1B');
           rx.textContent = '℞';
           g.appendChild(rx);
         }
@@ -870,9 +872,9 @@
       // 7. 繪製行運外輪 (Outer Wheel - Transits) · 對標 癒見占星魔法 雙盤標準
       if (isBiWheelMode && transitPlanets) {
         const PLANET_COLORS_TRANSIT = {
-          'Neptune': '#E11D48', 'Saturn': '#991B1B', 'Uranus': '#0284C7', 'Jupiter': '#16A34A',
-          'Mars': '#DC2626', 'Sun': '#D97706', 'Mercury': '#B45309', 'Venus': '#059669',
-          'Moon': '#78350F', 'Pluto': '#881337', 'NorthNode': '#0F172A'
+          'Neptune': '#991B1B', 'Saturn': '#7F1D1D', 'Uranus': '#0284C7', 'Jupiter': '#15803D',
+          'Mars': '#991B1B', 'Sun': '#B45309', 'Mercury': '#92400E', 'Venus': '#047857',
+          'Moon': '#78350F', 'Pluto': '#701A75', 'NorthNode': '#0F172A'
         };
 
         const transitItems = planetKeys
@@ -891,7 +893,7 @@
           .sort((a, b) => a.trueAng - b.trueAng);
 
         // 行運星曜鬆弛避讓
-        for (let pass = 0; pass < 40; pass++) {
+        for (let pass = 0; pass < 45; pass++) {
           for (let i = 0; i < transitItems.length - 1; i++) {
             const t1 = transitItems[i];
             const t2 = transitItems[i + 1];
@@ -917,48 +919,48 @@
           tLine.setAttribute('x2', ptDisp.x);
           tLine.setAttribute('y2', ptDisp.y);
           tLine.setAttribute('stroke', '#C5A866');
-          tLine.setAttribute('stroke-width', '0.8');
+          tLine.setAttribute('stroke-width', '1.0');
           tLine.setAttribute('stroke-dasharray', '1.5 2');
           tLine.setAttribute('opacity', '0.75');
           svg.appendChild(tLine);
 
           const tg = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-          // 行運星曜符號 (大號加粗，由 15.5px 放大至 21px)
+          // 行運星曜符號 (大號加粗，放大至 25px)
           const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           txt.setAttribute('x', ptDisp.x);
-          txt.setAttribute('y', ptDisp.y + 6);
-          txt.setAttribute('font-size', '21');
+          txt.setAttribute('y', ptDisp.y + 7.5);
+          txt.setAttribute('font-size', '25');
           txt.setAttribute('font-weight', '900');
           txt.setAttribute('fill', tpColor);
           txt.setAttribute('text-anchor', 'middle');
           txt.textContent = tp.symbol;
           tg.appendChild(txt);
 
-          // 行運度數與星座標註 (由 7.5px 放大至 11.5px)
-          const degPt = polarToCartesian(cx, cy, rTransitRing + 16, tp.dispAng);
+          // 行運度數與星座標註 (放大至 13.5px 粗體)
+          const degPt = polarToCartesian(cx, cy, rTransitRing + 18, tp.dispAng);
           const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           degText.setAttribute('x', degPt.x);
-          degText.setAttribute('y', degPt.y + 4);
-          degText.setAttribute('font-size', '11.5');
+          degText.setAttribute('y', degPt.y + 4.5);
+          degText.setAttribute('font-size', '13.5');
           degText.setAttribute('font-family', 'sans-serif');
-          degText.setAttribute('font-weight', 'bold');
+          degText.setAttribute('font-weight', '900');
           degText.setAttribute('text-anchor', 'middle');
 
           degText.innerHTML = `
             <tspan fill="#0F172A">${tp.degree.toString().padStart(2, '0')}°</tspan>
             <tspan fill="${signColor}" class="astro-glyph">${toTextGlyph(tp.signSymbol)}</tspan>
-            <tspan fill="#475569">${tp.minute.toString().padStart(2, '0')}'</tspan>
+            <tspan fill="#1E293B">${tp.minute.toString().padStart(2, '0')}'</tspan>
           `;
           tg.appendChild(degText);
 
           if (tp.isRetrograde) {
             const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            rx.setAttribute('x', ptDisp.x + 10);
-            rx.setAttribute('y', ptDisp.y - 6);
-            rx.setAttribute('font-size', '10.5');
+            rx.setAttribute('x', ptDisp.x + 11);
+            rx.setAttribute('y', ptDisp.y - 7);
+            rx.setAttribute('font-size', '13');
             rx.setAttribute('font-weight', '900');
-            rx.setAttribute('fill', '#DC2626');
+            rx.setAttribute('fill', '#991B1B');
             rx.textContent = '℞';
             tg.appendChild(rx);
           }
@@ -1071,31 +1073,40 @@
       }
 
       tableDiv.innerHTML = `
-        <table class="w-full text-left text-xs">
+        <table class="w-full text-left text-sm sm:text-base">
           <thead>
-            <tr class="border-b border-slate-200 text-slate-400 font-bold">
-              <th class="pb-2">星曜</th>
-              <th class="pb-2">落入星座與度數</th>
-              <th class="pb-2">宮位</th>
-              <th class="pb-2">狀態</th>
+            <tr class="bg-amber-100/50 border-b-2 border-amber-300 text-slate-950 font-black">
+              <th class="py-3 px-3">星曜</th>
+              <th class="py-3 px-3">落入星座與度數</th>
+              <th class="py-3 px-3 text-center">宮位</th>
+              <th class="py-3 px-3 text-center">狀態</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 font-medium">
+          <tbody class="divide-y divide-slate-200 font-medium">
             ${pOrder.map(k => {
               const p = planets[k];
               if (!p) return '';
               const h = getPlanetHouse(p.longitude);
               return `
-                <tr class="hover:bg-amber-50/40 transition">
-                  <td class="py-2 flex items-center gap-1.5 font-bold text-slate-800">
-                    <span class="text-base text-amber-700 font-bold">${p.symbol}</span> ${p.name}
+                <tr class="hover:bg-amber-50/70 transition">
+                  <td class="py-3 px-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-2xl sm:text-3xl font-black text-amber-900">${p.symbol}</span>
+                      <span class="text-base sm:text-lg font-black text-slate-950">${p.name}</span>
+                    </div>
                   </td>
-                  <td class="py-2 font-mono text-slate-700">
-                    <span class="font-bold text-stone-900 mr-1 text-sm">${p.signSymbol || ''}</span> ${p.formatted}
+                  <td class="py-3 px-3">
+                    <div class="flex items-center flex-wrap gap-1.5">
+                      <span class="text-xl font-black text-slate-900">${p.signSymbol || ''}</span>
+                      <span class="text-base sm:text-lg font-mono font-black text-slate-950">${p.formatted}</span>
+                      <span class="text-xs font-black text-amber-950 bg-amber-100/90 px-2 py-0.5 rounded-md border border-amber-300">${p.sign}</span>
+                    </div>
                   </td>
-                  <td class="py-2 text-slate-600 font-bold">第 ${h} 宮</td>
-                  <td class="py-2">
-                    ${p.isRetrograde ? '<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">逆行 ℞</span>' : '<span class="text-slate-400">順行</span>'}
+                  <td class="py-3 px-3 text-center">
+                    <span class="inline-block px-3 py-1 rounded-lg bg-amber-100 text-amber-950 font-black text-sm sm:text-base border border-amber-300 shadow-2xs">第 ${h} 宮</span>
+                  </td>
+                  <td class="py-3 px-3 text-center">
+                    ${p.isRetrograde ? '<span class="inline-block px-3 py-1 rounded-lg bg-rose-100 text-rose-950 font-black text-xs sm:text-sm border border-rose-300 shadow-2xs">逆行 ℞</span>' : '<span class="inline-block px-3 py-1 rounded-lg bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm">順行</span>'}
                   </td>
                 </tr>
               `;
@@ -1104,23 +1115,23 @@
         </table>
       `;
 
-      // 6. 生成 12 宮位起點表 (高亮四軸宮位)
+      // 6. 生成 12 宮位起點表 (高亮四軸宮位 · 比照紫微斗數大器卡片)
       const houseDiv = document.getElementById('houses_table_container');
       const cardinalLabels = { 1: '上升 Asc', 4: '天底 IC', 7: '下降 Dsc', 10: '天頂 MC' };
       houseDiv.innerHTML = houses.cusps.map(c => {
         const isCardinal = [1, 4, 7, 10].includes(c.house);
         return `
-          <div class="p-2 rounded-xl border flex items-center justify-between ${isCardinal ? 'bg-amber-50/80 border-amber-300 shadow-xs' : 'bg-slate-50 border-slate-200'}">
-            <div class="flex items-center gap-1.5">
-              <span class="font-bold ${isCardinal ? 'text-amber-900' : 'text-slate-700'}">第 ${c.house} 宮</span>
-              ${isCardinal ? `<span class="px-1.5 py-0.2 rounded bg-amber-200/80 text-amber-900 text-[10px] font-bold">${cardinalLabels[c.house]}</span>` : ''}
+          <div class="p-3.5 rounded-2xl border-2 flex items-center justify-between ${isCardinal ? 'bg-amber-100/60 border-amber-400 shadow-xs' : 'bg-stone-50 border-stone-200'}">
+            <div class="flex items-center gap-2">
+              <span class="font-black text-base sm:text-lg ${isCardinal ? 'text-amber-950' : 'text-slate-900'}">第 ${c.house} 宮</span>
+              ${isCardinal ? `<span class="px-2 py-0.5 rounded-md bg-amber-300 text-amber-950 text-xs font-black">${cardinalLabels[c.house]}</span>` : ''}
             </div>
-            <span class="font-mono text-slate-600 font-bold">${c.formatted}</span>
+            <span class="font-mono text-base font-black text-slate-900">${c.formatted}</span>
           </div>
         `;
       }).join('');
 
-      // 7. 愛倫院長命主星生活魔藥處方
+      // 7. 愛倫院長命主星生活魔藥處方 (大字體舒適閱讀)
       const ascSign = houses.asc.sign;
       const rulerMap = {
         '白羊座': { planet: '火星', advice: '以純粹的勇氣開拓新賽道，但學會給衝刺後的自己留下一壺安靜調頻的茶。' },
@@ -1140,13 +1151,17 @@
       const rulerInfo = rulerMap[ascSign] || rulerMap['白羊座'];
       const rxDiv = document.getElementById('astro_rx_container');
       rxDiv.innerHTML = `
-        <div class="p-3.5 rounded-xl bg-amber-100/70 border border-amber-300 text-amber-950 font-medium">
-          <p class="font-bold text-xs uppercase tracking-wider mb-1">👑 你的命主星：【${rulerInfo.planet}】（上升 ${ascSign}）</p>
-          <p>${rulerInfo.advice}</p>
+        <div class="p-4 sm:p-5 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-950 font-medium">
+          <p class="font-black text-base sm:text-lg mb-1.5 flex items-center gap-2">
+            <span>👑</span> <span>你的命主星：【${rulerInfo.planet}】（上升 ${ascSign}）</span>
+          </p>
+          <p class="text-sm sm:text-base font-bold text-stone-800 leading-relaxed">${rulerInfo.advice}</p>
         </div>
-        <div class="p-3.5 rounded-xl bg-white border border-[#E2D9C8] text-slate-700">
-          <p class="font-bold text-xs uppercase tracking-wider mb-1">🔮 日月雙核調頻指南</p>
-          <p>太陽【${planets.Sun.sign}】指引你發光的核心動能，月亮【${planets.Moon.sign}】則是你在深夜最需要被安撫的情緒容器。當太陽與月亮學會互相握手，人生的大局自會豁然開朗。</p>
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#E2D9C8] text-slate-800">
+          <p class="font-black text-base sm:text-lg mb-1.5 flex items-center gap-2">
+            <span>🔮</span> <span>日月雙核調頻指南</span>
+          </p>
+          <p class="text-sm sm:text-base font-bold text-stone-800 leading-relaxed">太陽【${planets.Sun.sign}】指引你發光的核心動能，月亮【${planets.Moon.sign}】則是你在深夜最需要被安撫的情緒容器。當太陽與月亮學會互相握手，人生的大局自會豁然開朗。</p>
         </div>
       `;
     }
