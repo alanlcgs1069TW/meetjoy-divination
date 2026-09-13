@@ -10,7 +10,7 @@
  *  T5  權威交叉比對：與 liu-yao.html HEXAGRAM_PALACES（top-first 鍵）逐卦核對
  *  T6  已知錨點值：乾=111111、坤=000000、屯=100010、隨=100110、艮=001001
  *  T7  Rave Mandala 規範：官方文獻序列（起點 Gate 41）逐項比對
- *  T8  輪盤錨點：12 點鐘(index 0)=第 17 閘門隨卦；64 槽位無重複、集合=1..64
+ *  T8  輪盤錨點：12 點鐘(index 0)=第 10 閘門履卦；64 槽位無重複、集合=1..64
  *  T9  輪盤角度：每槽 5.625°、共 360 度閉環
  *  T10 文件完整性：js/gene-keys-data.js 可被 require 且新常數全數匯出
  */
@@ -123,16 +123,16 @@ const wheelOk = RAVE_MANDALA_WHEEL.length === 64 &&
   wheelGates.length === new Set(wheelGates).size &&
   new Set(wheelGates).size === 64 &&
   wheelGates.every(g => g >= 1 && g <= 64) &&
-  RAVE_MANDALA_WHEEL[0].gate === 17 && RAVE_MANDALA_WHEEL[0].name === '澤雷隨' &&
-  MANDALA_ANCHOR.gate === 17 && MANDALA_ANCHOR.name === '澤雷隨' && MANDALA_ANCHOR.position === 0;
-check('T8 輪盤 64 槽無重複、集合=1..64、12 點鐘=第17閘門隨卦', wheelOk,
+   RAVE_MANDALA_WHEEL[0].gate === 10 && RAVE_MANDALA_WHEEL[0].name === '天澤履' &&
+  MANDALA_ANCHOR.gate === 10 && MANDALA_ANCHOR.name === '天澤履' && MANDALA_ANCHOR.position === 0;
+check('T8 輪盤 64 槽無重複、集合=1..64、12 點鐘=第10閘門履卦', wheelOk,
   `slot0=${RAVE_MANDALA_WHEEL[0].gate}${RAVE_MANDALA_WHEEL[0].name}`);
 
-// 輪盤 = 官方序列自 17 起旋轉（循環相對順序不變）
-const rotIdx = RAVE_MANDALA_ORDER.indexOf(17);
+// 輪盤 = 官方序列自 10 起旋轉（循環相對順序不變）
+const rotIdx = RAVE_MANDALA_ORDER.indexOf(10);
 const rotatedRef = [...RAVE_MANDALA_ORDER.slice(rotIdx), ...RAVE_MANDALA_ORDER.slice(0, rotIdx)];
 const rotationOk = wheelGates.every((g, i) => g === rotatedRef[i]);
-check('T8b 輪盤為官方序列自第17閘門起始之循環旋轉（相對順序不變）', rotationOk, '(旋轉不符)');
+check('T8b 輪盤為官方序列自第10閘門起始之循環旋轉（相對順序不變）', rotationOk, '(旋轉不符)');
 
 // ── T9 輪盤角度 ───────────────────────────────────────────────
 const SEG = 64, SLICE = 360 / SEG;

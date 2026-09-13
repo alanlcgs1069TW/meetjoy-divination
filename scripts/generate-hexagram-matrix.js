@@ -7,7 +7,7 @@
  *   2. 文王卦序 64 卦上下卦組成（King Wen Sequence）
  *   3. Rave Mandala 閘門循環順序（gethumandesign 官方文獻：41→19→…→60）
  *   4. 本地 liu-yao.html HEXAGRAM_PALACES（上爻→初爻 top-first 鍵，倒序即初爻→上爻）
- * 規格錨點：輪盤 12 點鐘頂點 = 第 17 閘門（澤雷隨）
+ * 規格錨點：輪盤 12 點鐘頂點 = 第 10 閘門（天澤履，依邵雍《皇極經世》六十四卦先天圓圖順序）
  */
 const fs = require('fs');
 const path = require('path');
@@ -63,8 +63,8 @@ const RAVE_MANDALA_ORDER = [
   28, 44, 1, 43, 14, 34, 9, 5, 26, 11, 10, 58, 38, 54, 61, 60
 ];
 
-// 規格錨點：12 點鐘頂點 = 第 17 閘門（澤雷隨）
-const MANDALA_ANCHOR_GATE = 17;
+// 規格錨點：12 點鐘頂點 = 第 10 閘門（天澤履，依邵雍《皇極經世》先天圓圖順序）
+const MANDALA_ANCHOR_GATE = 10;
 const SEGMENTS = 64;
 const SLICE_DEG = 360 / SEGMENTS; // 5.625°
 
@@ -142,7 +142,7 @@ function buildDataFile(hexMatrix, wheel) {
   out += '// ════════════════════════════════════════════════════════════════\n';
   out += '// 64 易經卦象六爻二進位矩陣 × Rave Mandala 順時針輪盤序列\n';
   out += '// 初爻→上爻（bottom-up）· 陽爻=1 / 陰爻=0 · 閘門編號 = 卦號 1:1\n';
-  out += '// Rave Mandala 錨點：輪盤 12 點鐘頂點 = 第 17 閘門（澤雷隨）\n';
+  out += '// Rave Mandala 錨點：輪盤 12 點鐘頂點 = 第 10 閘門（天澤履）\n';
   out += '// 產生器：scripts/generate-hexagram-matrix.js（不可手動修改）\n';
   out += '// ════════════════════════════════════════════════════════════════\n\n';
   out += jsonBlock('HEXAGRAM_MATRIX_64', hexMatrix);
@@ -196,4 +196,4 @@ fs.writeFileSync(DATA_PATH, updated, 'utf8');
 console.log(`✅ 已寫入 ${DATA_PATH}`);
 console.log(`   HEXAGRAM_MATRIX_64: ${Object.keys(hexMatrix).length} 卦`);
 console.log(`   RAVE_MANDALA_ORDER: ${RAVE_MANDALA_ORDER.length} 閘門（起點 41）`);
-console.log(`   RAVE_MANDALA_WHEEL: ${wheel.length} 槽位（12 點 = 隨卦 ${MANDALA_ANCHOR_GATE}）`);
+console.log(`   RAVE_MANDALA_WHEEL: ${wheel.length} 槽位（12 點 = 履卦 ${MANDALA_ANCHOR_GATE}）`);
