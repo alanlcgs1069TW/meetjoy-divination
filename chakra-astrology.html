@@ -157,40 +157,36 @@
           </div>
         </div>
 
-        <!-- 金字塔三層排盤佈局 (海底輪 House 1 至頂輪 House 7 登階金字塔) -->
-        <div class="flex flex-col items-center gap-4 max-w-3xl mx-auto py-4">
+        <!-- 正統九宮七曜金字塔佈局 (3x3 九宮格中呈現登階七宮，手機端一屏看齊全貌) -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 max-w-2xl mx-auto py-2 sm:py-4">
           
-          <!-- 頂層：第 7 宮 領袖宮 (頂輪 · 崇高天命) -->
-          <div class="w-full flex justify-center">
-            <div id="house_card_7" onclick="selectHouseDetail(7)" class="w-full sm:w-72 p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
+          <!-- 頂層 (第 1 列)：左空 ｜ 第 7 宮 領袖宮 (頂輪) ｜ 右空 -->
+          <div class="invisible pointer-events-none select-none"></div>
+          <div id="house_card_7" onclick="selectHouseDetail(7)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
+          </div>
+          <div class="invisible pointer-events-none select-none"></div>
+
+          <!-- 中層 (第 2 列)：第 4 宮 財富宮 (心輪) ｜ 第 5 宮 君王宮 (喉輪) ｜ 第 6 宮 病符宮 (眉心輪) -->
+          <div id="house_card_4" onclick="selectHouseDetail(4)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
+          </div>
+          <div id="house_card_5" onclick="selectHouseDetail(5)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
+          </div>
+          <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
           </div>
 
-          <!-- 中層：第 4 宮 財富宮 (心輪) ｜ 第 5 宮 君王宮 (喉輪) ｜ 第 6 宮 病符宮 (眉心輪) -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-            <div id="house_card_4" onclick="selectHouseDetail(4)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
-            <div id="house_card_5" onclick="selectHouseDetail(5)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
-            <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
+          <!-- 底層 (第 3 列)：第 1 宮 無常宮 (海底輪) ｜ 第 2 宮 極端宮 (臍輪) ｜ 第 3 宮 名望宮 (太陽神經叢) -->
+          <div id="house_card_1" onclick="selectHouseDetail(1)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
           </div>
-
-          <!-- 底層：第 1 宮 無常宮 (海底輪) ｜ 第 2 宮 極端宮 (臍輪) ｜ 第 3 宮 名望宮 (太陽神經叢) -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-            <div id="house_card_1" onclick="selectHouseDetail(1)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
-            <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
-            <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative">
-              <!-- 動態內容 -->
-            </div>
+          <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
+          </div>
+          <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+            <!-- 動態內容 -->
           </div>
 
         </div>
@@ -511,18 +507,18 @@
         const cardEl = document.getElementById(`house_card_${hNum}`);
         if (!cardEl) return;
 
-        cardEl.className = `p-4 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative ${
+        cardEl.className = `p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px] ${
           isNatal 
             ? 'bg-amber-50/90 border-[#C8A97E] gold-glow active-chakra' 
             : 'bg-white border-stone-200 hover:border-stone-400'
         }`;
 
         cardEl.innerHTML = `
-          ${isNatal ? '<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-[#C8A97E] text-stone-900 text-[10px] font-black tracking-widest uppercase shadow-xs">★ 本命星落點</div>' : ''}
-          <div class="text-[11px] font-bold text-stone-500 mb-1">House ${hNum} · ${hInfo.zhName}</div>
-          <div class="text-xs font-semibold px-2 py-0.5 rounded-full inline-block mb-2 ${hInfo.badgeColor}">${hInfo.chakra.split(' ')[0]}</div>
-          <div class="text-lg sm:text-xl font-black text-[#1F261C] mb-1">${pMeta.zh}</div>
-          <div class="text-[11px] text-stone-500">${pMeta.element}</div>
+          ${isNatal ? '<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.2 rounded-full bg-[#C8A97E] text-stone-900 text-[9px] sm:text-[10px] font-black tracking-wider uppercase shadow-xs whitespace-nowrap z-10">★ 本命</div>' : ''}
+          <div class="text-[10px] sm:text-[11px] font-bold text-stone-500 mb-0.5 whitespace-nowrap">H${hNum} · ${hInfo.zhName.replace('宮', '')}</div>
+          <div class="text-[9px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full inline-block mb-1 sm:mb-2 ${hInfo.badgeColor}">${hInfo.chakra.split(' ')[0]}</div>
+          <div class="text-base sm:text-xl font-black text-[#1F261C] mb-0.5 leading-tight">${pMeta.zh}</div>
+          <div class="text-[10px] sm:text-[11px] text-stone-500">${pMeta.element}</div>
         `;
       });
 
