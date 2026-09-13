@@ -493,9 +493,9 @@
 
         const signText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         signText.setAttribute('x', pos.x);
-        signText.setAttribute('y', pos.y + 6.5);
-        signText.setAttribute('font-size', '20');
-        signText.setAttribute('font-weight', 'bold');
+        signText.setAttribute('y', pos.y + 9.5);
+        signText.setAttribute('font-size', '28');
+        signText.setAttribute('font-weight', '900');
         signText.setAttribute('fill', signColor);
         signText.setAttribute('text-anchor', 'middle');
         signText.setAttribute('class', 'astro-glyph');
@@ -522,11 +522,11 @@
           const numPt = polarToCartesian(cx, cy, rZodiacOuter - 9, ang);
           const numTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           numTxt.setAttribute('x', numPt.x);
-          numTxt.setAttribute('y', numPt.y + 2.5);
-          numTxt.setAttribute('font-size', '6.5');
+          numTxt.setAttribute('y', numPt.y + 3);
+          numTxt.setAttribute('font-size', '9');
           numTxt.setAttribute('font-weight', 'bold');
           numTxt.setAttribute('font-family', 'ui-monospace, monospace');
-          numTxt.setAttribute('fill', '#64748B');
+          numTxt.setAttribute('fill', '#475569');
           numTxt.setAttribute('text-anchor', 'middle');
           numTxt.textContent = `${degInSign}°`;
           svg.appendChild(numTxt);
@@ -599,7 +599,7 @@
         }
         svg.appendChild(line);
 
-        // 宮位標籤號碼 1-12 (置於 rHouseInner 與 rHouseOuter 正中)
+        // 宮位標籤號碼 1-12 (置於 rHouseInner 與 rHouseOuter 正中，放大至 17px 粗體)
         const nextCusp = houses.cusps[idx === 11 ? 0 : idx + 1];
         const span = ((nextCusp.longitude - c.longitude + 360) % 360);
         const midCuspLon = (c.longitude + span / 2) % 360;
@@ -608,23 +608,23 @@
 
         const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         numText.setAttribute('x', numPos.x);
-        numText.setAttribute('y', numPos.y + 4);
-        numText.setAttribute('font-size', '12');
-        numText.setAttribute('font-weight', 'bold');
+        numText.setAttribute('y', numPos.y + 6);
+        numText.setAttribute('font-size', '17');
+        numText.setAttribute('font-weight', '900');
         numText.setAttribute('font-family', 'sans-serif');
-        numText.setAttribute('fill', '#334155');
+        numText.setAttribute('fill', '#1E293B');
         numText.setAttribute('text-anchor', 'middle');
         numText.textContent = c.house;
         svg.appendChild(numText);
 
-        // 在黃道外側標註該宮頭度數 (對標 癒見占星魔法 標註，例如 27° ♒ 30')
+        // 在黃道外側標註該宮頭度數 (放大至 10px，加粗)
         const cuspTagPt = polarToCartesian(cx, cy, rZodiacOuter + 8, ang);
         const cuspTag = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         cuspTag.setAttribute('x', cuspTagPt.x);
-        cuspTag.setAttribute('y', cuspTagPt.y + 2.5);
-        cuspTag.setAttribute('font-size', '7');
-        cuspTag.setAttribute('font-weight', 'bold');
-        cuspTag.setAttribute('fill', '#64748B');
+        cuspTag.setAttribute('y', cuspTagPt.y + 3.5);
+        cuspTag.setAttribute('font-size', '10');
+        cuspTag.setAttribute('font-weight', '900');
+        cuspTag.setAttribute('fill', '#475569');
         cuspTag.setAttribute('text-anchor', 'middle');
         cuspTag.textContent = `${c.degree}°`;
         svg.appendChild(cuspTag);
@@ -636,9 +636,9 @@
       const asGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       
       const asTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      asTitle.setAttribute('x', asPt.x - 2);
-      asTitle.setAttribute('y', asPt.y + 5);
-      asTitle.setAttribute('font-size', '19');
+      asTitle.setAttribute('x', asPt.x - 4);
+      asTitle.setAttribute('y', asPt.y + 7);
+      asTitle.setAttribute('font-size', '25');
       asTitle.setAttribute('font-weight', '900');
       asTitle.setAttribute('fill', '#0F172A');
       asTitle.setAttribute('text-anchor', 'end');
@@ -647,15 +647,15 @@
 
       const asDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       asDeg.setAttribute('x', asPt.x + 8);
-      asDeg.setAttribute('y', asPt.y + 4);
-      asDeg.setAttribute('font-size', '9');
-      asDeg.setAttribute('font-weight', 'bold');
+      asDeg.setAttribute('y', asPt.y + 4.5);
+      asDeg.setAttribute('font-size', '12');
+      asDeg.setAttribute('font-weight', '900');
       asDeg.setAttribute('text-anchor', 'start');
       const asSignColor = ZODIAC_CLASSIC_COLORS[houses.asc.sign] || '#15803D';
       asDeg.innerHTML = `
         <tspan fill="#0F172A">${houses.asc.degree}°</tspan> 
         <tspan fill="${asSignColor}" class="astro-glyph">${toTextGlyph(houses.asc.signSymbol)}</tspan> 
-        <tspan fill="#475569">${houses.asc.minute.toString().padStart(2, '0')}'</tspan>
+        <tspan fill="#334155">${houses.asc.minute.toString().padStart(2, '0')}'</tspan>
       `;
       asGroup.appendChild(asDeg);
       svg.appendChild(asGroup);
@@ -667,8 +667,8 @@
 
       const mcTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       mcTitle.setAttribute('x', mcPt.x);
-      mcTitle.setAttribute('y', mcPt.y - 3);
-      mcTitle.setAttribute('font-size', '17');
+      mcTitle.setAttribute('y', mcPt.y - 4);
+      mcTitle.setAttribute('font-size', '23');
       mcTitle.setAttribute('font-weight', '900');
       mcTitle.setAttribute('fill', '#0F172A');
       mcTitle.setAttribute('text-anchor', 'middle');
@@ -677,15 +677,15 @@
 
       const mcDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       mcDeg.setAttribute('x', mcPt.x);
-      mcDeg.setAttribute('y', mcPt.y + 8);
-      mcDeg.setAttribute('font-size', '8.5');
-      mcDeg.setAttribute('font-weight', 'bold');
+      mcDeg.setAttribute('y', mcPt.y + 11);
+      mcDeg.setAttribute('font-size', '11.5');
+      mcDeg.setAttribute('font-weight', '900');
       mcDeg.setAttribute('text-anchor', 'middle');
       const mcSignColor = ZODIAC_CLASSIC_COLORS[houses.mc.sign] || '#15803D';
       mcDeg.innerHTML = `
         <tspan fill="#0F172A">${houses.mc.degree}°</tspan> 
         <tspan fill="${mcSignColor}" class="astro-glyph">${toTextGlyph(houses.mc.signSymbol)}</tspan> 
-        <tspan fill="#475569">${houses.mc.minute.toString().padStart(2, '0')}'</tspan>
+        <tspan fill="#334155">${houses.mc.minute.toString().padStart(2, '0')}'</tspan>
       `;
       mcGroup.appendChild(mcDeg);
       svg.appendChild(mcGroup);
@@ -694,13 +694,13 @@
       const dsPt = polarToCartesian(cx, cy, rZodiacOuter + 14, 0);
       const dsDeg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       dsDeg.setAttribute('x', dsPt.x + 2);
-      dsDeg.setAttribute('y', dsPt.y + 4);
-      dsDeg.setAttribute('font-size', '8.5');
-      dsDeg.setAttribute('font-weight', 'bold');
+      dsDeg.setAttribute('y', dsPt.y + 4.5);
+      dsDeg.setAttribute('font-size', '11.5');
+      dsDeg.setAttribute('font-weight', '900');
       dsDeg.setAttribute('text-anchor', 'start');
       const dsSignColor = ZODIAC_CLASSIC_COLORS[houses.dsc.sign] || '#1E3A8A';
       dsDeg.innerHTML = `
-        <tspan fill="#475569">${houses.dsc.minute}'</tspan> 
+        <tspan fill="#334155">${houses.dsc.minute}'</tspan> 
         <tspan fill="${dsSignColor}" class="astro-glyph">${toTextGlyph(houses.dsc.signSymbol)}</tspan> 
         <tspan fill="#0F172A">${houses.dsc.degree}°</tspan>
       `;
@@ -783,7 +783,7 @@
         .sort((a, b) => a.trueAng - b.trueAng);
 
       // 彈簧鬆弛與多重同心半徑演算法 (群星聚集時扇面優雅錯開，100% 不重疊遮擋)
-      const minGap = 8.5;
+      const minGap = 9.8;
       for (let pass = 0; pass < 50; pass++) {
         for (let i = 0; i < natalItems.length - 1; i++) {
           const p1 = natalItems[i];
@@ -794,8 +794,8 @@
             p1.dispAng -= overlap;
             p2.dispAng += overlap;
             // 緊鄰星曜採用高低雙軌交錯半徑
-            p1.dispR = rNatalBase + 12;
-            p2.dispR = rNatalBase - 10;
+            p1.dispR = rNatalBase + 14;
+            p2.dispR = rNatalBase - 12;
           }
         }
       }
@@ -824,23 +824,23 @@
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-        // 行星符號 (大號加粗)
+        // 行星符號 (大號加粗，由 16px 放大至 21px)
         const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         txt.setAttribute('x', ptDisp.x);
-        txt.setAttribute('y', ptDisp.y + 4);
-        txt.setAttribute('font-size', '16');
+        txt.setAttribute('y', ptDisp.y + 6);
+        txt.setAttribute('font-size', '21');
         txt.setAttribute('font-weight', '900');
         txt.setAttribute('fill', pColor);
         txt.setAttribute('text-anchor', 'middle');
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
-        // 癒見占星魔法 經典緊湊格式度數標註：度數、星座小符號、分
-        const degPt = polarToCartesian(cx, cy, p.dispR - 14, p.dispAng);
+        // 癒見占星魔法 經典緊湊格式度數標註：度數、星座小符號、分 (由 7.5px 放大至 11.5px)
+        const degPt = polarToCartesian(cx, cy, p.dispR - 18, p.dispAng);
         const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         degText.setAttribute('x', degPt.x);
-        degText.setAttribute('y', degPt.y + 3);
-        degText.setAttribute('font-size', '7.5');
+        degText.setAttribute('y', degPt.y + 4);
+        degText.setAttribute('font-size', '11.5');
         degText.setAttribute('font-family', 'sans-serif');
         degText.setAttribute('font-weight', 'bold');
         degText.setAttribute('text-anchor', 'middle');
@@ -852,12 +852,12 @@
         `;
         g.appendChild(degText);
 
-        // 逆行標記 ℞
+        // 逆行標記 ℞ (由 8px 放大至 10.5px)
         if (p.isRetrograde) {
           const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          rx.setAttribute('x', ptDisp.x + 8);
-          rx.setAttribute('y', ptDisp.y - 4);
-          rx.setAttribute('font-size', '8');
+          rx.setAttribute('x', ptDisp.x + 10);
+          rx.setAttribute('y', ptDisp.y - 6);
+          rx.setAttribute('font-size', '10.5');
           rx.setAttribute('font-weight', '900');
           rx.setAttribute('fill', '#DC2626');
           rx.textContent = '℞';
@@ -891,7 +891,7 @@
           .sort((a, b) => a.trueAng - b.trueAng);
 
         // 行運星曜鬆弛避讓
-        for (let pass = 0; pass < 35; pass++) {
+        for (let pass = 0; pass < 40; pass++) {
           for (let i = 0; i < transitItems.length - 1; i++) {
             const t1 = transitItems[i];
             const t2 = transitItems[i + 1];
@@ -924,23 +924,23 @@
 
           const tg = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-          // 行運星曜符號 (大號加粗)
+          // 行運星曜符號 (大號加粗，由 15.5px 放大至 21px)
           const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           txt.setAttribute('x', ptDisp.x);
-          txt.setAttribute('y', ptDisp.y + 4.5);
-          txt.setAttribute('font-size', '15.5');
+          txt.setAttribute('y', ptDisp.y + 6);
+          txt.setAttribute('font-size', '21');
           txt.setAttribute('font-weight', '900');
           txt.setAttribute('fill', tpColor);
           txt.setAttribute('text-anchor', 'middle');
           txt.textContent = tp.symbol;
           tg.appendChild(txt);
 
-          // 行運度數與星座標註
-          const degPt = polarToCartesian(cx, cy, rTransitRing + 14, tp.dispAng);
+          // 行運度數與星座標註 (由 7.5px 放大至 11.5px)
+          const degPt = polarToCartesian(cx, cy, rTransitRing + 16, tp.dispAng);
           const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           degText.setAttribute('x', degPt.x);
-          degText.setAttribute('y', degPt.y + 3);
-          degText.setAttribute('font-size', '7.5');
+          degText.setAttribute('y', degPt.y + 4);
+          degText.setAttribute('font-size', '11.5');
           degText.setAttribute('font-family', 'sans-serif');
           degText.setAttribute('font-weight', 'bold');
           degText.setAttribute('text-anchor', 'middle');
@@ -954,9 +954,9 @@
 
           if (tp.isRetrograde) {
             const rx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            rx.setAttribute('x', ptDisp.x + 8);
-            rx.setAttribute('y', ptDisp.y - 3);
-            rx.setAttribute('font-size', '8');
+            rx.setAttribute('x', ptDisp.x + 10);
+            rx.setAttribute('y', ptDisp.y - 6);
+            rx.setAttribute('font-size', '10.5');
             rx.setAttribute('font-weight', '900');
             rx.setAttribute('fill', '#DC2626');
             rx.textContent = '℞';
