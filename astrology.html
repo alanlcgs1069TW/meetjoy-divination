@@ -860,18 +860,19 @@
         txt.textContent = p.symbol;
         g.appendChild(txt);
 
-        // 癒見占星魔法 經典緊湊格式度數標註：度數、星座小符號、分 (精緻 8.5px 粗體，無縫排列)
-        const degPt = polarToCartesian(cx, cy, p.dispR - 13.5, p.dispAng);
+        // 雙行緊湊格式度數標註：度數在上、分角在下 (寬度縮至 1/3 ~12px，群星相鄰時完全不打架、不遮擋)
+        const degPt = polarToCartesian(cx, cy, p.dispR - 15.5, p.dispAng);
         const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         degText.setAttribute('x', degPt.x);
-        degText.setAttribute('y', degPt.y + 3.0);
+        degText.setAttribute('y', degPt.y);
         degText.setAttribute('font-size', '8.5');
         degText.setAttribute('font-family', 'sans-serif');
-        degText.setAttribute('font-weight', '800');
+        degText.setAttribute('font-weight', '900');
         degText.setAttribute('text-anchor', 'middle');
 
         degText.innerHTML = `
-          <tspan fill="#0F172A">${p.degree.toString().padStart(2, '0')}°</tspan><tspan fill="${signColor}" class="astro-glyph">${toTextGlyph(p.signSymbol)}</tspan><tspan fill="#1E293B">${p.minute.toString().padStart(2, '0')}'</tspan>
+          <tspan x="${degPt.x}" dy="-3.5" fill="#0F172A">${p.degree.toString().padStart(2, '0')}°</tspan>
+          <tspan x="${degPt.x}" dy="8.5" fill="#475569" font-size="7.8" font-weight="800">${p.minute.toString().padStart(2, '0')}'</tspan>
         `;
         g.appendChild(degText);
 
@@ -974,18 +975,19 @@
           txt.textContent = tp.symbol;
           tg.appendChild(txt);
 
-          // 行運度數與星座標註 (8.5px 粗體)
-          const degPt = polarToCartesian(cx, cy, tp.dispR + 13.5, tp.dispAng);
+          // 行運雙行緊湊格式度數標註：度數在上、分角在下 (寬度縮至 1/3 ~12px，外圈零重疊零遮擋)
+          const degPt = polarToCartesian(cx, cy, tp.dispR + 15.5, tp.dispAng);
           const degText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           degText.setAttribute('x', degPt.x);
-          degText.setAttribute('y', degPt.y + 3.0);
+          degText.setAttribute('y', degPt.y);
           degText.setAttribute('font-size', '8.5');
           degText.setAttribute('font-family', 'sans-serif');
-          degText.setAttribute('font-weight', '800');
+          degText.setAttribute('font-weight', '900');
           degText.setAttribute('text-anchor', 'middle');
 
           degText.innerHTML = `
-            <tspan fill="#0F172A">${tp.degree.toString().padStart(2, '0')}°</tspan><tspan fill="${signColor}" class="astro-glyph">${toTextGlyph(tp.signSymbol)}</tspan><tspan fill="#1E293B">${tp.minute.toString().padStart(2, '0')}'</tspan>
+            <tspan x="${degPt.x}" dy="-3.5" fill="#0F172A">${tp.degree.toString().padStart(2, '0')}°</tspan>
+            <tspan x="${degPt.x}" dy="8.5" fill="#475569" font-size="7.8" font-weight="800">${tp.minute.toString().padStart(2, '0')}'</tspan>
           `;
           tg.appendChild(degText);
 
