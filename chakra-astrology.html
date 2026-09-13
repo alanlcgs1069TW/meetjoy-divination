@@ -157,35 +157,35 @@
           </div>
         </div>
 
-        <!-- 正統九宮七曜金字塔佈局 (3x3 九宮格中呈現登階七宮，手機端一屏看齊全貌) -->
+        <!-- 正統九宮七曜金字塔佈局 (3x3 九宮格中呈現七宮：中軸7-4-1，中層3-4-5，底層2-1-6) -->
         <div class="grid grid-cols-3 gap-2 sm:gap-4 max-w-2xl mx-auto py-2 sm:py-4">
           
           <!-- 頂層 (第 1 列)：左空 ｜ 第 7 宮 領袖宮 (頂輪) ｜ 右空 -->
           <div class="invisible pointer-events-none select-none"></div>
-          <div id="house_card_7" onclick="selectHouseDetail(7)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <div id="house_card_7" onclick="selectHouseDetail(7)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
           <div class="invisible pointer-events-none select-none"></div>
 
-          <!-- 中層 (第 2 列)：第 4 宮 財富宮 (心輪) ｜ 第 5 宮 君王宮 (喉輪) ｜ 第 6 宮 病符宮 (眉心輪) -->
-          <div id="house_card_4" onclick="selectHouseDetail(4)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <!-- 中層 (第 2 列)：第 3 宮 名望宮 ｜ 第 4 宮 財富宮 (中軸) ｜ 第 5 宮 君王宮 -->
+          <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
-          <div id="house_card_5" onclick="selectHouseDetail(5)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <div id="house_card_4" onclick="selectHouseDetail(4)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
-          <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <div id="house_card_5" onclick="selectHouseDetail(5)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
 
-          <!-- 底層 (第 3 列)：第 1 宮 無常宮 (海底輪) ｜ 第 2 宮 極端宮 (臍輪) ｜ 第 3 宮 名望宮 (太陽神經叢) -->
-          <div id="house_card_1" onclick="selectHouseDetail(1)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <!-- 底層 (第 3 列)：第 2 宮 極端宮 ｜ 第 1 宮 無常宮 (中軸底) ｜ 第 6 宮 病符宮 -->
+          <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
-          <div id="house_card_2" onclick="selectHouseDetail(2)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <div id="house_card_1" onclick="selectHouseDetail(1)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
-          <div id="house_card_3" onclick="selectHouseDetail(3)" class="p-2.5 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
+          <div id="house_card_6" onclick="selectHouseDetail(6)" class="p-2 sm:p-5 rounded-2xl border-2 transition cursor-pointer card-hover text-center relative flex flex-col justify-center items-center min-h-[95px] sm:min-h-[135px]">
             <!-- 動態內容 -->
           </div>
 
@@ -496,8 +496,8 @@
       document.getElementById('heroElement').innerText = res.birthPlanet.meta.element;
       document.getElementById('heroYears').innerText = `${res.birthPlanet.meta.years} 年`;
 
-      // 2. 七大宮位金字塔 (1 到 7 登階)
-      const houses = [7, 4, 5, 6, 1, 2, 3];
+      // 2. 正統九宮七曜金字塔 (頂7，中3-4-5，底2-1-6)
+      const houses = [7, 3, 4, 5, 2, 1, 6];
       houses.forEach(hNum => {
         const pName = res.houses[hNum];
         const pMeta = CHAKRA_ASTROLOGY_DATA.MAJOR_PERIODS.find(p => p.name === pName);
