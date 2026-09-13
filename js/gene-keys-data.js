@@ -294,56 +294,50 @@ const STAR_PEARL_COORDS = {
   pearl:        { x: 50.0, y: 50.0, labelAlign: 'right' }
 };
 
-// 全息通道網絡連線 (Pathways) - 完整全譜
+// 全息通道網絡連線 (Pathways) - 完整全譜（對標桌面截圖：3 綠 + 5 紅 + 6 藍 = 14 條神聖通道）
 const GOLDEN_PATHWAYS = [
-  // 激活序列綠線 (The Activation Sequence - 神聖幾何大菱形)
+  // 1. 激活序列綠線 (The Activation Sequence · 精確 3 條挑戰顯化通道)
   { from: 'lifesWork', to: 'evolution', color: '#10B981', seq: 'activation', name: '挑戰通道' },
-  { from: 'evolution', to: 'purpose', color: '#10B981', seq: 'activation', name: '進化回響通道' },
-  { from: 'purpose', to: 'radiance', color: '#10B981', seq: 'activation', name: '扎根通道' },
-  { from: 'radiance', to: 'lifesWork', color: '#10B981', seq: 'activation', name: '光芒顯化通道' },
-  { from: 'evolution', to: 'radiance', color: '#10B981', seq: 'activation', name: '突破通道' },
+  { from: 'evolution', to: 'radiance', color: '#10B981', seq: 'activation', name: '光芒突破通道' },
+  { from: 'radiance', to: 'purpose', color: '#10B981', seq: 'activation', name: '扎根天命通道' },
 
-  // 金星序列紅線 (The Venus Sequence - 心靈聖杯天梯)
+  // 2. 金星序列紅線 (The Venus Sequence · 精確 5 條心靈聖杯階梯)
   { from: 'purpose', to: 'attraction', color: '#E11D48', seq: 'venus', name: '業力吸引力通道' },
   { from: 'attraction', to: 'iq', color: '#E11D48', seq: 'venus', name: '心智轉化通道' },
-  { from: 'attraction', to: 'eq', color: '#E11D48', seq: 'venus', name: '情緒轉化通道' },
   { from: 'iq', to: 'eq', color: '#E11D48', seq: 'venus', name: '心智情緒整合通道' },
-  { from: 'iq', to: 'sq', color: '#E11D48', seq: 'venus', name: '靈性覺醒通道' },
   { from: 'eq', to: 'sq', color: '#E11D48', seq: 'venus', name: '心輪開啟通道' },
   { from: 'sq', to: 'core', color: '#E11D48', seq: 'venus', name: '核心創傷通道' },
 
-  // 珍珠序列藍線 (The Pearl Sequence - 世俗豐盛梅爾卡巴)
+  // 3. 珍珠序列藍線 (The Pearl Sequence · 外圍大三角 3 條 + 中心珍珠輻射 3 條 = 6 條)
   { from: 'core', to: 'culture', color: '#0EA5E9', seq: 'pearl', name: '天職創造力通道' },
-  { from: 'culture', to: 'pearl', color: '#0EA5E9', seq: 'pearl', name: '社群豐盛通道' },
-  { from: 'core', to: 'pearl', color: '#0EA5E9', seq: 'pearl', name: '本質變現通道' },
-  { from: 'pearl', to: 'lifesWork', color: '#0EA5E9', seq: 'pearl', name: '品牌顯化通道' }
+  { from: 'culture', to: 'lifesWork', color: '#0EA5E9', seq: 'pearl', name: '品牌文化通道' },
+  { from: 'lifesWork', to: 'core', color: '#0EA5E9', seq: 'pearl', name: '天職品牌通道' },
+  { from: 'pearl', to: 'lifesWork', color: '#0EA5E9', seq: 'pearl', name: '珍珠品牌中軸通道' },
+  { from: 'pearl', to: 'core', color: '#0EA5E9', seq: 'pearl', name: '珍珠天職通道' },
+  { from: 'pearl', to: 'culture', color: '#0EA5E9', seq: 'pearl', name: '珍珠文化通道' }
 ];
 
-// 各分盤專屬通道網絡 (100% 幾何閉合與端點對齊)
+// 各分盤專屬通道網絡 (對標截圖各分盤線條)
 const SUB_SEQUENCE_PATHWAYS = {
   activation: [
-    { from: 'lifesWork', to: 'evolution', color: '#10B981' },
-    { from: 'evolution', to: 'purpose', color: '#10B981' },
-    { from: 'purpose', to: 'radiance', color: '#10B981' },
-    { from: 'radiance', to: 'lifesWork', color: '#10B981' },
-    { from: 'evolution', to: 'radiance', color: '#10B981' }
+    { from: 'lifesWork', to: 'evolution', color: '#10B981', name: '挑戰通道' },
+    { from: 'evolution', to: 'radiance', color: '#10B981', name: '光芒突破通道' },
+    { from: 'radiance', to: 'purpose', color: '#10B981', name: '扎根天命通道' }
   ],
   venus: [
-    { from: 'purpose', to: 'attraction', color: '#E11D48' },
-    { from: 'attraction', to: 'iq', color: '#E11D48' },
-    { from: 'attraction', to: 'eq', color: '#E11D48' },
-    { from: 'iq', to: 'eq', color: '#E11D48' },
-    { from: 'iq', to: 'sq', color: '#E11D48' },
-    { from: 'eq', to: 'sq', color: '#E11D48' },
-    { from: 'sq', to: 'core', color: '#E11D48' }
+    { from: 'purpose', to: 'attraction', color: '#E11D48', name: '業力吸引力通道' },
+    { from: 'attraction', to: 'iq', color: '#E11D48', name: '心智轉化通道' },
+    { from: 'iq', to: 'eq', color: '#E11D48', name: '心智情緒整合通道' },
+    { from: 'eq', to: 'sq', color: '#E11D48', name: '心輪開啟通道' },
+    { from: 'sq', to: 'core', color: '#E11D48', name: '核心創傷通道' }
   ],
   pearl: [
-    { from: 'brand', to: 'vocation', color: '#0284C7' },
-    { from: 'vocation', to: 'culture', color: '#0284C7' },
-    { from: 'culture', to: 'brand', color: '#0284C7' },
-    { from: 'brand', to: 'pearl', color: '#0284C7' },
-    { from: 'vocation', to: 'pearl', color: '#0284C7' },
-    { from: 'culture', to: 'pearl', color: '#0284C7' }
+    { from: 'brand', to: 'culture', color: '#0284C7', name: '品牌文化通道' },
+    { from: 'culture', to: 'vocation', color: '#0284C7', name: '天職創造力通道' },
+    { from: 'vocation', to: 'brand', color: '#0284C7', name: '天職品牌通道' },
+    { from: 'pearl', to: 'brand', color: '#0284C7', name: '珍珠品牌中軸通道' },
+    { from: 'pearl', to: 'vocation', color: '#0284C7', name: '珍珠天職通道' },
+    { from: 'pearl', to: 'culture', color: '#0284C7', name: '珍珠文化通道' }
   ],
   starPearl: [
     // 正六邊形邊界
@@ -369,6 +363,2991 @@ const SUB_SEQUENCE_PATHWAYS = {
     { from: 'pearl', to: 'creativity', color: '#2563EB' }
   ]
 };
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// 64 易經卦象六爻二進位矩陣 × Rave Mandala 順時針輪盤序列
+// 初爻→上爻（bottom-up）· 陽爻=1 / 陰爻=0 · 閘門編號 = 卦號 1:1
+// Rave Mandala 錨點：輪盤 12 點鐘頂點 = 第 17 閘門（澤雷隨）
+// 產生器：scripts/generate-hexagram-matrix.js（不可手動修改）
+// ════════════════════════════════════════════════════════════════
+
+// HEXAGRAM_MATRIX_64
+const HEXAGRAM_MATRIX_64 = {
+  "1": {
+    "number": 1,
+    "name": "乾為天",
+    "lower": "乾",
+    "upper": "乾",
+    "binary": "111111",
+    "binaryTopFirst": "111111",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 6,
+    "yinCount": 0
+  },
+  "2": {
+    "number": 2,
+    "name": "坤為地",
+    "lower": "坤",
+    "upper": "坤",
+    "binary": "000000",
+    "binaryTopFirst": "000000",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 0,
+    "yinCount": 6
+  },
+  "3": {
+    "number": 3,
+    "name": "水雷屯",
+    "lower": "震",
+    "upper": "坎",
+    "binary": "100010",
+    "binaryTopFirst": "010001",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "4": {
+    "number": 4,
+    "name": "山水蒙",
+    "lower": "坎",
+    "upper": "艮",
+    "binary": "010001",
+    "binaryTopFirst": "100010",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "5": {
+    "number": 5,
+    "name": "水天需",
+    "lower": "乾",
+    "upper": "坎",
+    "binary": "111010",
+    "binaryTopFirst": "010111",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "6": {
+    "number": 6,
+    "name": "天水訟",
+    "lower": "坎",
+    "upper": "乾",
+    "binary": "010111",
+    "binaryTopFirst": "111010",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "7": {
+    "number": 7,
+    "name": "地水師",
+    "lower": "坎",
+    "upper": "坤",
+    "binary": "010000",
+    "binaryTopFirst": "000010",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 1,
+    "yinCount": 5
+  },
+  "8": {
+    "number": 8,
+    "name": "水地比",
+    "lower": "坤",
+    "upper": "坎",
+    "binary": "000010",
+    "binaryTopFirst": "010000",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 1,
+    "yinCount": 5
+  },
+  "9": {
+    "number": 9,
+    "name": "風天小畜",
+    "lower": "乾",
+    "upper": "巽",
+    "binary": "111011",
+    "binaryTopFirst": "110111",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 5,
+    "yinCount": 1
+  },
+  "10": {
+    "number": 10,
+    "name": "天澤履",
+    "lower": "兌",
+    "upper": "乾",
+    "binary": "110111",
+    "binaryTopFirst": "111011",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 5,
+    "yinCount": 1
+  },
+  "11": {
+    "number": 11,
+    "name": "地天泰",
+    "lower": "乾",
+    "upper": "坤",
+    "binary": "111000",
+    "binaryTopFirst": "000111",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "12": {
+    "number": 12,
+    "name": "天地否",
+    "lower": "坤",
+    "upper": "乾",
+    "binary": "000111",
+    "binaryTopFirst": "111000",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "13": {
+    "number": 13,
+    "name": "天火同人",
+    "lower": "離",
+    "upper": "乾",
+    "binary": "101111",
+    "binaryTopFirst": "111101",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 5,
+    "yinCount": 1
+  },
+  "14": {
+    "number": 14,
+    "name": "火天大有",
+    "lower": "乾",
+    "upper": "離",
+    "binary": "111101",
+    "binaryTopFirst": "101111",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 5,
+    "yinCount": 1
+  },
+  "15": {
+    "number": 15,
+    "name": "地山謙",
+    "lower": "艮",
+    "upper": "坤",
+    "binary": "001000",
+    "binaryTopFirst": "000100",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 1,
+    "yinCount": 5
+  },
+  "16": {
+    "number": 16,
+    "name": "雷地豫",
+    "lower": "坤",
+    "upper": "震",
+    "binary": "000100",
+    "binaryTopFirst": "001000",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 1,
+    "yinCount": 5
+  },
+  "17": {
+    "number": 17,
+    "name": "澤雷隨",
+    "lower": "震",
+    "upper": "兌",
+    "binary": "100110",
+    "binaryTopFirst": "011001",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "18": {
+    "number": 18,
+    "name": "山風蠱",
+    "lower": "巽",
+    "upper": "艮",
+    "binary": "011001",
+    "binaryTopFirst": "100110",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "19": {
+    "number": 19,
+    "name": "地澤臨",
+    "lower": "兌",
+    "upper": "坤",
+    "binary": "110000",
+    "binaryTopFirst": "000011",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "20": {
+    "number": 20,
+    "name": "風地觀",
+    "lower": "坤",
+    "upper": "巽",
+    "binary": "000011",
+    "binaryTopFirst": "110000",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "21": {
+    "number": 21,
+    "name": "火雷噬嗑",
+    "lower": "震",
+    "upper": "離",
+    "binary": "100101",
+    "binaryTopFirst": "101001",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "22": {
+    "number": 22,
+    "name": "山火賁",
+    "lower": "離",
+    "upper": "艮",
+    "binary": "101001",
+    "binaryTopFirst": "100101",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "23": {
+    "number": 23,
+    "name": "山地剝",
+    "lower": "坤",
+    "upper": "艮",
+    "binary": "000001",
+    "binaryTopFirst": "100000",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 1,
+    "yinCount": 5
+  },
+  "24": {
+    "number": 24,
+    "name": "地雷復",
+    "lower": "震",
+    "upper": "坤",
+    "binary": "100000",
+    "binaryTopFirst": "000001",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 1,
+    "yinCount": 5
+  },
+  "25": {
+    "number": 25,
+    "name": "天雷無妄",
+    "lower": "震",
+    "upper": "乾",
+    "binary": "100111",
+    "binaryTopFirst": "111001",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "26": {
+    "number": 26,
+    "name": "山天大畜",
+    "lower": "乾",
+    "upper": "艮",
+    "binary": "111001",
+    "binaryTopFirst": "100111",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "27": {
+    "number": 27,
+    "name": "山雷頤",
+    "lower": "震",
+    "upper": "艮",
+    "binary": "100001",
+    "binaryTopFirst": "100001",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "28": {
+    "number": 28,
+    "name": "澤風大過",
+    "lower": "巽",
+    "upper": "兌",
+    "binary": "011110",
+    "binaryTopFirst": "011110",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "29": {
+    "number": 29,
+    "name": "坎為水",
+    "lower": "坎",
+    "upper": "坎",
+    "binary": "010010",
+    "binaryTopFirst": "010010",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "30": {
+    "number": 30,
+    "name": "離為火",
+    "lower": "離",
+    "upper": "離",
+    "binary": "101101",
+    "binaryTopFirst": "101101",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "31": {
+    "number": 31,
+    "name": "澤山咸",
+    "lower": "艮",
+    "upper": "兌",
+    "binary": "001110",
+    "binaryTopFirst": "011100",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "32": {
+    "number": 32,
+    "name": "雷風恆",
+    "lower": "巽",
+    "upper": "震",
+    "binary": "011100",
+    "binaryTopFirst": "001110",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "33": {
+    "number": 33,
+    "name": "天山遯",
+    "lower": "艮",
+    "upper": "乾",
+    "binary": "001111",
+    "binaryTopFirst": "111100",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "34": {
+    "number": 34,
+    "name": "雷天大壯",
+    "lower": "乾",
+    "upper": "震",
+    "binary": "111100",
+    "binaryTopFirst": "001111",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "35": {
+    "number": 35,
+    "name": "火地晉",
+    "lower": "坤",
+    "upper": "離",
+    "binary": "000101",
+    "binaryTopFirst": "101000",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "36": {
+    "number": 36,
+    "name": "地火明夷",
+    "lower": "離",
+    "upper": "坤",
+    "binary": "101000",
+    "binaryTopFirst": "000101",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "37": {
+    "number": 37,
+    "name": "風火家人",
+    "lower": "離",
+    "upper": "巽",
+    "binary": "101011",
+    "binaryTopFirst": "110101",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "38": {
+    "number": 38,
+    "name": "火澤睽",
+    "lower": "兌",
+    "upper": "離",
+    "binary": "110101",
+    "binaryTopFirst": "101011",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "39": {
+    "number": 39,
+    "name": "水山蹇",
+    "lower": "艮",
+    "upper": "坎",
+    "binary": "001010",
+    "binaryTopFirst": "010100",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "40": {
+    "number": 40,
+    "name": "雷水解",
+    "lower": "坎",
+    "upper": "震",
+    "binary": "010100",
+    "binaryTopFirst": "001010",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "41": {
+    "number": 41,
+    "name": "山澤損",
+    "lower": "兌",
+    "upper": "艮",
+    "binary": "110001",
+    "binaryTopFirst": "100011",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "42": {
+    "number": 42,
+    "name": "風雷益",
+    "lower": "震",
+    "upper": "巽",
+    "binary": "100011",
+    "binaryTopFirst": "110001",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "43": {
+    "number": 43,
+    "name": "澤天夬",
+    "lower": "乾",
+    "upper": "兌",
+    "binary": "111110",
+    "binaryTopFirst": "011111",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 5,
+    "yinCount": 1
+  },
+  "44": {
+    "number": 44,
+    "name": "天風姤",
+    "lower": "巽",
+    "upper": "乾",
+    "binary": "011111",
+    "binaryTopFirst": "111110",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 5,
+    "yinCount": 1
+  },
+  "45": {
+    "number": 45,
+    "name": "澤地萃",
+    "lower": "坤",
+    "upper": "兌",
+    "binary": "000110",
+    "binaryTopFirst": "011000",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "46": {
+    "number": 46,
+    "name": "地風升",
+    "lower": "巽",
+    "upper": "坤",
+    "binary": "011000",
+    "binaryTopFirst": "000110",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "47": {
+    "number": 47,
+    "name": "澤水困",
+    "lower": "坎",
+    "upper": "兌",
+    "binary": "010110",
+    "binaryTopFirst": "011010",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "48": {
+    "number": 48,
+    "name": "水風井",
+    "lower": "巽",
+    "upper": "坎",
+    "binary": "011010",
+    "binaryTopFirst": "010110",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "49": {
+    "number": 49,
+    "name": "澤火革",
+    "lower": "離",
+    "upper": "兌",
+    "binary": "101110",
+    "binaryTopFirst": "011101",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "50": {
+    "number": 50,
+    "name": "火風鼎",
+    "lower": "巽",
+    "upper": "離",
+    "binary": "011101",
+    "binaryTopFirst": "101110",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "51": {
+    "number": 51,
+    "name": "震為雷",
+    "lower": "震",
+    "upper": "震",
+    "binary": "100100",
+    "binaryTopFirst": "001001",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "52": {
+    "number": 52,
+    "name": "艮為山",
+    "lower": "艮",
+    "upper": "艮",
+    "binary": "001001",
+    "binaryTopFirst": "100100",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "53": {
+    "number": 53,
+    "name": "風山漸",
+    "lower": "艮",
+    "upper": "巽",
+    "binary": "001011",
+    "binaryTopFirst": "110100",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "54": {
+    "number": 54,
+    "name": "雷澤歸妹",
+    "lower": "兌",
+    "upper": "震",
+    "binary": "110100",
+    "binaryTopFirst": "001011",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "55": {
+    "number": 55,
+    "name": "雷火豐",
+    "lower": "離",
+    "upper": "震",
+    "binary": "101100",
+    "binaryTopFirst": "001101",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "56": {
+    "number": 56,
+    "name": "火山旅",
+    "lower": "艮",
+    "upper": "離",
+    "binary": "001101",
+    "binaryTopFirst": "101100",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "57": {
+    "number": 57,
+    "name": "巽為風",
+    "lower": "巽",
+    "upper": "巽",
+    "binary": "011011",
+    "binaryTopFirst": "110110",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "58": {
+    "number": 58,
+    "name": "兌為澤",
+    "lower": "兌",
+    "upper": "兌",
+    "binary": "110110",
+    "binaryTopFirst": "011011",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "59": {
+    "number": 59,
+    "name": "風水渙",
+    "lower": "坎",
+    "upper": "巽",
+    "binary": "010011",
+    "binaryTopFirst": "110010",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "60": {
+    "number": 60,
+    "name": "水澤節",
+    "lower": "兌",
+    "upper": "坎",
+    "binary": "110010",
+    "binaryTopFirst": "010011",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "61": {
+    "number": 61,
+    "name": "風澤中孚",
+    "lower": "兌",
+    "upper": "巽",
+    "binary": "110011",
+    "binaryTopFirst": "110011",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 4,
+    "yinCount": 2
+  },
+  "62": {
+    "number": 62,
+    "name": "雷山小過",
+    "lower": "艮",
+    "upper": "震",
+    "binary": "001100",
+    "binaryTopFirst": "001100",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 2,
+    "yinCount": 4
+  },
+  "63": {
+    "number": 63,
+    "name": "水火既濟",
+    "lower": "離",
+    "upper": "坎",
+    "binary": "101010",
+    "binaryTopFirst": "010101",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  },
+  "64": {
+    "number": 64,
+    "name": "火水未濟",
+    "lower": "坎",
+    "upper": "離",
+    "binary": "010101",
+    "binaryTopFirst": "101010",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "lineLabels": [
+      "初",
+      "二",
+      "三",
+      "四",
+      "五",
+      "上"
+    ],
+    "yangCount": 3,
+    "yinCount": 3
+  }
+};
+
+// RAVE_MANDALA_ORDER
+const RAVE_MANDALA_ORDER = [
+  41,
+  19,
+  13,
+  49,
+  30,
+  55,
+  37,
+  63,
+  22,
+  36,
+  25,
+  17,
+  21,
+  51,
+  42,
+  3,
+  27,
+  24,
+  2,
+  23,
+  8,
+  20,
+  16,
+  35,
+  45,
+  12,
+  15,
+  52,
+  39,
+  53,
+  62,
+  56,
+  31,
+  33,
+  7,
+  4,
+  29,
+  59,
+  40,
+  64,
+  47,
+  6,
+  46,
+  18,
+  48,
+  57,
+  32,
+  50,
+  28,
+  44,
+  1,
+  43,
+  14,
+  34,
+  9,
+  5,
+  26,
+  11,
+  10,
+  58,
+  38,
+  54,
+  61,
+  60
+];
+
+// RAVE_MANDALA_WHEEL
+const RAVE_MANDALA_WHEEL = [
+  {
+    "position": 0,
+    "gate": 17,
+    "hexagram": 17,
+    "name": "澤雷隨",
+    "lower": "震",
+    "upper": "兌",
+    "binary": "100110",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 0,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 1,
+    "gate": 21,
+    "hexagram": 21,
+    "name": "火雷噬嗑",
+    "lower": "震",
+    "upper": "離",
+    "binary": "100101",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 5.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 2,
+    "gate": 51,
+    "hexagram": 51,
+    "name": "震為雷",
+    "lower": "震",
+    "upper": "震",
+    "binary": "100100",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 11.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 3,
+    "gate": 42,
+    "hexagram": 42,
+    "name": "風雷益",
+    "lower": "震",
+    "upper": "巽",
+    "binary": "100011",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 16.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 4,
+    "gate": 3,
+    "hexagram": 3,
+    "name": "水雷屯",
+    "lower": "震",
+    "upper": "坎",
+    "binary": "100010",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 22.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 5,
+    "gate": 27,
+    "hexagram": 27,
+    "name": "山雷頤",
+    "lower": "震",
+    "upper": "艮",
+    "binary": "100001",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 28.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 6,
+    "gate": 24,
+    "hexagram": 24,
+    "name": "地雷復",
+    "lower": "震",
+    "upper": "坤",
+    "binary": "100000",
+    "lines": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 33.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 7,
+    "gate": 2,
+    "hexagram": 2,
+    "name": "坤為地",
+    "lower": "坤",
+    "upper": "坤",
+    "binary": "000000",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 39.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 8,
+    "gate": 23,
+    "hexagram": 23,
+    "name": "山地剝",
+    "lower": "坤",
+    "upper": "艮",
+    "binary": "000001",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 45,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 9,
+    "gate": 8,
+    "hexagram": 8,
+    "name": "水地比",
+    "lower": "坤",
+    "upper": "坎",
+    "binary": "000010",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 50.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 10,
+    "gate": 20,
+    "hexagram": 20,
+    "name": "風地觀",
+    "lower": "坤",
+    "upper": "巽",
+    "binary": "000011",
+    "lines": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 56.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 11,
+    "gate": 16,
+    "hexagram": 16,
+    "name": "雷地豫",
+    "lower": "坤",
+    "upper": "震",
+    "binary": "000100",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 61.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 12,
+    "gate": 35,
+    "hexagram": 35,
+    "name": "火地晉",
+    "lower": "坤",
+    "upper": "離",
+    "binary": "000101",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 67.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 13,
+    "gate": 45,
+    "hexagram": 45,
+    "name": "澤地萃",
+    "lower": "坤",
+    "upper": "兌",
+    "binary": "000110",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 73.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 14,
+    "gate": 12,
+    "hexagram": 12,
+    "name": "天地否",
+    "lower": "坤",
+    "upper": "乾",
+    "binary": "000111",
+    "lines": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 78.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 15,
+    "gate": 15,
+    "hexagram": 15,
+    "name": "地山謙",
+    "lower": "艮",
+    "upper": "坤",
+    "binary": "001000",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 84.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 16,
+    "gate": 52,
+    "hexagram": 52,
+    "name": "艮為山",
+    "lower": "艮",
+    "upper": "艮",
+    "binary": "001001",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 90,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 17,
+    "gate": 39,
+    "hexagram": 39,
+    "name": "水山蹇",
+    "lower": "艮",
+    "upper": "坎",
+    "binary": "001010",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 95.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 18,
+    "gate": 53,
+    "hexagram": 53,
+    "name": "風山漸",
+    "lower": "艮",
+    "upper": "巽",
+    "binary": "001011",
+    "lines": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 101.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 19,
+    "gate": 62,
+    "hexagram": 62,
+    "name": "雷山小過",
+    "lower": "艮",
+    "upper": "震",
+    "binary": "001100",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 106.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 20,
+    "gate": 56,
+    "hexagram": 56,
+    "name": "火山旅",
+    "lower": "艮",
+    "upper": "離",
+    "binary": "001101",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 112.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 21,
+    "gate": 31,
+    "hexagram": 31,
+    "name": "澤山咸",
+    "lower": "艮",
+    "upper": "兌",
+    "binary": "001110",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 118.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 22,
+    "gate": 33,
+    "hexagram": 33,
+    "name": "天山遯",
+    "lower": "艮",
+    "upper": "乾",
+    "binary": "001111",
+    "lines": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 123.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 23,
+    "gate": 7,
+    "hexagram": 7,
+    "name": "地水師",
+    "lower": "坎",
+    "upper": "坤",
+    "binary": "010000",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 129.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 24,
+    "gate": 4,
+    "hexagram": 4,
+    "name": "山水蒙",
+    "lower": "坎",
+    "upper": "艮",
+    "binary": "010001",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 135,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 25,
+    "gate": 29,
+    "hexagram": 29,
+    "name": "坎為水",
+    "lower": "坎",
+    "upper": "坎",
+    "binary": "010010",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 140.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 26,
+    "gate": 59,
+    "hexagram": 59,
+    "name": "風水渙",
+    "lower": "坎",
+    "upper": "巽",
+    "binary": "010011",
+    "lines": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 146.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 27,
+    "gate": 40,
+    "hexagram": 40,
+    "name": "雷水解",
+    "lower": "坎",
+    "upper": "震",
+    "binary": "010100",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 151.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 28,
+    "gate": 64,
+    "hexagram": 64,
+    "name": "火水未濟",
+    "lower": "坎",
+    "upper": "離",
+    "binary": "010101",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 157.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 29,
+    "gate": 47,
+    "hexagram": 47,
+    "name": "澤水困",
+    "lower": "坎",
+    "upper": "兌",
+    "binary": "010110",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 163.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 30,
+    "gate": 6,
+    "hexagram": 6,
+    "name": "天水訟",
+    "lower": "坎",
+    "upper": "乾",
+    "binary": "010111",
+    "lines": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 168.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 31,
+    "gate": 46,
+    "hexagram": 46,
+    "name": "地風升",
+    "lower": "巽",
+    "upper": "坤",
+    "binary": "011000",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 174.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 32,
+    "gate": 18,
+    "hexagram": 18,
+    "name": "山風蠱",
+    "lower": "巽",
+    "upper": "艮",
+    "binary": "011001",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 180,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 33,
+    "gate": 48,
+    "hexagram": 48,
+    "name": "水風井",
+    "lower": "巽",
+    "upper": "坎",
+    "binary": "011010",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 185.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 34,
+    "gate": 57,
+    "hexagram": 57,
+    "name": "巽為風",
+    "lower": "巽",
+    "upper": "巽",
+    "binary": "011011",
+    "lines": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 191.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 35,
+    "gate": 32,
+    "hexagram": 32,
+    "name": "雷風恆",
+    "lower": "巽",
+    "upper": "震",
+    "binary": "011100",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 196.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 36,
+    "gate": 50,
+    "hexagram": 50,
+    "name": "火風鼎",
+    "lower": "巽",
+    "upper": "離",
+    "binary": "011101",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 202.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 37,
+    "gate": 28,
+    "hexagram": 28,
+    "name": "澤風大過",
+    "lower": "巽",
+    "upper": "兌",
+    "binary": "011110",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 208.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 38,
+    "gate": 44,
+    "hexagram": 44,
+    "name": "天風姤",
+    "lower": "巽",
+    "upper": "乾",
+    "binary": "011111",
+    "lines": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 213.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 39,
+    "gate": 1,
+    "hexagram": 1,
+    "name": "乾為天",
+    "lower": "乾",
+    "upper": "乾",
+    "binary": "111111",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 219.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 40,
+    "gate": 43,
+    "hexagram": 43,
+    "name": "澤天夬",
+    "lower": "乾",
+    "upper": "兌",
+    "binary": "111110",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 225,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 41,
+    "gate": 14,
+    "hexagram": 14,
+    "name": "火天大有",
+    "lower": "乾",
+    "upper": "離",
+    "binary": "111101",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 230.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 42,
+    "gate": 34,
+    "hexagram": 34,
+    "name": "雷天大壯",
+    "lower": "乾",
+    "upper": "震",
+    "binary": "111100",
+    "lines": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 236.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 43,
+    "gate": 9,
+    "hexagram": 9,
+    "name": "風天小畜",
+    "lower": "乾",
+    "upper": "巽",
+    "binary": "111011",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 241.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 44,
+    "gate": 5,
+    "hexagram": 5,
+    "name": "水天需",
+    "lower": "乾",
+    "upper": "坎",
+    "binary": "111010",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 247.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 45,
+    "gate": 26,
+    "hexagram": 26,
+    "name": "山天大畜",
+    "lower": "乾",
+    "upper": "艮",
+    "binary": "111001",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 253.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 46,
+    "gate": 11,
+    "hexagram": 11,
+    "name": "地天泰",
+    "lower": "乾",
+    "upper": "坤",
+    "binary": "111000",
+    "lines": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 258.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 47,
+    "gate": 10,
+    "hexagram": 10,
+    "name": "天澤履",
+    "lower": "兌",
+    "upper": "乾",
+    "binary": "110111",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 264.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 48,
+    "gate": 58,
+    "hexagram": 58,
+    "name": "兌為澤",
+    "lower": "兌",
+    "upper": "兌",
+    "binary": "110110",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 270,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 49,
+    "gate": 38,
+    "hexagram": 38,
+    "name": "火澤睽",
+    "lower": "兌",
+    "upper": "離",
+    "binary": "110101",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 275.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 50,
+    "gate": 54,
+    "hexagram": 54,
+    "name": "雷澤歸妹",
+    "lower": "兌",
+    "upper": "震",
+    "binary": "110100",
+    "lines": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 281.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 51,
+    "gate": 61,
+    "hexagram": 61,
+    "name": "風澤中孚",
+    "lower": "兌",
+    "upper": "巽",
+    "binary": "110011",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 286.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 52,
+    "gate": 60,
+    "hexagram": 60,
+    "name": "水澤節",
+    "lower": "兌",
+    "upper": "坎",
+    "binary": "110010",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 292.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 53,
+    "gate": 41,
+    "hexagram": 41,
+    "name": "山澤損",
+    "lower": "兌",
+    "upper": "艮",
+    "binary": "110001",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 298.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 54,
+    "gate": 19,
+    "hexagram": 19,
+    "name": "地澤臨",
+    "lower": "兌",
+    "upper": "坤",
+    "binary": "110000",
+    "lines": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 303.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 55,
+    "gate": 13,
+    "hexagram": 13,
+    "name": "天火同人",
+    "lower": "離",
+    "upper": "乾",
+    "binary": "101111",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 309.375,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 56,
+    "gate": 49,
+    "hexagram": 49,
+    "name": "澤火革",
+    "lower": "離",
+    "upper": "兌",
+    "binary": "101110",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 315,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 57,
+    "gate": 30,
+    "hexagram": 30,
+    "name": "離為火",
+    "lower": "離",
+    "upper": "離",
+    "binary": "101101",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 320.625,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 58,
+    "gate": 55,
+    "hexagram": 55,
+    "name": "雷火豐",
+    "lower": "離",
+    "upper": "震",
+    "binary": "101100",
+    "lines": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 326.25,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 59,
+    "gate": 37,
+    "hexagram": 37,
+    "name": "風火家人",
+    "lower": "離",
+    "upper": "巽",
+    "binary": "101011",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 331.875,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 60,
+    "gate": 63,
+    "hexagram": 63,
+    "name": "水火既濟",
+    "lower": "離",
+    "upper": "坎",
+    "binary": "101010",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "angleFromTopDeg": 337.5,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 61,
+    "gate": 22,
+    "hexagram": 22,
+    "name": "山火賁",
+    "lower": "離",
+    "upper": "艮",
+    "binary": "101001",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1
+    ],
+    "angleFromTopDeg": 343.125,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 62,
+    "gate": 36,
+    "hexagram": 36,
+    "name": "地火明夷",
+    "lower": "離",
+    "upper": "坤",
+    "binary": "101000",
+    "lines": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "angleFromTopDeg": 348.75,
+    "sliceDeg": 5.625
+  },
+  {
+    "position": 63,
+    "gate": 25,
+    "hexagram": 25,
+    "name": "天雷無妄",
+    "lower": "震",
+    "upper": "乾",
+    "binary": "100111",
+    "lines": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    "angleFromTopDeg": 354.375,
+    "sliceDeg": 5.625
+  }
+];
+
+// MANDALA_ANCHOR
+const MANDALA_ANCHOR = {
+  "position": 0,
+  "gate": 17,
+  "hexagram": 17,
+  "name": "澤雷隨",
+  "binary": "100110",
+  "at": "12點鐘頂點",
+  "direction": "clockwise",
+  "sliceDeg": 5.625
+};
+
+
+
+
+
+
+
+
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -380,7 +3359,11 @@ if (typeof module !== 'undefined' && module.exports) {
     PEARL_SEQUENCE_COORDS,
     STAR_PEARL_COORDS,
     GOLDEN_PATHWAYS,
-    SUB_SEQUENCE_PATHWAYS
+    SUB_SEQUENCE_PATHWAYS,
+    HEXAGRAM_MATRIX_64,
+    RAVE_MANDALA_ORDER,
+    RAVE_MANDALA_WHEEL,
+    MANDALA_ANCHOR
   };
 }
 

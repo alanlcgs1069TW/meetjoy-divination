@@ -299,9 +299,32 @@
               <stop offset="85%" stop-color="#4338CA"/>
               <stop offset="100%" stop-color="#1E1B4B"/>
             </radialGradient>
+
+            <!-- 圓滿模式專屬：雙色分割立體球 -->
+            <linearGradient id="grad_lifeswork_split" x1="8%" y1="88%" x2="88%" y2="12%">
+              <stop offset="0%" stop-color="#075985"/>
+              <stop offset="43%" stop-color="#2563EB"/>
+              <stop offset="48%" stop-color="#1D4ED8"/>
+              <stop offset="52%" stop-color="#16A34A"/>
+              <stop offset="100%" stop-color="#14532D"/>
+            </linearGradient>
+            <linearGradient id="grad_core_split" x1="0%" y1="50%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#7F1D1D"/>
+              <stop offset="44%" stop-color="#DC2626"/>
+              <stop offset="50%" stop-color="#B91C1C"/>
+              <stop offset="54%" stop-color="#1D4ED8"/>
+              <stop offset="100%" stop-color="#082F49"/>
+            </linearGradient>
+            <radialGradient id="grad_sphere_highlight" cx="31%" cy="22%" r="74%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.58"/>
+              <stop offset="28%" stop-color="#FFFFFF" stop-opacity="0.12"/>
+              <stop offset="72%" stop-color="#FFFFFF" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#020617" stop-opacity="0.22"/>
+            </radialGradient>
           </defs>
 
-          <!-- 1. 底層易經 64 卦輪盤 (I Ching 64 Hexagrams Ring) -->
+          <!-- 1. 生命之花與易經 64 卦輪盤 -->
+          <g id="layer_flower_of_life" aria-label="生命之花神聖幾何背景"></g>
           <g id="layer_hexagram_wheel" opacity="0.45"></g>
 
           <!-- 2. 中層幾何通道網絡 (Pathways Layer) -->
@@ -607,28 +630,66 @@
       if (badge) badge.textContent = cfg.badge;
     }
 
-    // 繪製背景 64 卦輪盤
+    // Rave Mandala 閘門順序旋轉至第 17 閘門，固定在 12 點鐘方向。
+    const RAVE_MANDALA_WHEEL_ORDER = [17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25];
+    const TRIGRAM_LINES = { '天': '111', '澤': '110', '火': '101', '雷': '100', '風': '011', '水': '010', '山': '001', '地': '000' };
+    const SPECIAL_HEXAGRAMS = { 1: '111111', 2: '000000', 29: '010010', 30: '101101', 51: '100100', 52: '001001', 57: '011011', 58: '110110' };
+
+    function getHexagramLines(gate) {
+      if (SPECIAL_HEXAGRAMS[gate]) return SPECIAL_HEXAGRAMS[gate];
+      const title = GENE_KEYS_64[gate] && GENE_KEYS_64[gate].hex;
+      if (!title) return '000000';
+      const upper = TRIGRAM_LINES[title[0]];
+      const lower = TRIGRAM_LINES[title[1]];
+      return upper && lower ? lower + upper : '000000'; // 初爻 → 上爻
+    }
+
+    // 生命之花：六角晶格交疊圓環，以中心 (480, 370) 對稱展開，全域覆蓋 960x760 畫布。
+    function renderFlowerOfLife() {
+      const layer = document.getElementById('layer_flower_of_life');
+      layer.innerHTML = '';
+      const dark = document.body.classList.contains('dark-mode');
+      const radius = 50, dx = radius * Math.sqrt(3), dy = radius * 1.5;
+      const stroke = dark ? '#1E293B' : '#E2E8F0';
+      const cx = 480, cy = 370;
+      for (let row = -6; row <= 6; row++) {
+        for (let col = -7; col <= 7; col++) {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', cx + col * dx + (Math.abs(row) % 2 ? dx / 2 : 0));
+          circle.setAttribute('cy', cy + row * dy);
+          circle.setAttribute('r', radius);
+          circle.setAttribute('fill', 'none');
+          circle.setAttribute('stroke', stroke);
+          circle.setAttribute('stroke-width', '0.8');
+          layer.appendChild(circle);
+        }
+      }
+    }
+
+    // 繪製背景 64 卦輪盤：每一卦均依真實六爻陰陽結構繪製。
     function renderHexagramWheel(svg) {
       const layer = document.getElementById('layer_hexagram_wheel');
       layer.innerHTML = '';
 
       const cx = 480, cy = 370;
-      const rOuter = 340;
-      const rInner = 280;
+      const rOuter = 356;
+      const rInner = 308;
+      const dark = document.body.classList.contains('dark-mode');
+      const ringStroke = dark ? '#475569' : '#94A3B8';
+      const yaoStroke = dark ? '#94A3B8' : '#64748B';
 
       // 雙重細同心圓
       const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       c1.setAttribute('cx', cx); c1.setAttribute('cy', cy); c1.setAttribute('r', rOuter);
-      c1.setAttribute('fill', 'none'); c1.setAttribute('stroke', '#CBD5E1'); c1.setAttribute('stroke-width', '1.5');
+      c1.setAttribute('fill', dark ? 'rgba(15,23,42,0.10)' : 'rgba(248,250,252,0.18)'); c1.setAttribute('stroke', ringStroke); c1.setAttribute('stroke-width', '1.35');
       layer.appendChild(c1);
 
       const c2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       c2.setAttribute('cx', cx); c2.setAttribute('cy', cy); c2.setAttribute('r', rInner);
-      c2.setAttribute('fill', 'none'); c2.setAttribute('stroke', '#E2E8F0'); c2.setAttribute('stroke-width', '1');
-      c2.setAttribute('stroke-dasharray', '2 4');
+      c2.setAttribute('fill', 'none'); c2.setAttribute('stroke', ringStroke); c2.setAttribute('stroke-width', '1.15');
       layer.appendChild(c2);
 
-      // 64 卦放射刻度線與卦象示意 (對標截圖外環易經卦線)
+      // 64 卦放射刻度與六爻；爻線沿半徑方向，由內環初爻排至外環上爻。
       for (let i = 0; i < 64; i++) {
         const deg = (i * 360 / 64) - 90;
         const rad = deg * Math.PI / 180;
@@ -640,21 +701,29 @@
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', p1x); line.setAttribute('y1', p1y);
         line.setAttribute('x2', p2x); line.setAttribute('y2', p2y);
-        line.setAttribute('stroke', '#94A3B8');
+        line.setAttribute('stroke', ringStroke);
         line.setAttribute('stroke-width', i % 4 === 0 ? '1.5' : '0.6');
         layer.appendChild(line);
 
-        // 每隔 8 卦繪製易經爻劃示意
-        if (i % 8 === 0) {
-          const pMidX = cx + Math.cos(rad) * (rInner + 18);
-          const pMidY = cy + Math.sin(rad) * (rInner + 18);
-          const trigram = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          trigram.setAttribute('x', pMidX); trigram.setAttribute('y', pMidY + 3);
-          trigram.setAttribute('font-size', '8');
-          trigram.setAttribute('fill', '#94A3B8');
-          trigram.setAttribute('text-anchor', 'middle');
-          trigram.textContent = '☰';
-          layer.appendChild(trigram);
+        const gate = RAVE_MANDALA_WHEEL_ORDER[i];
+        const yao = (typeof HEXAGRAM_MATRIX_64 !== 'undefined' && HEXAGRAM_MATRIX_64[gate])
+          ? HEXAGRAM_MATRIX_64[gate].binary
+          : getHexagramLines(gate);
+        const tangentX = -Math.sin(rad), tangentY = Math.cos(rad);
+        const barHalf = 5.3, gap = 1.9;
+        for (let lineIndex = 0; lineIndex < 6; lineIndex++) {
+          const r = rInner + 5 + lineIndex * 6.45;
+          const mx = cx + Math.cos(rad) * r, my = cy + Math.sin(rad) * r;
+          const drawBar = (start, end) => {
+            const bar = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            bar.setAttribute('x1', mx + tangentX * start); bar.setAttribute('y1', my + tangentY * start);
+            bar.setAttribute('x2', mx + tangentX * end); bar.setAttribute('y2', my + tangentY * end);
+            bar.setAttribute('stroke', yaoStroke); bar.setAttribute('stroke-width', '1.5');
+            bar.setAttribute('stroke-linecap', 'square');
+            layer.appendChild(bar);
+          };
+          if (yao[lineIndex] === '1') drawBar(-barHalf, barHalf);
+          else { drawBar(-barHalf, -gap); drawBar(gap, barHalf); }
         }
       }
     }
@@ -766,7 +835,9 @@
           gradId = ['relationship', 'stability', 'creativity'].includes(key) ? 'grad_core' : 'grad_pearl';
         } else {
           // wholeness
-          if (s.seq === 'venus') gradId = key === 'core' ? 'grad_core' : 'grad_venus';
+          if (key === 'lifesWork') gradId = 'grad_lifeswork_split';
+          else if (key === 'core') gradId = 'grad_core_split';
+          else if (s.seq === 'venus') gradId = 'grad_venus';
           else if (s.seq === 'pearl') gradId = 'grad_pearl';
           else gradId = 'grad_activation';
         }
@@ -782,6 +853,16 @@
         circle.setAttribute('stroke', isActive ? '#F59E0B' : '#FFFFFF');
         circle.setAttribute('stroke-width', isActive ? '4.5' : '2');
         g.appendChild(circle);
+
+        // 分割球仍保有玻璃高光與暗部，避免淪為平面二色圖示。
+        if (CURRENT_SUB_SEQUENCE === 'wholeness' && (key === 'lifesWork' || key === 'core')) {
+          const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          highlight.setAttribute('cx', cx); highlight.setAttribute('cy', cy);
+          highlight.setAttribute('r', isActive ? 35 : sphereRadius);
+          highlight.setAttribute('fill', 'url(#grad_sphere_highlight)');
+          highlight.setAttribute('pointer-events', 'none');
+          g.appendChild(highlight);
+        }
 
         // 球內文字：閘門.爻線 (例如 17.2)
         const gateText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -990,6 +1071,7 @@
 
       // 4. 繪製全息畫布
       const svg = document.getElementById('gene_keys_svg');
+      renderFlowerOfLife();
       renderHexagramWheel(svg);
       renderPathways(CURRENT_PROFILE);
       renderSpheres(CURRENT_PROFILE);
@@ -1006,6 +1088,10 @@
     // 暗夜模式切換
     document.getElementById('btn_dark_mode').addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
+      if (CURRENT_PROFILE) {
+        renderFlowerOfLife();
+        renderHexagramWheel(document.getElementById('gene_keys_svg'));
+      }
     });
 
     // 全螢幕切換
@@ -1032,7 +1118,15 @@
     // 初始化加載
     window.addEventListener('DOMContentLoaded', () => {
       initCityDropdown();
+      const params = new URLSearchParams(window.location.search);
+      const seq = params.get('seq');
+      if (seq && SUB_SEQ_CONFIG[seq]) {
+        CURRENT_SUB_SEQUENCE = seq;
+      }
       renderGeneKeysChart();
+      if (seq && SUB_SEQ_CONFIG[seq]) {
+        switchSubSequence(seq);
+      }
     });
   </script>
 </body>
