@@ -45,18 +45,25 @@
       color: #F1F5F9;
     }
 
-    /* 天命球體樣式 */
+    /* 天命球體樣式 - 鎖定中心點，防止縮放造成端點偏移脫節 */
     .gk-sphere-group {
       cursor: pointer;
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-box: fill-box;
+      transform-origin: center center;
     }
-    .gk-sphere-group:hover {
-      transform: scale(1.08);
-      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+    .gk-sphere-group circle.sphere-body {
+      transition: r 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.22s ease, stroke-width 0.22s ease, filter 0.22s ease;
     }
-    .gk-sphere-group.is-active {
-      transform: scale(1.12);
-      filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.9));
+    .gk-sphere-group:hover circle.sphere-body {
+      stroke: #FBBF24;
+      stroke-width: 3.5;
+      filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.75));
+    }
+    .gk-sphere-group.is-active circle.sphere-body {
+      stroke: #F59E0B;
+      stroke-width: 4.5;
+      r: 35;
+      filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.95));
     }
 
     /* 隱藏標籤過濾 */
@@ -689,29 +696,16 @@
         const x2 = (toCoord.x / 100) * w;
         const y2 = (toCoord.y / 100) * h;
 
-        if (pw.curved && CURRENT_SUB_SEQUENCE === 'wholeness') {
-          // 弧形回環通道 (使命 -> 生命工作)
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          const ctrlX = x1 - 190;
-          const ctrlY = (y1 + y2) / 2;
-          path.setAttribute('d', `M ${x1} ${y1} Q ${ctrlX} ${ctrlY} ${x2} ${y2}`);
-          path.setAttribute('fill', 'none');
-          path.setAttribute('stroke', pw.color || '#10B981');
-          path.setAttribute('stroke-width', '2.5');
-          path.setAttribute('opacity', '0.78');
-          path.setAttribute('class', 'pathway-line');
-          layer.appendChild(path);
-        } else {
-          // 直線通道 (對標截圖各分盤線條)
-          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-          line.setAttribute('stroke', pw.color || '#2563EB');
-          line.setAttribute('stroke-width', '2.5');
-          line.setAttribute('opacity', '0.78');
-          line.setAttribute('class', 'pathway-line');
-          layer.appendChild(line);
-        }
+        // 直線神聖幾何通道 (端點對齊球心，圓頭收尾)
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+        line.setAttribute('stroke', pw.color || '#2563EB');
+        line.setAttribute('stroke-width', '2.5');
+        line.setAttribute('stroke-linecap', 'round');
+        line.setAttribute('opacity', '0.78');
+        line.setAttribute('class', 'pathway-line');
+        layer.appendChild(line);
       });
     }
 
@@ -752,9 +746,11 @@
           else if (key === 'vocation' && s.line === 3) lineTag = '戰略（執行） · 三爻';
         }
 
-        // 球體群組
+        const isActive = key === ACTIVE_SPHERE_ID;
+
+        // 球體群組 (設定 transform-origin 於精確中心)
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.setAttribute('class', `gk-sphere-group ${key === ACTIVE_SPHERE_ID ? 'is-active' : ''}`);
+        g.setAttribute('class', `gk-sphere-group ${isActive ? 'is-active' : ''}`);
         g.setAttribute('data-id', key);
         g.onclick = () => selectSphere(key);
 
@@ -775,15 +771,16 @@
           else gradId = 'grad_activation';
         }
 
-        // 實體發光立體球
+        // 實體發光立體球 (端點被 32px 實心球體完美遮覆，永不漏邊)
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('class', 'sphere-body');
         circle.setAttribute('cx', cx);
         circle.setAttribute('cy', cy);
-        circle.setAttribute('r', sphereRadius);
+        circle.setAttribute('r', isActive ? 35 : sphereRadius);
         circle.setAttribute('fill', `url(#${gradId})`);
         circle.setAttribute('filter', 'url(#sphere_shadow)');
-        circle.setAttribute('stroke', '#FFFFFF');
-        circle.setAttribute('stroke-width', '2');
+        circle.setAttribute('stroke', isActive ? '#F59E0B' : '#FFFFFF');
+        circle.setAttribute('stroke-width', isActive ? '4.5' : '2');
         g.appendChild(circle);
 
         // 球內文字：閘門.爻線 (例如 17.2)
@@ -874,7 +871,14 @@
     function selectSphere(key) {
       ACTIVE_SPHERE_ID = key;
       document.querySelectorAll('.gk-sphere-group').forEach(el => {
-        el.classList.toggle('is-active', el.getAttribute('data-id') === key);
+        const isActive = el.getAttribute('data-id') === key;
+        el.classList.toggle('is-active', isActive);
+        const c = el.querySelector('circle.sphere-body');
+        if (c) {
+          c.setAttribute('r', isActive ? 35 : 32);
+          c.setAttribute('stroke', isActive ? '#F59E0B' : '#FFFFFF');
+          c.setAttribute('stroke-width', isActive ? '4.5' : '2');
+        }
       });
 
       const s = CURRENT_PROFILE.spheres[key];

@@ -296,13 +296,14 @@ const STAR_PEARL_COORDS = {
 
 // 全息通道網絡連線 (Pathways) - 完整全譜
 const GOLDEN_PATHWAYS = [
-  // 激活序列綠線 (The Activation Sequence)
-  { from: 'lifesWork', to: 'evolution', color: '#10B981', seq: 'activation', name: '突破通道' },
-  { from: 'evolution', to: 'radiance', color: '#10B981', seq: 'activation', name: '挑戰通道' },
-  { from: 'radiance', to: 'purpose', color: '#10B981', seq: 'activation', name: '扎根通道' },
-  { from: 'purpose', to: 'lifesWork', color: '#10B981', seq: 'activation', name: '天命循環通道' },
+  // 激活序列綠線 (The Activation Sequence - 神聖幾何大菱形)
+  { from: 'lifesWork', to: 'evolution', color: '#10B981', seq: 'activation', name: '挑戰通道' },
+  { from: 'evolution', to: 'purpose', color: '#10B981', seq: 'activation', name: '進化回響通道' },
+  { from: 'purpose', to: 'radiance', color: '#10B981', seq: 'activation', name: '扎根通道' },
+  { from: 'radiance', to: 'lifesWork', color: '#10B981', seq: 'activation', name: '光芒顯化通道' },
+  { from: 'evolution', to: 'radiance', color: '#10B981', seq: 'activation', name: '突破通道' },
 
-  // 金星序列紅線 (The Venus Sequence)
+  // 金星序列紅線 (The Venus Sequence - 心靈聖杯天梯)
   { from: 'purpose', to: 'attraction', color: '#E11D48', seq: 'venus', name: '業力吸引力通道' },
   { from: 'attraction', to: 'iq', color: '#E11D48', seq: 'venus', name: '心智轉化通道' },
   { from: 'attraction', to: 'eq', color: '#E11D48', seq: 'venus', name: '情緒轉化通道' },
@@ -311,20 +312,21 @@ const GOLDEN_PATHWAYS = [
   { from: 'eq', to: 'sq', color: '#E11D48', seq: 'venus', name: '心輪開啟通道' },
   { from: 'sq', to: 'core', color: '#E11D48', seq: 'venus', name: '核心創傷通道' },
 
-  // 珍珠序列藍線 (The Pearl Sequence)
+  // 珍珠序列藍線 (The Pearl Sequence - 世俗豐盛梅爾卡巴)
   { from: 'core', to: 'culture', color: '#0EA5E9', seq: 'pearl', name: '天職創造力通道' },
   { from: 'culture', to: 'pearl', color: '#0EA5E9', seq: 'pearl', name: '社群豐盛通道' },
   { from: 'core', to: 'pearl', color: '#0EA5E9', seq: 'pearl', name: '本質變現通道' },
   { from: 'pearl', to: 'lifesWork', color: '#0EA5E9', seq: 'pearl', name: '品牌顯化通道' }
 ];
 
-// 各分盤專屬通道網絡
+// 各分盤專屬通道網絡 (100% 幾何閉合與端點對齊)
 const SUB_SEQUENCE_PATHWAYS = {
   activation: [
     { from: 'lifesWork', to: 'evolution', color: '#10B981' },
-    { from: 'evolution', to: 'radiance', color: '#10B981' },
-    { from: 'radiance', to: 'purpose', color: '#10B981' },
-    { from: 'purpose', to: 'lifesWork', color: '#10B981' }
+    { from: 'evolution', to: 'purpose', color: '#10B981' },
+    { from: 'purpose', to: 'radiance', color: '#10B981' },
+    { from: 'radiance', to: 'lifesWork', color: '#10B981' },
+    { from: 'evolution', to: 'radiance', color: '#10B981' }
   ],
   venus: [
     { from: 'purpose', to: 'attraction', color: '#E11D48' },
