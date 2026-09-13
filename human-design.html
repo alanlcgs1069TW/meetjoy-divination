@@ -230,11 +230,6 @@
                 <ellipse cx="200" cy="360" rx="162" ry="215" fill="none" stroke="#E2E8F0" stroke-width="1.2" stroke-dasharray="4,4"/>
               </g>
 
-              <!-- 36 條寬闊雙向通道管道層 (底管 + 半通道啟動層) -->
-              <g id="svg_channels_layer" stroke-linecap="round">
-                <!-- 由 JS 動態繪製底層寬管道與啟動色彩 (紅/黑/斑馬紋) -->
-              </g>
-
               <!-- 九大中心幾何圖形層 (乾淨正統現代幾何，對標桌面專業截圖) -->
               <g id="svg_centers_layer">
                 <!-- 1. 頭部中心 (Head) 正三角形 尖頂朝上 -->
@@ -259,7 +254,7 @@
 
                 <!-- 5. 意志力中心 (Heart / Ego) 標準正統倒三角微向左偏 (26 號閘門寬敞清晰) -->
                 <g class="crystal-center cursor-pointer transition" data-center="Heart" id="center_Heart">
-                  <polygon points="280,316 314,378 240,378" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2" class="crystal-base"/>
+                  <polygon points="278,316 314,378 238,378" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2" class="crystal-base"/>
                 </g>
 
                 <!-- 6. 直覺脾中心 (Spleen) 左直角三角形指向右 -->
@@ -281,6 +276,11 @@
                 <g class="crystal-center cursor-pointer transition" data-center="Root" id="center_Root">
                   <rect x="165" y="535" width="70" height="65" rx="8" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2" class="crystal-base"/>
                 </g>
+              </g>
+
+              <!-- 36 條寬闊雙向通道管道層 (底管 + 半通道啟動層，在中心層之上、閘門徽章之下) -->
+              <g id="svg_channels_layer" stroke-linecap="round">
+                <!-- 由 JS 動態繪製底層寬管道與啟動色彩 (紅/黑/斑馬紋) -->
               </g>
 
               <!-- 64 閘門標籤與高亮徽章層 (Gate Badges) -->
@@ -422,10 +422,10 @@
       12: [226, 228], 35: [226, 212],
       // G中心 (Identity)
       7: [182, 312], 1: [200, 300], 13: [218, 312],
-      10: [172, 335], 25: [228, 335],
-      15: [182, 358], 2: [200, 370], 46: [218, 358],
+      10: [172, 335], 25: [234, 335],
+      15: [180, 358], 2: [200, 370], 46: [220, 358],
       // 意志力心輪 (Heart) 標準正統倒三角微向左偏 (閘門26大空間清晰展現)
-      21: [280, 328], 51: [254, 346], 26: [256, 368], 40: [298, 368],
+      21: [280, 328], 51: [258, 348], 26: [256, 368], 40: [298, 368],
       // 脾臟直覺中心 (Spleen) 嚴格拉開 20px+ 安全間距
       48: [78, 398], 57: [98, 415], 44: [118, 432], 50: [120, 458],
       32: [104, 474], 28: [88, 490], 18: [72, 502],
@@ -473,11 +473,11 @@
       { id: '35-36', g1: 35, g2: 36, p0: [226, 212], ctrl: [388, 300], p2: [330, 392] },
       { id: '12-22', g1: 12, g2: 22, p0: [226, 228], ctrl: [316, 285], pMid: [318, 365], ctrl2: [310, 395], p2: [302, 415], type: 'two-segment' },
       // G中心至心輪 (G -> Heart)
-      { id: '25-51', g1: 25, g2: 51, p0: [228, 335], ctrl: null, p2: [254, 346] },
-      // G中心至薦骨 (G -> Sacral)
-      { id: '15-5',  g1: 15, g2: 5,  p0: [182, 358], ctrl: null, p2: [180, 425] },
+      { id: '25-51', g1: 25, g2: 51, p0: [234, 335], ctrl: null, p2: [258, 348] },
+      // G中心至薦骨 (G -> Sacral，三條垂直平行通道，端點100%垂直對齊)
+      { id: '15-5',  g1: 15, g2: 5,  p0: [180, 358], ctrl: null, p2: [180, 425] },
       { id: '2-14',  g1: 2,  g2: 14, p0: [200, 370], ctrl: null, p2: [200, 425] },
-      { id: '46-29', g1: 46, g2: 29, p0: [218, 358], ctrl: null, p2: [220, 425] },
+      { id: '46-29', g1: 46, g2: 29, p0: [220, 358], ctrl: null, p2: [220, 425] },
       // 心輪至脾臟 (Heart -> Spleen) 走 G 與 薦骨間隙 (Y=400)，乾淨不纏繞
       { id: '26-44', g1: 26, g2: 44, p0: [256, 368], ctrl: [186, 400], p2: [118, 432] },
       // 心輪至情緒中心 (Heart -> Solar Plexus)
@@ -528,14 +528,35 @@
 
       const p0 = ch.p0, ctrl = ch.ctrl, p2 = ch.p2;
       if (!ctrl) {
-        const mx = (p0[0] + p2[0]) / 2;
-        const my = (p0[1] + p2[1]) / 2;
-        const half1 = `M ${p0[0]},${p0[1]} L ${mx},${my}`;
-        const half2 = `M ${mx},${my} L ${p2[0]},${p2[1]}`;
+        const dx = p2[0] - p0[0];
+        const dy = p2[1] - p0[1];
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // 懸掛通道比例：標準中點為 0.5 (50%)
+        // 若通道長度較短 (例如 25-51 跨度僅約 27px)，取 0.5 扣除圓圈徽章半徑 7.5px 後露出過短易產生未繪製錯覺
+        // 動態保證：懸掛段至少露出徽章外 11px，且不超過通道總長 66% (維持清晰斷開，絕不與對向閘門黏連)
+        let hangRatio = 0.5;
+        if (dist > 0) {
+          const minVisibleLen = 11;
+          const targetHangLen = Math.min(dist * 0.66, 7.5 + minVisibleLen);
+          hangRatio = Math.max(0.5, targetHangLen / dist);
+          hangRatio = Math.min(0.66, hangRatio);
+        }
+
+        const mx1 = p0[0] + dx * hangRatio;
+        const my1 = p0[1] + dy * hangRatio;
+        const mx2 = p2[0] - dx * hangRatio;
+        const my2 = p2[1] - dy * hangRatio;
+
+        const half1 = `M ${p0[0]},${p0[1]} L ${(p0[0] + p2[0]) / 2},${(p0[1] + p2[1]) / 2}`;
+        const half2 = `M ${(p0[0] + p2[0]) / 2},${(p0[1] + p2[1]) / 2} L ${p2[0]},${p2[1]}`;
+        const hang1 = `M ${p0[0]},${p0[1]} L ${mx1},${my1}`;
+        const hang2 = `M ${mx2},${my2} L ${p2[0]},${p2[1]}`;
+
         return {
           full: `M ${p0[0]},${p0[1]} L ${p2[0]},${p2[1]}`,
           defHalf1: half1, defHalf2: half2,
-          hangHalf1: half1, hangHalf2: half2
+          hangHalf1: hang1, hangHalf2: hang2
         };
       } else {
         const q1 = [(p0[0] + ctrl[0]) / 2, (p0[1] + ctrl[1]) / 2];
