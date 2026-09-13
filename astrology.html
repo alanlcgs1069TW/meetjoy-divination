@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>MeetJoy 西洋占星星盤排盤大典 (AstroChart Radix Pro)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
@@ -729,16 +732,16 @@
         // 癒見占星魔法 色彩：硬相位深緋紅、軟相位皇家深藍、梅花相翡翠綠 (粗線高飽和，比照紫微斗數絕對清晰)
         if (asp.angle === 90 || asp.angle === 180 || asp.angle === 0) {
           line.setAttribute('stroke', '#991B1B');
-          line.setAttribute('stroke-width', '2.4');
+          line.setAttribute('stroke-width', '3.0');
           line.setAttribute('opacity', '1.0');
         } else if (asp.angle === 120 || asp.angle === 60) {
           line.setAttribute('stroke', '#1D4ED8');
-          line.setAttribute('stroke-width', '2.2');
+          line.setAttribute('stroke-width', '2.6');
           line.setAttribute('opacity', '0.95');
         } else if (asp.angle === 150) {
           line.setAttribute('stroke', '#15803D');
-          line.setAttribute('stroke-width', '2.0');
-          line.setAttribute('stroke-dasharray', '3.5 3');
+          line.setAttribute('stroke-width', '2.2');
+          line.setAttribute('stroke-dasharray', '4 3');
           line.setAttribute('opacity', '0.95');
         } else {
           line.setAttribute('stroke', '#64748B');

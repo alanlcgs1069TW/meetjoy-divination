@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>西洋地占神聖排盤 · 大地之針全息推演 ｜ 癒見幸福 · 魔法占星學院</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -97,21 +100,29 @@
     }
     
     .center-box {
-      fill: #F9F5EC;
+      fill: #FFFDF8;
       stroke: #2E3829;
       stroke-width: 2.5;
     }
     .center-cell {
       cursor: pointer;
+    }
+    .center-cell rect.cell-bg {
       transition: all 0.2s ease;
+      fill: #FFFDF8;
     }
-    .center-cell:hover {
-      fill: #F5EBDA;
+    .center-cell:hover rect.cell-bg {
+      fill: #FEF3C7;
     }
-    .center-cell.active-house {
-      fill: #FDF3DB !important;
-      stroke: #B8860B !important;
-      stroke-width: 2 !important;
+    .center-cell.active-house rect.cell-bg {
+      fill: #FEF3C7 !important;
+      stroke: #B45309 !important;
+      stroke-width: 2.5 !important;
+    }
+    svg text {
+      stroke: none !important;
+      -webkit-user-select: none;
+      user-select: none;
     }
     
     /* 沙盤點擊區 */
@@ -952,26 +963,26 @@
 
         <!-- XIV 左證人 (左上) -->
         <g onclick="selectSlot('w14')" class="center-cell ${activeSlotKey === 'w14' ? 'active-house' : ''}">
-          <rect x="231" y="231" width="118" height="118" fill="transparent" />
-          <text x="290" y="254" font-family="'Noto Serif TC', serif" font-weight="900" font-size="14.5" fill="#1D4ED8" text-anchor="middle">XIV 左證人</text>
-          <text x="290" y="272" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="13.5" fill="#1E293B" text-anchor="middle">${currentChart.witnesses.left.zh}</text>
-          ${renderSvgDots(currentChart.witnesses.left.dots, 290, 283, 7.2, 4.2)}
+          <rect x="231" y="231" width="118" height="118" class="cell-bg" fill="#FFFDF8" stroke="#E2E8F0" stroke-width="1" />
+          <text x="290" y="255" font-family="'Noto Serif TC', serif" font-weight="900" font-size="15" fill="#1D4ED8" text-anchor="middle">XIV 左證人</text>
+          <text x="290" y="275" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="14" fill="#0F172A" text-anchor="middle">${currentChart.witnesses.left.zh}</text>
+          ${renderSvgDots(currentChart.witnesses.left.dots, 290, 286, 7.5, 4.5)}
         </g>
 
         <!-- XIII 右證人 (右上) -->
         <g onclick="selectSlot('w13')" class="center-cell ${activeSlotKey === 'w13' ? 'active-house' : ''}">
-          <rect x="351" y="231" width="118" height="118" fill="transparent" />
-          <text x="410" y="254" font-family="'Noto Serif TC', serif" font-weight="900" font-size="14.5" fill="#047857" text-anchor="middle">XIII 右證人</text>
-          <text x="410" y="272" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="13.5" fill="#1E293B" text-anchor="middle">${currentChart.witnesses.right.zh}</text>
-          ${renderSvgDots(currentChart.witnesses.right.dots, 410, 283, 7.2, 4.2)}
+          <rect x="351" y="231" width="118" height="118" class="cell-bg" fill="#FFFDF8" stroke="#E2E8F0" stroke-width="1" />
+          <text x="410" y="255" font-family="'Noto Serif TC', serif" font-weight="900" font-size="15" fill="#047857" text-anchor="middle">XIII 右證人</text>
+          <text x="410" y="275" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="14" fill="#0F172A" text-anchor="middle">${currentChart.witnesses.right.zh}</text>
+          ${renderSvgDots(currentChart.witnesses.right.dots, 410, 286, 7.5, 4.5)}
         </g>
 
         <!-- XV 終審法官 (下方) -->
         <g onclick="selectSlot('j15')" class="center-cell ${activeSlotKey === 'j15' ? 'active-house' : ''}">
-          <rect x="231" y="351" width="238" height="118" fill="transparent" />
-          <text x="350" y="375" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16" fill="#8A5800" text-anchor="middle">XV 法官 (The Judge)</text>
-          <text x="350" y="395" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="14" fill="#141B13" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
-          ${renderSvgDots(currentChart.judge.dots, 350, 406, 7.2, 4.2)}
+          <rect x="231" y="351" width="238" height="118" class="cell-bg" fill="#FFFDF8" stroke="#E2E8F0" stroke-width="1" />
+          <text x="350" y="377" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16.5" fill="#9A3412" text-anchor="middle">XV 終審法官 (The Judge)</text>
+          <text x="350" y="398" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="15" fill="#0F172A" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
+          ${renderSvgDots(currentChart.judge.dots, 350, 408, 7.5, 4.5)}
         </g>
 
         <!-- 5. 外圍 12 組外向微縮點陣 (對照 IMG_7975 / IMG_7976，完美居中於 outerFrame 邊界) -->
@@ -1030,18 +1041,18 @@
       // 5. 中央聖殿法庭大方框與主宰星 (徹底告別泥黃模糊！重構高對比深墨玄色 + 膠囊微光底牌)
       svgContent += `
         <rect x="230" y="230" width="240" height="240" fill="#FFFDF8" stroke="#1F261C" stroke-width="2.5" />
-        <rect x="238" y="238" width="224" height="224" fill="#FDFBF7" stroke="#D4AF37" stroke-width="1.2" rx="8" />
         <g onclick="selectSlot('j15')" class="center-cell ${activeSlotKey === 'j15' ? 'active-house' : ''} cursor-pointer">
+          <rect x="238" y="238" width="224" height="224" rx="8" class="cell-bg" fill="#FFFDF8" stroke="#D4AF37" stroke-width="1.5" />
           <!-- 主管行星大符號 (放大至 64px，深琥珀金 #B45309，莊嚴大器) -->
-          <text x="350" y="318" font-family="'Noto Serif TC', serif" font-weight="900" font-size="64" fill="#B45309" text-anchor="middle">${currentChart.judge.planetSymbol || '☉'}</text>
+          <text x="350" y="315" font-family="'Noto Serif TC', serif" font-weight="900" font-size="64" fill="#B45309" text-anchor="middle">${currentChart.judge.planetSymbol || '☉'}</text>
           
           <!-- 膠囊微光底牌 (凸顯文字清晰度) -->
-          <rect x="246" y="336" width="208" height="30" fill="#F3ECE0" stroke="#C8A97E" stroke-width="1.2" rx="15" />
-          <!-- 第一行：法官守護星名 (放大至 17px，深墨玄色 #141B13，粗重銳利，告別泥黃模糊) -->
-          <text x="350" y="357" font-family="'Noto Serif TC', serif" font-weight="900" font-size="17" fill="#141B13" text-anchor="middle">法官守護 · ${currentChart.judge.planet}</text>
+          <rect x="246" y="336" width="208" height="32" fill="#FEF3C7" stroke="#D97706" stroke-width="1.2" rx="16" />
+          <!-- 第一行：法官守護星名 (放大至 16.5px，深墨玄色 #0F172A，粗重銳利，告別泥黃模糊) -->
+          <text x="350" y="358" font-family="'Noto Serif TC', serif" font-weight="900" font-size="16.5" fill="#0F172A" text-anchor="middle">法官守護 · ${currentChart.judge.planet}</text>
           
-          <!-- 第二行：卦名與拉丁名 (放大至 14.5px，深墨玄綠 #1F261C，字重 900) -->
-          <text x="350" y="394" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="14.5" fill="#1F261C" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
+          <!-- 第二行：卦名與拉丁名 (放大至 15px，深褐金 #78350F，字重 900) -->
+          <text x="350" y="396" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="15" fill="#78350F" text-anchor="middle">${currentChart.judge.zh} · ${currentChart.judge.latin}</text>
         </g>
       `;
 
