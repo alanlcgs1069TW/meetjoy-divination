@@ -68,14 +68,23 @@ const MANDALA_ANCHOR_GATE = 10;
 const SEGMENTS = 64;
 const SLICE_DEG = 360 / SEGMENTS; // 5.625°
 
-// 旋轉序列使錨點閘門置於 index 0（維持循環相對順序）
-function rotateToAnchor(order, anchor) {
+// 順時針輪盤序列：
+// 官方文獻之 RAVE_MANDALA_ORDER 為黃道經度逆時針方向（41→19→13...）。
+// 曼陀羅輪盤 UI 視覺呈現為順時針方向（向右旋轉），故順時針序列為其逆向循環。
+// 以 Gate 10（履卦）為錨點起點，順時針依序為：
+// 10（履）→ 11（泰）→ 26（大畜）→ 5（需）→ 9（小畜）→ 34（大壯）... → 58（兌）
+function buildClockwiseWheelOrder(order, anchor) {
   const idx = order.indexOf(anchor);
   if (idx < 0) throw new Error('anchor gate not found in Rave Mandala order');
-  return order.slice(idx).concat(order.slice(0, idx));
+  const cw = [];
+  const n = order.length;
+  for (let i = 0; i < n; i++) {
+    cw.push(order[(idx - i + n) % n]);
+  }
+  return cw;
 }
 
-const RAVE_MANDALA_WHEEL_ORDER = rotateToAnchor(RAVE_MANDALA_ORDER, MANDALA_ANCHOR_GATE);
+const RAVE_MANDALA_WHEEL_ORDER = buildClockwiseWheelOrder(RAVE_MANDALA_ORDER, MANDALA_ANCHOR_GATE);
 
 // ─────────────────────────────────────────────────────────────
 // 4. 建立 64 卦矩陣

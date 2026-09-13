@@ -630,8 +630,14 @@
       if (badge) badge.textContent = cfg.badge;
     }
 
-    // 依《皇極經世》六十四卦先天圓圖順序，頂點對齊至第 10 閘門（天澤履），固定在 12 點鐘方向。
-    const RAVE_MANDALA_WHEEL_ORDER = [10,58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11];
+    // 依《皇極經世》六十四卦先天圓圖順序，頂點對齊至第 10 閘門（天澤履），順時針方向繞行。
+    // 正上方 12 點鐘子午線正好分割第 10 閘門（左）與第 11 閘門（右）。
+    const RAVE_MANDALA_WHEEL_ORDER = [
+      10, 11, 26, 5, 9, 34, 14, 43, 1, 44, 28, 50, 32, 57, 48, 18, 46, 6, 47, 64,
+      40, 59, 29, 4, 7, 33, 31, 56, 62, 53, 39, 52, 15, 12, 45, 35, 16, 20, 8, 23,
+      2, 24, 27, 3, 42, 51, 21, 17, 25, 36, 22, 63, 37, 55, 30, 49, 13, 19, 41, 60,
+      61, 54, 38, 58
+    ];
     const TRIGRAM_LINES = { '天': '111', '澤': '110', '火': '101', '雷': '100', '風': '011', '水': '010', '山': '001', '地': '000' };
     const SPECIAL_HEXAGRAMS = { 1: '111111', 2: '000000', 29: '010010', 30: '101101', 51: '100100', 52: '001001', 57: '011011', 58: '110110' };
 
@@ -666,17 +672,18 @@
       }
     }
 
-    // 繪製背景 64 卦輪盤：每一卦均依真實六爻陰陽結構繪製。
+    // 繪製背景 64 卦輪盤：依對標截圖標準，12 點鐘子午線精確分割 10 與 11，順時針排列 64 卦六爻與號碼。
     function renderHexagramWheel(svg) {
       const layer = document.getElementById('layer_hexagram_wheel');
       layer.innerHTML = '';
 
       const cx = 480, cy = 370;
       const rOuter = 356;
-      const rInner = 308;
+      const rInner = 306;
       const dark = document.body.classList.contains('dark-mode');
       const ringStroke = dark ? '#475569' : '#94A3B8';
       const yaoStroke = dark ? '#94A3B8' : '#64748B';
+      const numFill = dark ? '#CBD5E1' : '#475569';
 
       // 雙重細同心圓
       const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -689,42 +696,68 @@
       c2.setAttribute('fill', 'none'); c2.setAttribute('stroke', ringStroke); c2.setAttribute('stroke-width', '1.15');
       layer.appendChild(c2);
 
-      // 64 卦放射刻度與六爻；爻線沿半徑方向，由內環初爻排至外環上爻。
+      // 64 條放射分割線：正上方 12 點鐘（-90°）正好是第 10 閘門（左）與第 11 閘門（右）的分界線
       for (let i = 0; i < 64; i++) {
-        const deg = (i * 360 / 64) - 90;
-        const rad = deg * Math.PI / 180;
-        const p1x = cx + Math.cos(rad) * (rOuter - 14);
-        const p1y = cy + Math.sin(rad) * (rOuter - 14);
-        const p2x = cx + Math.cos(rad) * rOuter;
-        const p2y = cy + Math.sin(rad) * rOuter;
+        const divDeg = (i * 360 / 64) - 90;
+        const divRad = divDeg * Math.PI / 180;
+        const p1x = cx + Math.cos(divRad) * rInner;
+        const p1y = cy + Math.sin(divRad) * rInner;
+        const p2x = cx + Math.cos(divRad) * rOuter;
+        const p2y = cy + Math.sin(divRad) * rOuter;
 
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', p1x); line.setAttribute('y1', p1y);
         line.setAttribute('x2', p2x); line.setAttribute('y2', p2y);
         line.setAttribute('stroke', ringStroke);
-        line.setAttribute('stroke-width', i % 4 === 0 ? '1.5' : '0.6');
+        line.setAttribute('stroke-width', (i % 16 === 0) ? '1.5' : (i % 8 === 0 ? '1.0' : '0.5'));
         layer.appendChild(line);
+      }
 
+      // 64 卦扇區中心：Gate 10（履卦）在 12 點鐘左側半格（-92.8125°），Gate 11（泰卦）在右側半格（-87.1875°）
+      for (let i = 0; i < 64; i++) {
+        const centerDeg = -90 - 2.8125 + (i * 5.625);
+        const centerRad = centerDeg * Math.PI / 180;
         const gate = RAVE_MANDALA_WHEEL_ORDER[i];
         const yao = (typeof HEXAGRAM_MATRIX_64 !== 'undefined' && HEXAGRAM_MATRIX_64[gate])
           ? HEXAGRAM_MATRIX_64[gate].binary
           : getHexagramLines(gate);
-        const tangentX = -Math.sin(rad), tangentY = Math.cos(rad);
-        const barHalf = 5.3, gap = 1.9;
+
+        // 繪製六爻陰陽卦線
+        const tangentX = -Math.sin(centerRad), tangentY = Math.cos(centerRad);
+        const barHalf = 5.2, gap = 1.8;
         for (let lineIndex = 0; lineIndex < 6; lineIndex++) {
-          const r = rInner + 5 + lineIndex * 6.45;
-          const mx = cx + Math.cos(rad) * r, my = cy + Math.sin(rad) * r;
+          const r = rInner + 14 + lineIndex * 5.4;
+          const mx = cx + Math.cos(centerRad) * r, my = cy + Math.sin(centerRad) * r;
           const drawBar = (start, end) => {
             const bar = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             bar.setAttribute('x1', mx + tangentX * start); bar.setAttribute('y1', my + tangentY * start);
             bar.setAttribute('x2', mx + tangentX * end); bar.setAttribute('y2', my + tangentY * end);
-            bar.setAttribute('stroke', yaoStroke); bar.setAttribute('stroke-width', '1.5');
+            bar.setAttribute('stroke', yaoStroke); bar.setAttribute('stroke-width', '1.4');
             bar.setAttribute('stroke-linecap', 'square');
             layer.appendChild(bar);
           };
           if (yao[lineIndex] === '1') drawBar(-barHalf, barHalf);
           else { drawBar(-barHalf, -gap); drawBar(gap, barHalf); }
         }
+
+        // 繪製閘門編號（扇區內圈居中）
+        const rNum = rInner + 7.5;
+        const nx = cx + Math.cos(centerRad) * rNum;
+        const ny = cy + Math.sin(centerRad) * rNum;
+        const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        numText.setAttribute('x', nx);
+        numText.setAttribute('y', ny);
+        numText.setAttribute('font-size', '7');
+        numText.setAttribute('font-weight', '700');
+        numText.setAttribute('font-family', 'Noto Sans TC, sans-serif');
+        numText.setAttribute('fill', numFill);
+        numText.setAttribute('text-anchor', 'middle');
+        numText.setAttribute('dominant-baseline', 'central');
+        let textAngle = centerDeg + 90;
+        if (textAngle > 90 && textAngle < 270) textAngle += 180;
+        numText.setAttribute('transform', `rotate(${textAngle}, ${nx}, ${ny})`);
+        numText.textContent = gate;
+        layer.appendChild(numText);
       }
     }
 
@@ -944,6 +977,49 @@
         tagGroup.appendChild(tLine);
 
         g.appendChild(tagGroup);
+
+        // 5. 行星符號（依照設計紅 / 意識黑，呈現於球體另一側空白相對處）
+        const SPHERE_PLANET_FALLBACK = {
+          lifesWork:    { symbol: '☉', isDesign: false },
+          evolution:    { symbol: '⊕', isDesign: false },
+          radiance:     { symbol: '☉', isDesign: true },
+          purpose:      { symbol: '⊕', isDesign: true },
+          attraction:   { symbol: '☽', isDesign: true },
+          iq:           { symbol: '♀', isDesign: false },
+          eq:           { symbol: '♂', isDesign: false },
+          sq:           { symbol: '♀', isDesign: true },
+          core:         { symbol: '♂', isDesign: true },
+          vocation:     { symbol: '♂', isDesign: true },
+          culture:      { symbol: '♃', isDesign: true },
+          brand:        { symbol: '☉', isDesign: false },
+          pearl:        { symbol: '♃', isDesign: false },
+          relationship: { symbol: '☿', isDesign: false },
+          stability:    { symbol: '♄', isDesign: true },
+          creativity:   { symbol: '♅', isDesign: true }
+        };
+
+        const fb = SPHERE_PLANET_FALLBACK[key] || { symbol: '☉', isDesign: false };
+        const isDesign = s.planet ? s.planet.startsWith('Design') : fb.isDesign;
+        const planetSym = s.planetSymbol || fb.symbol;
+
+        // 行星符號精確位於四行標籤的相對另一側
+        const pX = isLeft ? cx + (sphereRadius + 14) : cx - (sphereRadius + 14);
+        const pAnchor = isLeft ? 'start' : 'end';
+        const pColor = isDesign ? '#DC2626' : '#0F172A';
+
+        const planetText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        planetText.setAttribute('x', pX);
+        planetText.setAttribute('y', cy);
+        planetText.setAttribute('dominant-baseline', 'central');
+        planetText.setAttribute('text-anchor', pAnchor);
+        planetText.setAttribute('font-size', '19');
+        planetText.setAttribute('font-weight', '900');
+        planetText.setAttribute('font-family', 'Apple Color Emoji, Segoe UI Emoji, sans-serif');
+        planetText.setAttribute('fill', pColor);
+        planetText.setAttribute('style', 'paint-order: stroke fill; stroke: rgba(255,255,255,0.95); stroke-width: 3.5px; stroke-linejoin: round; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12)); pointer-events: none;');
+        planetText.textContent = planetSym;
+        g.appendChild(planetText);
+
         layer.appendChild(g);
       });
     }

@@ -128,11 +128,12 @@ const wheelOk = RAVE_MANDALA_WHEEL.length === 64 &&
 check('T8 輪盤 64 槽無重複、集合=1..64、12 點鐘=第10閘門履卦', wheelOk,
   `slot0=${RAVE_MANDALA_WHEEL[0].gate}${RAVE_MANDALA_WHEEL[0].name}`);
 
-// 輪盤 = 官方序列自 10 起旋轉（循環相對順序不變）
+// 輪盤 = 官方曼陀羅 UI 順時針序列（自 Gate 10 履卦順時針旋轉：10→11→26→5→9...）
 const rotIdx = RAVE_MANDALA_ORDER.indexOf(10);
-const rotatedRef = [...RAVE_MANDALA_ORDER.slice(rotIdx), ...RAVE_MANDALA_ORDER.slice(0, rotIdx)];
-const rotationOk = wheelGates.every((g, i) => g === rotatedRef[i]);
-check('T8b 輪盤為官方序列自第10閘門起始之循環旋轉（相對順序不變）', rotationOk, '(旋轉不符)');
+const n = RAVE_MANDALA_ORDER.length;
+const cwRef = Array.from({ length: n }, (_, i) => RAVE_MANDALA_ORDER[(rotIdx - i + n) % n]);
+const rotationOk = wheelGates.every((g, i) => g === cwRef[i]);
+check('T8b 輪盤為曼陀羅自第10閘門履卦順時針繞行序列（與實機 UI 100% 一致）', rotationOk, '(順時針旋轉不符)');
 
 // ── T9 輪盤角度 ───────────────────────────────────────────────
 const SEG = 64, SLICE = 360 / SEG;
