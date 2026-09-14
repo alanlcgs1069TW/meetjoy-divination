@@ -21,6 +21,7 @@
   <script src="./js/geo-cities.js"></script>
   <script src="./js/astro-calc.js"></script>
   <script src="./js/meetjoy-pdf.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
 
   <style>
     body { font-family: 'Noto Serif TC', serif; }
@@ -73,6 +74,9 @@
 
       <!-- 嚴格排盤表單 -->
       <form id="hd_form" class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-4 sm:p-6">
+        <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
+        <div id="universal_profile_bar"></div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           
           <!-- 出生日期 -->
@@ -1622,6 +1626,37 @@
     // 初始化載入
     window.addEventListener('DOMContentLoaded', () => {
       initCityDropdown();
+
+      // 掛載全站通用命盤生日庫與會員專屬檔案連通組件 (相容紫微斗數)
+      if (window.MeetJoyProfiles) {
+        MeetJoyProfiles.mount('#universal_profile_bar', {
+          getCurrentData: () => {
+            return {
+              birthDate: document.getElementById('birth_date').value,
+              birthTime: document.getElementById('birth_time').value,
+              birthCity: document.getElementById('birth_city').value,
+              name: '人類圖命盤'
+            };
+          },
+          onSelect: (profile) => {
+            if (profile.birthDate) {
+              document.getElementById('birth_date').value = profile.birthDate;
+            }
+            if (profile.birthTime) {
+              document.getElementById('birth_time').value = profile.birthTime;
+            }
+            if (profile.birthCity) {
+              const citySel = document.getElementById('birth_city');
+              if (citySel.querySelector(`option[value="${profile.birthCity}"]`)) {
+                citySel.value = profile.birthCity;
+              }
+            }
+            updateGeoInfo();
+            renderHumanDesignChart();
+          }
+        });
+      }
+
       renderHumanDesignChart();
     });
   </script>

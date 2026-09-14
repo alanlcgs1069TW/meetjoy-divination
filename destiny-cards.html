@@ -17,6 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="./js/meetjoy-pdf.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
   <style>
     body { font-family: 'Noto Serif TC', serif; }
     .sans { font-family: 'Noto Sans TC', sans-serif; }
@@ -78,6 +79,9 @@
           </button>
         </div>
       </div>
+
+      <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
+      <div id="universal_profile_bar" class="mb-4"></div>
 
       <!-- 輸入表單 -->
       <form id="destinyCardForm" onsubmit="handleCalculateCards(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -526,6 +530,28 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      // 掛載全站通用命盤生日庫與會員專屬檔案連通組件 (相容紫微斗數)
+      if (window.MeetJoyProfiles) {
+        MeetJoyProfiles.mount('#universal_profile_bar', {
+          getCurrentData: () => {
+            return {
+              name: document.getElementById('cardNameInput').value.trim() || '撲克命盤',
+              birthDate: document.getElementById('cardDateInput').value,
+              birthTime: '12:00'
+            };
+          },
+          onSelect: (profile) => {
+            if (profile.name && profile.name !== '未命名') {
+              document.getElementById('cardNameInput').value = profile.name;
+            }
+            if (profile.birthDate) {
+              document.getElementById('cardDateInput').value = profile.birthDate;
+            }
+            handleCalculateCards();
+          }
+        });
+      }
+
       handleCalculateCards();
     });
   </script>

@@ -23,6 +23,7 @@
   <script src="./js/astro-calc.js"></script>
   <script src="./js/gene-keys-data.js"></script>
   <script src="./js/meetjoy-pdf.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
 
   <style>
     body {
@@ -207,6 +208,8 @@
 
   <!-- 浮動 / 可折疊排盤輸入列 -->
   <section id="inputs_section" class="w-full bg-slate-50 border-b border-slate-200 py-3 px-4 sm:px-8 transition-all duration-300">
+    <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
+    <div id="universal_profile_bar" class="max-w-6xl mx-auto mb-2"></div>
     <form id="gk_form" class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
       <div class="flex flex-wrap items-center gap-2 sm:gap-4">
         <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 shadow-2xs">
@@ -1246,6 +1249,39 @@
     // 初始化加載
     window.addEventListener('DOMContentLoaded', () => {
       initCityDropdown();
+
+      // 掛載全站通用命盤生日庫與會員專屬檔案連通組件 (相容紫微斗數)
+      if (window.MeetJoyProfiles) {
+        MeetJoyProfiles.mount('#universal_profile_bar', {
+          getCurrentData: () => {
+            return {
+              name: document.getElementById('gk_name').value.trim() || '天命盤',
+              birthDate: document.getElementById('gk_date').value,
+              birthTime: document.getElementById('gk_time').value,
+              birthCity: document.getElementById('gk_city').value
+            };
+          },
+          onSelect: (profile) => {
+            if (profile.name && profile.name !== '未命名') {
+              document.getElementById('gk_name').value = profile.name;
+            }
+            if (profile.birthDate) {
+              document.getElementById('gk_date').value = profile.birthDate;
+            }
+            if (profile.birthTime) {
+              document.getElementById('gk_time').value = profile.birthTime;
+            }
+            if (profile.birthCity) {
+              const citySel = document.getElementById('gk_city');
+              if (citySel.querySelector(`option[value="${profile.birthCity}"]`)) {
+                citySel.value = profile.birthCity;
+              }
+            }
+            renderGeneKeysChart();
+          }
+        });
+      }
+
       const params = new URLSearchParams(window.location.search);
       const seq = params.get('seq');
       if (seq && SUB_SEQ_CONFIG[seq]) {

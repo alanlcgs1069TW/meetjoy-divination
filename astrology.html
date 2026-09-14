@@ -24,6 +24,7 @@
   <script src="./js/geo-cities.js"></script>
   <script src="./js/astro-calc.js"></script>
   <script src="./js/meetjoy-pdf.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
 
   <style>
     body { font-family: 'Noto Serif TC', serif; }
@@ -78,6 +79,9 @@
 
       <!-- 輸入表單 -->
       <form id="astro_form" class="bg-[#FAF7F2] border border-[#E8DFC8] rounded-2xl p-4 sm:p-6">
+        <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
+        <div id="universal_profile_bar"></div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5 items-end">
           
           <!-- 姓名與性別 -->
@@ -1313,6 +1317,44 @@
     // 初始化
     window.addEventListener('DOMContentLoaded', () => {
       initCityDropdown();
+
+      // 掛載全站通用命盤生日庫與會員專屬檔案連通組件 (相容紫微斗數)
+      if (window.MeetJoyProfiles) {
+        MeetJoyProfiles.mount('#universal_profile_bar', {
+          getCurrentData: () => {
+            return {
+              name: document.getElementById('user_name').value.trim() || '占星盤',
+              gender: document.getElementById('user_gender').value.toLowerCase().includes('female') ? 'female' : 'male',
+              birthDate: document.getElementById('birth_date').value,
+              birthTime: document.getElementById('birth_time').value,
+              birthCity: document.getElementById('birth_city').value
+            };
+          },
+          onSelect: (profile) => {
+            if (profile.name && profile.name !== '未命名') {
+              document.getElementById('user_name').value = profile.name;
+            }
+            if (profile.gender) {
+              document.getElementById('user_gender').value = profile.gender === 'female' ? 'Female' : 'Male';
+            }
+            if (profile.birthDate) {
+              document.getElementById('birth_date').value = profile.birthDate;
+            }
+            if (profile.birthTime) {
+              document.getElementById('birth_time').value = profile.birthTime;
+            }
+            if (profile.birthCity) {
+              const citySel = document.getElementById('birth_city');
+              if (citySel.querySelector(`option[value="${profile.birthCity}"]`)) {
+                citySel.value = profile.birthCity;
+              }
+            }
+            updateGeoInfo();
+            renderAstrologyChart();
+          }
+        });
+      }
+
       renderAstrologyChart();
     });
   </script>
