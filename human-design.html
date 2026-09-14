@@ -353,6 +353,47 @@
       </div>
     </div>
 
+    <!-- 能量結構全息統計大典 (Profile Lines 爻數矩陣 & Circuitry 迴路佔比) -->
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- 卡片 1：1-6 爻線爻數統計 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+              <span>📊 １－６爻線能量分佈統計 (Line Matrix)</span>
+            </h3>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 font-bold border border-amber-200">
+              全盤 26 天體爻位
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+            統計本命盤顯意識（13 顆星曜）與潛意識（13 顆星曜）中 1 至 6 爻的分佈次數，反映靈魂在底層紮根、天賦隱居、實證突破、人際網絡、救世解方與超然榜樣等各維度的能量側重。
+          </p>
+          <div id="lines_stats_container" class="space-y-3"></div>
+        </div>
+        <div id="lines_dominant_tip" class="mt-4 p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 leading-relaxed"></div>
+      </div>
+
+      <!-- 卡片 2：三大迴路群與通道佔比統計 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+              <span>🌀 能量迴路群佔比統計 (Circuitry Matrix)</span>
+            </h3>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200">
+              閘門與通道貫通率
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+            人類圖 36 條通道與 64 閘門分屬個別、集體與部落三大生命迴路系統。此處精確統計您在各系統中的能量持有量與接通佔比。
+          </p>
+          <div id="circuits_stats_container" class="space-y-4"></div>
+        </div>
+        <div id="circuits_dominant_tip" class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed"></div>
+      </div>
+    </div>
+
     <!-- 匯出與列印 PDF 報告工具列 -->
     <div class="mt-8 flex flex-wrap items-center justify-between gap-4 bg-white/90 border border-[#CBD5E1] rounded-2xl p-4 sm:p-5 shadow-sm no-print">
       <div>
@@ -422,6 +463,213 @@
       'Sacral': '【薦骨中心調頻】：腹部深處的直覺反應（嗯哼 vs 嗯哼不）是你的靈魂導航。只對真正點燃你活力的事物說 Yes！',
       'Spleen': '【脾臟中心調頻】：直覺的提醒像微風拂過，只在當下瞬間響起一次。學會在嘈雜的世界中靜下來，信任身體的第一感覺。',
       'Root': '【根部中心調頻】：腎上腺素的壓力是火箭引擎，不是方向盤。不要為了逃避焦慮而倉促做事，先深呼吸站穩腳跟。'
+    };
+
+    // 星曜中文名稱對照
+    const PLANET_NAMES_ZH = {
+      Sun: '太陽',
+      Earth: '地球',
+      NorthNode: '北交點',
+      SouthNode: '南交點',
+      Moon: '月亮',
+      Mercury: '水星',
+      Venus: '金星',
+      Mars: '火星',
+      Jupiter: '木星',
+      Saturn: '土星',
+      Uranus: '天王星',
+      Neptune: '海王星',
+      Pluto: '冥王星'
+    };
+
+    // 1-6 爻線核心特質與靈魂原型
+    const LINE_METRICS = {
+      1: {
+        title: '1 爻 · 研究者 (Investigator)',
+        archetype: '地基奠定者',
+        focus: '向內鑽研、求證底層邏輯、探索安全感來源。需要充足的知識庫才能感到篤定自信。',
+        color: '#0284C7',
+        bg: '#E0F2FE'
+      },
+      2: {
+        title: '2 爻 · 隱士 (Hermit)',
+        archetype: '天賦隱居者',
+        focus: '天然本能、不假思索的靈性才華。享受獨處空間，等待被外界對的人真誠看見與召喚。',
+        color: '#10B981',
+        bg: '#D1FAE5'
+      },
+      3: {
+        title: '3 爻 · 探索者 / 烈士 (Martyr)',
+        archetype: '實證試錯家',
+        focus: '在碰撞與試錯中驗證真理。沒有失敗，只有發現「什麼行不通」的寶貴智慧，適應力極強。',
+        color: '#F59E0B',
+        bg: '#FEF3C7'
+      },
+      4: {
+        title: '4 爻 · 機會主義者 (Opportunist)',
+        archetype: '社交網絡者',
+        focus: '透過熟人圈、朋友與人脈網路傳遞影響力。重視信任與友誼根基，機會皆由人際共振而來。',
+        color: '#8B5CF6',
+        bg: '#EDE9FE'
+      },
+      5: {
+        title: '5 爻 · 實踐異端 (Heretic)',
+        archetype: '普世救世主',
+        focus: '承載外界期望與投射光環。專注於提供通用、立竿見影的落地解方，擅長在關鍵時刻救場。',
+        color: '#EC4899',
+        bg: '#FCE7F3'
+      },
+      6: {
+        title: '6 爻 · 人生典範 (Role Model)',
+        archetype: '超然登頂者',
+        focus: '經歷前半生的歷練碰撞，逐步抽離至屋頂俯瞰大局，最終成為眾人指路的智慧燈塔與活出典範。',
+        color: '#B45309',
+        bg: '#FEF3C7'
+      }
+    };
+
+    // 三大迴路群定義與導讀
+    const CIRCUIT_GROUPS = {
+      individual: {
+        name: '個別迴路群 (Individual Circuitry)',
+        desc: '核心主題是「突變、獨特性與自我賦權」。專注於自己的信念與原創靈感，並透過個人的獨特轉化，引爆周遭世界的突變進化。',
+        totalGates: 22,
+        totalChannels: 15,
+        theme: '突變與原創賦能',
+        color: '#8B5CF6',
+        border: 'border-purple-200',
+        bg: 'bg-purple-50/50'
+      },
+      collective: {
+        name: '集體迴路群 (Collective Circuitry)',
+        desc: '核心主題是「全人類的分享、反思與未來演進」。分為追求科學邏輯模式的邏輯迴路，以及探尋歷史經驗教訓的抽象迴路。',
+        totalGates: 28,
+        totalChannels: 14,
+        theme: '群體分享與演化模式',
+        color: '#0284C7',
+        border: 'border-sky-200',
+        bg: 'bg-sky-50/50'
+      },
+      tribal: {
+        name: '部落迴路群 (Tribal Circuitry)',
+        desc: '核心主題是「社群支持、家庭忠誠、資源分配與物質保障」。包含延續生命的防禦迴路，以及確保社群繁盛富足的自我價值意志力迴路。',
+        totalGates: 14,
+        totalChannels: 7,
+        theme: '社群守護與物質繁盛',
+        color: '#D97706',
+        border: 'border-amber-200',
+        bg: 'bg-amber-50/50'
+      }
+    };
+
+    // 36 條通道所屬迴路對照表
+    const HD_CHANNEL_CIRCUITS = {
+      '20-57': { group: 'individual', circuit: '整合迴路', name: '腦波通道' },
+      '10-57': { group: 'individual', circuit: '整合迴路', name: '完美形式通道' },
+      '20-34': { group: 'individual', circuit: '整合迴路', name: '魅力通道' },
+      '10-34': { group: 'individual', circuit: '整合/中心迴路', name: '探索通道' },
+      '10-20': { group: 'individual', circuit: '整合迴路', name: '覺醒通道' },
+      '34-57': { group: 'individual', circuit: '整合迴路', name: '力量直覺通道' },
+      '25-51': { group: 'individual', circuit: '中心迴路', name: '天真跳躍發起通道' },
+      '61-24': { group: 'individual', circuit: '知曉迴路', name: '思想覺察通道' },
+      '43-23': { group: 'individual', circuit: '知曉迴路', name: '頓悟溝通通道' },
+      '28-38': { group: 'individual', circuit: '知曉迴路', name: '困頓掙扎通道' },
+      '39-55': { group: 'individual', circuit: '知曉迴路', name: '情緒起伏音律通道' },
+      '12-22': { group: 'individual', circuit: '知曉迴路', name: '開放浪漫藝術通道' },
+      '3-60': { group: 'individual', circuit: '知曉迴路', name: '突變脈衝新生通道' },
+      '2-14': { group: 'individual', circuit: '知曉迴路', name: '煉金守財發電通道' },
+      '1-8': { group: 'individual', circuit: '知曉迴路', name: '靈感激發通道' },
+
+      '63-4': { group: 'collective', circuit: '理解/邏輯迴路', name: '邏輯質疑通道' },
+      '17-62': { group: 'collective', circuit: '理解/邏輯迴路', name: '組織概念通道' },
+      '16-48': { group: 'collective', circuit: '理解/邏輯迴路', name: '才華深度波長通道' },
+      '18-58': { group: 'collective', circuit: '理解/邏輯迴路', name: '批判完美苛求通道' },
+      '9-52': { group: 'collective', circuit: '理解/邏輯迴路', name: '專注靜定細節通道' },
+      '15-5': { group: 'collective', circuit: '理解/邏輯迴路', name: '宇宙韻律節奏通道' },
+      '7-31': { group: 'collective', circuit: '理解/邏輯迴路', name: '領袖領導通道' },
+      '64-47': { group: 'collective', circuit: '感知/抽象迴路', name: '抽象思維通道' },
+      '11-56': { group: 'collective', circuit: '感知/抽象迴路', name: '追尋說書人通道' },
+      '35-36': { group: 'collective', circuit: '感知/抽象迴路', name: '無常體驗冒險通道' },
+      '41-30': { group: 'collective', circuit: '感知/抽象迴路', name: '夢想渴望收斂通道' },
+      '53-42': { group: 'collective', circuit: '感知/抽象迴路', name: '循環開始結束通道' },
+      '46-29': { group: 'collective', circuit: '感知/抽象迴路', name: '發現自我全心投入通道' },
+      '13-33': { group: 'collective', circuit: '感知/抽象迴路', name: '歷史見證通道' },
+
+      '6-59': { group: 'tribal', circuit: '自我防禦迴路', name: '親密交配繁殖通道' },
+      '27-50': { group: 'tribal', circuit: '自我防禦迴路', name: '滋養保護監護通道' },
+      '21-45': { group: 'tribal', circuit: '自我/意志力迴路', name: '金錢金庫領主通道' },
+      '26-44': { group: 'tribal', circuit: '自我/意志力迴路', name: '說服傳遞行銷通道' },
+      '32-54': { group: 'tribal', circuit: '自我/物質迴路', name: '蛻變野心轉化通道' },
+      '19-49': { group: 'tribal', circuit: '自我/社群迴路', name: '整合敏感需求通道' },
+      '40-37': { group: 'tribal', circuit: '自我/社群迴路', name: '社群契約溫情通道' }
+    };
+
+    // 64 閘門與易經 64 卦全名、關鍵字、迴路對照字典
+    const HD_GATE_DATA = {
+      1: { hexagram: '乾為天', name: '創意的力量', keywords: '原創表達 · 靈感湧現 · 純粹自發', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'G' },
+      2: { hexagram: '坤為地', name: '高等自我方向', keywords: '接受指引 · 內在導航 · 滋養順應', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'G' },
+      3: { hexagram: '水雷屯', name: '秩序的誕生', keywords: '突破混亂 · 創新突變 · 新生萌芽', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Sacral' },
+      4: { hexagram: '山水蒙', name: '形式化公式', keywords: '邏輯解方 · 撫平狂想 · 心智理解', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Ajna' },
+      5: { hexagram: '水天需', name: '固定節奏律動', keywords: '自然韻律 · 宇宙等待 · 耐心調頻', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Sacral' },
+      6: { hexagram: '天水訟', name: '摩擦調解界線', keywords: '情感親密 · 衝突調和 · 破冰成長', circuit: '防禦迴路', group: 'tribal', groupName: '部落迴路群', center: 'Solar Plexus' },
+      7: { hexagram: '地水師', name: '引領方向', keywords: '未來將帥 · 民主推舉 · 願景領航', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'G' },
+      8: { hexagram: '水地比', name: '貢獻展現', keywords: '風格樹立 · 典範引導 · 獨特貢獻', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Throat' },
+      9: { hexagram: '風天小畜', name: '細節專注', keywords: '蓄積能量 · 精準聚焦 · 滴水穿石', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Sacral' },
+      10: { hexagram: '天澤履', name: '自性之步', keywords: '活出自己 · 實踐自愛 · 尊嚴步伐', circuit: '整合/中心迴路', group: 'individual', groupName: '個別迴路群', center: 'G' },
+      11: { hexagram: '地天泰', name: '概念構想', keywords: '靈光想法 · 哲思追尋 · 和諧光芒', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Ajna' },
+      12: { hexagram: '天地否', name: '謹慎停頓', keywords: '純真之聲 · 情感沉澱 · 靜默蓄力', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Throat' },
+      13: { hexagram: '天火同人', name: '聆聽者', keywords: '守護秘密 · 共感同理 · 見證歷史', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'G' },
+      14: { hexagram: '火天大有', name: '豐盛發電', keywords: '動力湧現 · 金錢資源 · 熱情驅策', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Sacral' },
+      15: { hexagram: '地山謙', name: '慈悲極端', keywords: '多元包容 · 廣納百川 · 人性韻律', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'G' },
+      16: { hexagram: '雷地豫', name: '技能渴望', keywords: '藝術才華 · 靈巧熱情 · 匠人狂喜', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Throat' },
+      17: { hexagram: '澤雷隨', name: '觀點形成', keywords: '遠見宏觀 · 邏輯架構 · 心智模式', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Ajna' },
+      18: { hexagram: '山風蠱', name: '撥亂反正', keywords: '修復破損 · 追求完美 · 挑剔除錯', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Spleen' },
+      19: { hexagram: '地澤臨', name: '想要與需求', keywords: '敏感共情 · 物質歸屬 · 情感依靠', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Root' },
+      20: { hexagram: '風地觀', name: '當下臨在', keywords: '此刻覺知 · 當機立斷 · 即時洞察', circuit: '整合/知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Throat' },
+      21: { hexagram: '火雷噬嗑', name: '資源掌控', keywords: '獵人領袖 · 財務支配 · 權威統治', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Heart' },
+      22: { hexagram: '山火賁', name: '開放優雅', keywords: '浪漫氣質 · 藝術美感 · 社交魅力', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Solar Plexus' },
+      23: { hexagram: '山地剝', name: '融會貫通', keywords: '化繁為簡 · 提綱挈領 · 直白表達', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Throat' },
+      24: { hexagram: '地雷復', name: '合理解釋', keywords: '思維反覆 · 重新歸零 · 頓悟歸來', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Ajna' },
+      25: { hexagram: '天雷無妄', name: '天真本性', keywords: '萬物之愛 · 赤子純真 · 靈魂療癒', circuit: '中心迴路', group: 'individual', groupName: '個別迴路群', center: 'G' },
+      26: { hexagram: '山天大畜', name: '累積大能', keywords: '傳播行銷 · 巧妙說服 · 策略謀略', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Heart' },
+      27: { hexagram: '山雷頤', name: '滋養照護', keywords: '無私奉獻 · 守護弱小 · 利他給予', circuit: '防禦迴路', group: 'tribal', groupName: '部落迴路群', center: 'Sacral' },
+      28: { hexagram: '澤風大過', name: '困境掙扎', keywords: '勇往直前 · 尋找意義 · 挑戰極限', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Spleen' },
+      29: { hexagram: '坎為水', name: '承諾毅力', keywords: '毅然說好 · 全身投入 · 穿越深淵', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Sacral' },
+      30: { hexagram: '離為火', name: '渴望命運', keywords: '熾烈燃燒 · 命中注定 · 情感追尋', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Solar Plexus' },
+      31: { hexagram: '澤山咸', name: '民主領袖', keywords: '順應民意 · 領袖之聲 · 心之影響', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Throat' },
+      32: { hexagram: '雷風恆', name: '延續長久', keywords: '永續經營 · 風險敏銳 · 守成演化', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Spleen' },
+      33: { hexagram: '天山遁', name: '隱退反思', keywords: '閉關沉澱 · 經驗昇華 · 啟示轉化', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Throat' },
+      34: { hexagram: '雷天大壯', name: '純粹力量', keywords: '強大動能 · 自力更生 · 賦能行動', circuit: '整合/中心迴路', group: 'individual', groupName: '個別迴路群', center: 'Sacral' },
+      35: { hexagram: '火地晉', name: '前進歷練', keywords: '拓展視野 · 嘗試冒險 · 豐富經驗', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Throat' },
+      36: { hexagram: '地火明夷', name: '危機平息', keywords: '走出黑暗 · 人性慈悲 · 情感煉金', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Solar Plexus' },
+      37: { hexagram: '風火家人', name: '友誼家庭', keywords: '家族連結 · 溫情默契 · 承諾信任', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Solar Plexus' },
+      38: { hexagram: '火澤睽', name: '獨立戰士', keywords: '捍衛自我 · 不屈不撓 · 意義奮戰', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Root' },
+      39: { hexagram: '水山蹇', name: '阻礙挑釁', keywords: '激發靈性 · 突破僵局 · 活力引爆', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Root' },
+      40: { hexagram: '雷水解', name: '釋放獨處', keywords: '意志犒賞 · 劃界休養 · 卸下重擔', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Heart' },
+      41: { hexagram: '山澤損', name: '原始渴望', keywords: '夢想種子 · 想像藍圖 · 基因啟動', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Root' },
+      42: { hexagram: '風雷益', name: '成長圓滿', keywords: '循環完成 · 結實累累 · 順遂開展', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Sacral' },
+      43: { hexagram: '澤天夬', name: '獨特洞見', keywords: '突破傳統 · 頓悟閃現 · 原創見解', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Ajna' },
+      44: { hexagram: '天風姤', name: '警惕機先', keywords: '直覺嗅覺 · 人才辨識 · 模式相遇', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Spleen' },
+      45: { hexagram: '澤地萃', name: '聚攏分配', keywords: '領地之王 · 財富匯聚 · 資源分享', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Throat' },
+      46: { hexagram: '地風升', name: '身體推進', keywords: '熱愛肉身 · 幸運機緣 · 臣服當下', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'G' },
+      47: { hexagram: '澤水困', name: '壓抑領悟', keywords: '轉化逆境 · 撥開迷霧 · 頓悟過去', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Ajna' },
+      48: { hexagram: '水風井', name: '智慧深井', keywords: '深邃學識 · 解決良方 · 底蘊豐沛', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Spleen' },
+      49: { hexagram: '澤火革', name: '原則革新', keywords: '情感革命 · 堅定信條 · 劃清底線', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Solar Plexus' },
+      50: { hexagram: '火風鼎', name: '價值延續', keywords: '守護傳統 · 倫理道德 · 傳承秩序', circuit: '防禦迴路', group: 'tribal', groupName: '部落迴路群', center: 'Spleen' },
+      51: { hexagram: '震為雷', name: '震驚發起', keywords: '勇氣試煉 · 喚醒沉睡 · 膽識躍進', circuit: '中心迴路', group: 'individual', groupName: '個別迴路群', center: 'Heart' },
+      52: { hexagram: '艮為山', name: '寧靜止步', keywords: '靜止定力 · 專注高山 · 蓄勢待發', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Root' },
+      53: { hexagram: '風山漸', name: '新起點啟動', keywords: '循序漸進 · 啟航推力 · 展開旅程', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Root' },
+      54: { hexagram: '雷澤歸妹', name: '野心抱負', keywords: '力爭上游 · 物質飛躍 · 靈性昇華', circuit: '自我/部落迴路', group: 'tribal', groupName: '部落迴路群', center: 'Root' },
+      55: { hexagram: '雷火豐', name: '精神豐盛', keywords: '情緒高飛 · 靈魂喜悅 · 豐沛豐饒', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Solar Plexus' },
+      56: { hexagram: '火山旅', name: '漫遊說書人', keywords: '寓教於樂 · 奇幻故事 · 啟迪人心', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Throat' },
+      57: { hexagram: '巽為風', name: '溫和直覺', keywords: '微音入耳 · 洞察預警 · 瞬間明晰', circuit: '整合/知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Spleen' },
+      58: { hexagram: '兌為澤', name: '喜悅活力', keywords: '生命熱忱 · 改善進步 · 樂觀服務', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Root' },
+      59: { hexagram: '風水渙', name: '親密破冰', keywords: '融化隔閡 · 深度連結 · 繁衍共創', circuit: '防禦迴路', group: 'tribal', groupName: '部落迴路群', center: 'Sacral' },
+      60: { hexagram: '水澤節', name: '限制接受', keywords: '框架破局 · 突變契機 · 點石成金', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Root' },
+      61: { hexagram: '風澤中孚', name: '內在真理', keywords: '神秘冥想 · 啟迪開悟 · 核心信仰', circuit: '知曉迴路', group: 'individual', groupName: '個別迴路群', center: 'Head' },
+      62: { hexagram: '雷山小過', name: '細節陳述', keywords: '具象文字 · 精確表達 · 條理分明', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Throat' },
+      63: { hexagram: '水火既濟', name: '質疑懷疑', keywords: '科學求證 · 邏輯推敲 · 探究根本', circuit: '邏輯迴路', group: 'collective', groupName: '集體迴路群', center: 'Head' },
+      64: { hexagram: '火水未濟', name: '多樣可能', keywords: '想像洗禮 · 過去倒帶 · 靈光整合', circuit: '抽象迴路', group: 'collective', groupName: '集體迴路群', center: 'Head' }
     };
 
     // 64 閘門在 SVG 上的精準標準座標 (全面最佳化間距，杜絕重疊擠壓)
@@ -948,26 +1196,83 @@
           }
         }
 
-        // 點擊閘門顯示該閘門啟用狀態
+        // 點擊閘門顯示該閘門易經卦名、核心關鍵字、所屬迴路與啟用狀態
         gGroup.addEventListener('click', (e) => {
           e.stopPropagation();
           const drawer = document.getElementById('center_drawer');
           const isAct = hd.activeGates.all.has(g);
           const des = hd.activeGates.design.has(g);
           const per = hd.activeGates.personality.has(g);
-          let statusText = '⚪ 未啟動 (白字休眠)';
-          if (des && per) statusText = '⚡ 雙重啟動 (紅黑交織)';
-          else if (des) statusText = '🔴 潛意識啟動 (Design 紅色)';
-          else if (per) statusText = '⚫ 意識啟動 (Personality 黑色)';
+          let statusText = '⚪ 未啟動 (休眠開放)';
+          let statusClass = 'bg-slate-100 text-slate-500 border-slate-200';
+          if (des && per) {
+            statusText = '⚡ 雙重啟動 (紅黑交織)';
+            statusClass = 'bg-amber-100 text-amber-900 border-amber-300';
+          } else if (des) {
+            statusText = '🔴 潛意識啟動 (Design 紅色)';
+            statusClass = 'bg-rose-100 text-rose-800 border-rose-300';
+          } else if (per) {
+            statusText = '⚫ 顯意識啟動 (Personality 黑色)';
+            statusClass = 'bg-blue-100 text-blue-900 border-blue-300';
+          }
+
+          const gateInfo = HD_GATE_DATA[g] || {
+            hexagram: `易經第 ${g} 卦`,
+            name: `閘門 ${g}`,
+            keywords: '靈魂能量原型',
+            circuit: '能量迴路',
+            groupName: '迴路群',
+            center: '能量中心'
+          };
+
+          const centerTitle = CENTER_NAMES[gateInfo.center] || gateInfo.center;
+
+          // 取得在此閘門激活的具體星曜與爻線
+          const activePlanets = [];
+          Object.entries(hd.personality || {}).forEach(([pKey, pVal]) => {
+            if (pVal && pVal.gate === g) {
+              const pZh = PLANET_NAMES_ZH[pKey] || pKey;
+              activePlanets.push(`<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-slate-900 text-white font-mono shadow-2xs">⚫ 顯意識 ${pZh} ${pVal.gate}.${pVal.line} (${pVal.line} 爻)</span>`);
+            }
+          });
+          Object.entries(hd.design || {}).forEach(([dKey, dVal]) => {
+            if (dVal && dVal.gate === g) {
+              const dZh = PLANET_NAMES_ZH[dKey] || dKey;
+              activePlanets.push(`<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono shadow-2xs">🔴 潛意識 ${dZh} ${dVal.gate}.${dVal.line} (${dVal.line} 爻)</span>`);
+            }
+          });
+
+          const activePlanetsHtml = activePlanets.length > 0 ? `
+            <div class="mt-2.5 pt-2 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
+              <span class="text-[11px] font-bold text-slate-500">🌌 激活星位與爻線：</span>
+              ${activePlanets.join('')}
+            </div>
+          ` : '';
 
           drawer.innerHTML = `
-            <div class="flex items-center gap-2 mb-1.5">
-              <span class="w-3 h-3 rounded-full ${isAct ? 'bg-slate-900' : 'bg-slate-300'}"></span>
-              <strong class="text-sm font-bold text-slate-900">閘門 Gate ${g}</strong>
-              <span class="text-xs px-2 py-0.5 rounded-full ${isAct ? 'bg-slate-100 text-slate-800 font-bold' : 'text-slate-400'}">${statusText}</span>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full ${isAct ? 'bg-[#C8A97E]' : 'bg-slate-300'} shadow-xs inline-block"></span>
+                <strong class="text-sm font-bold text-slate-900">閘門 Gate ${g} · 【${gateInfo.hexagram}】</strong>
+                <span class="text-xs font-bold text-slate-700">（${gateInfo.name}）</span>
+              </div>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold border ${statusClass}">${statusText}</span>
             </div>
-            <p class="leading-relaxed">此閘門代表易經第 ${g} 卦對應之能量原型。${isAct ? '在您的命盤中已啟動，賦予您專屬的靈魂天賦特質。' : '此閘門處於開放狀態，容易感受並接收環境與他人的共振。'}</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 mb-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+              <div><strong>🔑 核心天賦關鍵字：</strong>${gateInfo.keywords}</div>
+              <div><strong>🌀 所屬迴路與中心：</strong>${gateInfo.circuit}（${gateInfo.groupName}）· ${centerTitle}</div>
+            </div>
+
+            <p class="leading-relaxed text-xs sm:text-sm text-slate-700">
+              ${isAct 
+                ? `易經<strong>【${gateInfo.hexagram}】</strong>在您的本命盤中已啟動，賦予您<strong>「${gateInfo.name}」</strong>的專屬生命天賦。當您順應策略與內在權威時，能展現「${gateInfo.keywords}」的卓越靈魂品質。`
+                : `易經<strong>【${gateInfo.hexagram}】</strong>在您的本命盤中處於開放休眠狀態。此閘門是您體驗外界共振的智慧天線，容易敏銳感受周遭在「${gateInfo.name}」面向的能量流動。`}
+            </p>
+
+            ${activePlanetsHtml}
           `;
+          drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
 
         gatesLayer.appendChild(gGroup);
@@ -1003,6 +1308,219 @@
           <p class="font-medium">當你感覺到「${hd.notSelf}」席捲而來時，這不是失敗，而是靈魂在提醒你：你剛才又在用頭腦勉強自己做不屬於你的事了。</p>
         </div>
       `;
+
+      // 11. 渲染能量結構全息統計大典 (1-6 爻線統計 & 三大迴路佔比矩陣)
+      renderStatisticsCards(hd);
+    }
+
+    // 渲染 1-6 爻線統計與三大迴路群矩陣
+    function renderStatisticsCards(hd) {
+      if (!hd) return;
+
+      // 1. 統計 1-6 爻爻數 (全盤 26 天體星位：顯意識 13 + 潛意識 13)
+      const lineCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+
+      const countActivation = (obj) => {
+        Object.values(obj || {}).forEach(pVal => {
+          if (pVal && pVal.line && lineCounts[pVal.line] !== undefined) {
+            lineCounts[pVal.line]++;
+          }
+        });
+      };
+
+      countActivation(hd.personality);
+      countActivation(hd.design);
+
+      const totalPositions = 26;
+
+      // 計算主導爻線 (出現次數最高)
+      let maxCount = 0;
+      let dominantLines = [];
+      for (let l = 1; l <= 6; l++) {
+        if (lineCounts[l] > maxCount) {
+          maxCount = lineCounts[l];
+          dominantLines = [l];
+        } else if (lineCounts[l] === maxCount && maxCount > 0) {
+          dominantLines.push(l);
+        }
+      }
+
+      // 渲染 1-6 爻分佈
+      const linesContainer = document.getElementById('lines_stats_container');
+      if (linesContainer) {
+        linesContainer.innerHTML = [1, 2, 3, 4, 5, 6].map(l => {
+          const count = lineCounts[l];
+          const pct = Math.round((count / totalPositions) * 100);
+          const meta = LINE_METRICS[l];
+          const isDominant = dominantLines.includes(l);
+          return `
+            <div class="p-3 rounded-xl border ${isDominant ? 'border-amber-300 bg-amber-50/50 shadow-2xs' : 'border-slate-200/80 bg-slate-50/50'} transition hover:border-slate-300">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${meta.color}"></span>
+                  <strong class="text-xs sm:text-sm font-bold text-slate-900">${meta.title}</strong>
+                  ${isDominant ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-stone-900 font-black shadow-2xs">👑 靈魂高頻主導</span>' : ''}
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs sm:text-sm font-black text-slate-900">${count} 爻</span>
+                  <span class="text-[11px] text-slate-400 font-mono">(${pct}%)</span>
+                </div>
+              </div>
+              
+              <!-- 進度條 -->
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mb-1.5">
+                <div class="h-full rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${meta.color}"></div>
+              </div>
+
+              <p class="text-[11px] text-slate-600 leading-relaxed">${meta.focus}</p>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 主導爻線靈魂叮嚀
+      const tipDiv = document.getElementById('lines_dominant_tip');
+      if (tipDiv) {
+        const domNames = dominantLines.map(l => `${l} 爻【${LINE_METRICS[l].archetype}】`).join(' ＆ ');
+        tipDiv.innerHTML = `
+          <strong class="font-bold block text-slate-900 mb-1">🌟 靈魂爻線結構提煉：</strong>
+          <p>全盤 26 天體星位中，出現頻率最高的是 <strong>${domNames}</strong>（共佔 ${maxCount} 爻次）。這意味著您的靈魂在與世界互動、落實天賦時，最常採取「${dominantLines.map(l => LINE_METRICS[l].archetype).join('與')}」的思維行動機制。善用這份強項，您能以最少阻力獲得深刻成就！</p>
+        `;
+      }
+
+      // 2. 統計三大迴路群佔比 (擁有多少該迴路的閘門及通道)
+      const circuitStats = {
+        individual: { gates: new Set(), channels: [] },
+        collective: { gates: new Set(), channels: [] },
+        tribal: { gates: new Set(), channels: [] }
+      };
+
+      // 統計已啟動閘門 (去重後的靈魂閘門)
+      hd.activeGates.all.forEach(g => {
+        const gInfo = HD_GATE_DATA[g];
+        if (gInfo && circuitStats[gInfo.group]) {
+          circuitStats[gInfo.group].gates.add(g);
+        }
+      });
+
+      // 統計已貫通天賦通道
+      hd.definedChannels.forEach(ch => {
+        const chInfo = HD_CHANNEL_CIRCUITS[ch.id];
+        if (chInfo && circuitStats[chInfo.group]) {
+          circuitStats[chInfo.group].channels.push({
+            id: ch.id,
+            name: ch.name,
+            circuit: chInfo.circuit,
+            type: ch.type
+          });
+        }
+      });
+
+      // 渲染三大迴路卡片
+      const circuitsContainer = document.getElementById('circuits_stats_container');
+      if (circuitsContainer) {
+        circuitsContainer.innerHTML = ['individual', 'collective', 'tribal'].map(grpKey => {
+          const grp = CIRCUIT_GROUPS[grpKey];
+          const data = circuitStats[grpKey];
+          const activeGateCount = data.gates.size;
+          const totalGroupGates = grp.totalGates;
+          const gatePct = Math.round((activeGateCount / totalGroupGates) * 100);
+
+          const activeChCount = data.channels.length;
+          const totalGroupCh = grp.totalChannels;
+          const chPct = Math.round((activeChCount / totalGroupCh) * 100);
+
+          // 啟動閘門徽章
+          const gateBadges = Array.from(data.gates).sort((a, b) => a - b).map(g => {
+            const gMeta = HD_GATE_DATA[g];
+            return `<span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 font-mono shadow-2xs" title="${gMeta.hexagram} - ${gMeta.name}">
+              <strong>${g}</strong><span class="text-[9px] text-slate-400">${gMeta.hexagram}</span>
+            </span>`;
+          }).join('');
+
+          // 貫通通道清單
+          const chBadges = data.channels.length === 0 ? '<span class="text-[11px] text-slate-400 italic">尚無完整接通通道</span>' : data.channels.map(c => `
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold shadow-2xs">
+              <span class="w-2 h-2 rounded-full" style="background-color: ${grp.color}"></span>
+              <span>${c.name} (${c.id})</span>
+            </div>
+          `).join('');
+
+          return `
+            <div class="p-4 rounded-xl border ${grp.border} ${grp.bg}">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full" style="background-color: ${grp.color}"></span>
+                  <strong class="text-sm font-bold text-slate-900">${grp.name}</strong>
+                </div>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700 font-bold">
+                  ${grp.theme}
+                </span>
+              </div>
+
+              <p class="text-xs text-slate-600 mb-3 leading-relaxed">${grp.desc}</p>
+
+              <!-- 雙指標進度條：閘門佔比 & 通道佔比 -->
+              <div class="grid grid-cols-2 gap-3 mb-3 bg-white/90 p-2.5 rounded-xl border border-slate-200/80">
+                <div>
+                  <div class="flex justify-between text-[11px] font-bold text-slate-700 mb-1">
+                    <span>擁有閘門數</span>
+                    <span class="font-mono text-slate-900">${activeGateCount}/${totalGroupGates} (${gatePct}%)</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500" style="width: ${gatePct}%; background-color: ${grp.color}"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-[11px] font-bold text-slate-700 mb-1">
+                    <span>貫通通道數</span>
+                    <span class="font-mono text-slate-900">${activeChCount}/${totalGroupCh} (${chPct}%)</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500" style="width: ${chPct}%; background-color: ${grp.color}"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 貫通通道清單 -->
+              <div class="mb-2.5">
+                <span class="text-[11px] font-bold text-slate-700 block mb-1">⚡ 已貫通天賦通道：</span>
+                <div class="flex flex-wrap gap-1.5">${chBadges}</div>
+              </div>
+
+              <!-- 擁有閘門清單 -->
+              <div>
+                <span class="text-[11px] font-bold text-slate-700 block mb-1">🔑 擁有之迴路閘門 (${activeGateCount} 個)：</span>
+                <div class="flex flex-wrap gap-1">${gateBadges || '<span class="text-[11px] text-slate-400">無</span>'}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 迴路人格總評
+      const cTipDiv = document.getElementById('circuits_dominant_tip');
+      if (cTipDiv) {
+        const indCh = circuitStats.individual.channels.length;
+        const colCh = circuitStats.collective.channels.length;
+        const triCh = circuitStats.tribal.channels.length;
+        let circuitSummary = '';
+        if (indCh >= colCh && indCh >= triCh && indCh > 0) {
+          circuitSummary = '您的<strong>個別迴路群（Individual）</strong>最為強盛！這賦予您深厚的天生原創性與突變能量。您來這個世界不是為了迎合傳統框架，而是透過堅定活出真實的自己，自然感染並啟蒙周遭的人。';
+        } else if (colCh >= indCh && colCh >= triCh && colCh > 0) {
+          circuitSummary = '您的<strong>集體迴路群（Collective）</strong>最為突出！這賦予您宏觀的視野與樂於分享的靈魂天性。您擅長從過往經驗中汲取智慧，或透過邏輯架構為眾人指引未來的可持續前進模式。';
+        } else if (triCh >= indCh && triCh >= colCh && triCh > 0) {
+          circuitSummary = '您的<strong>部落迴路群（Tribal）</strong>最為凝聚！這賦予您無比忠誠的社群守護者力量。您重視家庭、團隊與信諾，並致力於物質資源的富足積累與公平照護。';
+        } else {
+          circuitSummary = '您的三大迴路能量分佈均衡細膩，既具備個人原創探索的火花，又擁有對群體與社群的敏銳觸角。請依隨您的內在權威與策略，在不同的生活情境中自然調配這些天賦面向！';
+        }
+
+        cTipDiv.innerHTML = `
+          <strong class="font-bold block text-slate-900 mb-1">🌿 愛倫院長的迴路人格導讀：</strong>
+          <p class="leading-relaxed">${circuitSummary}</p>
+        `;
+      }
     }
 
     // 點擊能量中心互動事件 (生活魔藥與當下定義調頻)
