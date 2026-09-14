@@ -17,7 +17,7 @@
     <script src="./js/meetjoy-pdf.js"></script>
     <style>
       @media print {
-        .mj-global-nav, .sidebar, .adv-nav-wrap, .btn-submit, .btn-time-arrow, .center-btn-row, .chart-list-header, .btn-add-chart {
+        .mj-global-nav, .sidebar, .adv-nav-wrap, .btn-submit, .btn-time-arrow, .center-btn-row, .chart-list-header, .btn-add-chart, .mj-booking-cta-section {
           display: none !important;
         }
         body {
@@ -64,5 +64,45 @@
     </nav>
 
     <div id="root"></div>
+
+    <!-- 底部預約諮詢區塊 (Call To Action) -->
+    <div class="mj-booking-cta-section" style="width: 100%; max-width: 980px; margin: 40px auto 30px auto; padding: 0 16px; box-sizing: border-box;">
+      <div style="background: linear-gradient(135deg, #FFFDF9 0%, #FAF6ED 50%, #F4EDE0 100%); border: 2px solid rgba(200, 169, 126, 0.7); border-radius: 24px; padding: 28px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; position: relative; overflow: hidden; font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 9999px; background-color: #1E261D; color: #F7E7CE; font-size: 12px; font-weight: bold; border: 1px solid rgba(200, 169, 126, 0.5); margin-bottom: 12px;">
+          <span>✨ 癒見幸福 · 魔法占星學院</span>
+        </div>
+        
+        <h3 style="font-size: clamp(20px, 4vw, 28px); font-weight: 900; color: #1E261D; margin-bottom: 12px; letter-spacing: 0.5px;">
+          想更深入解讀紫微命盤格局與行運？想跟老師預約諮詢
+        </h3>
+        
+        <p style="font-size: clamp(12px, 2.5vw, 14px); color: #57534e; max-width: 680px; margin: 0 auto 24px auto; line-height: 1.6;">
+          紫微斗數十二宮位映照出本命格調、大限起伏與流年吉凶。若您在先天身命格局、事業前途、感情婚姻或祿權科忌化星轉折上有深層困惑，歡迎預約愛倫院長與學院專業導師群，進行 1 對 1 深度命盤解碼與生活實戰指引！
+        </p>
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px;">
+          <a href="https://meetjoy.net/booking/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 16px; background-color: #C8A97E; color: #1c1917; font-weight: 900; font-size: 15px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid rgba(140, 106, 26, 0.3); transition: all 0.2s;">
+            <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>想跟老師預約諮詢（線上預約中心）</span>
+          </a>
+          <a href="https://line.me/R/ti/p/@548valkv" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 16px; background-color: #06C755; color: #ffffff; font-weight: bold; font-size: 15px; text-decoration: none; box-shadow: 0 4px 10px rgba(6, 199, 85, 0.25); transition: all 0.2s;">
+            <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19.37 4.6C17.4 2.61 14.79 1.5 12 1.5c-2.79 0-5.4 1.11-7.37 3.1S1.5 9.27 1.5 12c0 2.73 1.16 5.31 3.13 7.3C6.6 21.29 9.21 22.5 12 22.5c1.16 0 2.3-.18 3.41-.55l.21-.07.07.21c.45 1.39 2.83 2.41 4.06 2.41.18 0 .33-.02.45-.07.41-.16.45-.66.05-1.12-.65-.74-1.55-2.13-1.85-2.81 1.83-1.96 2.95-4.49 2.95-7.5 0-2.73-1.16-5.31-3.13-7.3z"/>
+            </svg>
+            <span>LINE 官方預約洽詢（@548valkv）</span>
+          </a>
+        </div>
+
+        <div style="margin-top: 16px; font-size: 12px; color: #78716c; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+          <span>🔒 100% 隱私保密</span>
+          <span>•</span>
+          <span>🌿 線上 Zoom / 台北實體深度諮詢</span>
+          <span>•</span>
+          <span>💫 專屬客製化調頻建議</span>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
