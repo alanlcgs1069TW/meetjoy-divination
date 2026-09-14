@@ -54,4 +54,5 @@
 ## 部署與運行
 
 - 本專案為純靜態 HTML/JS 架構（Stand-alone Web SPA），無需伺服器編譯。
-- 專屬測試站點：`https://meetjoy-divination.pages.dev`
+- 正式線上站點：`https://app.meetjoy.net`
+- 備援測試站點：`https://meetjoy-divination.pages.dev`
