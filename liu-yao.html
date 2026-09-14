@@ -478,30 +478,35 @@
         <span class="text-stone-500 font-mono text-[11px]">${currentSanChuan.xunName} · 空亡【${currentSanChuan.kongWang}】</span>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
-          <div class="text-[10px] text-stone-500 font-bold mb-0.5">歲建 (年傳)</div>
-          <div class="text-sm font-black text-red-900 font-mono">${currentSanChuan.yearGZ} 年</div>
-          <div class="text-[10px] text-stone-400">太歲當權</div>
+        <!-- 1. 空亡 (最左邊) -->
+        <div class="col-span-2 sm:col-span-1 bg-white/90 p-2 rounded-lg border border-purple-200 shadow-2xs">
+          <div class="text-[10px] text-purple-900 font-bold mb-0.5">日旬空亡</div>
+          <div class="text-sm font-black text-purple-900 font-mono">${currentSanChuan.kongWang}</div>
+          <div class="text-[10px] text-purple-700 font-bold">吉凶避忌</div>
         </div>
-        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
-          <div class="text-[10px] text-stone-500 font-bold mb-0.5">月建 (月傳)</div>
-          <div class="text-sm font-black text-amber-900 font-mono">${currentSanChuan.monthGZ} 月</div>
-          <div class="text-[10px] text-amber-700 font-bold">提綱月令</div>
-        </div>
-        <div class="bg-white/90 p-2 rounded-lg border border-amber-300 ring-1 ring-amber-400/40 shadow-xs">
-          <div class="text-[10px] text-red-800 font-bold mb-0.5">日辰 (日傳)</div>
-          <div class="text-sm font-black text-red-950 font-mono">${currentSanChuan.dayGZ} 日</div>
-          <div class="text-[10px] text-red-700 font-bold">六爻司事</div>
-        </div>
+        <!-- 2. 時辰 (時支) -->
         <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
           <div class="text-[10px] text-stone-500 font-bold mb-0.5">時辰 (時支)</div>
           <div class="text-sm font-black text-stone-800 font-mono">${currentSanChuan.hourGZ} 時</div>
           <div class="text-[10px] text-stone-400">時支發應</div>
         </div>
-        <div class="col-span-2 sm:col-span-1 bg-white/90 p-2 rounded-lg border border-purple-200 shadow-2xs">
-          <div class="text-[10px] text-purple-900 font-bold mb-0.5">日旬空亡</div>
-          <div class="text-sm font-black text-purple-900 font-mono">${currentSanChuan.kongWang}</div>
-          <div class="text-[10px] text-purple-700 font-bold">吉凶避忌</div>
+        <!-- 3. 日辰 (日傳) -->
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-300 ring-1 ring-amber-400/40 shadow-xs">
+          <div class="text-[10px] text-red-800 font-bold mb-0.5">日辰 (日傳)</div>
+          <div class="text-sm font-black text-red-950 font-mono">${currentSanChuan.dayGZ} 日</div>
+          <div class="text-[10px] text-red-700 font-bold">六爻司事</div>
+        </div>
+        <!-- 4. 月建 (月傳) -->
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
+          <div class="text-[10px] text-stone-500 font-bold mb-0.5">月建 (月傳)</div>
+          <div class="text-sm font-black text-amber-900 font-mono">${currentSanChuan.monthGZ} 月</div>
+          <div class="text-[10px] text-amber-700 font-bold">提綱月令</div>
+        </div>
+        <!-- 5. 歲建 (年傳 · 最右邊) -->
+        <div class="bg-white/90 p-2 rounded-lg border border-amber-200/60 shadow-2xs">
+          <div class="text-[10px] text-stone-500 font-bold mb-0.5">歲建 (年傳)</div>
+          <div class="text-sm font-black text-red-900 font-mono">${currentSanChuan.yearGZ} 年</div>
+          <div class="text-[10px] text-stone-400">太歲當權</div>
         </div>
       </div>
       <div class="mt-2 pt-2 border-t border-amber-200/50 flex flex-wrap items-center justify-between text-[11px] text-stone-600">
@@ -789,16 +794,18 @@
         <!-- 三傳司令與本卦提綱卡 -->
         <div class="bg-amber-50/90 border border-amber-300/90 rounded-2xl p-4 mb-6 text-xs text-stone-800 shadow-xs">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/70 pb-2 mb-2 font-medium">
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-red-900">三傳歲月日：</span>
-              <span class="bg-red-100 text-red-900 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.yearGZ}年</span>
-              <span class="bg-amber-200/80 text-amber-950 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.monthGZ}月</span>
-              <span class="bg-red-800 text-white px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.dayGZ}日</span>
-              <span class="bg-stone-200 text-stone-800 px-2 py-0.5 rounded font-mono">${currentSanChuan.hourGZ}時</span>
-            </div>
-            <div>
+            <div class="flex flex-wrap items-center gap-2">
               <span class="font-bold text-purple-900">日旬空亡：</span>
               <span class="font-mono font-bold text-purple-950 bg-purple-100 px-2 py-0.5 rounded">${currentSanChuan.kongWang}</span>
+              <span class="text-stone-300 mx-1">|</span>
+              <span class="font-bold text-stone-800">司命提綱：</span>
+              <span class="bg-stone-200 text-stone-800 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.hourGZ}時</span>
+              <span class="bg-red-800 text-white px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.dayGZ}日</span>
+              <span class="bg-amber-200/80 text-amber-950 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.monthGZ}月</span>
+              <span class="bg-red-100 text-red-900 px-2 py-0.5 rounded font-mono font-bold">${currentSanChuan.yearGZ}年</span>
+            </div>
+            <div class="text-stone-500 font-mono text-[11px]">
+              ${currentSanChuan.xunName}
             </div>
           </div>
           <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-stone-600 text-[11px]">
