@@ -367,7 +367,7 @@
             </span>
           </div>
           <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-            統計本命盤顯意識（13 顆星曜）與潛意識（13 顆星曜）中 1 至 6 爻的分佈次數，反映靈魂在底層紮根、天賦隱居、實證突破、人際網絡、救世解方與超然榜樣等各維度的能量側重。
+            統計本命盤顯意識（13 顆星曜）與潛意識（13 顆星曜）中 1 至 6 爻的分佈次數，反映靈魂在底層紮根、天賦隱居、實證突破、人際網路、救世解方與超然榜樣等各維度的能量側重。
           </p>
           <div id="lines_stats_container" class="space-y-3"></div>
         </div>
@@ -507,7 +507,7 @@
       },
       4: {
         title: '4 爻 · 機會主義者 (Opportunist)',
-        archetype: '社交網絡者',
+        archetype: '人際網路者',
         focus: '透過熟人圈、朋友與人脈網路傳遞影響力。重視信任與友誼根基，機會皆由人際共振而來。',
         color: '#8B5CF6',
         bg: '#EDE9FE'
@@ -1227,7 +1227,7 @@
 
           const centerTitle = CENTER_NAMES[gateInfo.center] || gateInfo.center;
 
-          // 取得在此閘門激活的具體星曜與爻線
+          // 取得在此閘門啟動的具體星曜與爻線
           const activePlanets = [];
           Object.entries(hd.personality || {}).forEach(([pKey, pVal]) => {
             if (pVal && pVal.gate === g) {
@@ -1244,7 +1244,7 @@
 
           const activePlanetsHtml = activePlanets.length > 0 ? `
             <div class="mt-2.5 pt-2 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
-              <span class="text-[11px] font-bold text-slate-500">🌌 激活星位與爻線：</span>
+              <span class="text-[11px] font-bold text-slate-500">🌌 啟動星位與爻線：</span>
               ${activePlanets.join('')}
             </div>
           ` : '';
@@ -1546,7 +1546,7 @@
               <strong class="text-sm font-bold text-slate-900">${centerTitle}</strong>
             </div>
             <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold ${isDefined ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
-              ${isDefined ? '● 已定義中心 (Defined)' : '○ 開放/未定義中心 (Open)'}
+              ${isDefined ? '● 有定義中心 (Defined)' : '○ 未定義/開放中心 (Open)'}
             </span>
           </div>
           <p class="leading-relaxed text-slate-700 text-xs sm:text-sm">${centerAdvice}</p>

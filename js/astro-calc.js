@@ -947,7 +947,7 @@
 
     // 11 大天命球對應之天體與爻線
     const spheres = {
-      // 激活序列 (綠色 · 激活自我天賦)
+      // 啟動序列 (綠色 · 啟動自我天賦)
       lifesWork: { id: 'lifesWork', name: '生命工作', en: "Life's Work", seq: 'activation', color: '#10B981', planet: 'Personality Sun', planetSymbol: '☉', ...degreeToGateLine(pPos.Sun.longitude) },
       evolution: { id: 'evolution', name: '進化', en: 'Evolution', seq: 'activation', color: '#10B981', planet: 'Personality Earth', planetSymbol: '⊕', ...degreeToGateLine(pPos.Earth.longitude) },
       radiance: { id: 'radiance', name: '光芒', en: 'Radiance', seq: 'activation', color: '#10B981', planet: 'Design Sun', planetSymbol: '☉', ...degreeToGateLine(dPos.Sun.longitude) },

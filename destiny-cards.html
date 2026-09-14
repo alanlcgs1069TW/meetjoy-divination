@@ -345,7 +345,7 @@
       handleCalculateCards(new Event('submit'));
     }
 
-    // 點擊放大查看 1080 高清神聖卡牌 Modal
+    // 點擊放大查看 1080P 高畫質神聖卡牌 Modal
     function openCardModal(imgName, title, desc = '') {
       const modal = document.getElementById('cardPreviewModal');
       const modalImg = document.getElementById('modalCardImg');
@@ -485,7 +485,7 @@
     });
   </script>
 
-  <!-- 1080 高清卡牌放大預覽視窗 (Modal) -->
+  <!-- 1080P 高畫質卡牌放大預覽視窗 (Modal) -->
   <div id="cardPreviewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md hidden transition-opacity" onclick="if(event.target === this) closeCardModal()">
     <div class="bg-gradient-to-b from-stone-900 to-stone-950 border border-amber-500/40 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative flex flex-col items-center animate-fade-in text-center">
       <button onclick="closeCardModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-stone-800 text-stone-300 hover:text-white hover:bg-stone-700 flex items-center justify-center transition">

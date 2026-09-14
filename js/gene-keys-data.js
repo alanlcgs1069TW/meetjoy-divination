@@ -100,7 +100,7 @@ const SPHERE_LINE_TAGS = {
     5: '五爻 · 影響（聲音）',
     6: '六爻 · 臣服（意識）'
   },
-  // 使命 (Purpose - 激活序列/身體根基)
+  // 使命 (Purpose - 啟動序列/身體根基)
   purpose: {
     1: '初爻 · 物理根基',
     2: '二爻 · 姿勢流動',
@@ -239,7 +239,7 @@ const SPHERE_LINE_TAGS = {
 // 全息天命圖各序列標準幾何端點座標 (基於 960x760 視圖百分比)
 // 1. 完整全譜 (Wholeness · 11 Spheres 神聖幾何曼陀羅)
 const SACRED_MANDALA_COORDS = {
-  // 激活序列 (菱形四極頂點)
+  // 啟動序列 (菱形四極頂點)
   lifesWork:  { x: 50.0, y: 12.0, labelAlign: 'top-right' },
   evolution:  { x: 82.0, y: 49.0, labelAlign: 'right' },
   radiance:   { x: 18.0, y: 49.0, labelAlign: 'left' },
@@ -257,7 +257,7 @@ const SACRED_MANDALA_COORDS = {
   pearl:      { x: 50.0, y: 26.0, labelAlign: 'top-right' }
 };
 
-// 2. 激活序列專屬幾何端點 (大正菱形 · 四大天才端點)
+// 2. 啟動序列專屬幾何端點 (大正菱形 · 四大天才端點)
 const ACTIVATION_SEQUENCE_COORDS = {
   lifesWork:  { x: 50.0, y: 14.0, labelAlign: 'top-right' },
   evolution:  { x: 82.0, y: 50.0, labelAlign: 'right' },
@@ -294,9 +294,9 @@ const STAR_PEARL_COORDS = {
   pearl:        { x: 50.0, y: 50.0, labelAlign: 'right' }
 };
 
-// 全息通道網絡連線 (Pathways) - 完整全譜（對標桌面截圖：3 綠 + 5 紅 + 6 藍 = 14 條神聖通道）
+// 全息通道路徑連線 (Pathways) - 完整全譜（對標桌面截圖：3 綠 + 5 紅 + 6 藍 = 14 條神聖通道）
 const GOLDEN_PATHWAYS = [
-  // 1. 激活序列綠線 (The Activation Sequence · 精確 3 條挑戰顯化通道)
+  // 1. 啟動序列綠線 (The Activation Sequence · 精確 3 條挑戰顯化通道)
   { from: 'lifesWork', to: 'evolution', color: '#10B981', seq: 'activation', name: '挑戰通道' },
   { from: 'evolution', to: 'radiance', color: '#10B981', seq: 'activation', name: '光芒突破通道' },
   { from: 'radiance', to: 'purpose', color: '#10B981', seq: 'activation', name: '扎根天命通道' },

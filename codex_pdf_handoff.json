@@ -1,0 +1,21 @@
+{
+  "task": "MeetJoyPDF 列印行銷頁首頁尾與命盤優先保護重構",
+  "status": "completed",
+  "modified_file": "/Users/alanlc/Documents/claudeai/100_Todo/projects/meetjoy-divination/js/meetjoy-pdf.js",
+  "requested_handoff_path": "/Users/alanlc/Documents/claudeai/000_Agent/memory/logs/codex_pdf_handoff.json",
+  "qr_source": "/Users/alanlc/Documents/claudeai/100_Todo/projects/meetjoy-divination/assets/app_meetjoy_qr_dataurl.txt",
+  "implemented": [
+    "列印時於 main 動態注入官方 Logo、品牌抬頭、報告名稱、鑑定時間與 64x64 QR Code 頁首",
+    "注入固定列印頁尾，含官方網站與 app.meetjoy.net 線上排盤入口",
+    "列印前將偵測到的人類圖、基因天命、紫微、西洋占星、小六壬或六爻核心盤面移至頁首後方；列印後復位",
+    "核心盤面套用 page-break-inside 與 break-inside avoid，SVG 以 A4 可用高度放大且完整呈現",
+    "支援匯出按鈕與瀏覽器原生列印事件"
+  ],
+  "validation": [
+    "node --check js/meetjoy-pdf.js",
+    "Node CommonJS 載入與 QR 備援 DataURL 驗證",
+    "prettier --write js/meetjoy-pdf.js",
+    "git diff --check"
+  ],
+  "handoff_write_status": "sandbox_blocked_outside_project"
+}
