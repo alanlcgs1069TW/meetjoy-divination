@@ -368,6 +368,9 @@
   </main>
 
   <script>
+    // 全域保存當前排盤計算結果
+    let currentHdChart = null;
+
     // 正統人類圖中心定義色 (對標桌面 IMG_7943 與 IMG_7942 專業色彩)
     const CENTER_COLORS = {
       'Head': '#E5A93C',
@@ -378,7 +381,8 @@
       'Sacral': '#C93B2B',
       'Root': '#845B45',
       'Spleen': '#845B45',
-      'Solar Plexus': '#845B45'
+      'Solar Plexus': '#845B45',
+      'Solar_Plexus': '#845B45'
     };
 
     const CENTER_STROKES = {
@@ -390,7 +394,8 @@
       'Sacral': '#96281C',
       'Root': '#63402E',
       'Spleen': '#63402E',
-      'Solar Plexus': '#63402E'
+      'Solar Plexus': '#63402E',
+      'Solar_Plexus': '#63402E'
     };
 
     const CENTER_NAMES = {
@@ -400,6 +405,7 @@
       'G': 'G中心 (Identity)',
       'Heart': '意志力/心輪 (Heart/Ego)',
       'Solar Plexus': '情緒中心 (Solar Plexus)',
+      'Solar_Plexus': '情緒中心 (Solar Plexus)',
       'Sacral': '薦骨中心 (Sacral)',
       'Spleen': '脾臟直覺中心 (Spleen)',
       'Root': '根部中心 (Root)'
@@ -412,6 +418,7 @@
       'G': '【G中心調頻】：方向感與愛從來不需要向外追趕。待在令你身體感到放鬆美好的環境，屬於你的命定之人自然會出現。',
       'Heart': '【意志力中心調頻】：意志力是短跑衝刺鞋，不是 24 小時睡衣。承諾前先誠實檢驗能量，永遠不需要向世界證明自己夠好。',
       'Solar Plexus': '【情緒中心調頻】：當下沒有絕對的真理。在情緒波的高峰與低谷中不作重大決定，給自己一杯茶的時間等待清晰。',
+      'Solar_Plexus': '【情緒中心調頻】：當下沒有絕對的真理。在情緒波的高峰與低谷中不作重大決定，給自己一杯茶的時間等待清晰。',
       'Sacral': '【薦骨中心調頻】：腹部深處的直覺反應（嗯哼 vs 嗯哼不）是你的靈魂導航。只對真正點燃你活力的事物說 Yes！',
       'Spleen': '【脾臟中心調頻】：直覺的提醒像微風拂過，只在當下瞬間響起一次。學會在嘈雜的世界中靜下來，信任身體的第一感覺。',
       'Root': '【根部中心調頻】：腎上腺素的壓力是火箭引擎，不是方向盤。不要為了逃避焦慮而倉促做事，先深呼吸站穩腳跟。'
@@ -650,6 +657,7 @@
 
       // 2. 調用核心排盤引擎
       const hd = AstroCalc.calculateHumanDesignChart(utcDate);
+      currentHdChart = hd;
 
       // 3. 更新指標卡 (依愛倫指示：置於圖與行星標示之後，包含定義/幾分人與輪迴交叉完整名稱)
       const summaryDiv = document.getElementById('chart_summary_cards');
@@ -997,18 +1005,35 @@
       `;
     }
 
-    // 點擊能量中心互動事件
+    // 點擊能量中心互動事件 (生活魔藥與當下定義調頻)
     document.querySelectorAll('.crystal-center').forEach(el => {
       el.addEventListener('click', () => {
-        const cKey = el.dataset.center;
+        const rawKey = el.dataset.center || '';
+        const normKey = rawKey.replace('_', ' ');
+        const centerTitle = CENTER_NAMES[normKey] || CENTER_NAMES[rawKey] || '能量中心';
+        const centerAdvice = CENTER_RX[normKey] || CENTER_RX[rawKey] || '請聆聽身體內在當下的沉靜與呼吸，安住於自身中心。';
+
+        // 判斷當前排盤中此中心是否已定義 (Defined vs Open)
+        let isDefined = false;
+        if (currentHdChart && currentHdChart.definedCenters) {
+          isDefined = currentHdChart.definedCenters.includes(normKey) || currentHdChart.definedCenters.includes(rawKey);
+        }
+
+        const centerColor = isDefined ? (CENTER_COLORS[normKey] || '#C8A97E') : '#94A3B8';
         const drawer = document.getElementById('center_drawer');
         drawer.innerHTML = `
-          <div class="flex items-center gap-2 mb-1.5">
-            <span class="w-3 h-3 rounded-full bg-[#C8A97E]"></span>
-            <strong class="text-sm font-bold text-slate-900">${CENTER_NAMES[cKey]}</strong>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-3.5 h-3.5 rounded-full shadow-xs inline-block" style="background-color: ${centerColor}"></span>
+              <strong class="text-sm font-bold text-slate-900">${centerTitle}</strong>
+            </div>
+            <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold ${isDefined ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+              ${isDefined ? '● 已定義中心 (Defined)' : '○ 開放/未定義中心 (Open)'}
+            </span>
           </div>
-          <p class="leading-relaxed">${CENTER_RX[cKey]}</p>
+          <p class="leading-relaxed text-slate-700 text-xs sm:text-sm">${centerAdvice}</p>
         `;
+        drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
 
