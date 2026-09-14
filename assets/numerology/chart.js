@@ -293,10 +293,47 @@
     ];
   }
 
+  const NINE_STARS_DEFS = [
+    { word: '名', title: '名望聲譽', desc: '立命顯揚 · 威信立心' },
+    { word: '財', title: '正偏財祿', desc: '資源豐盛 · 物質豐盛' },
+    { word: '官', title: '官祿威權', desc: '責任承擔 · 升遷掌印' },
+    { word: '利', title: '獲利順遂', desc: '成果轉化 · 亨通回報' },
+    { word: '交', title: '人際社交', desc: '合作連結 · 人脈擴展' },
+    { word: '敗', title: '波折考驗', desc: '沉著轉機 · 逆境鍛造' },
+    { word: '衰', title: '能量沉潛', desc: '內修調息 · 養精蓄銳' },
+    { word: '煞', title: '制化化煞', desc: '破局化解 · 斬斷內耗' },
+    { word: '絕', title: '歸零重生', desc: '蛻變涅槃 · 蓄勢新生' }
+  ];
+
   function renderTriangle(root, lifeNumber, flowYear) {
     const sequence = Array.from({ length: 9 }, (_, index) => ((lifeNumber - 1 + index) % 9) + 1);
+    const starWords = ['名', '財', '官', '利', '交', '敗', '衰', '煞', '絕'];
     const points = trianglePoints();
-    root.querySelector('[data-time-triangle]').innerHTML = `<svg viewBox="-20 0 250 182" role="img" aria-label="主命數 ${lifeNumber} 的九年循環三角盤"><path d="M36 160V12L188 160Z"/><path d="M36 160H188"/><text x="18" y="165" style="text-anchor:end">命盤柱</text>${points.map((point, index) => `<g class="${sequence[index] === flowYear ? 'is-current' : ''}${[0, 3, 6].includes(index) ? ' is-vertex' : ''}"><circle cx="${point[0]}" cy="${point[1]}" r="${[0, 3, 6].includes(index) ? 15 : 13}"/><text x="${point[0]}" y="${point[1] + 5}">${sequence[index]}</text></g>`).join('')}</svg><p>數字由太陽盤主命數在左下直角起算、順時針鋪滿三角形；三頂點為同組數（147／258／369）。</p>`;
+    root.querySelector('[data-time-triangle]').innerHTML = `<svg viewBox="-25 -5 260 200" role="img" aria-label="主命數 ${lifeNumber} 的九年循環三角盤"><path d="M36 160V12L188 160Z"/><path d="M36 160H188"/><text x="18" y="165" style="text-anchor:end">命盤柱</text>${points.map((point, index) => `<g class="${sequence[index] === flowYear ? 'is-current' : ''}${[0, 3, 6].includes(index) ? ' is-vertex' : ''}"><circle cx="${point[0]}" cy="${point[1]}" r="${[0, 3, 6].includes(index) ? 15 : 13}"/><text x="${point[0]}" y="${point[1] + 4}">${sequence[index]}</text><text x="${point[0]}" y="${point[1] + 24}" font-size="9" font-weight="bold" fill="#be5b3f">${starWords[index]}</text></g>`).join('')}</svg><p>數字由太陽盤主命數在左下直角「名」起算、順時針鋪滿三角形（名財官利交敗衰煞絕）；三頂點為同組數（147／258／369）。</p>`;
+  }
+
+  function renderNineStars(root, lifeNumber, flowYear) {
+    const grid = root.querySelector('[data-nine-stars-grid]');
+    const flowVal = root.querySelector('[data-flow-year-val]');
+    if (!grid) return;
+    if (flowVal) flowVal.textContent = `${flowYear} 數`;
+
+    const base = Number(lifeNumber) || 9;
+    const itemsHtml = NINE_STARS_DEFS.map((star, idx) => {
+      // 每個字下面也從主命數開始寫數字依序在每個字的下面
+      const num = ((base - 1 + idx) % 9) + 1;
+      const isCurrentFlow = (num === flowYear);
+      return `
+        <div class="sun-chart__nine-star-item ${isCurrentFlow ? 'is-flow-current' : ''}">
+          ${isCurrentFlow ? '<span class="sun-chart__nine-star-badge">當前流年</span>' : ''}
+          <div class="sun-chart__nine-star-word">${star.word}</div>
+          <div class="sun-chart__nine-star-num">${num}</div>
+          <div class="sun-chart__nine-star-tag">${star.title}</div>
+          <div class="sun-chart__nine-star-desc">${star.desc}</div>
+        </div>
+      `;
+    }).join('');
+    grid.innerHTML = itemsHtml;
   }
 
   function renderChart(root, values) {
@@ -324,6 +361,7 @@
     root.querySelector('[data-life-number]').textContent = lifeNumber;
     renderCycleLists(root, birth, values.birthTime, referenceDate, lifeNumber);
     renderTriangle(root, lifeNumber, flowYear);
+    renderNineStars(root, lifeNumber, flowYear);
     root.querySelector('[data-chart-result]').hidden = false;
     root.querySelector('[data-chart-empty]').hidden = true;
   }

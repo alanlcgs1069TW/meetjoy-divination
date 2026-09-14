@@ -16,4 +16,24 @@
 @media (max-width: 840px) { .sun-chart__form { grid-template-columns: 1fr 1fr; }.sun-chart__manual-lunar { grid-column: span 1; }.sun-chart__form > button { grid-column: span 1; }.sun-chart__insight-grid, .sun-chart__life-layout { grid-template-columns: 1fr 1fr; }.sun-chart__connections, .sun-chart__triangle-card { grid-column: span 2; }.sun-chart__flows { grid-template-columns: 1fr; }.sun-chart__flow { border-right: 0; border-bottom: 1px solid rgba(16,47,73,.3); }.sun-chart__flow:last-child { border-bottom: 0; } }
 @media (max-width: 580px) { .sun-chart { margin: 0; padding: 18px 14px; border-width: 0; }.sun-chart__form, .sun-chart__plates, .sun-chart__insight-grid, .sun-chart__life-layout { grid-template-columns: 1fr; }.sun-chart__manual-lunar, .sun-chart__form > button, .sun-chart__connections, .sun-chart__triangle-card { grid-column: span 1; }.sun-chart__toolbar, .sun-chart__date-ribbon, .sun-chart__section-heading { align-items: flex-start; flex-direction: column; }.sun-chart__date-ribbon { gap: 10px; }.sun-chart__date-ribbon i { display: none; }.sun-chart__toolbar div { width: 100%; }.sun-chart__toolbar button { flex: 1; padding-inline: 8px; }.sun-chart__cell { min-height: 64px; }.sun-chart__grid-wrap { gap: 9px; }.sun-chart__zero { width: 52px; }.sun-chart__lunar-fields { grid-template-columns: 1fr; } }
 @media print { .sun-chart { max-width: none; margin: 0; padding: 14mm; border: 0; box-shadow: none; background: #fff; }.sun-chart__form, .sun-chart__empty, .sun-chart__toolbar div { display: none !important; }.sun-chart__result { margin-top: 0; }.sun-chart__mist, .sun-chart::before, .sun-chart::after { opacity: .18; }.sun-chart__panel, .sun-chart__cycle-card, .sun-chart__triangle-card, .sun-chart__plate { break-inside: avoid; }.sun-chart__gift { break-inside: avoid; }.sun-chart__plates, .sun-chart__insight-grid, .sun-chart__life-layout { gap: 9px; }.sun-chart__plate, .sun-chart__panel, .sun-chart__cycle-card, .sun-chart__triangle-card { padding: 11px; }.sun-chart h3 { margin-bottom: 8px; } }
-
+/* 九星流年能量格局長條卡片 (名財官利交敗衰煞絕) */
+.sun-chart__nine-stars-section { margin-top: 24px; }
+.sun-chart__nine-stars-card { padding: 22px; border: 1px solid rgba(16, 47, 73, 0.38); background: rgba(255, 253, 246, 0.7); box-shadow: 0 4px 16px rgba(16, 47, 73, 0.05); }
+.sun-chart__nine-stars-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid rgba(16, 47, 73, 0.18); }
+.sun-chart__nine-stars-heading h3 { margin: 0 0 6px 0; font-size: 20px; letter-spacing: .06em; color: var(--sun-navy); }
+.sun-chart__nine-stars-subtitle { margin: 0; color: #5c7480; font-size: 12px; line-height: 1.6; }
+.sun-chart__nine-stars-flow-tag { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--sun-navy); color: #fffaf0; border-radius: 20px; font-size: 12px; white-space: nowrap; }
+.sun-chart__nine-stars-flow-tag b { color: var(--sun-gold); font-size: 16px; }
+.sun-chart__nine-stars-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 10px; }
+.sun-chart__nine-star-item { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 4px 12px; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(16, 47, 73, 0.22); border-radius: 6px; position: relative; transition: all 0.2s ease; }
+.sun-chart__nine-star-item:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(16, 47, 73, 0.08); }
+.sun-chart__nine-star-item.is-flow-current { background: rgba(185, 139, 72, 0.15); border: 2px solid var(--sun-rust); box-shadow: 0 4px 14px rgba(190, 91, 63, 0.2); }
+.sun-chart__nine-star-word { font-size: 22px; font-weight: 900; color: var(--sun-navy); margin-bottom: 4px; line-height: 1; }
+.sun-chart__nine-star-item.is-flow-current .sun-chart__nine-star-word { color: var(--sun-rust); }
+.sun-chart__nine-star-num { font-size: 26px; font-weight: 800; color: var(--sun-rust); line-height: 1.1; margin-bottom: 6px; }
+.sun-chart__nine-star-tag { font-size: 11px; font-weight: 700; color: var(--sun-gold); margin-bottom: 4px; white-space: nowrap; }
+.sun-chart__nine-star-desc { font-size: 10px; color: #627b86; line-height: 1.35; margin-top: 2px; }
+.sun-chart__nine-star-badge { position: absolute; top: -8px; background: var(--sun-rust); color: #fff; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
+@media (max-width: 840px) { .sun-chart__nine-stars-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+@media (max-width: 580px) { .sun-chart__nine-stars-grid { grid-template-columns: repeat(3, 1fr); } .sun-chart__nine-stars-heading { flex-direction: column; } }
+@media print { .sun-chart__nine-stars-section { break-inside: avoid; } }

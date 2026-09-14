@@ -17,6 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="./js/meetjoy-pdf.js"></script>
+  <script src="./js/meetjoy-nav.js"></script>
   <link rel="stylesheet" href="./assets/numerology/chart.css">
   <style>
     body { font-family: 'Noto Serif TC', serif; background-color: #F4EFE6; color: #183B54; margin: 0; padding: 0; }
@@ -148,6 +149,25 @@
           <div class="sun-chart__cycle-card"><p class="sun-chart__panel-kicker">主命數 <strong data-life-number></strong></p><h3>三大週期數</h3><div data-three-cycles></div></div>
           <div class="sun-chart__cycle-card"><p class="sun-chart__panel-kicker">逐步累計</p><h3>五大階段數</h3><div data-five-stages></div></div>
           <div class="sun-chart__triangle-card"><p class="sun-chart__panel-kicker">九年循環</p><h3>時間盤序列</h3><div data-time-triangle></div></div>
+        </section>
+
+        <!-- 🔮 九星流年能量格局長條卡片（名 財 官 利 交 敗 衰 煞 絕） -->
+        <section class="sun-chart__nine-stars-section" data-nine-stars-section>
+          <div class="sun-chart__nine-stars-card">
+            <div class="sun-chart__nine-stars-heading">
+              <div>
+                <p class="sun-chart__panel-kicker">生命密碼 · 九星流年能量格局</p>
+                <h3>九星流年長條矩陣（名 財 官 利 交 敗 衰 煞 絕）</h3>
+                <p class="sun-chart__nine-stars-subtitle">以太陽盤主命數為首，順序排定九年循環之能量位階。名為聲譽、財為豐盛、官為權威、利為回報、交為人脈、敗為轉化、衰為沉潛、煞為化解、絕為新生。</p>
+              </div>
+              <div class="sun-chart__nine-stars-flow-tag">
+                <span>目前流年：</span><b data-flow-year-val>--</b>
+              </div>
+            </div>
+            <div class="sun-chart__nine-stars-grid" data-nine-stars-grid>
+              <!-- 9 欄長條：名 財 官 利 交 敗 衰 煞 絕 -->
+            </div>
+          </div>
         </section>
 
         <section class="sun-chart__gift-section">
