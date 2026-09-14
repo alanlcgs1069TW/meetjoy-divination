@@ -171,8 +171,8 @@
 
     const App = () => {
       const [mode, setMode] = useState('date');
-      const [num1, setNum1] = useState('');
-      const [num2, setNum2] = useState('');
+      const [num1, setNum1] = useState('8'); // 預先填入幸運吉數 8 (八方大安)
+      const [num2, setNum2] = useState('6'); // 預先填入幸運吉數 6 (六六大順)
       const [lunarDay, setLunarDay] = useState(1);
       const [timeBranchIdx, setTimeBranchIdx] = useState(0); 
       const [result, setResult] = useState(null);
@@ -185,6 +185,16 @@
         const branchIndex = Math.floor((hour + 1) / 2) % 12;
         setTimeBranchIdx(branchIndex);
       }, []);
+
+      // 靈感隨機取數功能 (易經大衍與靈機神動)
+      const generateRandomNumbers = () => {
+        // 從 1~64 靈感數字池中隨機抽選兩個不重複的吉數
+        const r1 = Math.floor(Math.random() * 64) + 1;
+        let r2 = Math.floor(Math.random() * 64) + 1;
+        if (r2 === r1) r2 = (r1 % 64) + 1;
+        setNum1(r1.toString());
+        setNum2(r2.toString());
+      };
 
       const calculate = () => {
         let n1 = 0, n2 = 0, selfElement = '', selfLabel = '', calcTimeBranchIdx = 0; 
@@ -310,8 +320,23 @@
                 </React.Fragment>
               ) : (
                 <React.Fragment>
+                  <div className="col-span-1 sm:col-span-2 flex items-center justify-between pb-1.5 border-b border-stone-200/60 mb-1">
+                    <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                      <span>🔢 靈感數字起盤</span>
+                      <span className="text-[11px] text-stone-400 font-normal hidden sm:inline">（心念動時即占，意念起卦）</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={generateRandomNumbers}
+                      className="px-3 py-1 text-xs font-bold text-[#2E3829] hover:text-white bg-[#EFE9DF] hover:bg-[#536349] border border-[#C8A97E]/70 rounded-full transition-all flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+                      title="心念一動，隨機抽選兩組幸運靈感數字"
+                    >
+                      <span className="text-sm">🎲</span>
+                      <span>隨機取數</span>
+                    </button>
+                  </div>
                   <div>
-                    <label className="block text-xs font-bold text-stone-600 mb-1">數字一 (日數)</label>
+                    <label className="block text-xs font-bold text-stone-600 mb-1">數字一 (日數 · 代表定位)</label>
                     <input
                       type="number"
                       value={num1}
@@ -321,7 +346,7 @@
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-stone-600 mb-1">數字二 (時數)</label>
+                    <label className="block text-xs font-bold text-stone-600 mb-1">數字二 (時數 · 代表應事)</label>
                     <input
                       type="number"
                       value={num2}
