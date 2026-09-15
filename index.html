@@ -32,10 +32,18 @@
       border-color: #C8A97E;
       box-shadow: 0 4px 12px rgba(46, 56, 41, 0.2);
     }
-    /* 當被 iframe 嵌入時（例如 meetjoy.net/app/），自動隱藏內部導覽列，消除手機版雙重重疊 */
+    /* 當被 iframe 嵌入時（例如 meetjoy.net/app/），自動隱藏內部導覽列，消除雙重導覽列重疊 */
     .in-iframe nav, html.in-iframe nav,
-    .in-iframe #mj_unified_top_bar, html.in-iframe #mj_unified_top_bar {
+    .in-iframe header, html.in-iframe header,
+    .in-iframe #mj_unified_global_header, html.in-iframe #mj_unified_global_header,
+    .in-iframe #mj_unified_top_bar, html.in-iframe #mj_unified_top_bar,
+    .in-iframe #mj_unified_dept_bar, html.in-iframe #mj_unified_dept_bar {
       display: none !important;
+      height: 0 !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
     }
     .in-iframe main {
       padding-top: 1.5rem !important;

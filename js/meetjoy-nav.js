@@ -61,15 +61,24 @@
 
   function renderUnifiedNav() {
     const current = getCurrentPath();
+    const isHome = (current === '/' || current === '/index.html' || current === '');
+    const isInIframe = (window.self !== window.top) || document.documentElement.classList.contains('in-iframe');
+
+    // 核心防呆：當被 iframe 嵌入時（例如 meetjoy.net/app/），且處於首頁 index.html
+    // 外層 WordPress 頁面已自帶頂級品牌標題列，且首頁本身已滿版呈現各大排盤卡片，絕不重複渲染內部導覽列！
+    if (isInIframe && isHome) {
+      const existingHeader = document.getElementById('mj_unified_global_header');
+      if (existingHeader) existingHeader.remove();
+      const rawNav = document.querySelector('nav.mj-global-nav') || document.querySelector('nav');
+      if (rawNav) rawNav.style.display = 'none';
+      return;
+    }
 
     // 建立外層導覽容器
     const nav = document.createElement('header');
     nav.id = 'mj_unified_global_header';
     nav.className = 'w-full sticky top-0 z-[9999] shadow-md border-b border-[#C8A97E]/40 font-serif select-none';
     nav.style.backgroundColor = '#1A2319';
-
-    // 偵測是否被 iframe 嵌入（如 meetjoy.net/app/）
-    const isInIframe = (window.self !== window.top) || document.documentElement.classList.contains('in-iframe');
 
     // 第 1 層：官方 Logo、大典標題、外部捷徑（若在 iframe 內則自動隱藏，避免與外層導覽列重複）
     const topBarHtml = isInIframe ? '' : `
@@ -103,48 +112,52 @@
       </div>
     `;
 
-    // 第 2 層：多層次五大學系排盤選單條
-    const isHome = (current === '/' || current === '/index.html' || current === '');
-    const homeBtnHtml = `
-      <a href="/index.html" class="flex items-center shrink-0 gap-1 px-2.5 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition ${isHome ? 'bg-[#C8A97E] text-stone-900 shadow-xs' : 'text-amber-100/90 hover:text-white hover:bg-white/10'}">
-        <span>🌟 排盤大典</span>
-      </a>
-    `;
+    // 若在獨立訪問的首頁（standalone isHome），第 1 層已具備完整功能，第 2 層直接省略，杜絕雙層視覺
+    let multiLevelBarHtml = '';
 
-    let deptItemsHtml = homeBtnHtml;
-    DEPARTMENTS.forEach((dept) => {
-      const hasActive = dept.systems.some(s => s.url === current || current.endsWith(s.url));
-      const sysLinks = dept.systems.map(s => {
-        const isActive = (s.url === current || current.endsWith(s.url));
-        if (isActive) {
+    if (!isHome) {
+      // 內頁（排盤工具頁）才提供快速切換學系排盤選單條
+      const homeBtnHtml = `
+        <a href="/index.html" class="flex items-center shrink-0 gap-1 px-2.5 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition bg-[#C8A97E] text-stone-900 shadow-xs hover:bg-[#b8946a]">
+          <span>← 🌟 返回排盤大典</span>
+        </a>
+      `;
+
+      let deptItemsHtml = homeBtnHtml;
+      DEPARTMENTS.forEach((dept) => {
+        const hasActive = dept.systems.some(s => s.url === current || current.endsWith(s.url));
+        const sysLinks = dept.systems.map(s => {
+          const isActive = (s.url === current || current.endsWith(s.url));
+          if (isActive) {
+            return `
+              <a href="${s.url}" class="px-2.5 py-1 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs whitespace-nowrap text-xs flex items-center gap-1">
+                <span>${s.name}</span>
+              </a>
+            `;
+          }
           return `
-            <a href="${s.url}" class="px-2.5 py-1 rounded-lg bg-[#C8A97E] text-stone-900 font-bold shadow-xs whitespace-nowrap text-xs flex items-center gap-1">
-              <span>${s.name}</span>
+            <a href="${s.url}" class="px-2.5 py-1 rounded-lg text-amber-100/90 hover:text-white hover:bg-white/10 transition whitespace-nowrap text-xs">
+              ${s.name}
             </a>
           `;
-        }
-        return `
-          <a href="${s.url}" class="px-2.5 py-1 rounded-lg text-amber-100/90 hover:text-white hover:bg-white/10 transition whitespace-nowrap text-xs">
-            ${s.name}
-          </a>
-        `;
-      }).join('');
+        }).join('');
 
-      deptItemsHtml += `
-        <div class="flex items-center shrink-0 gap-1 px-2 py-1 rounded-xl ${hasActive ? 'bg-white/10 border border-[#C8A97E]/50' : 'bg-black/20 border border-white/5'}">
-          <span class="text-[11px] font-bold text-amber-200/80 mr-0.5 whitespace-nowrap">${dept.name}：</span>
-          <div class="flex items-center gap-1">
-            ${sysLinks}
+        deptItemsHtml += `
+          <div class="flex items-center shrink-0 gap-1 px-2 py-1 rounded-xl ${hasActive ? 'bg-white/10 border border-[#C8A97E]/50' : 'bg-black/20 border border-white/5'}">
+            <span class="text-[11px] font-bold text-amber-200/80 mr-0.5 whitespace-nowrap">${dept.name}：</span>
+            <div class="flex items-center gap-1">
+              ${sysLinks}
+            </div>
           </div>
+        `;
+      });
+
+      multiLevelBarHtml = `
+        <div id="mj_unified_dept_bar" class="w-full px-2 sm:px-4 py-1.5 flex items-center gap-2 overflow-x-auto no-scrollbar" style="background-color: #141C13;">
+          ${deptItemsHtml}
         </div>
       `;
-    });
-
-    const multiLevelBarHtml = `
-      <div class="w-full px-2 sm:px-4 py-1.5 flex items-center gap-2 overflow-x-auto no-scrollbar" style="background-color: #141C13;">
-        ${deptItemsHtml}
-      </div>
-    `;
+    }
 
     nav.innerHTML = topBarHtml + multiLevelBarHtml;
 
