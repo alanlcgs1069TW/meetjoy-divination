@@ -68,9 +68,12 @@
     nav.className = 'w-full sticky top-0 z-[9999] shadow-md border-b border-[#C8A97E]/40 font-serif select-none';
     nav.style.backgroundColor = '#1A2319';
 
-    // 第 1 層：官方 Logo、大典標題、外部捷徑
-    const topBarHtml = `
-      <div class="w-full px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between border-b border-white/10 text-amber-50">
+    // 偵測是否被 iframe 嵌入（如 meetjoy.net/app/）
+    const isInIframe = (window.self !== window.top) || document.documentElement.classList.contains('in-iframe');
+
+    // 第 1 層：官方 Logo、大典標題、外部捷徑（若在 iframe 內則自動隱藏，避免與外層導覽列重複）
+    const topBarHtml = isInIframe ? '' : `
+      <div id="mj_unified_top_bar" class="w-full px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between border-b border-white/10 text-amber-50">
         <div class="flex items-center gap-2 sm:gap-3">
           <!-- 官方 Logo (回官網 meetjoy.net) -->
           <a href="https://meetjoy.net/" title="返回癒見幸福官方首頁" class="block shrink-0 group">
@@ -101,7 +104,14 @@
     `;
 
     // 第 2 層：多層次五大學系排盤選單條
-    let deptItemsHtml = '';
+    const isHome = (current === '/' || current === '/index.html' || current === '');
+    const homeBtnHtml = `
+      <a href="/index.html" class="flex items-center shrink-0 gap-1 px-2.5 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition ${isHome ? 'bg-[#C8A97E] text-stone-900 shadow-xs' : 'text-amber-100/90 hover:text-white hover:bg-white/10'}">
+        <span>🌟 排盤大典</span>
+      </a>
+    `;
+
+    let deptItemsHtml = homeBtnHtml;
     DEPARTMENTS.forEach((dept) => {
       const hasActive = dept.systems.some(s => s.url === current || current.endsWith(s.url));
       const sysLinks = dept.systems.map(s => {
