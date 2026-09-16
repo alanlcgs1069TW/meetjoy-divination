@@ -16,6 +16,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="./js/meetjoy-nav.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
   <style>
     body { font-family: 'Noto Serif TC', serif; }
     .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -105,6 +106,11 @@
       <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
         由愛倫院長親自主持調配。全系統嚴格對齊學院「五大學系」全景架構，集結陰陽數字雙盤、東方時空命理、蒼穹星象天命、神秘神聖卜筮與脈輪能量鍊金，每個工具皆配置標準方形意象大圖與生活魔藥調頻處方，供學員、諮詢師與個案即時精準推算。
       </p>
+    </div>
+
+    <!-- 會員雲端命盤庫直通通道卡片 (Home Auth Portal Card) -->
+    <div id="mj_home_portal_card" class="w-full max-w-4xl mb-10 bg-gradient-to-r from-[#182622] via-[#23352F] to-[#182622] border-2 border-[#C8A97E]/70 rounded-3xl p-5 sm:p-7 shadow-xl text-amber-50 relative overflow-hidden">
+      <div id="mj_home_portal_content"></div>
     </div>
 
     <!-- 計劃一＋三：五大學系互動膠囊標籤條 (Interactive Filter Tabs) -->
@@ -576,6 +582,153 @@
         }
       });
     }
+
+    // 會員雲端命盤庫通道卡片渲染
+    function renderHomePortalCard() {
+      const portalBox = document.getElementById('mj_home_portal_content');
+      if (!portalBox) return;
+
+      let user = null;
+      try {
+        if (window.MeetJoyAuth && typeof window.MeetJoyAuth.getUser === 'function') {
+          user = window.MeetJoyAuth.getUser();
+        } else {
+          const raw = localStorage.getItem('mj_member_user');
+          if (raw) user = JSON.parse(raw);
+        }
+      } catch (e) {}
+
+      let profiles = [];
+      try {
+        if (window.MeetJoyProfiles && typeof window.MeetJoyProfiles.getAll === 'function') {
+          profiles = window.MeetJoyProfiles.getAll();
+        } else {
+          const raw = localStorage.getItem('mj_universal_profiles') || '[]';
+          profiles = JSON.parse(raw);
+        }
+      } catch (e) {}
+
+      if (user && (user.email || user.name)) {
+        const displayName = user.name || (user.email ? user.email.split('@')[0] : '會員');
+        const isAdmin = user.isAdmin || user.email === 'alanlcgs1069@gmail.com';
+        portalBox.innerHTML = `
+          <div class="flex flex-col md:flex-row items-center justify-between gap-5">
+            <div class="space-y-1.5 text-center md:text-left">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-black border border-amber-500/40">
+                <span>${isAdmin ? '👑 院長最高權限' : '✨ 正式學員身分'}</span>
+                <span>•</span>
+                <span>跨裝置即時漫遊中</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-black text-[#F7E7CE]">
+                歡迎回來，${displayName}！
+              </h3>
+              <p class="text-xs text-amber-200/70 max-w-xl">
+                您的雲端命盤庫已與全站 11 大排盤系統（八字、紫微、占星、人類圖等）無縫接通。
+                目前已儲存 <strong class="text-amber-300 font-bold">${profiles.length} 組</strong> 個案紀錄。
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-3 shrink-0">
+              <button type="button" id="mj_home_btn_sync" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#C8A97E] to-[#B8860B] hover:from-amber-300 hover:to-amber-400 text-[#182622] font-black text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                <span>🔄 立即同步雲端</span>
+              </button>
+              <button type="button" id="mj_home_btn_logout" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-rose-500/20 text-amber-200 hover:text-rose-200 border border-white/20 hover:border-rose-400/40 font-bold text-xs transition cursor-pointer">
+                登出
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('mj_home_btn_sync').onclick = () => {
+          if (window.MeetJoyProfiles && typeof window.MeetJoyProfiles.syncWithCloud === 'function') {
+            window.MeetJoyProfiles.syncWithCloud(false);
+          } else {
+            alert('命盤庫已處於最新狀態！');
+          }
+        };
+
+        document.getElementById('mj_home_btn_logout').onclick = () => {
+          if (confirm('確定要登出會員嗎？登出後將清空本地命盤紀錄。')) {
+            if (window.MeetJoyAuth && typeof window.MeetJoyAuth.logout === 'function') {
+              window.MeetJoyAuth.logout();
+            } else {
+              localStorage.removeItem('mj_member_user');
+              localStorage.removeItem('mj_universal_profiles');
+              localStorage.removeItem('ziwei-charts');
+              window.location.href = window.location.pathname;
+            }
+          }
+        };
+      } else {
+        const cleanRedirect = encodeURIComponent(window.location.href);
+        portalBox.innerHTML = `
+          <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 text-center lg:text-left max-w-lg">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
+                <span>🏛️ 魔法占星學院 · 雲端檔案館</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-black text-[#F7E7CE]">
+                登入會員 · 啟動跨裝置雲端命盤庫
+              </h3>
+              <p class="text-xs text-amber-200/70 leading-relaxed">
+                只需輸入您的學員 Email 或第三方社群登入，即可永久保存您的個人與親友生辰，切換至 11 大排盤工具自動帶入，走到哪都能調頻查看！
+              </p>
+            </div>
+            <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div class="flex items-center gap-2 bg-white/10 p-1.5 rounded-2xl border border-white/20">
+                <input type="email" id="mj_home_quick_email" placeholder="輸入學員 Email..." class="bg-transparent px-3 py-2 text-xs text-white placeholder:text-amber-200/50 focus:outline-none w-48 sm:w-56">
+                <button type="button" id="mj_home_quick_login_btn" class="px-4 py-2 rounded-xl bg-[#C8A97E] hover:bg-amber-300 text-[#182622] font-black text-xs transition shrink-0 cursor-pointer shadow-md">
+                  ✨ 登入啟動
+                </button>
+              </div>
+              <button type="button" id="mj_home_open_modal_btn" class="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-amber-200 hover:text-white font-bold text-xs border border-white/20 transition cursor-pointer text-center">
+                LINE / Google 登入 ➔
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('mj_home_quick_login_btn').onclick = async () => {
+          const emailInput = document.getElementById('mj_home_quick_email');
+          const email = (emailInput?.value || '').trim();
+          if (!email || !email.includes('@')) {
+            alert('請輸入有效的學員電子信箱！');
+            return;
+          }
+          if (window.MeetJoyAuth && typeof window.MeetJoyAuth.checkAccountExists === 'function') {
+            const res = await window.MeetJoyAuth.checkAccountExists(email);
+            if (res.exists) {
+              window.MeetJoyAuth.login('home_quick', {
+                email,
+                name: res.name || email.split('@')[0],
+                isAdmin: res.isAdmin
+              });
+              if (window.MeetJoyProfiles) window.MeetJoyProfiles.syncWithCloud(false);
+              renderHomePortalCard();
+            } else {
+              window.MeetJoyAuth.showLoginModal();
+              setTimeout(() => {
+                const modalEmail = document.getElementById('mj_auth_reg_email');
+                if (modalEmail) modalEmail.value = email;
+                const switchBtn = document.getElementById('mj_btn_switch_to_reg');
+                if (switchBtn) switchBtn.click();
+              }, 150);
+            }
+          }
+        };
+
+        document.getElementById('mj_home_open_modal_btn').onclick = () => {
+          if (window.MeetJoyAuth && typeof window.MeetJoyAuth.showLoginModal === 'function') {
+            window.MeetJoyAuth.showLoginModal();
+          }
+        };
+      }
+    }
+
+    // 監聽身分變更與頁面載入
+    window.addEventListener('mj-auth-changed', renderHomePortalCard);
+    window.addEventListener('mj-profiles-changed', renderHomePortalCard);
+    window.addEventListener('DOMContentLoaded', renderHomePortalCard);
+    renderHomePortalCard();
   </script>
 </body>
 </html>

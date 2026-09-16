@@ -412,13 +412,13 @@
             </div>
 
             <div class="space-y-2.5 mt-2">
-              <a href="https://meetjoy.net/wp-login.php?loginSocial=line&redirect=${encodedRedirectUrl}" target="_top" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=line&redirect_to=${encodedRedirectUrl}&redirect=${encodedRedirectUrl}&from=app" target="_top" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
                 <span>💬 使用 LINE 帳號快速登入 / 註冊</span>
               </a>
-              <a href="https://meetjoy.net/wp-login.php?loginSocial=google&redirect=${encodedRedirectUrl}" target="_top" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs no-underline cursor-pointer">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=google&redirect_to=${encodedRedirectUrl}&redirect=${encodedRedirectUrl}&from=app" target="_top" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs no-underline cursor-pointer">
                 <span>🌐 使用 Google 帳號快速登入 / 註冊</span>
               </a>
-              <a href="https://meetjoy.net/wp-login.php?loginSocial=facebook&redirect=${encodedRedirectUrl}" target="_top" class="w-full py-2.5 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=facebook&redirect_to=${encodedRedirectUrl}&redirect=${encodedRedirectUrl}&from=app" target="_top" class="w-full py-2.5 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
                 <span>🔵 使用 Facebook 帳號快速登入 / 註冊</span>
               </a>
             </div>

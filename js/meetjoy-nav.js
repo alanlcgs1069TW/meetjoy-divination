@@ -357,6 +357,8 @@
           <a href="https://line.me/R/ti/p/@548valkv" target="_blank" style="padding: 5px 12px; border-radius: 8px; background: #06C755; color: #ffffff; text-decoration: none;">
             LINE
           </a>
+          <!-- 全站頁頭常駐會員身分與登入/登出插槽 -->
+          <div id="mj_nav_auth_container" style="display: flex; align-items: center; margin-left: 4px;"></div>
         </div>
       </div>
     `;
@@ -482,7 +484,80 @@
         });
       });
     }
+
+    // 初始化頁頭會員狀態插槽
+    updateNavAuthStatus();
   }
+
+  function updateNavAuthStatus() {
+    const container = document.getElementById('mj_nav_auth_container');
+    if (!container) return;
+
+    let user = null;
+    try {
+      if (window.MeetJoyAuth && typeof window.MeetJoyAuth.getUser === 'function') {
+        user = window.MeetJoyAuth.getUser();
+      } else {
+        const raw = localStorage.getItem('mj_member_user');
+        if (raw) user = JSON.parse(raw);
+      }
+    } catch (e) {}
+
+    if (user && (user.email || user.name)) {
+      const displayName = user.name || (user.email ? user.email.split('@')[0] : '會員');
+      const isAdmin = user.isAdmin || user.email === 'alanlcgs1069@gmail.com';
+      const badgeIcon = isAdmin ? '👑' : '🟢';
+      container.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 8px; background: rgba(200, 169, 126, 0.18); border: 1px solid rgba(200, 169, 126, 0.45); color: #F7E7CE; font-size: 11px; white-space: nowrap;">
+          <span>${badgeIcon}</span>
+          <span style="font-weight: 800; max-width: 90px; overflow: hidden; text-overflow: ellipsis;" title="${displayName} (${user.email || ''})">${displayName}</span>
+          <button type="button" id="mj_nav_logout_btn" style="background: none; border: none; color: #fca5a5; font-size: 10px; cursor: pointer; padding: 0 0 0 4px; text-decoration: underline; font-weight: bold;" title="登出會員">登出</button>
+        </div>
+      `;
+      const logoutBtn = container.querySelector('#mj_nav_logout_btn');
+      if (logoutBtn) {
+        logoutBtn.onclick = (e) => {
+          e.preventDefault();
+          if (confirm('確定要登出會員嗎？登出後將清空本地命盤快取。')) {
+            if (window.MeetJoyAuth && typeof window.MeetJoyAuth.logout === 'function') {
+              window.MeetJoyAuth.logout();
+            } else {
+              localStorage.removeItem('mj_member_user');
+              localStorage.removeItem('mj_universal_profiles');
+              localStorage.removeItem('ziwei-charts');
+              window.location.href = window.location.pathname;
+            }
+          }
+        };
+      }
+    } else {
+      container.innerHTML = `
+        <button type="button" id="mj_nav_login_btn" style="padding: 5px 12px; border-radius: 8px; background: linear-gradient(135deg, #C8A97E 0%, #B8860B 100%); color: #182622 !important; font-weight: 900; font-size: 11px; border: 1px solid rgba(200, 169, 126, 0.8); cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); white-space: nowrap;" title="登入會員雲端命盤庫">
+          <span>🔑 登入</span>
+        </button>
+      `;
+      const loginBtn = container.querySelector('#mj_nav_login_btn');
+      if (loginBtn) {
+        loginBtn.onclick = (e) => {
+          e.preventDefault();
+          if (window.MeetJoyAuth && typeof window.MeetJoyAuth.showLoginModal === 'function') {
+            window.MeetJoyAuth.showLoginModal();
+          } else {
+            const script = document.createElement('script');
+            script.src = '/js/meetjoy-universal-profiles.js';
+            script.onload = () => {
+              if (window.MeetJoyAuth) window.MeetJoyAuth.showLoginModal();
+            };
+            document.head.appendChild(script);
+          }
+        };
+      }
+    }
+  }
+
+  // 監聽全域認證狀態變更
+  window.addEventListener('mj-auth-changed', updateNavAuthStatus);
+  window.addEventListener('storage', updateNavAuthStatus);
 
   // DOM 載入時自動初始化
   if (document.readyState === 'loading') {
@@ -493,6 +568,7 @@
 
   window.MeetJoyUnifiedNav = {
     render: renderUnifiedNav,
+    updateAuth: updateNavAuthStatus,
     departments: DEPARTMENTS
   };
 })();
