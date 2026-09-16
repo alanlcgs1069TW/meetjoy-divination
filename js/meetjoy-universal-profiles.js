@@ -65,6 +65,8 @@
     EXPANSION_SLOTS_PER_PACK: 30, // 每包擴充 30 個
     EXPANSION_PRICE_NTD: 300, // 每包 300 元
     PRODUCT_ID: 228781,
+    PRODUCT_SLUG: 'vault-expansion-pack-30',
+    PRODUCT_URL: 'https://meetjoy.net/product/vault-expansion-pack-30/',
     PRODUCT_CART_URL: 'https://meetjoy.net/cart/?add-to-cart=228781',
     ADMIN_EMAILS: ['alanlcgs@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net']
   };
@@ -136,6 +138,9 @@
           <div class="pt-2 flex flex-col gap-2">
             <a href="${VAULT_CONFIG.PRODUCT_CART_URL}" target="_blank" class="w-full bg-[#2E3829] hover:bg-[#3E4B37] text-amber-100 font-bold py-3 px-4 rounded-xl text-center text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 border border-amber-900/30">
               <span>🛒 立即線上擴充 30 組額度 (NT$ 300)</span>
+            </a>
+            <a href="${VAULT_CONFIG.PRODUCT_URL}" target="_blank" class="w-full text-center py-1 text-[11px] text-amber-800 hover:text-amber-950 font-bold transition">
+              📖 查看擴充包完整商品說明 ↗
             </a>
             <button type="button" id="mj_btn_cancel_quota_modal" class="w-full py-2 text-xs text-slate-500 hover:text-slate-800 font-bold transition">
               稍後再說
