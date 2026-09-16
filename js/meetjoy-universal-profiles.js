@@ -215,9 +215,37 @@
 
     logout() {
       try {
+        // 1. 清除登入身分與管理員快取
         localStorage.removeItem('mj_member_user');
+        localStorage.removeItem('mj_current_admin_email');
+        localStorage.removeItem('ziwei-user');
+
+        // 2. 清除所有本地命盤紀錄快取（愛倫院長指示：登出不應該有之前的命盤紀錄）
+        localStorage.removeItem('mj_universal_profiles');
+        localStorage.removeItem('ziwei-charts');
+
+        // 3. 清除特定帳號之容量額度快取
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('mj_vault_extra_slots_')) {
+            keysToRemove.push(k);
+          }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+
+        // 4. 發出全域身分與檔案清除事件
         window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: null }));
-      } catch (e) {}
+        window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+        window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+      } catch (e) {
+        console.error('[MeetJoyAuth] logout error:', e);
+      }
+
+      // 5. 立即重新整理當前頁面（愛倫院長指示：會員登出應該要重新整理）
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     },
 
     async checkAccountExists(email) {
@@ -283,6 +311,20 @@
     showLoginModal(onSuccess) {
       const oldModal = document.getElementById('mj_auth_modal');
       if (oldModal) oldModal.remove();
+
+      // 動態取得當前頁面的乾淨 URL 作為登入重定向目的地（愛倫院長指示：登入後回到同一個頁面而不是跑去 app.meetjoy.net）
+      let cleanRedirectUrl = window.location.href;
+      try {
+        const currentUrlObj = new URL(window.location.href);
+        currentUrlObj.searchParams.delete('mj_email');
+        currentUrlObj.searchParams.delete('user_email');
+        currentUrlObj.searchParams.delete('mj_name');
+        currentUrlObj.searchParams.delete('user_name');
+        currentUrlObj.searchParams.delete('mj_admin');
+        currentUrlObj.searchParams.delete('is_admin');
+        cleanRedirectUrl = currentUrlObj.toString();
+      } catch (e) {}
+      const encodedRedirectUrl = encodeURIComponent(cleanRedirectUrl);
 
       const modalHtml = `
         <div id="mj_auth_modal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in font-serif">
@@ -355,13 +397,13 @@
             </div>
 
             <div class="space-y-2.5 mt-2">
-              <a href="https://meetjoy.net/wp-login.php?loginSocial=line&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=line&redirect=${encodedRedirectUrl}" target="_top" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
                 <span>💬 使用 LINE 帳號快速登入 / 註冊</span>
               </a>
-              <a href="https://meetjoy.net/wp-login.php?loginSocial=google&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs no-underline cursor-pointer">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=google&redirect=${encodedRedirectUrl}" target="_top" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs no-underline cursor-pointer">
                 <span>🌐 使用 Google 帳號快速登入 / 註冊</span>
               </a>
-              <a href="https://meetjoy.net/wp-login.php?loginSocial=facebook&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=facebook&redirect=${encodedRedirectUrl}" target="_top" class="w-full py-2.5 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
                 <span>🔵 使用 Facebook 帳號快速登入 / 註冊</span>
               </a>
             </div>
@@ -464,7 +506,14 @@
             modalEl.remove();
             MeetJoyProfiles.showToast(isAdmin ? `👑 歡迎愛倫院長！享無限命盤容量，正在同步雲端命盤庫...` : `🌿 歡迎回來，${user.name}！正在為您同步雲端命盤...`);
             await MeetJoyProfiles.syncWithCloud(false);
+            window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: user }));
+            window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+            window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
             if (typeof onSuccess === 'function') onSuccess(user);
+            // 登入後留在同一個頁面並自動重新整理載入命盤庫（愛倫院長指示：留在同一個頁面）
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
           } else {
             // 尚未有帳號！自動流暢切換到註冊 Tab
             submitLoginBtn.disabled = false;
@@ -504,7 +553,14 @@
         modalEl.remove();
         MeetJoyProfiles.showToast(`🌱 恭喜開通！歡迎加入學院，${user.name}！已為您啟動 3 組免費雲端命盤庫。`);
         await MeetJoyProfiles.syncWithCloud(false);
+        window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: user }));
+        window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+        window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
         if (typeof onSuccess === 'function') onSuccess(user);
+        // 註冊後留在同一個頁面並自動重新整理載入命盤庫（愛倫院長指示：留在同一個頁面）
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       };
     }
   };
@@ -1011,17 +1067,32 @@
 
         if (paramEmail) {
           const current = MeetJoyAuth.getUser();
-          if (!current || current.email !== paramEmail) {
-            const isAdminUser = paramAdmin === '1' || VAULT_CONFIG.ADMIN_EMAILS.includes(paramEmail);
-            MeetJoyAuth.login('url_sync', {
-              email: paramEmail,
-              name: paramName || (isAdminUser ? '愛倫院長' : paramEmail.split('@')[0]),
-              isAdmin: isAdminUser
-            });
-            if (isAdminUser) {
-              localStorage.setItem('mj_current_admin_email', paramEmail);
-            }
+          const isAdminUser = paramAdmin === '1' || VAULT_CONFIG.ADMIN_EMAILS.includes(paramEmail);
+          const loggedUser = MeetJoyAuth.login('url_sync', {
+            email: paramEmail,
+            name: paramName || (isAdminUser ? '愛倫院長' : paramEmail.split('@')[0]),
+            isAdmin: isAdminUser
+          });
+          if (isAdminUser) {
+            localStorage.setItem('mj_current_admin_email', paramEmail);
           }
+          // 立即同步雲端命盤
+          this.syncWithCloud(false);
+          window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: loggedUser }));
+          window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+          window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+
+          // 淨化 URL，移除臨時登入參數，保持在當前頁面（愛倫院長指示：回到同一個頁面）
+          try {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('mj_email');
+            cleanUrl.searchParams.delete('user_email');
+            cleanUrl.searchParams.delete('mj_name');
+            cleanUrl.searchParams.delete('user_name');
+            cleanUrl.searchParams.delete('mj_admin');
+            cleanUrl.searchParams.delete('is_admin');
+            window.history.replaceState({}, document.title, cleanUrl.toString());
+          } catch (err) {}
         }
       } catch (e) {
         console.warn('[MeetJoyProfiles] URL param sync error:', e);
