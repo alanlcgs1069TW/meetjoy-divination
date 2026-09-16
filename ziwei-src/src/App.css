@@ -1018,8 +1018,8 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
 [data-show-pinyin="true"] .center-gender-divider  { display: none; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   VERTICAL MODE — 中文直書 (data-show-pinyin="false" + data-locale^="zh")
-   Only applies when locale is zh-TW or zh-CN (NOT English).
+   VERTICAL MODE — 中文直書 (data-show-pinyin="false" + data-locale="zh-TW")
+   Only applies when locale is zh-TW (NOT English).
    Each star becomes a thin vertical column (writing-mode: vertical-lr).
    All star groups sit in a horizontal row (flex-direction: row), then wrap
    to next row when the palace width is exceeded.

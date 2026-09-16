@@ -29,13 +29,11 @@ export const HAS_KNOWN_ISSUES = ISSUES.length > 0;
 
 const TITLES: Record<string, string> = {
   'zh-TW': '已知問題',
-  'zh-CN': '已知问题',
   'en':    'Known Issues',
 };
 
 const EMPTY: Record<string, string> = {
   'zh-TW': '目前沒有已知問題。',
-  'zh-CN': '目前没有已知问题。',
   'en':    'No known issues at this time.',
 };
 
@@ -46,7 +44,7 @@ export function KnownIssues({ onClose }: Props) {
 
   function pick(issue: Issue): IssueText {
     if (locale === 'en')    return issue.en;
-    if (locale === 'zh-CN') return issue.cn;
+    
     return issue.zh;
   }
 

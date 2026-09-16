@@ -54,20 +54,17 @@ const CREDITS: Credit[] = [
 
 const TITLES: Record<string, string> = {
   'zh-TW': '致謝',
-  'zh-CN': '致谢',
   'en':    'With Thanks',
 };
 
 const INTRO: Record<string, string> = {
   'zh-TW': '感謝以下單位與個人，讓這個工具成為可能。',
-  'zh-CN': '感谢以下单位与个人，让这个工具成为可能。',
   'en':    'With gratitude to the following for making this tool possible.',
 };
 
 // 收尾小註：說明非營利、純個人 AI 學習，語氣輕
 const NOTE: Record<string, string> = {
   'zh-TW': '這個小工具是我在學習、體驗 AI 的過程中做給自己用的，並非商業產品、也無意營利。如果可以對你有幫助，那對我來說會是個小確幸。',
-  'zh-CN': '这个小工具是我在学习、体验 AI 的过程中做给自己用的，并非商业产品、也无意营利。如果可以对你有帮助，那对我来说会是个小确幸。',
   'en':    "This is a personal project I built to learn and experiment with AI. It's not a commercial product. If you find it helpful, that would honestly make my day.",
 };
 
@@ -79,7 +76,7 @@ export function About({ onClose }: Props) {
 
   function pick(credit: Credit): CreditText {
     if (locale === 'en')    return credit.en;
-    if (locale === 'zh-CN') return credit.cn;
+    
     return credit.zh;
   }
 

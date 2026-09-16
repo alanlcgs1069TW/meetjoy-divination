@@ -39,8 +39,7 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
   const UI_MAP: Record<string, UIStrings> = {
     'en':    { title: mode === 'new' ? 'New Chart'  : 'Edit Chart', gender: 'Gender', female: '♀ Female', male: '♂ Male', name: 'Name',  optional: 'optional', category: 'Category', birthday: 'Solar Birthday', hour: 'Hour',  confirm: mode === 'new' ? 'Add'  : 'Save', cancel: 'Cancel', advanced: 'Multiple Birth · Beta', random: 'Random', randomHint: 'Randomize gender / birthday / hour and fill a random name' },
     'zh-TW': { title: mode === 'new' ? '新增命盤'  : '編輯命盤',   gender: '性別',   female: '♀ 女',     male: '♂ 男',   name: '姓名', optional: '選填',     category: '分類',     birthday: '陽曆生日',       hour: '時辰', confirm: mode === 'new' ? '確認新增' : '確認修改', cancel: '取消', advanced: '多胞胎功能 · 測試中 Beta', random: '隨機', randomHint: '隨機起盤：隨機填入性別／生日／時辰與姓名（可重複點重骰）' },
-    'zh-CN': { title: mode === 'new' ? '新增命盘'  : '编辑命盘',   gender: '性别',   female: '♀ 女',     male: '♂ 男',   name: '姓名', optional: '选填',     category: '分类',     birthday: '阳历生日',       hour: '时辰', confirm: mode === 'new' ? '确认新增' : '确认修改', cancel: '取消', advanced: '多胞胎功能 · 测试中 Beta', random: '随机', randomHint: '随机起盘：随机填入性别／生日／时辰与姓名（可重复点重骰）' },
-  };
+    };
   const UI = UI_MAP[locale] ?? UI_MAP['zh-TW'];
 
   const [name, setName]       = useState(initial?.name ?? '');

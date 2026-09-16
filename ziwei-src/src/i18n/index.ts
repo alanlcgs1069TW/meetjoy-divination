@@ -1,10 +1,9 @@
 // ─── Locale ─────────────────────────────────────────────────────────────────
 
-export type Locale = 'zh-TW' | 'zh-CN' | 'en'
+export type Locale = 'zh-TW' | 'en'
 
 export const SUPPORTED_LOCALES: { code: Locale; label: string }[] = [
   { code: 'zh-TW', label: '繁體中文' },
-  { code: 'zh-CN', label: '简体中文' },
   { code: 'en',    label: 'English'  },
 ]
 
@@ -14,21 +13,20 @@ export interface StarTranslation {
   en: string
   abbr?: string
   pinyin: string
-  'zh-CN'?: string
-}
+  }
 
 // ─── Palace Names ───────────────────────────────────────────────────────────
 
-export const PALACE_NAMES: Record<string, { en: string; pinyin: string; 'zh-CN'?: string }> = {
+export const PALACE_NAMES: Record<string, { en: string; pinyin: string;  }> = {
   '命':    { en: 'Self',         pinyin: 'Ming Gong' },
   '兄弟':  { en: 'Sibling',     pinyin: 'Xiong Di' },
   '夫妻':  { en: 'Romance',     pinyin: 'Fu Qi' },
   '子女':  { en: 'Children',    pinyin: 'Zi Nu' },
-  '財帛':  { en: 'Wealth',      pinyin: 'Cai Bo',   'zh-CN': '财帛' },
+  '財帛':  { en: 'Wealth',      pinyin: 'Cai Bo' },
   '疾厄':  { en: 'Health',      pinyin: 'Ji E' },
-  '遷移':  { en: 'Reflection',  pinyin: 'Qian Yi',  'zh-CN': '迁移' },
-  '僕役':  { en: 'Friends',     pinyin: 'Pu Yi',    'zh-CN': '仆役' },
-  '官祿':  { en: 'Achievement', pinyin: 'Guan Lu',  'zh-CN': '官禄' },
+  '遷移':  { en: 'Reflection',  pinyin: 'Qian Yi' },
+  '僕役':  { en: 'Friends',     pinyin: 'Pu Yi' },
+  '官祿':  { en: 'Achievement', pinyin: 'Guan Lu' },
   '田宅':  { en: 'Property',    pinyin: 'Tian Zhai' },
   '福德':  { en: 'Soul',        pinyin: 'Fu De' },
   '父母':  { en: 'Parent',      pinyin: 'Fu Mu' },
@@ -39,71 +37,71 @@ export const PALACE_NAMES: Record<string, { en: string; pinyin: string; 'zh-CN'?
 export const STAR_DICT: Record<string, StarTranslation> = {
   // 十四主星
   '紫微': { en: 'Star of Emperor',     abbr: 'Emprr',  pinyin: 'Zi Wei' },
-  '天機': { en: 'Star of Calculating', abbr: 'Calc',   pinyin: 'Tian Ji',   'zh-CN': '天机' },
-  '太陽': { en: 'The Sun',             abbr: 'Sun',    pinyin: 'Tai Yang',  'zh-CN': '太阳' },
-  '太陰': { en: 'The Moon',            abbr: 'Moon',   pinyin: 'Tai Yin',   'zh-CN': '太阴' },
+  '天機': { en: 'Star of Calculating', abbr: 'Calc',   pinyin: 'Tian Ji' },
+  '太陽': { en: 'The Sun',             abbr: 'Sun',    pinyin: 'Tai Yang' },
+  '太陰': { en: 'The Moon',            abbr: 'Moon',   pinyin: 'Tai Yin' },
   '武曲': { en: 'Star of Finance',     abbr: 'Financ', pinyin: 'Wu Qu' },
   '天同': { en: 'Star of Innocence',   abbr: 'Innoce', pinyin: 'Tian Tong' },
-  '廉貞': { en: 'Star of Confinement', abbr: 'Confin', pinyin: 'Lian Zhen', 'zh-CN': '廉贞' },
+  '廉貞': { en: 'Star of Confinement', abbr: 'Confin', pinyin: 'Lian Zhen' },
   '天梁': { en: 'Star of Blessing',    abbr: 'Bless',  pinyin: 'Tian Liang' },
   '天府': { en: 'Star of Lord',        abbr: 'Lord',   pinyin: 'Tian Fu' },
   '天相': { en: 'Star of Minister',    abbr: 'Minstr', pinyin: 'Tian Xiang' },
-  '七殺': { en: 'Star of Persistence', abbr: 'Persis', pinyin: 'Qi Sha',    'zh-CN': '七杀' },
-  '破軍': { en: 'Star of Passion',     abbr: 'Passn',  pinyin: 'Po Jun',    'zh-CN': '破军' },
-  '貪狼': { en: 'Star of Desire',      abbr: 'Desir',  pinyin: 'Tan Lang',  'zh-CN': '贪狼' },
-  '巨門': { en: 'Somber Star',         abbr: 'Somber', pinyin: 'Ju Men',    'zh-CN': '巨门' },
+  '七殺': { en: 'Star of Persistence', abbr: 'Persis', pinyin: 'Qi Sha' },
+  '破軍': { en: 'Star of Passion',     abbr: 'Passn',  pinyin: 'Po Jun' },
+  '貪狼': { en: 'Star of Desire',      abbr: 'Desir',  pinyin: 'Tan Lang' },
+  '巨門': { en: 'Somber Star',         abbr: 'Somber', pinyin: 'Ju Men' },
   // 煞星
-  '陀羅': { en: 'Star of Thoughts',    abbr: 'Thots',  pinyin: 'Tuo Luo',   'zh-CN': '陀罗' },
+  '陀羅': { en: 'Star of Thoughts',    abbr: 'Thots',  pinyin: 'Tuo Luo' },
   '擎羊': { en: 'Dagger Star',         abbr: 'Dagger', pinyin: 'Qing Yang' },
   '火星': { en: 'Fiery Star',          abbr: 'Fiery',  pinyin: 'Huo Xing' },
-  '鈴星': { en: 'Wily Star',           abbr: 'Wily',   pinyin: 'Ling Xing', 'zh-CN': '铃星' },
+  '鈴星': { en: 'Wily Star',           abbr: 'Wily',   pinyin: 'Ling Xing' },
   // 輔星
-  '祿存': { en: 'Flow',                                 pinyin: 'Lu Cun',    'zh-CN': '禄存' },
+  '祿存': { en: 'Flow',                                 pinyin: 'Lu Cun' },
   '文昌': { en: 'Intellect Star',      abbr: 'Intlct', pinyin: 'Wen Chang' },
   '文曲': { en: 'Intelligence Star',   abbr: 'Intlgn', pinyin: 'Wen Qu' },
-  '天鉞': { en: 'Female Helper',       abbr: 'FHelpr', pinyin: 'Tian Yue',  'zh-CN': '天钺' },
+  '天鉞': { en: 'Female Helper',       abbr: 'FHelpr', pinyin: 'Tian Yue' },
   '天魁': { en: 'Male Helper',         abbr: 'MHelpr', pinyin: 'Tian Kui' },
-  '左輔': { en: 'Left Aide',           abbr: 'L.Aide', pinyin: 'Zuo Fu',    'zh-CN': '左辅' },
+  '左輔': { en: 'Left Aide',           abbr: 'L.Aide', pinyin: 'Zuo Fu' },
   '右弼': { en: 'Right Aide',          abbr: 'R.Aide', pinyin: 'You Bi' },
   '地空': { en: 'Vanish Damage',       abbr: 'Vanish', pinyin: 'Di Kong' },
   '地劫': { en: 'Robbery Damage',      abbr: 'Robbd',  pinyin: 'Di Jie' },
-  '天馬': { en: 'Sky Horse',           abbr: 'Horse',  pinyin: 'Tian Ma',   'zh-CN': '天马' },
-  '紅鸞': { en: 'Romance Star',        abbr: 'Romnce', pinyin: 'Hong Luan', 'zh-CN': '红鸾' },
+  '天馬': { en: 'Sky Horse',           abbr: 'Horse',  pinyin: 'Tian Ma' },
+  '紅鸞': { en: 'Romance Star',        abbr: 'Romnce', pinyin: 'Hong Luan' },
   '天喜': { en: 'Joy Star',            abbr: 'Joy',    pinyin: 'Tian Xi' },
   // 雜曜
   '三台': { en: 'Three Terrace',  abbr: 'ThTrrc', pinyin: 'San Tai' },
   '八座': { en: 'Eight Seats',    abbr: 'EtSeat', pinyin: 'Ba Zuo' },
-  '天壽': { en: 'Longevity Star', abbr: 'Lngvty', pinyin: 'Tian Shou', 'zh-CN': '天寿' },
+  '天壽': { en: 'Longevity Star', abbr: 'Lngvty', pinyin: 'Tian Shou' },
   '天姚': { en: 'Allure Star',    abbr: 'Allure', pinyin: 'Tian Yao' },
   '孤辰': { en: 'Lone Star',      abbr: 'Lone',   pinyin: 'Gu Chen' },
   '寡宿': { en: 'Widow Star',     abbr: 'Widow',  pinyin: 'Gua Su' },
-  '天廚': { en: 'Feast Star',     abbr: 'Feast',  pinyin: 'Tian Chu',  'zh-CN': '天厨' },
-  '天貴': { en: 'Noble Star',     abbr: 'Noble',  pinyin: 'Tian Gui',  'zh-CN': '天贵' },
+  '天廚': { en: 'Feast Star',     abbr: 'Feast',  pinyin: 'Tian Chu' },
+  '天貴': { en: 'Noble Star',     abbr: 'Noble',  pinyin: 'Tian Gui' },
   '天才': { en: 'Talent Star',    abbr: 'Talnt',  pinyin: 'Tian Cai' },
   '天哭': { en: 'Sorrow Star',    abbr: 'Sorrow', pinyin: 'Tian Ku' },
   '天巫': { en: 'Mystic Star',    abbr: 'Mystc',  pinyin: 'Tian Wu' },
   '天福': { en: 'Fortune Star',   abbr: 'Fortn',  pinyin: 'Tian Fu' },
-  '陰煞': { en: 'Shadow Sha',     abbr: 'Shadow', pinyin: 'Yin Sha',   'zh-CN': '阴煞' },
-  '封誥': { en: 'Decree Star',    abbr: 'Decre',  pinyin: 'Feng Gao',  'zh-CN': '封诰' },
-  '台輔': { en: 'Pillar Star',    abbr: 'Pillar', pinyin: 'Tai Fu',    'zh-CN': '台辅' },
-  '臺輔': { en: 'Pillar Star',    abbr: 'Pillar', pinyin: 'Tai Fu',    'zh-CN': '台辅' },
+  '陰煞': { en: 'Shadow Sha',     abbr: 'Shadow', pinyin: 'Yin Sha' },
+  '封誥': { en: 'Decree Star',    abbr: 'Decre',  pinyin: 'Feng Gao' },
+  '台輔': { en: 'Pillar Star',    abbr: 'Pillar', pinyin: 'Tai Fu' },
+  '臺輔': { en: 'Pillar Star',    abbr: 'Pillar', pinyin: 'Tai Fu' },
   '恩光': { en: 'Grace Star',     abbr: 'Grace',  pinyin: 'En Guang' },
   '天官': { en: 'Official Star',  abbr: 'Offcl',  pinyin: 'Tian Guan' },
   '天空': { en: 'Sky Void',       abbr: 'SkyVd',  pinyin: 'Tian Kong' },
-  '天傷': { en: 'Injury Star',    abbr: 'Injry',  pinyin: 'Tian Shang','zh-CN': '天伤' },
+  '天傷': { en: 'Injury Star',    abbr: 'Injry',  pinyin: 'Tian Shang' },
   '天使': { en: 'Envoy Star',     abbr: 'Envoy',  pinyin: 'Tian Shi' },
   '破碎': { en: 'Shatter Star',   abbr: 'Shattr', pinyin: 'Po Sui' },
   '截路': { en: 'Cut Path',       abbr: 'CtPth',  pinyin: 'Jie Lu' },
   '旬空': { en: 'Cycle Void',     abbr: 'CyclVd', pinyin: 'Xun Kong' },
   '劫空': { en: 'Robbed Void',    abbr: 'RbdVd',  pinyin: 'Jie Kong' },
-  '華蓋': { en: 'Canopy Star',    abbr: 'Canopy', pinyin: 'Hua Gai',   'zh-CN': '华盖' },
+  '華蓋': { en: 'Canopy Star',    abbr: 'Canopy', pinyin: 'Hua Gai' },
   '天德': { en: 'Sky Virtue',     abbr: 'SkyVtu', pinyin: 'Tian De' },
   '月德': { en: 'Moon Virtue',    abbr: 'MnVtu',  pinyin: 'Yue De' },
-  '龍池': { en: 'Dragon Pool',    abbr: 'DrgnPl', pinyin: 'Long Chi',  'zh-CN': '龙池' },
-  '鳳閣': { en: 'Phoenix Tower',  abbr: 'PhxTwr', pinyin: 'Feng Ge',   'zh-CN': '凤阁' },
+  '龍池': { en: 'Dragon Pool',    abbr: 'DrgnPl', pinyin: 'Long Chi' },
+  '鳳閣': { en: 'Phoenix Tower',  abbr: 'PhxTwr', pinyin: 'Feng Ge' },
   '蜚廉': { en: 'Rumour Star',    abbr: 'Rumour', pinyin: 'Fei Lian' },
   '天刑': { en: 'Punishment Star',abbr: 'Punsht', pinyin: 'Tian Xing' },
-  '天虛': { en: 'Sky Empty',      abbr: 'SkyEmp', pinyin: 'Tian Xu',   'zh-CN': '天虚' },
+  '天虛': { en: 'Sky Empty',      abbr: 'SkyEmp', pinyin: 'Tian Xu' },
   '天月': { en: 'Sky Moon',       abbr: 'SkyMn',  pinyin: 'Tian Yue' },
   '天池': { en: 'Sky Lake',       abbr: 'SkyLk',  pinyin: 'Tian Chi' },
   '咸池': { en: 'Lechery Pool',   abbr: 'Lchry',  pinyin: 'Xian Chi' },
@@ -113,8 +111,8 @@ export const STAR_DICT: Record<string, StarTranslation> = {
   '晦氣': { en: 'Gloom Star',     abbr: 'Gloom',  pinyin: 'Hui Qi'   },
   '喪門': { en: 'Mourning Gate',  abbr: 'Mourn',  pinyin: 'Sang Men' },
   '貫索': { en: 'Rope Star',      abbr: 'Rope',   pinyin: 'Guan Suo' },
-  '龍德': { en: 'Dragon Virtue',  abbr: 'DrgnVt', pinyin: 'Long De',  'zh-CN': '龙德' },
-  '白虎': { en: 'White Tiger',    abbr: 'WhtTgr', pinyin: 'Bai Hu',   'zh-CN': '白虎' },
+  '龍德': { en: 'Dragon Virtue',  abbr: 'DrgnVt', pinyin: 'Long De' },
+  '白虎': { en: 'White Tiger',    abbr: 'WhtTgr', pinyin: 'Bai Hu' },
   '弔客': { en: 'Mourner Star',   abbr: 'Mrnr',   pinyin: 'Diao Ke'  },
   // 年支十二神
   '劫煞': { en: 'Robbery Sha',    abbr: 'RbSha',  pinyin: 'Jie Sha'  },
@@ -123,58 +121,58 @@ export const STAR_DICT: Record<string, StarTranslation> = {
   '指背': { en: 'Gossip Star',    abbr: 'Gossip', pinyin: 'Zhi Bei'  },
   '月煞': { en: 'Moon Sha',       abbr: 'MnSha',  pinyin: 'Yue Sha'  },
   '亡神': { en: 'Death God',      abbr: 'DthGd',  pinyin: 'Wang Shen' },
-  '將星': { en: 'General Star',   abbr: 'Genrl',  pinyin: 'Jiang Xing', 'zh-CN': '将星' },
+  '將星': { en: 'General Star',   abbr: 'Genrl',  pinyin: 'Jiang Xing' },
   '攀鞍': { en: 'Saddle Star',    abbr: 'Saddle', pinyin: 'Pan An'   },
   '歲驛': { en: 'Year Travel',    abbr: 'YrTrvl', pinyin: 'Sui Yi'   },
   '息神': { en: 'Rest God',       abbr: 'RestGd', pinyin: 'Xi Shen'  },
   // 長生十二神
-  '長生': { en: 'Life Birth',    abbr: 'Lf­Brth', pinyin: 'Chang Sheng', 'zh-CN': '长生' },
+  '長生': { en: 'Life Birth',    abbr: 'Lf­Brth', pinyin: 'Chang Sheng' },
   '沐浴': { en: 'Cleansing',     abbr: 'Clnsg',        pinyin: 'Mu Yu' },
-  '冠帶': { en: 'Cap & Belt',    abbr: 'Cap­Blt',  pinyin: 'Guan Dai',    'zh-CN': '冠带' },
-  '臨官': { en: 'Official Post', abbr: 'Ofc­Pst',  pinyin: 'Lin Guan',    'zh-CN': '临官' },
+  '冠帶': { en: 'Cap & Belt',    abbr: 'Cap­Blt',  pinyin: 'Guan Dai' },
+  '臨官': { en: 'Official Post', abbr: 'Ofc­Pst',  pinyin: 'Lin Guan' },
   '帝旺': { en: 'Peak Power',    abbr: 'Pk­Pwr',   pinyin: 'Di Wang' },
   '衰':   { en: 'Decline',       abbr: 'Declne', pinyin: 'Shuai' },
   '病':   { en: 'Sickness',      abbr: 'Sick',   pinyin: 'Bing' },
   '死':   { en: 'Death',                          pinyin: 'Si' },
   '墓':   { en: 'Tomb',                           pinyin: 'Mu' },
-  '絕':   { en: 'Extinction',    abbr: 'Extnct', pinyin: 'Jue',         'zh-CN': '绝' },
+  '絕':   { en: 'Extinction',    abbr: 'Extnct', pinyin: 'Jue' },
   '胎':   { en: 'Embryo',                         pinyin: 'Tai' },
-  '養':   { en: 'Nurturing',     abbr: 'Nurtrg', pinyin: 'Yang',        'zh-CN': '养' },
+  '養':   { en: 'Nurturing',     abbr: 'Nurtrg', pinyin: 'Yang' },
   '天牢': { en: 'Sky Prison',    abbr: 'SkyPrs', pinyin: 'Tian Lao' },
   '解神': { en: 'Relief Star',   abbr: 'Relief', pinyin: 'Jie Shen' },
   '宿存': { en: 'Lodge Star',    abbr: 'Lodge',  pinyin: 'Su Cun' },
   // 大限 overlay
-  '限祿': { en: 'Dec. Flow',     abbr: 'Dec.Fl', pinyin: 'Xian Lu',   'zh-CN': '限禄' },
+  '限祿': { en: 'Dec. Flow',     abbr: 'Dec.Fl', pinyin: 'Xian Lu' },
   '限羊': { en: 'Dec. Dagger',   abbr: 'Dec.Dg', pinyin: 'Xian Yang' },
   '限陀': { en: 'Dec. Thoughts', abbr: 'Dec.Th', pinyin: 'Xian Tuo' },
   // 流年 overlay
-  '年祿': { en: 'Yr. Flow',      abbr: 'Yr.Fl',  pinyin: 'Nian Lu',   'zh-CN': '年禄' },
+  '年祿': { en: 'Yr. Flow',      abbr: 'Yr.Fl',  pinyin: 'Nian Lu' },
   '年羊': { en: 'Yr. Dagger',    abbr: 'Yr.Dg',  pinyin: 'Nian Yang' },
   '年陀': { en: 'Yr. Thoughts',  abbr: 'Yr.Th',  pinyin: 'Nian Tuo' },
-  '年鸞': { en: 'Yr. Romance',   abbr: 'Yr.Rm',  pinyin: 'Nian Luan', 'zh-CN': '年鸾' },
+  '年鸞': { en: 'Yr. Romance',   abbr: 'Yr.Rm',  pinyin: 'Nian Luan' },
   '年喜': { en: 'Yr. Joy',                        pinyin: 'Nian Xi' },
-  '小祿': { en: 'ML. Flow',      abbr: 'ML.Fl',  pinyin: 'Xiao Lu',   'zh-CN': '小禄' },
+  '小祿': { en: 'ML. Flow',      abbr: 'ML.Fl',  pinyin: 'Xiao Lu' },
   '小羊': { en: 'ML. Dagger',    abbr: 'ML.Dg',  pinyin: 'Xiao Yang' },
   '小陀': { en: 'ML. Thoughts',  abbr: 'ML.Th',  pinyin: 'Xiao Tuo' },
   // 流月 overlay
-  '月祿': { en: 'Mo. Flow',      abbr: 'Mo.­Fl',  pinyin: 'Yue Lu',    'zh-CN': '月禄' },
+  '月祿': { en: 'Mo. Flow',      abbr: 'Mo.­Fl',  pinyin: 'Yue Lu' },
   '月羊': { en: 'Mo. Dagger',    abbr: 'Mo.­Dg',  pinyin: 'Yue Yang' },
   '月陀': { en: 'Mo. Thoughts',  abbr: 'Mo.­Th',  pinyin: 'Yue Tuo' },
   // 流日 overlay
-  '日祿': { en: 'Day Flow',      abbr: 'Day­Fl',  pinyin: 'Ri Lu',     'zh-CN': '日禄' },
+  '日祿': { en: 'Day Flow',      abbr: 'Day­Fl',  pinyin: 'Ri Lu' },
   '日羊': { en: 'Day Dagger',    abbr: 'Day­Dg',  pinyin: 'Ri Yang' },
   '日陀': { en: 'Day Thoughts',  abbr: 'Day­Th',  pinyin: 'Ri Tuo' },
   // 流時 overlay
-  '時祿': { en: 'Hr. Flow',      abbr: 'Hr.­Fl',  pinyin: 'Shi Lu',    'zh-CN': '时禄' },
-  '時羊': { en: 'Hr. Dagger',    abbr: 'Hr.­Dg',  pinyin: 'Shi Yang',  'zh-CN': '时羊' },
-  '時陀': { en: 'Hr. Thoughts',  abbr: 'Hr.­Th',  pinyin: 'Shi Tuo',   'zh-CN': '时陀' },
+  '時祿': { en: 'Hr. Flow',      abbr: 'Hr.­Fl',  pinyin: 'Shi Lu' },
+  '時羊': { en: 'Hr. Dagger',    abbr: 'Hr.­Dg',  pinyin: 'Shi Yang' },
+  '時陀': { en: 'Hr. Thoughts',  abbr: 'Hr.­Th',  pinyin: 'Shi Tuo' },
   // 博士十二神
   '博士': { en: 'Scholar',        abbr: 'Schol',  pinyin: 'Bo Shi' },
   '力士': { en: 'Strongman',      abbr: 'Strmn',  pinyin: 'Li Shi' },
-  '青龍': { en: 'Green Dragon',   abbr: 'GrnDrg', pinyin: 'Qing Long',  'zh-CN': '青龙' },
+  '青龍': { en: 'Green Dragon',   abbr: 'GrnDrg', pinyin: 'Qing Long' },
   '小耗': { en: 'Minor Loss',     abbr: 'MinLss', pinyin: 'Xiao Hao' },
-  '將軍': { en: 'General',        abbr: 'Genrl',  pinyin: 'Jiang Jun',  'zh-CN': '将军' },
-  '奏書': { en: 'Memorial',       abbr: 'Memrl',  pinyin: 'Zou Shu',    'zh-CN': '奏书' },
+  '將軍': { en: 'General',        abbr: 'Genrl',  pinyin: 'Jiang Jun' },
+  '奏書': { en: 'Memorial',       abbr: 'Memrl',  pinyin: 'Zou Shu' },
   '喜神': { en: 'Joy Spirit',     abbr: 'JoySpt', pinyin: 'Xi Shen' },
   '病符': { en: 'Illness Sign',   abbr: 'IllSgn', pinyin: 'Bing Fu' },
   '大耗': { en: 'Major Loss',     abbr: 'MajLss', pinyin: 'Da Hao' },
@@ -194,7 +192,6 @@ export const MUTAGEN_LABELS: Record<string, { zh: string; en: string }> = {
 // ─── Palace short labels ─────────────────────────────────────────────────────
 
 export const PALACE_SHORT    = ['命','兄','夫','子','財','疾','遷','僕','官','田','福','父'];
-export const PALACE_SHORT_CN = ['命','兄','夫','子','财','疾','迁','仆','官','田','福','父'];
 export const PALACE_SHORT_EN = ['Self','Sibling','Romance','Children','Wealth','Health','Reflection','Friends','Achievement','Property','Soul','Parent'];
 // Abbreviated English labels for tight mobile slots (truncations of full names)
 export const PALACE_ABBR_EN  = ['Self','Sibl','Rom','Chld','Wlth','Hlth','Refl','Frnd','Achv','Prop','Soul','Prnt'];
@@ -206,8 +203,7 @@ const PALACE_ABBR_EN_MAP: Record<string, string> = Object.fromEntries(
 );
 
 function getPalaceShortArray(locale: Locale): string[] {
-  if (locale === 'zh-CN') return PALACE_SHORT_CN;
-  if (locale === 'en')    return PALACE_SHORT_EN;
+  if (locale === 'en') return PALACE_SHORT_EN;
   return PALACE_SHORT;
 }
 
@@ -359,8 +355,7 @@ export function getPalaceDisplay(name: string, locale: Locale = 'zh-TW'): { prim
     const en = entry?.en ?? key;
     return { primary: en, secondary: pinyin, abbr: PALACE_ABBR_EN_MAP[key] };
   }
-  const primary = locale === 'zh-CN' ? (entry?.['zh-CN'] ?? key) : key;
-  return { primary, secondary: pinyin };
+  return { primary: key, secondary: pinyin };
 }
 
 function formatPinyin(s: string): string {
@@ -373,9 +368,7 @@ export function getStarDisplay(name: string, locale: Locale = 'zh-TW'): { primar
   const raw = entry?.pinyin ?? name;
   let primary: string;
   let abbr: string | undefined;
-  if (locale === 'zh-CN') {
-    primary = entry?.['zh-CN'] ?? name;
-  } else if (locale === 'en') {
+  if (locale === 'en') {
     primary = entry?.en ?? name;
     abbr = entry?.abbr;
   } else {

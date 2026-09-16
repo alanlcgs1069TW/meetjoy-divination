@@ -37,8 +37,7 @@ export function Sidebar({ auth, onClose, onLoginClick, onLogout, onSyncClick, on
   const T: Record<string, { title: string; register: string; sync: string; logout: string; language: string; privacy: string; knownIssues: string; about: string; bugReport: string; chartDefaults: string; feixing: string; zihua: string; on: string; off: string }> = {
     'en':    { title: 'Settings',  register: 'Sign up / Sign in', sync: 'Sync & Back Up', logout: 'Sign out', language: 'Language', privacy: 'Privacy Policy', knownIssues: 'Known Issues', about: 'With Thanks',       bugReport: 'Report',   chartDefaults: 'Chart Defaults', feixing: 'Fēihuà colouring', zihua: 'Zìhuà arrows', on: 'On', off: 'Off' },
     'zh-TW': { title: '設定選單', register: '免費註冊 / 登入',    sync: '備份同步',        logout: '登出',     language: '語言',     privacy: '隱私政策',      knownIssues: '已知問題',     about: '致謝',              bugReport: '意見回報', chartDefaults: '盤面預設',       feixing: '飛化上色',          zihua: '自化箭頭',      on: '開', off: '關' },
-    'zh-CN': { title: '设定选单', register: '免费注册 / 登入',    sync: '备份同步',        logout: '登出',     language: '语言',     privacy: '隐私政策',      knownIssues: '已知问题',     about: '致谢',              bugReport: '意见反馈', chartDefaults: '盘面预设',       feixing: '飞化上色',          zihua: '自化箭头',      on: '开', off: '关' },
-  };
+    };
   const UI = T[locale] ?? T['zh-TW'];
   return (
     <div className="sidebar-overlay">
@@ -55,9 +54,7 @@ export function Sidebar({ auth, onClose, onLoginClick, onLogout, onSyncClick, on
             <div className="sidebar-local-notice">
               {locale === 'en'
                 ? 'Sign in to back up your charts to the cloud.'
-                : locale === 'zh-CN'
-                  ? '登入后可选择备份至云端。'
-                  : '登入後可選擇備份至雲端。'}
+                : '登入後可選擇備份至雲端。'}
             </div>
           </>
         ) : (

@@ -8,7 +8,6 @@ import { getAnonName, isRandomName } from '../lib/anonName';
 
 const MULTI_BIRTH_LABEL = {
   'zh-TW': { 2: '同時辰第二胎 Twin 2', 3: '同時辰第三胎 Triplet 3', 4: '同時辰第四胎 Quadruplet 4' },
-  'zh-CN': { 2: '同时辰第二胎 Twin 2', 3: '同时辰第三胎 Triplet 3', 4: '同时辰第四胎 Quadruplet 4' },
   'en':    { 2: 'Twin 2',              3: 'Triplet 3',              4: 'Quadruplet 4' },
 } as const;
 
@@ -149,7 +148,7 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
   const genderEn = birthInfo.gender === 'female' ? 'Female' : 'Male';
 
   const BACK_LABEL: Record<string, string> = {
-    'en': '← Charts', 'zh-TW': '← 命盤', 'zh-CN': '← 命盘',
+    'en': '← Charts', 'zh-TW': '← 命盤',
   };
   const FIVE_ELEMENTS_EN: Record<string, string> = {
     '水二局': 'Water-2', '木三局': 'Wood-3', '金四局': 'Metal-4',

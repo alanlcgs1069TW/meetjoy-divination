@@ -11,11 +11,11 @@ const ACTIVE_CAT_KEY = 'ziwei-active-cat';
 const UNTAGGED = '__untagged__';
 
 const CAT_LABELS: Record<string, Record<string, string>> = {
-  '自己': { 'zh-TW': '自己', 'zh-CN': '自己', 'en': 'Me' },
-  '家人': { 'zh-TW': '家人', 'zh-CN': '家人', 'en': 'Family' },
-  '朋友': { 'zh-TW': '朋友', 'zh-CN': '朋友', 'en': 'Friends' },
-  '客戶': { 'zh-TW': '客戶', 'zh-CN': '客户', 'en': 'Clients' },
-  '名人': { 'zh-TW': '名人', 'zh-CN': '名人', 'en': 'Celebrities' },
+  '自己': { 'zh-TW': '自己', 'en': 'Me' },
+  '家人': { 'zh-TW': '家人', 'en': 'Family' },
+  '朋友': { 'zh-TW': '朋友', 'en': 'Friends' },
+  '客戶': { 'zh-TW': '客戶', 'en': 'Clients' },
+  '名人': { 'zh-TW': '名人', 'en': 'Celebrities' },
 };
 function catLabel(cat: string, locale: string): string {
   return CAT_LABELS[cat]?.[locale] ?? cat;
@@ -79,7 +79,6 @@ function timeLabel(timeIndex: number, locale: Locale, showPinyin: boolean): stri
 
 const TWIN_LABELS: Record<Locale, string[]> = {
   'zh-TW': ['第二胎 Twin 2', '第三胎 Triplet 3', '第四胎 Quadruplet 4'],
-  'zh-CN': ['第二胎 Twin 2', '第三胎 Triplet 3', '第四胎 Quadruplet 4'],
   'en':    ['Twin 2',        'Triplet 3',         'Quadruplet 4'],
 };
 
@@ -90,7 +89,6 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
   const UI_BY_LOCALE: Record<string, UIStrings> = {
     'en':    { title: 'Charts',      search: 'Search by name or date...', edit: 'Edit',  delete: 'Delete', confirmDelete: 'Confirm?',  noResults: 'No results found',    empty: 'No charts yet — use ＋ to add',  allTab: 'All',  untaggedTab: 'Untagged',  unnamed: '(Unnamed)',   catPlaceholder: 'Category name', addChart: 'New Chart', customCat: 'Custom' },
     'zh-TW': { title: '命盤資料庫', search: '搜尋名字或日期',            edit: '編輯', delete: '刪除',  confirmDelete: '確認刪除',  noResults: '找不到符合的命盤',  empty: '尚無命盤，點右上角 ＋ 新增', allTab: '全部', untaggedTab: '無標籤', unnamed: '（無名稱）', catPlaceholder: '分類名稱',    addChart: '新增命盤', customCat: '自訂' },
-    'zh-CN': { title: '命盘资料库', search: '搜寻名字或日期',            edit: '编辑', delete: '删除',  confirmDelete: '确认删除',  noResults: '找不到符合的命盘',  empty: '尚无命盘，点右上角 ＋ 新增', allTab: '全部', untaggedTab: '无标签', unnamed: '（无名称）', catPlaceholder: '分类名称',    addChart: '新增命盘', customCat: '自定义' },
   };
   const UI = UI_BY_LOCALE[locale] ?? UI_BY_LOCALE['zh-TW'];
 
@@ -352,9 +350,7 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
           <div className="chart-local-notice">
             {locale === 'en'
               ? 'Your data stays on this device. Sign up to back it up to the cloud.'
-              : locale === 'zh-CN'
-                ? '资料仅储存于本设备。注册登入后可备份至云端。'
-                : '資料僅儲存於本裝置。註冊登入後可備份至雲端。'}
+              : '資料僅儲存於本裝置。註冊登入後可備份至雲端。'}
           </div>
         )}
         {filtered.map(c => (
