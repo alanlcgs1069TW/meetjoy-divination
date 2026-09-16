@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import re
+
+html_content = """<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -6,9 +8,9 @@
   <title>癒見幸福 · 線上占卜大典 (塔羅牌 · 紫微牌卡 · 雷諾曼卡 · 浮世繪和風神諭)</title>
   
   <!-- 品牌標籤與字體 -->
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
   
@@ -712,3 +714,9 @@
   </script>
 </body>
 </html>
+"""
+
+with open('100_Todo/projects/meetjoy-divination/divination.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print('Updated divination.html successfully!')

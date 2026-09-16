@@ -1,4 +1,6 @@
-/**
+import re
+
+content = """/**
  * 癒見幸福 · 魔法占星學院
  * 八字 18:57 經典主盤視圖引擎 (Bazi 18:57 Classic Board View - V3 Upgrade)
  * 嚴格對齊桌面截圖：截圖 2026-09-16 下午6.57.58.png + 8051 格式 (IMG_8051.jpg) + 8045/8046/8047/8048/8049/8050
@@ -848,3 +850,9 @@
   };
 
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));
+"""
+
+with open('100_Todo/projects/meetjoy-divination/js/bazi-classic-view.js', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print('Updated bazi-classic-view.js successfully!')

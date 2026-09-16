@@ -1,7 +1,8 @@
 /**
  * 癒見幸福 · 魔法占星學院
  * 康熙字典生肖姓名學推導引擎 (KangXi SanCai Engine)
- * 100% 繁體中文（台灣）· 依據愛倫院長正統姓名學體系與 8051 格式
+ * 100% 繁體中文（台灣）· 依據愛倫院長正統姓名學體系與 8051 / 18:57 格式
+ * 核心準則：以【人格為本體】推算天格、地格、外格、總格之生剋十神關係
  */
 
 (function (global) {
@@ -45,41 +46,70 @@
     return NUM_GANZHI[mod] || '甲子';
   }
 
-  // 計算十神印章（根據日元天干與各格天干關係）
-  function getShiShenSeal(dayGan, targetGan) {
-    if (!dayGan || !targetGan) return '印';
-    const STEM_ELEMENTS = {
-      '甲': { elem: '木', yinYang: 1 }, '乙': { elem: '木', yinYang: 0 },
-      '丙': { elem: '火', yinYang: 1 }, '丁': { elem: '火', yinYang: 0 },
-      '戊': { elem: '土', yinYang: 1 }, '己': { elem: '土', yinYang: 0 },
-      '庚': { elem: '金', yinYang: 1 }, '辛': { elem: '金', yinYang: 0 },
-      '壬': { elem: '水', yinYang: 1 }, '癸': { elem: '水', yinYang: 0 }
-    };
-    const s1 = STEM_ELEMENTS[dayGan];
-    const s2 = STEM_ELEMENTS[targetGan];
-    if (!s1 || !s2) return '印';
+  /**
+   * 核心推算：以【人格為本體】推算與目標格（天格/地格/外格/總格）的生剋關係印章
+   * 人格五行 vs 目標格五行：
+   * - 剋我者（目標剋人格）➔ 【官】（正官/七殺）
+   * - 生我者（目標生人格）➔ 【印】（正印/偏印）
+   * - 我生者（人格生目標）➔ 【食】（食神/傷官）
+   * - 我剋者（人格剋目標）➔ 【財】（正財/偏財）
+   * - 同我者（目標同人格）➔ 【比】（比肩/劫財）
+   */
+  function calcShiShenByRenge(rengeWuxing, targetWuxing, rengeGan, targetGan) {
+    if (!rengeWuxing || !targetWuxing) return '印';
+    if (rengeWuxing === targetWuxing) return '比';
 
-    const sameYinYang = (s1.yinYang === s2.yinYang);
     const order = ['木', '火', '土', '金', '水'];
-    const idx1 = order.indexOf(s1.elem);
-    const idx2 = order.indexOf(s2.elem);
+    const rIdx = order.indexOf(rengeWuxing);
+    const tIdx = order.indexOf(targetWuxing);
+    if (rIdx === -1 || tIdx === -1) return '印';
 
-    if (idx1 === idx2) return sameYinYang ? '比' : '劫';
-    if ((idx1 + 1) % 5 === idx2) return sameYinYang ? '食' : '傷';
-    if ((idx1 + 2) % 5 === idx2) return sameYinYang ? '才' : '財';
-    if ((idx1 + 3) % 5 === idx2) return sameYinYang ? '殺' : '官';
-    if ((idx1 + 4) % 5 === idx2) return sameYinYang ? '梟' : '印';
+    // 生我者 (Target 生 RenGe)
+    if ((tIdx + 1) % 5 === rIdx) return '印';
+    // 我生者 (RenGe 生 Target)
+    if ((rIdx + 1) % 5 === tIdx) return '食';
+    // 剋我者 (Target 剋 RenGe)
+    if ((tIdx + 2) % 5 === rIdx) return '官';
+    // 我剋者 (RenGe 剋 Target)
+    if ((rIdx + 2) % 5 === tIdx) return '財';
+
     return '印';
   }
 
+  // 生活化生剋解析文案生成
+  function generateShengKeInterpretation(relType, gridName, rengeWuxing, targetWuxing) {
+    const titleMap = {
+      'tiange': '天格長輩主管運',
+      'dige': '地格家庭配偶與潛意識',
+      'waige': '外格人際社交機遇',
+      'zongge': '總格中晚年終身大局'
+    };
+    const title = titleMap[gridName] || '格局關係';
+
+    switch (relType) {
+      case '印':
+        return `【${title} · 生我得印】：${targetWuxing}生${rengeWuxing}。在此領域你自帶豐沛庇佑與滋養，總有貴人與助力在背後撐腰，心態踏實穩定，容易獲得資源傾斜與包容。`;
+      case '官':
+        return `【${title} · 剋我為官】：${targetWuxing}剋${rengeWuxing}。在此領域外界給予較高標準與責任壓力，雖然自我督促嚴格、挑戰較大，但也是磨練領導魄力與成就大業的必經試煉。`;
+      case '食':
+        return `【${title} · 我生吐秀】：${rengeWuxing}生${targetWuxing}。你在此領域願意傾注滿腔熱情與才華，照顧他人不遺餘力，付出雖多但能享受創意顯化與人際付出的純粹喜悅。`;
+      case '財':
+        return `【${title} · 我剋為財】：${rengeWuxing}剋${targetWuxing}。你在此領域展現極強的掌控力、企圖心與價值變現敏銳度，懂得調動資源、主導全局，轉化為實質回報。`;
+      case '比':
+        return `【${title} · 同我比和】：${targetWuxing}同${rengeWuxing}。彼此同頻共振、勢均力敵，如同並肩作戰的換帖好友或合夥同盟，合作無間但需注意偶爾的意見堅持。`;
+      default:
+        return `【${title}】：生剋和諧，能量自然流轉。`;
+    }
+  }
+
   // 姓名分析主入口
-  function analyzeName(fullName, dayGan = '丙') {
+  function analyzeName(fullName) {
     const cleanName = String(fullName || '').trim().replace(/[^\u4e00-\u9fa5]/g, '');
     if (!cleanName) {
       return null;
     }
 
-    const dict = (typeof window !== 'undefined' && window.KangXiDict) ? window.KangXiDict : {};
+    const dict = (typeof window !== 'undefined' && window.KangXiDict) ? window.KangXiDict : (typeof global !== 'undefined' && global.KangXiDict ? global.KangXiDict : {});
 
     // 逐字拆解
     const chars = [];
@@ -87,81 +117,112 @@
       const entry = dict[ch];
       const strokes = entry ? entry.strokes : (ch.charCodeAt(0) % 15 + 5);
       const elem = entry ? entry.element : getNumWuxing(strokes);
+      const radical = entry ? (entry.radical || '—') : '—';
+      const simp = entry ? (entry.simplified || ch) : ch;
+      const explain = entry ? (entry.explain || '') : '';
+
       chars.push({
         char: ch,
         strokes: strokes,
         element: elem,
-        radical: '口' // 預設或常用部首
+        radical: radical,
+        simplified: simp,
+        explain: explain
       });
     }
 
     // 依字數計算五格剖象 (單姓雙名、單姓單名、雙姓雙名)
-    let tiange = 0, renge = 0, dige = 0, waige = 0, zongge = 0;
+    let tiangeNum = 0, rengeNum = 0, digeNum = 0, waigeNum = 0, zonggeNum = 0;
     const len = chars.length;
 
     if (len === 1) {
       const s1 = chars[0].strokes;
-      tiange = s1 + 1;
-      renge = s1 + 1;
-      dige = 1 + 1;
-      waige = 1 + 1;
-      zongge = s1;
+      tiangeNum = s1 + 1;
+      rengeNum = s1 + 1;
+      digeNum = 1 + 1;
+      waigeNum = 1 + 1;
+      zonggeNum = s1;
     } else if (len === 2) {
       // 單姓單名 (如 史法)
       const s1 = chars[0].strokes;
       const s2 = chars[1].strokes;
-      tiange = s1 + 1;
-      renge = s1 + s2;
-      dige = s2 + 1;
-      waige = (s1 + 1 > 1) ? 2 : 1;
-      zongge = s1 + s2;
+      tiangeNum = s1 + 1;
+      rengeNum = s1 + s2;
+      digeNum = s2 + 1;
+      waigeNum = (s1 + 1 > 1) ? 2 : 1;
+      zonggeNum = s1 + s2;
     } else if (len === 3) {
-      // 單姓雙名 (如 史可法)
+      // 單姓雙名 (如 史可法、江丙坤)
       const s1 = chars[0].strokes;
       const s2 = chars[1].strokes;
       const s3 = chars[2].strokes;
-      tiange = s1 + 1;
-      renge = s1 + s2;
-      dige = s2 + s3;
-      waige = s3 + 1;
-      zongge = s1 + s2 + s3;
+      tiangeNum = s1 + 1;
+      rengeNum = s1 + s2;
+      digeNum = s2 + s3;
+      waigeNum = s3 + 1;
+      zonggeNum = s1 + s2 + s3;
     } else {
       // 雙姓雙名 (如 司馬相如)
       const s1 = chars[0].strokes;
       const s2 = chars[1].strokes;
       const s3 = chars[2].strokes;
       const s4 = chars[3].strokes;
-      tiange = s1 + s2;
-      renge = s2 + s3;
-      dige = s3 + s4;
-      waige = s1 + s4;
-      zongge = s1 + s2 + s3 + s4;
+      tiangeNum = s1 + s2;
+      rengeNum = s2 + s3;
+      digeNum = s3 + s4;
+      waigeNum = s1 + s4;
+      zonggeNum = s1 + s2 + s3 + s4;
     }
 
-    function buildGrid(num) {
+    // 先建立 人格 (本體)
+    const rengeWx = getNumWuxing(rengeNum);
+    const rengeGz = getNumGanZhi(rengeNum);
+    const rengeIsLucky = NUM_LUCK[rengeNum] !== false;
+
+    const rengeGrid = {
+      num: rengeNum,
+      wuxing: rengeWx,
+      isLucky: rengeIsLucky,
+      symbol: rengeIsLucky ? '⭕' : '❌',
+      ganZhi: rengeGz,
+      seal: '本體',
+      isBody: true,
+      interpretation: `【人格本體】：五行屬${rengeWx}，數理「${rengeNum}」${rengeIsLucky ? '吉 ⭕' : '需修煉 ❌'}。代表命主核心思維模式與天賦原動力，是整體姓名能量的航標中樞。`
+    };
+
+    // 建立其他各格，以【人格為本體】計算生剋十神印章
+    function buildTargetGrid(num, gridKey) {
       const wx = getNumWuxing(num);
       const isLucky = NUM_LUCK[num] !== false;
       const gz = getNumGanZhi(num);
-      const seal = getShiShenSeal(dayGan, gz.charAt(0));
+      const seal = calcShiShenByRenge(rengeWx, wx, rengeGz.charAt(0), gz.charAt(0));
       return {
         num: num,
         wuxing: wx,
         isLucky: isLucky,
         symbol: isLucky ? '⭕' : '❌',
         ganZhi: gz,
-        seal: seal
+        seal: seal,
+        isBody: false,
+        interpretation: generateShengKeInterpretation(seal, gridKey, rengeWx, wx)
       };
     }
+
+    const tiangeGrid = buildTargetGrid(tiangeNum, 'tiange');
+    const digeGrid = buildTargetGrid(digeNum, 'dige');
+    const waigeGrid = buildTargetGrid(waigeNum, 'waige');
+    const zonggeGrid = buildTargetGrid(zonggeNum, 'zongge');
 
     return {
       fullName: cleanName,
       chars: chars,
-      tiange: buildGrid(tiange),
-      renge: buildGrid(renge),
-      dige: buildGrid(dige),
-      waige: buildGrid(waige),
-      zongge: buildGrid(zongge),
-      sancaiConfig: `${getNumWuxing(tiange)}-${getNumWuxing(renge)}-${getNumWuxing(dige)}`
+      tiange: tiangeGrid,
+      renge: rengeGrid,
+      dige: digeGrid,
+      waige: waigeGrid,
+      zongge: zonggeGrid,
+      sancaiConfig: `${tiangeGrid.wuxing}-${rengeGrid.wuxing}-${digeGrid.wuxing}`,
+      summary: `以人格【${rengeGrid.wuxing}】為本體，天格為【${tiangeGrid.seal}】、地格為【${digeGrid.seal}】、外格為【${waigeGrid.seal}】、總格為【${zonggeGrid.seal}】。`
     };
   }
 
@@ -169,7 +230,7 @@
     analyzeName,
     getNumWuxing,
     getNumGanZhi,
-    getShiShenSeal
+    calcShiShenByRenge
   };
 
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));
