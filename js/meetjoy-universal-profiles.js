@@ -195,8 +195,15 @@
         email: email,
         avatar: userInfo?.avatar || '',
         provider: provider || 'email',
+        isAdmin: !!userInfo?.isAdmin,
+        extra_slots: parseInt(userInfo?.extra_slots || '0', 10),
         loginAt: Date.now()
       };
+      if (user.extra_slots > 0) {
+        try {
+          localStorage.setItem(`mj_vault_extra_slots_${email}`, user.extra_slots);
+        } catch(e){}
+      }
       try {
         localStorage.setItem('mj_member_user', JSON.stringify(user));
         window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: user }));
@@ -242,7 +249,12 @@
         if (wpRes.ok) {
           const wpData = await wpRes.json();
           if (wpData && wpData.exists) {
-            return { exists: true, name: wpData.name || email.split('@')[0], isAdmin: false };
+            return { 
+              exists: true, 
+              name: wpData.name || email.split('@')[0], 
+              isAdmin: !!wpData.is_admin,
+              extra_slots: parseInt(wpData.extra_slots || '0', 10)
+            };
           }
         }
       } catch (e) {
@@ -443,7 +455,8 @@
             const user = MeetJoyAuth.login('email', {
               name: accountStatus.name || (isAdmin ? '愛倫院長' : email.split('@')[0]),
               email: email,
-              isAdmin: isAdmin
+              isAdmin: isAdmin,
+              extra_slots: accountStatus.extra_slots || 0
             });
             if (isAdmin) {
               localStorage.setItem('mj_current_admin_email', email);
