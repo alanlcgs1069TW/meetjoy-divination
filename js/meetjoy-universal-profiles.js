@@ -53,10 +53,7 @@
   }
 
   function toZiweiSolarDate(dStr) {
-    if (!dStr) return '1990-1-1';
-    const parts = dStr.split('-').map(Number);
-    if (parts.length !== 3 || parts.some(isNaN)) return dStr;
-    return `${parts[0]}-${parts[1]}-${parts[2]}`;
+    return normalizeDate(dStr);
   }
 
   // ==================== 0. 命盤庫容量與擴充規則 (2026-09-16 愛倫院長拍板) ====================
@@ -585,37 +582,7 @@
     getAll() {
       const profilesMap = new Map();
 
-      // 1. 讀取紫微斗數既有命盤 (ziwei-charts)
-      try {
-        const rawZw = localStorage.getItem('ziwei-charts');
-        if (rawZw) {
-          const zwCharts = JSON.parse(rawZw);
-          if (Array.isArray(zwCharts)) {
-            zwCharts.filter(c => !c.deletedAt).forEach(c => {
-              const bDate = normalizeDate(c.solarDate);
-              const bTime = timeIndexToTime(c.timeIndex ?? 6);
-              const key = `${c.name || '未命名'}_${bDate}_${c.timeIndex}`;
-              profilesMap.set(key, {
-                id: c.id || `zw_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-                name: c.name || '未命名',
-                gender: c.gender === 'male' ? 'male' : 'female',
-                birthDate: bDate,
-                birthTime: bTime,
-                birthCity: 'tw_taipei',
-                timeIndex: c.timeIndex ?? 6,
-                category: c.category || '自己',
-                notes: c.notes || '',
-                source: 'ziwei',
-                updatedAt: c.updatedAt || Date.now()
-              });
-            });
-          }
-        }
-      } catch (err) {
-        console.warn('[MeetJoyProfiles] Failed to read ziwei-charts:', err);
-      }
-
-      // 2. 讀取通用生辰庫 (mj_universal_profiles)
+      // 1. 優先讀取通用生辰檔案庫 (mj_universal_profiles)
       try {
         const rawUniv = localStorage.getItem('mj_universal_profiles');
         if (rawUniv) {
@@ -623,28 +590,73 @@
           if (Array.isArray(univProfiles)) {
             univProfiles.filter(p => !p.deletedAt).forEach(p => {
               const bDate = normalizeDate(p.birthDate);
-              const timeIdx = p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(p.birthTime);
-              const key = `${p.name || '未命名'}_${bDate}_${timeIdx}`;
+              const bTime = (p.birthTime && p.birthTime !== 'None') ? p.birthTime : '';
+              const timeIdx = p.timeIndex !== undefined ? p.timeIndex : (bTime ? timeToTimeIndex(bTime) : 6);
+              const cleanName = (p.name || '未命名').trim();
+              const key = `${cleanName}_${bDate}`;
               
-              const existing = profilesMap.get(key);
               profilesMap.set(key, {
-                id: p.id || (existing ? existing.id : `prof_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`),
-                name: p.name || '未命名',
+                id: p.id || `prof_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                name: cleanName,
                 gender: p.gender === 'male' ? 'male' : 'female',
                 birthDate: bDate,
-                birthTime: p.birthTime || (existing ? existing.birthTime : '12:00'),
-                birthCity: p.birthCity || (existing ? existing.birthCity : 'tw_taipei'),
+                birthTime: bTime || '12:00',
+                birthCity: p.birthCity || 'tw_taipei',
                 timeIndex: timeIdx,
-                category: p.category || (existing ? existing.category : '自己'),
-                notes: p.notes || (existing ? existing.notes : ''),
-                source: 'universal',
-                updatedAt: Math.max(p.updatedAt || 0, existing ? (existing.updatedAt || 0) : 0) || Date.now()
+                category: p.category || '自己',
+                notes: p.notes || '',
+                source: p.source || 'universal',
+                updatedAt: p.updatedAt || Date.now()
               });
             });
           }
         }
       } catch (err) {
         console.warn('[MeetJoyProfiles] Failed to read mj_universal_profiles:', err);
+      }
+
+      // 2. 補充讀取紫微斗數既有命盤 (ziwei-charts)，同名同生日不重複新增，並嚴格保護已有之精確時間
+      try {
+        const rawZw = localStorage.getItem('ziwei-charts');
+        if (rawZw) {
+          const zwCharts = JSON.parse(rawZw);
+          if (Array.isArray(zwCharts)) {
+            zwCharts.filter(c => !c.deletedAt).forEach(c => {
+              const bDate = normalizeDate(c.solarDate);
+              const cleanName = (c.name || '未命名').trim();
+              const key = `${cleanName}_${bDate}`;
+              const existing = profilesMap.get(key);
+
+              const hasValidExactTime = (t) => t && t !== 'None' && t !== '12:00';
+              const cTime = (c.birthTime && c.birthTime !== 'None') ? c.birthTime : '';
+              
+              if (!existing) {
+                const resolvedTime = cTime || timeIndexToTime(c.timeIndex ?? 6);
+                profilesMap.set(key, {
+                  id: c.id || `zw_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                  name: cleanName,
+                  gender: c.gender === 'male' ? 'male' : 'female',
+                  birthDate: bDate,
+                  birthTime: resolvedTime,
+                  birthCity: c.birthCity || 'tw_taipei',
+                  timeIndex: c.timeIndex !== undefined ? c.timeIndex : timeToTimeIndex(resolvedTime),
+                  category: c.category || '自己',
+                  notes: c.notes || '',
+                  source: 'ziwei',
+                  updatedAt: c.updatedAt || Date.now()
+                });
+              } else {
+                // 若既有紀錄時間為預設 12:00 或無時間，而紫微有精確時間，則補上
+                if (!hasValidExactTime(existing.birthTime) && hasValidExactTime(cTime)) {
+                  existing.birthTime = cTime;
+                  existing.timeIndex = timeToTimeIndex(cTime);
+                }
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('[MeetJoyProfiles] Failed to read ziwei-charts:', err);
       }
 
       const list = Array.from(profilesMap.values());
@@ -685,7 +697,8 @@
       const now = Date.now();
 
       // 檢查是否為編輯更新已存在的同名+同生辰命盤（更新既有資料不佔用新名額）
-      const isUpdating = existingList.some(p => p.id === id || (`${p.name}_${normalizeDate(p.birthDate)}_${p.timeIndex}` === `${name}_${bDate}_${timeIdx}`));
+      const cleanName = name.trim();
+      const isUpdating = existingList.some(p => p.id === id || (`${(p.name || '').trim()}_${normalizeDate(p.birthDate)}` === `${cleanName}_${bDate}`));
 
       if (!isUpdating && !quota.isUnlimited && existingList.length >= quota.maxSlots) {
         showQuotaExceededModal(existingList.length, quota.maxSlots);
@@ -694,7 +707,7 @@
 
       const newProfile = {
         id,
-        name,
+        name: cleanName,
         gender,
         birthDate: bDate,
         birthTime: bTime,
@@ -710,29 +723,31 @@
         let univ = [];
         const raw = localStorage.getItem('mj_universal_profiles');
         if (raw) univ = JSON.parse(raw);
-        univ = univ.filter(p => p.id !== id && !(`${p.name}_${normalizeDate(p.birthDate)}_${p.timeIndex}` === `${name}_${bDate}_${timeIdx}`));
+        univ = univ.filter(p => p.id !== id && (`${(p.name || '').trim()}_${normalizeDate(p.birthDate)}` !== `${cleanName}_${bDate}`));
         univ.unshift(newProfile);
         localStorage.setItem('mj_universal_profiles', JSON.stringify(univ));
       } catch (e) {
         console.warn('[MeetJoyProfiles] Save universal profile failed:', e);
       }
 
-      // 2. 雙向同步寫入紫微斗數 (ziwei-charts) 格式
+      // 2. 雙向同步寫入紫微斗數 (ziwei-charts) 格式，完整保留精確時間與出生地
       try {
         let zw = [];
         const rawZw = localStorage.getItem('ziwei-charts');
         if (rawZw) zw = JSON.parse(rawZw);
         const zwItem = {
           id,
-          name,
-          solarDate: toZiweiSolarDate(bDate),
+          name: cleanName,
+          solarDate: bDate,
+          birthTime: bTime,
+          birthCity,
           timeIndex: timeIdx,
           gender,
           category,
           notes,
           updatedAt: now
         };
-        zw = zw.filter(c => c.id !== id && !(`${c.name}_${normalizeDate(c.solarDate)}_${c.timeIndex}` === `${name}_${bDate}_${timeIdx}`));
+        zw = zw.filter(c => c.id !== id && (`${(c.name || '').trim()}_${normalizeDate(c.solarDate)}` !== `${cleanName}_${bDate}`));
         zw.unshift(zwItem);
         localStorage.setItem('ziwei-charts', JSON.stringify(zw));
       } catch (e) {
@@ -780,12 +795,7 @@
           const pName = (p.name || '').trim();
           const pDate = normalizeDate(p.birthDate);
           if (targetName && targetDate && pName === targetName && pDate === targetDate) {
-            const pTimeIdx = p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(p.birthTime);
-            if (targetTimeIdx != null && pTimeIdx != null) {
-              if (pTimeIdx === targetTimeIdx) return false;
-            } else {
-              return false;
-            }
+            return false;
           }
           return true;
         });
@@ -798,11 +808,7 @@
           const cName = (c.name || '').trim();
           const cDate = normalizeDate(c.solarDate);
           if (targetName && targetDate && cName === targetName && cDate === targetDate) {
-            if (targetTimeIdx != null && c.timeIndex != null) {
-              if (c.timeIndex === targetTimeIdx) return false;
-            } else {
-              return false;
-            }
+            return false;
           }
           return true;
         });
@@ -860,28 +866,58 @@
         // 2. 取得本地既有命盤
         const localProfiles = this.getAll();
 
-        // 3. 雙向智慧合併 (Last-Write-Wins)
+        // 3. 雙向智慧合併 (Last-Write-Wins 與防重複邏輯)
         const mergedMap = new Map();
+        const hasValidExactTime = (t) => t && t !== 'None' && t !== '12:00';
         
-        // 先載入雲端命盤
+        // 先載入雲端命盤，以 cleanName + birthDate 作為唯一識別鍵，徹底消滅重複個案！
         cloudProfiles.forEach(p => {
-          const k = p.id || `${p.name}_${normalizeDate(p.birthDate)}_${p.birthTime}`;
-          mergedMap.set(k, p);
+          const bDate = normalizeDate(p.birthDate);
+          const cleanName = (p.name || '').trim();
+          const k = `${cleanName}_${bDate}`;
+          const bTime = (p.birthTime && p.birthTime !== 'None') ? p.birthTime : '';
+          mergedMap.set(k, {
+            ...p,
+            name: cleanName,
+            birthDate: bDate,
+            birthTime: bTime || '12:00',
+            timeIndex: p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(bTime || '12:00')
+          });
         });
 
         // 比對本地命盤
         let hasLocalNewer = false;
         localProfiles.forEach(p => {
-          const k = p.id || `${p.name}_${normalizeDate(p.birthDate)}_${p.birthTime}`;
+          const bDate = normalizeDate(p.birthDate);
+          const cleanName = (p.name || '').trim();
+          const k = `${cleanName}_${bDate}`;
           const cloudP = mergedMap.get(k);
+
           if (!cloudP) {
             mergedMap.set(k, p);
             hasLocalNewer = true;
           } else {
+            // 雲端與本地皆有此人：嚴格防止精確分鐘被覆蓋
+            const cloudHasExact = hasValidExactTime(cloudP.birthTime);
+            const localHasExact = hasValidExactTime(p.birthTime);
+            const resolvedTime = localHasExact ? p.birthTime : (cloudHasExact ? cloudP.birthTime : (p.birthTime || cloudP.birthTime || '12:00'));
+
             const lTime = p.updatedAt || 0;
             const cTime = cloudP.updatedAt || 0;
             if (lTime > cTime) {
-              mergedMap.set(k, p);
+              mergedMap.set(k, {
+                ...cloudP,
+                ...p,
+                id: cloudP.id || p.id, // 保留穩定之唯一 ID
+                name: cleanName,
+                birthDate: bDate,
+                birthTime: resolvedTime,
+                timeIndex: p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(resolvedTime),
+                birthCity: p.birthCity || cloudP.birthCity || 'tw_taipei'
+              });
+              hasLocalNewer = true;
+            } else if (cloudHasExact && !localHasExact) {
+              // 雲端時間更精確，本地需同步刷新
               hasLocalNewer = true;
             }
           }
@@ -890,13 +926,15 @@
         const finalMerged = Array.from(mergedMap.values()).filter(p => !p.deletedAt);
         finalMerged.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
-        // 4. 持久化回本地 localStorage
+        // 4. 持久化回本地 localStorage (同步寫入 mj_universal_profiles 與 ziwei-charts)
         localStorage.setItem('mj_universal_profiles', JSON.stringify(finalMerged));
 
         const zwList = finalMerged.map(p => ({
           id: p.id,
           name: p.name,
-          solarDate: toZiweiSolarDate(p.birthDate),
+          solarDate: normalizeDate(p.birthDate),
+          birthTime: p.birthTime,
+          birthCity: p.birthCity,
           timeIndex: p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(p.birthTime),
           gender: p.gender,
           category: p.category || '自己',
@@ -960,7 +998,8 @@
           : `<option value="">📁 帶入已存命盤 (${profiles.length} 位) -- 全站與雲端通用</option>` +
             profiles.map(p => {
               const catTag = p.category ? `[${p.category}] ` : '';
-              return `<option value="${p.id}">${catTag}${p.name} · ${p.birthDate} ${p.birthTime} (${p.gender === 'male' ? '乾造' : '坤造'})</option>`;
+              const timeStr = p.birthTime ? ` ${p.birthTime}` : '';
+              return `<option value="${p.id}">${catTag}${p.name} · ${p.birthDate}${timeStr} (${p.gender === 'male' ? '乾造' : '坤造'})</option>`;
             }).join('');
 
         const quota = getUserVaultQuota(user);
