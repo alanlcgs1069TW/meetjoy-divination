@@ -18,6 +18,7 @@
   <script src="./js/meetjoy-nav.js"></script>
 
   <style>
+    html, body { min-width: 0; min-height: 100%; background: #F6F2EA; overflow-x: hidden; }
     body { font-family: 'Noto Serif TC', serif; }
     .font-cinzel { font-family: 'Cinzel', serif; }
     
@@ -30,7 +31,7 @@
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
     }
     .card-inner.flipped {
       transform: rotateY(180deg);
@@ -45,7 +46,6 @@
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.25);
     }
     .card-back {
-      background: radial-gradient(circle at 50% 50%, #1e293b, #090d16);
       border: 2px solid #c8a97e;
       display: flex;
       flex-direction: column;
@@ -70,9 +70,10 @@
       justify-content: space-between;
       padding: 10px;
     }
-    .card-reversed {
-      transform: rotate(180deg);
-    }
+    /* 倒牌只旋轉內層畫面，保留 card-front 的 rotateY(180deg) 以確保正面可見。 */
+    .card-art-reversed { transform: rotate(180deg); }
+    .ziwei-card-image { transform-origin: center; }
+    .ziwei-card-image.card-art-reversed { transform: rotate(180deg); }
 
     /* 浮世繪木版畫風格 (Ukiyo-e Edition) */
     .theme-ukiyoe .card-front {
@@ -80,10 +81,17 @@
       border: 3px double #8C2D19;
       box-shadow: 0 12px 28px -6px rgba(140, 45, 25, 0.25);
     }
-    .theme-ukiyoe .card-back {
+    .theme-ukiyoe .card-back:not(.ziwei-card-back) {
       background: radial-gradient(circle at 50% 50%, #1E3A5F, #0D1B2A);
       border: 3px double #C8A97E;
     }
+    .card-back-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .card-back-copy { position: relative; z-index: 1; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
+    .tarot-back, .lenormand-back { position: relative; overflow: hidden; }
+    .tarot-back { background-color: #102b4d; background-image: radial-gradient(circle at 50% 50%, transparent 0 21%, #c8a97e 21.5% 22.5%, transparent 23%), repeating-radial-gradient(circle at 50% 115%, #34688b 0 2px, #102b4d 3px 11px); }
+    .lenormand-back { background-color: #7d241e; background-image: radial-gradient(ellipse at 50% 24%, #e8c779 0 7%, transparent 8%), repeating-radial-gradient(ellipse at 50% 104%, #bb8b43 0 2px, #7d241e 3px 13px); }
+    .ukiyoe-art { width: 100%; height: 100%; display: block; }
+    .card-art-wrap { width: 100%; height: 100%; min-height: 0; overflow: hidden; border-radius: 10px; transition: transform .3s ease; }
     .hanko-stamp {
       display: inline-flex;
       align-items: center;
@@ -118,7 +126,7 @@
       grid-template-columns: 2fr 1fr;
       gap: 20px;
       align-items: center;
-      max-width: 960px;
+      max-width: 1360px;
       margin: 0 auto;
     }
     @media (max-width: 768px) {
@@ -134,7 +142,7 @@
   <header id="meetjoy_nav_container" class="w-full sticky top-0 z-50 shadow-md"></header>
 
   <!-- 主體容器 -->
-  <main class="w-full max-w-6xl px-3 sm:px-6 py-6 sm:py-8 flex flex-col items-center flex-1">
+  <main class="w-full max-w-[1560px] 2xl:max-w-[1720px] px-3 sm:px-8 py-6 sm:py-8 flex flex-col items-center flex-1">
     
     <!-- 標題橫幅 -->
     <div class="w-full text-center mb-6">
@@ -152,7 +160,7 @@
     </div>
 
     <!-- 三大占卜系統主切換 Tabs -->
-    <div class="w-full max-w-2xl flex items-center p-1.5 bg-stone-200/90 rounded-2xl mb-6 shadow-inner border border-stone-300">
+    <div class="w-full max-w-4xl flex items-center p-1.5 bg-stone-200/90 rounded-2xl mb-6 shadow-inner border border-stone-300">
       <button type="button" id="tab_tarot" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md">
         🌟 經典塔羅 (78張)
       </button>
@@ -431,9 +439,9 @@
       function renderStandardGridLayout() {
         const count = drawnCards.length;
         let gridCols = 'grid-cols-1 max-w-xs mx-auto';
-        if (count === 3) gridCols = 'grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto';
-        if (count === 4) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-5xl mx-auto';
-        if (count === 5) gridCols = 'grid-cols-2 sm:grid-cols-5 max-w-5xl mx-auto';
+        if (count === 3) gridCols = 'grid-cols-1 sm:grid-cols-3 max-w-5xl mx-auto';
+        if (count === 4) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-6xl mx-auto';
+        if (count === 5) gridCols = 'grid-cols-2 sm:grid-cols-5 max-w-7xl mx-auto';
 
         return `
           <div class="grid ${gridCols} gap-4 sm:gap-6">
@@ -445,7 +453,7 @@
       // 九宮格 3x3
       function renderNineBoxLayout() {
         return `
-          <div class="max-w-4xl mx-auto space-y-2">
+          <div class="max-w-6xl mx-auto space-y-2">
             <div class="text-center text-xs font-bold text-stone-500 mb-2">
               🎴 雷諾曼九宮格大局（橫列：過去 · 現在 · 未來 ｜ 直欄：思想 · 核心 · 走向）
             </div>
@@ -459,7 +467,7 @@
       // 十二宮排版
       function renderTwelvePalacesLayout() {
         return `
-          <div class="max-w-5xl mx-auto space-y-2">
+          <div class="max-w-7xl mx-auto space-y-2">
             <div class="text-center text-xs font-bold text-stone-500 mb-2">
               🌌 紫微斗數十二宮命運大牌陣（點擊各宮卡牌逐張翻開，全面透視人生十二領域）
             </div>
@@ -514,9 +522,16 @@
         const isZiwei = (currentSystem === 'ziwei');
         const hasImg = isZiwei && c.image;
 
-        let wCls = 'w-48 sm:w-52 h-72 sm:h-80';
-        if (size === 'sm') wCls = 'w-full h-56 sm:h-64';
-        if (size === 'xs') wCls = 'w-full h-48 sm:h-52';
+        let wCls = 'w-48 sm:w-52 aspect-[1/1.65]';
+        if (size === 'sm') wCls = 'w-full aspect-[1/1.65]';
+        if (size === 'xs') wCls = 'w-full aspect-[1/1.65]';
+        const art = !hasImg && window.MeetJoyDivination?.renderUkiyoeArt
+          ? window.MeetJoyDivination.renderUkiyoeArt(c, currentSystem)
+          : '';
+        const backClass = hasImg ? 'ziwei-card-back' : (currentSystem === 'tarot' ? 'tarot-back' : 'lenormand-back');
+        const timeLabel = c.group === 'life'
+          ? (c.dimensions?.timing || '時間數值：1～12（天／週／月）')
+          : '';
 
         return `
           <div class="flex flex-col items-center">
@@ -528,47 +543,38 @@
               <div class="card-inner ${item.isFlipped ? 'flipped' : ''}" id="card_inner_${idx}">
                 
                 <!-- 卡背 -->
-                <div class="card-face card-back group hover:border-amber-400 transition" style="${hasImg && c.backImage ? `background-image: url('${c.backImage}'); background-size: cover; background-position: center;` : ''}">
-                  ${!(hasImg && c.backImage) ? `
+                <div class="card-face card-back ${backClass} group hover:border-amber-400 transition">
+                  ${hasImg && c.backImage ? `
+                    <img src="${c.backImage}" alt="${c.groupLabel || '紫微'}牌背" class="card-back-image" onerror="this.remove()">
+                    <div class="card-back-copy absolute inset-0 flex flex-col items-center justify-center bg-slate-950/20">
+                      <span class="rounded-full bg-black/45 px-3 py-1 text-[10px] font-black tracking-widest text-amber-100">點擊翻開</span>
+                    </div>
+                  ` : `
                     <div class="w-12 h-12 rounded-full border border-amber-300/40 flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
-                      <span class="text-xl text-amber-200">✦</span>
+                      <span class="text-xl text-amber-200">${currentSystem === 'tarot' ? '✦' : '鶴'}</span>
                     </div>
                     <span class="text-[11px] font-black text-amber-100 font-cinzel tracking-wider">MEETJOY</span>
                     <span class="text-[9px] text-amber-200/70 mt-0.5">點擊翻開</span>
-                  ` : ''}
+                  `}
                 </div>
 
                 <!-- 卡面 -->
-                <div class="card-face card-front ${item.isReversed ? 'card-reversed' : ''}">
+                <div class="card-face card-front">
                   
                   ${hasImg ? `
                     <!-- 實體紫微牌卡圖案展示 -->
                     <div class="w-full h-full rounded-xl overflow-hidden relative flex flex-col justify-between p-1 bg-stone-900">
-                      <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover rounded-lg" onerror="this.style.display='none'">
+                      <img src="${c.image}" alt="${c.name}" class="ziwei-card-image ${item.isReversed ? 'card-art-reversed' : ''} w-full h-full object-cover rounded-lg" onerror="this.style.display='none'">
                       <div class="absolute bottom-1 left-1 right-1 bg-black/75 backdrop-blur-xs rounded-md p-1 text-center text-white">
                         <span class="text-xs font-black block">${c.name}</span>
                         <span class="text-[9px] text-amber-300 font-bold">${item.isReversed ? '倒牌 逆位' : '正牌 正向'}</span>
                       </div>
+                      ${timeLabel ? `<span class="absolute top-2 left-2 right-2 rounded-md bg-amber-300/95 px-1.5 py-1 text-center text-[9px] font-black text-stone-900 shadow-sm">${timeLabel}</span>` : ''}
                     </div>
                   ` : `
-                    <!-- 塔羅與雷諾曼浮世繪風骨卡面 -->
-                    <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 border-b border-stone-200 pb-1">
-                      <span class="text-[10px]">${currentSystem === 'lenormand' ? c.pips : (c.element || '星曜')}</span>
-                      <div class="flex items-center gap-1">
-                        <span class="hanko-stamp">${c.hanko || '浮世'}</span>
-                        ${item.isReversed ? '<span class="px-1 py-0.2 rounded bg-rose-100 text-rose-700 text-[9px] font-black">逆位</span>' : '<span class="text-emerald-700 text-[9px] font-black">正位</span>'}
-                      </div>
-                    </div>
-
-                    <div class="flex-1 flex flex-col items-center justify-center text-center my-1">
-                      <div class="text-3xl mb-1">${c.symbol || '🎴'}</div>
-                      <h3 class="text-sm sm:text-base font-black text-stone-900 leading-tight">${c.name}</h3>
-                      <span class="text-[10px] text-amber-800 font-bold mt-0.5">${c.ukiyoName || ''}</span>
-                    </div>
-
-                    <div class="text-[9px] text-stone-400 text-center pt-1 border-t border-stone-200/80">
-                      癒見幸福 · 浮世神諭
-                    </div>
+                    <!-- 塔羅與雷諾曼：逐張內嵌浮世繪木版畫，倒牌旋轉畫作而不破壞 3D 正面 -->
+                    <div class="card-art-wrap ${item.isReversed ? 'card-art-reversed' : ''}">${art}</div>
+                    <div class="absolute top-2 left-2 flex items-center gap-1.5"><span class="hanko-stamp">${c.hanko || '浮世'}</span><span class="rounded bg-white/85 px-1.5 py-0.5 text-[9px] font-black ${item.isReversed ? 'text-rose-700' : 'text-emerald-700'}">${item.isReversed ? '逆位' : '正位'}</span></div>
                   `}
 
                 </div>
@@ -642,11 +648,16 @@
           let meaningText = '';
           let potionText = c.potion || '以沉穩深呼吸定錨當下，點燃自信與安然。';
           let dimsHtml = '';
+          let timingHtml = '';
 
           if (currentSystem === 'tarot') {
             meaningText = isRev ? c.reversed : c.upright;
           } else if (currentSystem === 'ziwei') {
             meaningText = isRev ? c.reversed : c.upright;
+            if (c.group === 'life') {
+              const timing = c.dimensions?.timing || '時間數值：1～12（天／週／月）';
+              timingHtml = `<div class="rounded-xl border-2 border-amber-300 bg-amber-50 px-3 py-2 text-xs font-black text-amber-950">⏳ ${timing}</div>`;
+            }
             if (c.dimensions) {
               const d = c.dimensions;
               dimsHtml = `
@@ -678,6 +689,7 @@
                 ${meaningText}
               </p>
 
+              ${timingHtml}
               ${dimsHtml}
 
               <div class="pt-2 border-t border-stone-200/80 flex items-center gap-1.5 text-xs text-amber-900 font-bold">

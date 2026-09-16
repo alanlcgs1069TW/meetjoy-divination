@@ -18,6 +18,7 @@
   <script src="./js/meetjoy-universal-profiles.js"></script>
   <script src="./js/meetjoy-nav.js"></script>
   <style>
+    html, body { min-width: 0; min-height: 100%; background: #F6F2EA; overflow-x: hidden; }
     body { font-family: 'Noto Serif TC', serif; }
     .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     
@@ -103,22 +104,12 @@
       white-space: nowrap;
     }
 
-    /* 神煞底部抽屜 */
-    #shensha_drawer {
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      right: 0;
-      bottom: -400px;
-      transition: bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      background: #ffffff;
-      border-top: 3px solid #c8a97e;
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.18);
-      padding: 24px max(24px, calc((100vw - 860px) / 2));
-    }
-    #shensha_drawer.open {
-      bottom: 0;
-    }
+    /* 神煞右側滑出抽屜：固定於視窗，避免受內容高度與捲軸影響 */
+    #shensha_backdrop { opacity: 0; pointer-events: none; }
+    #shensha_backdrop.is-visible { opacity: 1; pointer-events: auto; }
+    body.shensha-drawer-open { overflow: hidden; }
+    #shensha_drawer { will-change: transform; }
+    #shensha_drawer.is-open { transform: translateX(0); }
 
     /* 互動連線舞台 */
     .relation-stage {
@@ -181,7 +172,7 @@
     </div>
   </nav>
 
-  <main class="w-full max-w-7xl px-3 sm:px-6 py-6 sm:py-10 flex flex-col items-center">
+  <main class="w-full max-w-[1560px] 2xl:max-w-[1720px] px-3 sm:px-8 py-6 sm:py-10 flex flex-col items-center">
 
     <!-- 標題說明 -->
     <div class="text-center max-w-3xl mb-6">
@@ -197,10 +188,10 @@
     </div>
 
     <!-- 全站通用會員命盤庫載入條 -->
-    <div id="universal_profile_bar" class="w-full max-w-5xl mb-4"></div>
+    <div id="universal_profile_bar" class="w-full mb-4"></div>
 
     <!-- 排盤輸入卡片 -->
-    <div class="w-full max-w-5xl bg-white/90 backdrop-blur-md border-2 border-[#C8A97E]/70 rounded-3xl p-4 sm:p-6 mb-6 shadow-md">
+    <div class="w-full bg-white/90 backdrop-blur-md border-2 border-[#C8A97E]/70 rounded-3xl p-4 sm:p-6 mb-6 shadow-md">
       
       <!-- 模式切換 Tabs -->
       <div class="flex items-center justify-center p-1 bg-stone-100/90 rounded-2xl mb-5 border border-stone-200/80 max-w-md mx-auto">
@@ -334,12 +325,12 @@
     <!-- ==========================================
          八字命盤展示大典 (高密度專業盤面 · 嚴格對齊桌面截圖)
          ========================================== -->
-    <div id="bazi_chart_container" class="w-full max-w-5xl"></div>
+    <div id="bazi_chart_container" class="w-full"></div>
 
     <!-- ==========================================
          雙人八字合盤深度解析卡片 (雙人模式下動態呈現)
          ========================================== -->
-    <div id="dual_analysis_card" class="w-full max-w-5xl mt-6 bg-gradient-to-br from-amber-50/90 to-sky-50/90 border-2 border-[#C8A97E] rounded-3xl p-5 sm:p-7 shadow-lg hidden">
+    <div id="dual_analysis_card" class="w-full mt-6 bg-gradient-to-br from-amber-50/90 to-sky-50/90 border-2 border-[#C8A97E] rounded-3xl p-5 sm:p-7 shadow-lg hidden">
       <div class="flex items-center justify-between mb-3 border-b border-amber-300 pb-2">
         <div class="flex items-center gap-2">
           <span class="text-2xl">💞</span>
@@ -378,31 +369,16 @@
       </div>
     </div>
 
-    <!-- 神煞底部滑出抽屜 (對齊截圖 IMG_8050.jpg) -->
-    <aside id="shensha_drawer" aria-label="神煞生活解讀" aria-hidden="true"></aside>
+    <!-- 神煞右側滑出抽屜 -->
+    <div id="shensha_backdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99] transition-opacity duration-300" aria-hidden="true"></div>
+    <aside id="shensha_drawer" class="fixed top-0 right-0 h-full w-full max-w-md sm:max-w-lg bg-white shadow-2xl z-[100] flex flex-col transition-transform duration-300 transform translate-x-full" aria-label="神煞生活解讀" aria-hidden="true" role="dialog" aria-modal="true"></aside>
 
   </main>
 
   <script>
     // 全域變數
     let currentBaziMode = 'natal';
-    let currentActiveTab = 'chart'; // 'chart' | 'relation' | 'shensha'
     let currentChartData = null;
-
-    const PILLAR_ORDER = ['time', 'day', 'month', 'year'];
-    const PILLAR_LABELS = { time: '時', day: '日', month: '月', year: '年' };
-    const PILLAR_SUBTITLES = { time: '時柱 · 晚景', day: '日柱 · 命主', month: '月柱 · 職場', year: '年柱 · 根源' };
-
-    const esc = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
-
-    function getWuXingClass(wx) {
-      if (wx === '木') return 'element-木';
-      if (wx === '火') return 'element-火';
-      if (wx === '土') return 'element-土';
-      if (wx === '金') return 'element-金';
-      if (wx === '水') return 'element-水';
-      return 'text-stone-800';
-    }
 
     // 主渲染入口
     function renderBaziChart() {
@@ -424,560 +400,7 @@
       }
     }
 
-    // 核心整合視圖渲染（嚴格對齊桌面截圖）
-    function renderUnifiedBaziView(data) {
-      const host = document.getElementById('bazi_chart_container');
-      if (!host) return;
-
-      const fp = data.fourPillars;
-      const jq = data.jieQiTimeline || {};
-      const relations = data.pillarRelations || [];
-      const inDeckRels = data.inDeckRelations || [];
-
-      // 1. 直式四柱卡片 HTML (天干在最上方、地支在下方 · IMG_8045.PNG)
-      const pillarsHtml = PILLAR_ORDER.map(key => {
-        const p = fp[key];
-        const isDay = (key === 'day');
-        const notesHtml = (p.pillarNotes && p.pillarNotes.length)
-          ? p.pillarNotes.map(n => `<span class="inline-block px-1.5 py-0.5 rounded-md bg-stone-100 text-stone-700 text-[10px] font-black border border-stone-200">${esc(n)}</span>`).join('')
-          : '';
-
-        return `
-          <div class="pillar-card ${isDay ? 'day-pillar' : ''} p-3 sm:p-4 flex flex-col items-center">
-            <!-- 柱名標籤 -->
-            <div class="w-full flex items-center justify-between pb-1.5 mb-2 border-b border-stone-200 text-xs font-black text-stone-500">
-              <span class="tracking-widest">${PILLAR_LABELS[key]}</span>
-              <span class="text-[10px] text-stone-400 font-bold">${key === 'day' ? '命主' : esc(p.mainStar)}</span>
-            </div>
-
-            <!-- 天干區（置頂大字 + 主星縮寫 · IMG_8045.PNG） -->
-            <div class="flex items-center justify-center gap-1.5 my-1 w-full">
-              <span class="text-4xl sm:text-5xl font-black ${getWuXingClass(p.ganWuxing)} leading-none">${esc(p.gan)}</span>
-              <span class="text-xs sm:text-sm font-black ${getWuXingClass(p.ganWuxing)}">${esc(p.mainStar === '命主' ? '主' : p.mainStar.slice(0, 1))}</span>
-            </div>
-
-            <!-- 地支區（置於天干下方大字 + 藏干副星直列 + 空亡標記 · IMG_8045.PNG） -->
-            <div class="flex items-start justify-center gap-2 mt-3 mb-2 w-full">
-              <!-- 地支大字與空亡徽章 -->
-              <div class="relative flex items-center justify-center">
-                <span class="text-4xl sm:text-5xl font-black ${getWuXingClass(p.zhiWuxing)} leading-none">${esc(p.zhi)}</span>
-                ${p.isKong ? '<span class="kong-badge absolute -left-2 -top-1" title="旬空">空</span>' : ''}
-              </div>
-
-              <!-- 藏干與十神副星縱向列表 -->
-              <div class="flex flex-col space-y-0.5 text-[11px] font-black leading-tight pt-1">
-                ${p.hidden.map(h => `
-                  <div class="flex items-center gap-1 ${getWuXingClass(h.wuxing)}">
-                    <span>${esc(h.stem)}</span>
-                    <span class="text-[10px] opacity-90">${esc(h.shiShen.slice(0, 1))}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- 柱下關係提示標籤 (例如：同沖 月柱、伏吟 月柱) -->
-            <div class="w-full min-h-[36px] flex flex-wrap gap-1 justify-center items-center my-2">
-              ${notesHtml}
-            </div>
-
-            <!-- 柱底十二長生運與納音 -->
-            <div class="w-full pt-2 border-t border-stone-200 text-center text-[11px] text-stone-600 font-bold space-y-0.5">
-              <div class="text-stone-800 font-black">${esc(p.diShi)}</div>
-              <div class="text-[10px] text-stone-500">${esc(p.naYin)}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      // 2. 柱下連線軌道 (對齊 IMG_8045.PNG 底部連線)
-      const inDeckLinesHtml = inDeckRels.length ? inDeckRels.map(r => {
-        const toneClass = r.tone === 'red' ? 'text-rose-600 border-rose-300 bg-rose-50' : (r.tone === 'green' ? 'text-emerald-700 border-emerald-300 bg-emerald-50' : (r.tone === 'violet' ? 'text-purple-700 border-purple-300 bg-purple-50' : 'text-amber-800 border-amber-300 bg-amber-50'));
-        return `
-          <div class="flex items-center justify-between text-xs px-3 py-1.5 rounded-xl border ${toneClass} font-black">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full ${r.tone === 'red' ? 'bg-rose-500' : (r.tone === 'green' ? 'bg-emerald-500' : 'bg-purple-500')}"></span>
-              <span>${esc(r.fromZhi)} ➔ ${esc(r.toZhi)}</span>
-              <span>${esc(r.type)}</span>
-            </div>
-            <span class="text-[10px] opacity-75">${PILLAR_LABELS[r.from]}柱 與 ${PILLAR_LABELS[r.to]}柱</span>
-          </div>
-        `;
-      }).join('') : '<div class="text-center text-xs text-stone-400 py-1 font-bold">四柱地支氣場平穩，無劇烈刑沖</div>';
-
-      // 3. 節氣軸與起運 HTML (對齊 IMG_8045.PNG)
-      const prevName = jq.prev ? esc(jq.prev.name) : '前一節氣';
-      const prevTime = jq.prev ? esc(jq.prev.time) : '—';
-      const prevDist = jq.prev ? esc(jq.prev.distance) : '—';
-      const nextName = jq.next ? esc(jq.next.name) : '下一節氣';
-      const nextTime = jq.next ? esc(jq.next.time) : '—';
-      const nextDist = jq.next ? esc(jq.next.distance) : '—';
-      const progressPct = jq.progress || 50;
-
-      // 4. 十年大運 HTML
-      const daYunHtml = data.daYun.list.map(dy => `
-        <div class="p-2 rounded-xl bg-white border border-stone-200 text-center shadow-2xs shrink-0 w-16 sm:w-20">
-          <div class="text-xs font-bold text-stone-500">${dy.age}歲</div>
-          <div class="text-base font-black my-0.5">
-            <span class="${getWuXingClass(dy.ganWuxing)}">${esc(dy.gan)}</span><span class="${getWuXingClass(dy.zhiWuxing)}">${esc(dy.zhi)}</span>
-          </div>
-          <div class="text-[10px] text-stone-600 font-bold">${esc(dy.shiShen.slice(0, 2))}</div>
-        </div>
-      `).join('');
-
-      // 5. 先天體檢 HTML
-      const organHtml = data.organCheckup.map(item => `
-        <div class="p-1.5 rounded-xl bg-white border border-stone-200 text-center">
-          <div class="text-base font-black text-rose-600 leading-none mb-1">${item.count}</div>
-          <div class="text-xs font-black text-stone-800">${esc(item.stem)}</div>
-          <div class="text-[10px] font-bold text-stone-500">${esc(item.organ)}</div>
-        </div>
-      `).join('');
-
-      // 6. 姓名學三才五格 HTML
-      const sc = data.sancai;
-      const nameCharsHtml = sc.charList.map(c => `
-        <tr class="border-b border-stone-200">
-          <td class="py-1 text-base font-black text-rose-800 border-r border-stone-200">${esc(c.char)}</td>
-          <td class="py-1 font-bold text-rose-600 border-r border-stone-200">${c.strokes}</td>
-          <td class="py-1 text-stone-600 border-r border-stone-200">${esc(c.radical)}</td>
-          <td class="py-1 font-bold ${getWuXingClass(c.wuxing)}">${esc(c.wuxing)}</td>
-        </tr>
-      `).join('');
-
-      // 7. 關係 Tab (IMG_8047.jpg & IMG_8048.jpg)
-      const relCardsHtml = relations.length ? relations.map(r => {
-        const toneBorder = r.tone === 'red' ? 'border-rose-300 bg-rose-50/50 text-rose-900' : (r.tone === 'green' ? 'border-emerald-300 bg-emerald-50/50 text-emerald-900' : (r.tone === 'violet' ? 'border-purple-300 bg-purple-50/50 text-purple-900' : 'border-amber-300 bg-amber-50/50 text-amber-900'));
-        return `
-          <div class="p-4 rounded-2xl border ${toneBorder}">
-            <div class="flex items-center justify-between font-black text-sm mb-1.5">
-              <span>${esc(r.fromName)} ⇄ ${esc(r.toName)}</span>
-              <span class="px-2 py-0.5 rounded-full text-xs bg-white/80 shadow-2xs">${esc(r.type)}</span>
-            </div>
-            <p class="text-xs leading-relaxed text-stone-700 font-medium">${esc(r.label)}</p>
-          </div>
-        `;
-      }).join('') : '<p class="text-xs text-stone-500 p-4">四柱兩兩干支互動穩定，各司其職，適合依大運與流年節奏逐步推進。</p>';
-
-      // 8. 神煞 Tab 四柱直式膠囊 (IMG_8049.jpg)
-      const shenShaDeckHtml = PILLAR_ORDER.map(key => {
-        const p = fp[key];
-        const shaList = p.shenSha || [];
-        return `
-          <div class="pillar-card p-3 sm:p-4 flex flex-col items-center">
-            <div class="w-full text-center pb-2 mb-2 border-b border-stone-200">
-              <span class="text-sm font-black text-stone-800">${PILLAR_SUBTITLES[key]}</span>
-            </div>
-            
-            <div class="w-full space-y-1.5 text-xs font-black">
-              <!-- 長生運與坐運 -->
-              <div class="p-1.5 rounded-lg bg-stone-100 text-stone-800 text-center">${esc(p.diShi)} · 坐${esc(p.diShi)}</div>
-              
-              <!-- 柱空亡 -->
-              <div class="p-1.5 rounded-lg bg-stone-50 text-stone-600 text-center border border-stone-200">
-                空亡：${p.isKong ? '<span class="text-rose-600">逢空</span>' : '<span class="text-stone-400">未逢</span>'}
-              </div>
-
-              <!-- 納音五行 -->
-              <div class="p-1.5 rounded-lg bg-amber-50 text-amber-900 text-center border border-amber-200">
-                ${esc(p.naYin)}
-              </div>
-
-              <!-- 神煞標籤膠囊 (點擊可彈出解讀抽屜) -->
-              <div class="pt-2 flex flex-col gap-1.5">
-                ${shaList.length ? shaList.map(s => `
-                  <button type="button" class="w-full py-1.5 px-2 rounded-xl bg-amber-100/70 hover:bg-amber-200 text-stone-900 font-black text-xs transition text-center shadow-2xs border border-amber-200 flex items-center justify-between" onclick="openShenShaDrawer('${esc(s)}')">
-                    <span>${esc(s)}</span>
-                    ${p.isKong ? '<span class="kong-badge">空</span>' : '<span class="text-[10px] text-amber-700">📖</span>'}
-                  </button>
-                `).join('') : '<div class="text-[11px] text-stone-400 py-3 text-center">本柱清吉安泰</div>'}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      // 9. 神煞圖鑑庫所有晶片 (54 種)
-      const allChartSha = PILLAR_ORDER.flatMap(k => fp[k].shenSha || []);
-      const allShaChips = (data.shenShaCatalog || []).map(shaName => {
-        const hasIt = allChartSha.some(x => x.includes(shaName) || shaName.includes(x));
-        return `
-          <button type="button" class="px-3 py-1.5 rounded-full text-xs font-black transition ${hasIt ? 'bg-amber-200 text-amber-950 border border-amber-400 shadow-xs' : 'bg-stone-100 text-stone-600 border border-stone-200 hover:bg-white'}" onclick="openShenShaDrawer('${esc(shaName)}')">
-            ${esc(shaName)} ${hasIt ? '✨' : ''}
-          </button>
-        `;
-      }).join('');
-
-      // 組合成完整卡片
-      host.innerHTML = `
-        <div class="w-full bg-white border-2 border-stone-800 rounded-3xl shadow-xl overflow-hidden print-full-width">
-          
-          <!-- 頂部命主摘要與三大 Tab 切換 -->
-          <div class="p-4 sm:p-6 bg-gradient-to-r from-[#1b281d] via-[#243527] to-[#1b281d] text-amber-50 border-b-2 border-stone-800 flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs tracking-widest text-amber-300 font-black">十三行八字 · 魔法星盤大典</span>
-                <span class="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">${esc(data.zodiac)} · ${esc(data.genderLabel)}</span>
-              </div>
-              <h2 class="text-2xl sm:text-3xl font-black text-amber-100">${esc(data.userName)} 的四柱命盤</h2>
-              <p class="text-xs text-stone-300 mt-1">
-                日元命主：<span class="font-black text-amber-300 text-sm">${esc(fp.day.gan)} ${esc(fp.day.ganWuxing)}</span> · 納音 ${esc(fp.day.naYin)} · 虛歲 ${data.lunarAge} 歲
-              </p>
-            </div>
-
-            <!-- 三大 Tab 切換按鈕 (大盤 | 關係 | 神煞) -->
-            <div class="flex items-center p-1 bg-black/40 rounded-2xl border border-white/20">
-              <button type="button" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${currentActiveTab === 'chart' ? 'bg-[#C8A97E] text-stone-900 shadow-md' : 'text-amber-100 hover:bg-white/10'}" onclick="switchActiveTab('chart')">
-                🌟 大盤
-              </button>
-              <button type="button" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${currentActiveTab === 'relation' ? 'bg-[#C8A97E] text-stone-900 shadow-md' : 'text-amber-100 hover:bg-white/10'}" onclick="switchActiveTab('relation')">
-                🔗 關係
-              </button>
-              <button type="button" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${currentActiveTab === 'shensha' ? 'bg-[#C8A97E] text-stone-900 shadow-md' : 'text-amber-100 hover:bg-white/10'}" onclick="switchActiveTab('shensha')">
-                📜 神煞
-              </button>
-            </div>
-          </div>
-
-          <!-- ==================== TAB 1: 大盤 ==================== -->
-          <div id="panel_chart" class="${currentActiveTab === 'chart' ? 'block' : 'hidden'} p-4 sm:p-6 space-y-6">
-            
-            <!-- 1. 四柱直式排列卡片 (時、日、月、年 · 天干在上地支在下 · IMG_8045.PNG) -->
-            <div>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-3">
-                ${pillarsHtml}
-              </div>
-
-              <!-- 柱下刑沖合害互動連線 (IMG_8045.PNG 底部連線) -->
-              <div class="p-3 bg-stone-50 rounded-2xl border border-stone-200 space-y-1.5">
-                <div class="text-[11px] font-black text-stone-500 mb-1 flex items-center justify-between">
-                  <span>⚡ 四柱內部刑沖剋合害動態連線：</span>
-                  <span class="text-[10px] text-stone-400">點擊標籤可查看現代解讀</span>
-                </div>
-                ${inDeckLinesHtml}
-              </div>
-            </div>
-
-            <!-- 2. 基本資料與二十四節氣進度軸尺 (IMG_8045.PNG) -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/40 border border-[#C8A97E]/60 space-y-4">
-              <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-[#C8A97E]/40">
-                <div class="text-xs text-stone-700">
-                  <span class="font-bold">出生時間：</span>
-                  <span class="font-black text-stone-900">${esc(data.solarDate)} ${esc(data.solarTime)}</span>
-                  <span class="text-stone-400 ml-2">(${esc(data.lunarString)})</span>
-                </div>
-                <div class="text-xs font-black text-[#854d0e]">
-                  ${esc(data.genderLabel)} · ${esc(data.zodiac)} · 虛歲 ${data.lunarAge} 歲
-                </div>
-              </div>
-
-              <!-- 節氣進度軸尺 -->
-              <div>
-                <div class="flex items-center justify-between text-xs font-black mb-3">
-                  <div>
-                    <span class="text-purple-900">${prevName}</span>
-                    <span class="block text-[10px] text-stone-500 font-normal">${prevTime}</span>
-                  </div>
-                  <div class="text-right">
-                    <span class="text-purple-900">${nextName}</span>
-                    <span class="block text-[10px] text-stone-500 font-normal">${nextTime}</span>
-                  </div>
-                </div>
-
-                <div class="jq-track">
-                  <div class="jq-progress" style="width: ${progressPct}%"></div>
-                  <div class="jq-pin" style="left: ${progressPct}%"></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 mt-4 text-xs font-black text-stone-700">
-                  <div class="p-2.5 rounded-xl bg-white border border-stone-200">
-                    <div class="text-[10px] text-stone-400 mb-0.5">距 ${prevName} (已走過)</div>
-                    <div class="text-purple-700 font-black">${prevDist}</div>
-                  </div>
-                  <div class="p-2.5 rounded-xl bg-white border border-stone-200 text-right">
-                    <div class="text-[10px] text-stone-400 mb-0.5">距 ${nextName} (尚待交接)</div>
-                    <div class="text-stone-800 font-black">${nextDist}</div>
-                  </div>
-                </div>
-
-                <!-- 起運與交運說明 -->
-                <div class="mt-3 p-2.5 rounded-xl bg-white/80 border border-stone-200 text-xs text-stone-600 space-y-1">
-                  <div>📅 <span class="font-bold">${esc(data.daYun.startDesc)}</span></div>
-                  <div class="text-stone-500">⏳ ${esc(data.daYun.exchangeDesc)}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3. 十年大運流程橫軸 -->
-            <div>
-              <div class="text-xs font-black text-stone-800 mb-2 flex items-center gap-1.5">
-                <span>🚀 十年大運流程 (起運歲數與大運干支)</span>
-              </div>
-              <div class="flex gap-2 overflow-x-auto pb-2">
-                ${daYunHtml}
-              </div>
-            </div>
-
-            <!-- 4. 先天體檢 (十干臟腑能量) -->
-            <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-black text-stone-800">🩺 先天體檢 (十天干對應人體臟腑能量統計)</span>
-                <span class="text-[10px] text-stone-500 font-bold">天干＋藏干加總</span>
-              </div>
-              <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
-                ${organHtml}
-              </div>
-            </div>
-
-            <!-- 5. 五行旺衰強弱評估與喜忌 -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold">
-              <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200">
-                <div class="text-stone-500 text-[11px] mb-1">陽宅命卦 / 命主易卦</div>
-                <div class="text-sm font-black text-stone-900 mb-1">${esc(data.gua.houseGua)}</div>
-                <div class="text-xs font-black text-rose-800">本命卦象：${esc(data.gua.guaName)} (${esc(data.gua.symbolUpper)}${esc(data.gua.symbolLower)})</div>
-              </div>
-
-              <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200">
-                <div class="text-stone-500 text-[11px] mb-1">五行旺相休囚死與喜忌</div>
-                <div class="grid grid-cols-2 gap-1 text-[11px]">
-                  <div>喜：<span class="text-rose-600 font-black">${esc(data.wuxingBalance.xi)}</span></div>
-                  <div>用：<span class="text-emerald-600 font-black">${esc(data.wuxingBalance.yong)}</span></div>
-                  <div>忌：<span class="text-blue-600 font-black">${esc(data.wuxingBalance.ji)}</span></div>
-                  <div>仇：<span class="text-amber-600 font-black">${esc(data.wuxingBalance.chou)}</span></div>
-                </div>
-              </div>
-
-              <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200">
-                <div class="text-stone-500 text-[11px] mb-1">日主強弱評估</div>
-                <div class="flex items-center justify-between font-black text-sm my-1">
-                  <span class="text-blue-600">${esc(data.wuxingBalance.scorePos)} (生扶)</span>
-                  <span class="text-rose-600">${esc(data.wuxingBalance.scoreNeg)} (剋洩)</span>
-                </div>
-                <div class="text-[11px] text-stone-600">
-                  ${data.wuxingBalance.isWeak ? '日主偏弱，喜生扶比劫；生活宜多調補印星生機。' : '日主健旺，喜食傷財星疏洩；積極開拓事業成果。'}
-                </div>
-              </div>
-            </div>
-
-            <!-- 6. 愛倫院長 · 八字生活魔藥調頻處方 -->
-            <div class="p-5 sm:p-6 rounded-2xl bg-[#FAF7F0] border-2 border-[#C8A97E]/70 shadow-xs">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="text-2xl">🧪</span>
-                <h3 class="text-base sm:text-lg font-black text-[#2E3829]">
-                  愛倫院長 · 八字生活魔藥調頻處方
-                </h3>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs">
-                <div class="p-3.5 bg-white rounded-xl border border-amber-200 shadow-2xs">
-                  <div class="font-bold text-amber-900 text-sm mb-1">🌿 植物香氣精油處方</div>
-                  <p class="text-stone-600 leading-relaxed" id="unified_potion_oil"></p>
-                </div>
-                <div class="p-3.5 bg-white rounded-xl border border-amber-200 shadow-2xs">
-                  <div class="font-bold text-amber-900 text-sm mb-1">💎 守護晶石配方</div>
-                  <p class="text-stone-600 leading-relaxed" id="unified_potion_crystal"></p>
-                </div>
-                <div class="p-3.5 bg-white rounded-xl border border-amber-200 shadow-2xs">
-                  <div class="font-bold text-amber-900 text-sm mb-1">✨ 日常魔法微儀式</div>
-                  <p class="text-stone-600 leading-relaxed" id="unified_potion_ritual"></p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 7. 生肖姓名學三才五格 (純繁體) -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200">
-              <div class="flex items-center justify-between pb-2 mb-3 border-b border-stone-200">
-                <span class="text-xs font-black text-stone-800">🀄 生肖姓名學 (純繁體三才五格)</span>
-                <span class="text-[10px] text-stone-400">繁體筆劃還原康熙字典</span>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-12 gap-4 text-xs">
-                <div class="md:col-span-5 border border-stone-200 rounded-xl overflow-hidden bg-white">
-                  <table class="w-full text-center border-collapse">
-                    <thead>
-                      <tr class="bg-stone-100 font-bold text-stone-600 border-b border-stone-200">
-                        <th class="py-1 px-1.5 border-r border-stone-200">繁體</th>
-                        <th class="py-1 px-1.5 border-r border-stone-200">筆劃</th>
-                        <th class="py-1 px-1.5 border-r border-stone-200">部首</th>
-                        <th class="py-1 px-1.5">五行</th>
-                      </tr>
-                    </thead>
-                    <tbody>${nameCharsHtml}</tbody>
-                  </table>
-                </div>
-
-                <div class="md:col-span-7 grid grid-cols-2 gap-2 font-bold">
-                  <div class="p-2 rounded-xl bg-white border border-stone-200 flex justify-between items-center">
-                    <span>天格</span><span class="font-black text-blue-600">${sc.tianGe.num} (${sc.tianGe.wuxing}) ${sc.tianGe.isLucky ? '⭕' : '❌'}</span>
-                  </div>
-                  <div class="p-2 rounded-xl bg-white border border-stone-200 flex justify-between items-center">
-                    <span>人格</span><span class="font-black text-blue-600">${sc.renGe.num} (${sc.renGe.wuxing}) ${sc.renGe.isLucky ? '⭕' : '❌'}</span>
-                  </div>
-                  <div class="p-2 rounded-xl bg-white border border-stone-200 flex justify-between items-center">
-                    <span>地格</span><span class="font-black text-blue-600">${sc.diGe.num} (${sc.diGe.wuxing}) ${sc.diGe.isLucky ? '⭕' : '❌'}</span>
-                  </div>
-                  <div class="p-2 rounded-xl bg-white border border-stone-200 flex justify-between items-center">
-                    <span>外格</span><span class="font-black text-blue-600">${sc.waiGe.num} (${sc.waiGe.wuxing}) ${sc.waiGe.isLucky ? '⭕' : '❌'}</span>
-                  </div>
-                  <div class="col-span-2 p-2 rounded-xl bg-amber-50 border border-amber-200 flex justify-between items-center">
-                    <span>總格</span><span class="font-black text-rose-700">${sc.zongGe.num} (${sc.zongGe.wuxing}) ${sc.zongGe.isLucky ? '⭕ (吉順吉祥)' : '❌ (浮沉動態)'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- ==================== TAB 2: 關係 ==================== -->
-          <div id="panel_relation" class="${currentActiveTab === 'relation' ? 'block' : 'hidden'} p-4 sm:p-6 space-y-5">
-            
-            <!-- 導引橫幅 (IMG_8047.jpg & IMG_8048.jpg) -->
-            <div class="space-y-2">
-              <div class="p-3 rounded-2xl bg-purple-900 text-purple-100 text-xs leading-relaxed font-bold shadow-xs">
-                <span>🔮 視覺化「刑沖會合」：刑，沖，剋，合，害，破，暗合，三合，半合，暗三合，拱三合，會方，暗會方，拱會方。</span>
-              </div>
-              <div class="p-3 rounded-2xl bg-[#2E3829] text-amber-100 text-xs leading-relaxed font-bold shadow-xs">
-                <span>⚡ 智能分析「兩柱關係」：伏吟，反吟，天地合，天同地會，天同地沖，天同地刑，天合地合，天合地刑，天剋地會，天剋地合，天剋地刑，天生地同，天生地會，天生地合，天生地沖，天生地刑。</span>
-              </div>
-            </div>
-
-            <!-- 互動舞台 -->
-            <div class="relation-stage p-6 flex flex-col justify-between">
-              <div class="text-center text-xs text-stone-500 font-bold mb-4">
-                四柱地支核心氣場節點 · 點擊卡片查看互動解析
-              </div>
-
-              <div class="grid grid-cols-4 gap-2 sm:gap-4 my-auto">
-                ${PILLAR_ORDER.map(k => `
-                  <div class="text-center">
-                    <div class="relation-node ${getWuXingClass(fp[k].zhiWuxing)}">
-                      ${esc(fp[k].zhi)}
-                    </div>
-                    <div class="mt-2 text-xs font-black text-stone-700">${PILLAR_SUBTITLES[k]}</div>
-                  </div>
-                `).join('')}
-              </div>
-
-              <div class="mt-6 text-center">
-                <span class="inline-block px-3 py-1 rounded-full bg-white text-xs font-black text-stone-600 shadow-xs border border-stone-200">
-                  兩柱互動線索總結 (${relations.length} 組關鍵交集)
-                </span>
-              </div>
-            </div>
-
-            <!-- 兩柱深度診斷卡片 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              ${relCardsHtml}
-            </div>
-
-          </div>
-
-          <!-- ==================== TAB 3: 神煞 ==================== -->
-          <div id="panel_shensha" class="${currentActiveTab === 'shensha' ? 'block' : 'hidden'} p-4 sm:p-6 space-y-6">
-            
-            <!-- 頂部提示 -->
-            <div class="p-3 rounded-2xl bg-amber-100/80 text-amber-950 text-xs font-bold leading-relaxed border border-amber-300">
-              💡 點擊下方任何神煞膠囊或標籤，底部將即時滑出愛倫院長生活化深度解讀與轉念魔法。
-            </div>
-
-            <!-- 四柱縱向神煞卡片 (對齊 IMG_8049.jpg) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              ${shenShaDeckHtml}
-            </div>
-
-            <!-- 全神煞生活化圖鑑查詢庫 (54 種) -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200">
-              <div class="flex items-center justify-between mb-3 pb-2 border-b border-stone-200">
-                <span class="text-xs font-black text-stone-800">📚 五十餘種神煞生活化圖鑑庫 (點選即查)</span>
-                <span class="text-[10px] text-amber-700 font-black">金色代表命盤已推得</span>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                ${allShaChips}
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      `;
-
-      // 同步更新生活魔藥內容
-      updateUnifiedPotion(data);
-    }
-
-    // 更新生活魔藥處方文字
-    function updateUnifiedPotion(data) {
-      const yong = data.wuxingBalance.yong;
-      const oilEl = document.getElementById('unified_potion_oil');
-      const cryEl = document.getElementById('unified_potion_crystal');
-      const ritEl = document.getElementById('unified_potion_ritual');
-      if (!oilEl || !cryEl || !ritEl) return;
-
-      if (yong === '木') {
-        oilEl.textContent = '推薦使用「佛手柑、迷迭香與真正薰衣草」，借青翠木氣調暢肝經氣機，激發靈感活力。';
-        cryEl.textContent = '配戴「綠幽靈、天河石或橄欖石」，滋養慈悲寬容與開拓能量，守護生機氣場。';
-        ritEl.textContent = '清晨面向東方進行深呼吸，赤腳踏草地感受大地之木氣生發，心中默念：「我如初春新芽，擁有無窮的生長力量。」';
-      } else if (yong === '火') {
-        oilEl.textContent = '推薦使用「大馬士革玫瑰、甜橙與肉桂」，以溫暖火元素活絡小腸經與心氣，驅散低迷陰冷。';
-        cryEl.textContent = '配戴「紅膠花、紅紋石或太陽石」，點燃自信與創造力，照耀內在熱情。';
-        ritEl.textContent = '中午沐浴在正午陽光下 5 分鐘，雙手交疊放於心輪感受溫度，默念：「我願接納生命的明亮與歡喜。」';
-      } else if (yong === '水') {
-        oilEl.textContent = '推薦使用「絲柏、乳香與大西洋雪松」，透過深邃水精油潤澤腎經元氣，滋養智慧直覺。';
-        cryEl.textContent = '配戴「海藍寶、黑曜石或藍晶石」，穩定情緒深層水流，清晰判斷外界邊界。';
-        ritEl.textContent = '夜間靜心時配合白噪音冥想，放鬆背部脊椎，默念：「我如流水般靈動包容，穿越一切阻礙。」';
-      } else if (yong === '金') {
-        oilEl.textContent = '推薦使用「茶樹、尤加利與沒藥」，清肅肺經鬱熱，提升自我邊界感與決策定力。';
-        cryEl.textContent = '配戴「白水晶、金鈦晶或月光石」，強化心智聚光焦點，隔絕干擾雜訊。';
-        ritEl.textContent = '整理書桌與儀容，練習清晰說出「是」與「不」，默念：「我堅定明確，清楚知曉自己的方向。」';
-      } else {
-        oilEl.textContent = '推薦使用「廣藿香、岩蘭草與生薑」，以厚實土香踏實脾胃中焦，給予踏實定錨感。';
-        cryEl.textContent = '配戴「黃水晶、虎眼石或茶晶」，穩固大地根基，轉化焦躁疑慮。';
-        ritEl.textContent = '飯後平靜散步 10 分鐘，雙腳踏實著地，默念：「我沉穩安住於此刻，萬物皆在我身邊和諧運作。」';
-      }
-    }
-
-    // 切換三大 Tab (大盤 | 關係 | 神煞)
-    function switchActiveTab(tabName) {
-      currentActiveTab = tabName;
-      if (currentChartData) {
-        renderUnifiedBaziView(currentChartData);
-      }
-    }
-
-    // 打開神煞滑出抽屜 (IMG_8050.jpg)
-    function openShenShaDrawer(shaName) {
-      const drawer = document.getElementById('shensha_drawer');
-      if (!drawer) return;
-
-      const guide = (currentChartData && currentChartData.shenShaGuide) ? currentChartData.shenShaGuide[shaName] : null;
-      const descText = guide || '此神煞為命理星宿象徵之一。它如同一盞內在觀察燈，提醒我們在日常人際、工作與生活節奏中保有覺察與溫柔。';
-
-      drawer.innerHTML = `
-        <div class="max-w-3xl mx-auto flex items-start justify-between gap-4">
-          <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black">神煞生活解讀</span>
-              <span class="text-xs text-stone-400 font-bold">四柱推導體系</span>
-            </div>
-            <h3 class="text-2xl font-black text-stone-900 tracking-wide">${esc(shaName)}</h3>
-            <p class="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium pt-1">
-              ${esc(descText)}
-            </p>
-          </div>
-          <button type="button" class="shrink-0 p-2 rounded-full hover:bg-stone-100 text-stone-500 text-base font-black transition" onclick="closeShenShaDrawer()" aria-label="關閉">
-            ✕
-          </button>
-        </div>
-      `;
-      drawer.classList.add('open');
-      drawer.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeShenShaDrawer() {
-      const drawer = document.getElementById('shensha_drawer');
-      if (drawer) {
-        drawer.classList.remove('open');
-        drawer.setAttribute('aria-hidden', 'true');
-      }
-    }
-
+    // 主盤渲染與神煞抽屜統一由 js/bazi-classic-view.js 接管。
     // 雙人八字合盤運算
     function renderDualBazi() {
       const nameA = document.getElementById('user_name_a').value.trim() || '甲方';

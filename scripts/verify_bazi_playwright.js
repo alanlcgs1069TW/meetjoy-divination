@@ -40,6 +40,21 @@ const path = require('path');
   await page.click('#tab_btn_dapan');
   await page.waitForTimeout(300);
 
+  // Test opening right-side Shensha drawer
+  console.log('Testing right-side Shensha drawer...');
+  await page.click('#tab_btn_shensha');
+  await page.waitForTimeout(300);
+  const firstShenshaBtn = await page.$('#view_shensha_panel button');
+  if (firstShenshaBtn) {
+    await firstShenshaBtn.click();
+    await page.waitForTimeout(600);
+    await page.screenshot({ path: path.resolve(__dirname, '../test_bazi_shensha_drawer.png'), fullPage: false });
+    console.log('Saved test_bazi_shensha_drawer.png');
+    // Test closing drawer
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+  }
+
   console.log('Console errors count:', consoleErrors.length);
   if (consoleErrors.length > 0) {
     console.error('Errors found:', consoleErrors);

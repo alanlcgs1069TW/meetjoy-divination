@@ -1,0 +1,44 @@
+你現在作為「癒見幸福」視覺與前端設計首席工程師。
+請仔細閱讀專案規格書 `/Users/alanlc/Documents/claudeai/100_Todo/projects/meetjoy-divination/RDT_DIVINATION_REBUILD.md`，並根據愛倫院長的反饋與截圖（/Users/alanlc/Library/Application Support/CleanShot/media/media_KXowSpfDlK/CleanShot 2026-09-16 at 23.17.17@2x.png），全面重構與修復 `bazi.html`、`js/bazi-classic-view.js`、`divination.html` 與 `js/divination-cards.js`。
+
+### 核心問題與具體實施指令：
+
+#### 1. 八字排盤大典 (`bazi.html` 與 `js/bazi-classic-view.js`)
+- **頁面寬度大器展開**：
+  - 用戶反饋「右邊白列跟下邊長得很奇怪，主要視窗可以是盡量頁寬大嗎？」。
+  - 請將 `bazi.html` 內所有主要容器（`<main>`、`#bazi_chart_container`、輸入卡片、合盤卡片等）從原本限制狹窄的 `max-w-5xl` (1024px) 提升為寬螢幕大版型：`w-full max-w-[1560px] 2xl:max-w-[1720px] px-3 sm:px-8`。
+  - 徹底修復右側白列（確保 `body` 與 `html` 背景 `#F6F2EA` 滿版無溢出橫向捲軸，加 `overflow-x-hidden`）以及下方奇怪截斷的問題。
+  - 清理 `bazi.html` 內第 428-940 行重複的舊 `renderUnifiedBaziView` 廢棄死代碼，確保邏輯統一且乾淨。
+- **八字神煞右側滑出抽屜 (Slide-over Drawer)**：
+  - 用戶反饋「八字神煞的說明有時候看不到，有辦法是pop up或者right side滑動進來嗎？」。
+  - 請將原先的底部抽屜改為現代流暢的「右側滑動抽屜（Right-Side Slide-Over Sheet）」，並附帶柔和深色遮罩（Backdrop Overlay）：
+    - 抽屜樣式：`fixed top-0 right-0 h-full w-full max-w-md sm:max-w-lg bg-white shadow-2xl z-[100] flex flex-col transition-transform duration-300 transform translate-x-full`，打開時 `translate-x-0`。
+    - 遮罩樣式：`fixed inset-0 bg-black/50 backdrop-blur-xs z-[99] transition-opacity duration-300`。
+    - 點擊任一神煞按鈕即呼叫 `openShenShaDrawer(shaName)`，抽屜自右側滑入，展示神煞大標題、吉凶五行屬性、白話生活化通俗解讀、若逢旬空之說明、愛倫生活魔藥調頻處方（精油、晶石、微儀式、肯定句）。
+    - 支援按右上角 `✕` 按鈕、點擊背景遮罩、按 `ESC` 鍵快速關閉。
+
+#### 2. 線上占卜大典 (`divination.html` 與 `js/divination-cards.js`)
+- **紫微牌卡實體正反面與 3D 翻牌徹底修復**：
+  - 用戶反饋「塔羅雷諾曼跟紫微的牌卡顯示有問題，紫微正反面你也沒處理好」。
+  - 翻牌 CSS 修復：
+    - 舊版 `.card-reversed` 錯誤寫成 `transform: rotate(180deg);`，覆蓋掉了 `.card-front` 的 `transform: rotateY(180deg);`，導致倒牌翻轉時背面消失不可見！
+    - 正確寫法：`.card-front` 恆常具備 `transform: rotateY(180deg); backface-visibility: hidden;`；若為倒牌，則讓內部圖片或內容做 `transform: rotate(180deg);`，或者 `.card-front.card-reversed { transform: rotateY(180deg) rotate(180deg); }`，保證牌面正面朝向讀者且上下顛倒！
+  - 實體卡背圖片保證顯示：
+    - 主星牌背：`./images/ziwei/牌背-主星.jpg`
+    - 輔星牌背：`./images/ziwei/牌背-輔星.jpg`
+    - 長生牌背：`./images/ziwei/牌背-長生.jpg`
+    - 卡背必須使用獨立 `<img>` 或避免被 `.theme-ukiyoe .card-back` 的 `background: radial-gradient` 縮寫覆蓋，保證抽牌時顯示精美的紫微實體卡背！
+  - 實體卡面圖片展示：
+    - 正面顯示 `./images/ziwei/A紫微.jpg` 等實體牌卡圖，維持約 1:1.65 正統牌卡長寬比，圓角精緻。
+    - 長生星牌需在牌面與解讀報告中特別突出「時間數值：1～12（天／週／月）」。
+- **塔羅牌與雷諾曼牌卡浮世繪木版畫 (Ukiyo-e) 繪圖視覺呈現**：
+  - 用戶反饋「請你畫的圖也都沒正常顯示」。
+  - 塔羅 78 張與雷諾曼 36 張不得僅顯示單一 emoji 或純文字！請建構高質感的浮世繪視覺卡面繪圖（嵌入式和風 SVG 浮世繪木版畫藝術或精美日式圖騰畫作，包含青海波浪、天照祥雲、富士靈山、鳥居、櫻吹雪、浮世金幣、武士靈刀等江戶古典圖元）。
+  - 塔羅牌背採用深藍江戶青海波紋與金邊菊紋；雷諾曼牌背採用古金松鶴祥雲朱漆風格。
+  - 主容器同步升級為寬螢幕大版型 (`w-full max-w-[1560px] 2xl:max-w-[1720px]`)，使凱爾特十字、雷諾曼九宮格與十二宮大牌陣有寬敞流暢的展示空間。
+
+#### 3. 規範與驗證
+- 全程 100% 繁體中文（台灣），專有名詞保留英文。
+- Zero Attribution 鐵律（嚴禁提及任何外部導師或機構名稱）。
+- 杜絕「不是X而是Y」AI 文案腔。
+- 檢查所有 JavaScript 語法，確保無語法錯誤。

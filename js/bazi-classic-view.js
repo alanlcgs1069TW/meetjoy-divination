@@ -19,6 +19,7 @@
   const labels = { time: '時柱', day: '日柱', month: '月柱', year: '年柱' };
 
   let currentTab = 'dapan'; // 'dapan' | 'relation' | 'shensha'
+  let latestChartData = null;
 
   // 五行 CSS Class
   const wxClass = v => {
@@ -169,6 +170,7 @@
   // 核心渲染主函數
   global.renderUnifiedBaziView = function (data) {
     ensureStyles();
+    latestChartData = data;
     const host = document.getElementById('bazi_chart_container');
     if (!host) return;
 
@@ -687,7 +689,7 @@
           <!-- 刑沖會合生活魔藥建議 -->
           <div class="p-3.5 bg-gradient-to-r from-amber-100/70 to-amber-50 rounded-xl border border-amber-300 text-xs space-y-1 text-stone-800 font-bold">
             <div class="text-amber-950 font-black">🧪 愛倫魔藥師破局觀點：</div>
-            <p>命局中的相沖、相刑絕非凶相，而是靈魂為了突破安逸現狀而設定的「強效催化劑」。遇沖則動，適時給予自己出外探索、改變日常慣性的機會；遇合則聚，珍惜身邊有緣的夥伴，創造互補雙贏。</p>
+            <p>命局中的相沖、相刑帶著突破安逸現狀的「強效催化劑」力量。遇沖可主動安排探索與調整日常；遇合可珍惜有緣夥伴，創造互補雙贏。</p>
           </div>
         </div>
 
@@ -846,5 +848,81 @@
       updateUnifiedPotion(data);
     }
   };
+
+  function getShenShaProfile(name) {
+    const elementMap = { 天乙貴人: '金', 文昌: '水', 桃花: '水', 驛馬: '木', 華蓋: '土', 羊刃: '火', 劫煞: '金', 災煞: '火', 亡神: '水', 孤辰: '土', 寡宿: '土' };
+    const auspicious = /貴人|文昌|福|德|祿|喜|天醫|金輿/.test(name);
+    return {
+      tone: auspicious ? '吉曜 · 助力顯化' : '提醒 · 覺察調頻',
+      element: elementMap[name] || '依命局五行而定',
+      oil: auspicious ? '甜橙與乳香' : '岩蘭草與真正薰衣草',
+      crystal: auspicious ? '黃水晶與白水晶' : '黑曜石與煙晶',
+      ritual: auspicious ? '晨間將雙手覆在心口，緩慢吸吐四回，寫下今天願意接住的一份支持。' : '晚間以雙腳踩地站立一分鐘，吐氣時放下過度預演，讓身體回到此刻。',
+      affirmation: auspicious ? '我安然接住適時而來的支持，穩穩走向自己的位置。' : '我看見訊號，也保有選擇；每一步都能回到清明與穩定。'
+    };
+  }
+
+  global.openShenShaDrawer = function (shaName) {
+    const drawer = document.getElementById('shensha_drawer');
+    const backdrop = document.getElementById('shensha_backdrop');
+    if (!drawer || !backdrop) return;
+    const guide = latestChartData?.shenShaGuide?.[shaName];
+    const profile = getShenShaProfile(shaName);
+    const description = typeof guide === 'string' && guide.trim()
+      ? guide
+      : '此神煞像命盤裡的一盞提醒燈，邀請你留意人際、工作與生活節奏中的細微變化。';
+    const kong = Object.values(latestChartData?.fourPillars || {}).some(p => (p.shenSha || []).includes(shaName) && p.isKong);
+
+    drawer.innerHTML = `
+      <div class="flex items-center justify-between px-5 sm:px-7 py-5 border-b border-stone-200 bg-gradient-to-r from-[#243527] to-[#1b281d] text-amber-50">
+        <div>
+          <span class="inline-flex px-2.5 py-1 rounded-full bg-amber-200 text-stone-900 text-[11px] font-black">神煞生活解讀</span>
+          <h3 class="mt-2 text-2xl sm:text-3xl font-black tracking-wide">${esc(shaName)}</h3>
+        </div>
+        <button type="button" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-xl font-black transition" onclick="closeShenShaDrawer()" aria-label="關閉神煞說明">✕</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5 text-sm leading-7 text-stone-700">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-2xl border border-amber-200 bg-amber-50 p-3"><span class="block text-[11px] font-black text-amber-900">屬性判讀</span><b class="text-stone-900">${profile.tone}</b></div>
+          <div class="rounded-2xl border border-sky-200 bg-sky-50 p-3"><span class="block text-[11px] font-black text-sky-900">五行線索</span><b class="text-stone-900">${profile.element}</b></div>
+        </div>
+        <section class="rounded-2xl border border-stone-200 bg-stone-50 p-4">
+          <h4 class="font-black text-stone-900 mb-2">白話生活解讀</h4>
+          <p>${esc(description)}</p>
+        </section>
+        <section class="rounded-2xl border ${kong ? 'border-rose-300 bg-rose-50' : 'border-stone-200 bg-white'} p-4">
+          <h4 class="font-black text-stone-900 mb-2">旬空提示</h4>
+          <p>${kong ? '此神煞所在柱逢空，外在訊號容易先出現、後沉澱。把它當成觀察期，先記錄感受與事實，再安排下一步。' : '此神煞目前未見旬空標記。仍可透過日常覺察，將它的象徵轉為可掌握的行動節奏。'}</p>
+        </section>
+        <section class="rounded-2xl border border-[#d8bd83] bg-gradient-to-br from-[#fffaf0] to-white p-4 space-y-3">
+          <h4 class="font-black text-amber-950">愛倫生活魔藥調頻處方</h4>
+          <div class="grid grid-cols-2 gap-3 text-xs"><p><b>精油</b><br>${profile.oil}</p><p><b>晶石</b><br>${profile.crystal}</p></div>
+          <p class="text-xs"><b>微儀式</b><br>${profile.ritual}</p>
+          <blockquote class="rounded-xl bg-amber-100/70 p-3 text-xs font-bold text-amber-950">「${profile.affirmation}」</blockquote>
+        </section>
+      </div>`;
+    drawer.classList.add('is-open');
+    drawer.setAttribute('aria-hidden', 'false');
+    backdrop.classList.add('is-visible');
+    backdrop.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('shensha-drawer-open');
+  };
+
+  global.closeShenShaDrawer = function () {
+    const drawer = document.getElementById('shensha_drawer');
+    const backdrop = document.getElementById('shensha_backdrop');
+    drawer?.classList.remove('is-open');
+    drawer?.setAttribute('aria-hidden', 'true');
+    backdrop?.classList.remove('is-visible');
+    backdrop?.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('shensha-drawer-open');
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('shensha_backdrop')?.addEventListener('click', global.closeShenShaDrawer);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') global.closeShenShaDrawer();
+    });
+  });
 
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));

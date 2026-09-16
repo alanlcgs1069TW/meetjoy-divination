@@ -1424,9 +1424,42 @@
   }
 ];
 
+  const xmlEscape = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+
+  /**
+   * 為全部塔羅與雷諾曼牌產生獨立的內嵌 Ukiyo-e 木版畫。
+   * 每張牌以名稱雜湊建立不同構圖、印色與印章位置，保留一套一致的江戶畫冊語言。
+   */
+  function renderUkiyoeArt(card, system) {
+    const title = String(card.name || '神諭牌');
+    const seed = [...title].reduce((sum, char) => sum + char.codePointAt(0), system === 'tarot' ? 17 : 47);
+    const hue = seed % 2 ? '#173a5e' : '#294d42';
+    const accent = seed % 3 ? '#b8412e' : '#c9973e';
+    const isTarot = system === 'tarot';
+    const motifText = `${title} ${card.ukiyoName || ''}`;
+    let motif = '';
+    if (/權杖|Wands|鞭子|鐮刀/.test(motifText)) motif = '<path d="M88 162L153 70M113 171L176 82" stroke="#5b301e" stroke-width="10" stroke-linecap="round"/><path d="M87 162L153 70M113 171L176 82" stroke="#d9b45e" stroke-width="3" stroke-linecap="round"/>';
+    else if (/寶劍|Swords|劍|鞭子/.test(motifText)) motif = '<path d="M132 178L132 72M111 95L153 95M121 72L132 53L143 72" stroke="#35414a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M132 172L132 78" stroke="#e7edf0" stroke-width="3"/>';
+    else if (/聖杯|Cups|心|花束/.test(motifText)) motif = '<path d="M96 86H168L158 132Q132 148 106 132Z" fill="#b94134" stroke="#6e261e" stroke-width="4"/><path d="M132 146V166M106 170H158" stroke="#6e261e" stroke-width="6" stroke-linecap="round"/><path d="M104 95Q132 112 160 95" fill="none" stroke="#efcc76" stroke-width="4"/>';
+    else if (/錢幣|Pentacles|金幣|魚|鑰匙/.test(motifText)) motif = '<g fill="#d7a83d" stroke="#795b21" stroke-width="4"><circle cx="108" cy="112" r="26"/><circle cx="157" cy="137" r="28"/><circle cx="146" cy="86" r="22"/></g><g fill="none" stroke="#fff0aa" stroke-width="3"><path d="M108 96v32M92 112h32M146 71v30M131 86h30"/></g>';
+    else if (/山|塔|富士|船|雲/.test(motifText)) motif = '<path d="M65 169L124 84L172 169Z" fill="#36566d"/><path d="M104 113L124 84L143 115L132 109L122 119Z" fill="#f8f2df"/><path d="M52 171H205" stroke="#26455b" stroke-width="9"/><path d="M54 183Q78 166 102 183T150 183T202 183" fill="none" stroke="#d9eced" stroke-width="5"/>';
+    else if (/太陽|星星|月亮|Stars/.test(motifText)) motif = '<circle cx="132" cy="110" r="37" fill="#e6bb45"/><path d="M132 53v14M132 153v14M75 110h14M175 110h14M92 70l10 10M162 140l10 10M172 70l-10 10M102 140l-10 10" stroke="#d49130" stroke-width="6" stroke-linecap="round"/>';
+    else if (/鳥|鸛|狗|狐狸|熊|蛇/.test(motifText)) motif = '<path d="M92 154Q87 106 125 91Q160 78 174 118Q160 153 128 157Q107 158 92 154Z" fill="#d2a545" stroke="#69472b" stroke-width="4"/><circle cx="150" cy="111" r="4" fill="#1e293b"/><path d="M172 119l22 9-22 8" fill="#b94134"/>';
+    else motif = '<path d="M72 155V112Q72 84 101 84Q118 84 132 101Q146 84 163 84Q192 84 192 112V155" fill="none" stroke="#b8412e" stroke-width="13" stroke-linecap="round"/><path d="M80 162H184" stroke="#c9973e" stroke-width="7" stroke-linecap="round"/>';
+
+    const blossoms = Array.from({ length: 7 }, (_, i) => {
+      const x = 42 + ((seed * (i + 3)) % 188);
+      const y = 42 + ((seed * (i + 7)) % 120);
+      return `<g transform="translate(${x} ${y})" fill="#e9a4a6"><circle cx="0" cy="-4" r="4"/><circle cx="4" cy="0" r="4"/><circle cx="0" cy="4" r="4"/><circle cx="-4" cy="0" r="4"/><circle r="2.2" fill="#d28a39"/></g>`;
+    }).join('');
+    const number = isTarot ? String(seed % 78 + 1).padStart(2, '0') : String(card.num || seed % 36 + 1).padStart(2, '0');
+    return `<svg viewBox="0 0 264 370" class="ukiyoe-art" role="img" aria-label="${xmlEscape(title)} 浮世繪木版畫"><defs><pattern id="wave-${seed}" width="22" height="14" patternUnits="userSpaceOnUse"><path d="M0 8q5-9 11 0q5 9 11 0" fill="none" stroke="#d7e5e1" stroke-width="1.5"/></pattern><filter id="paper-${seed}"><feTurbulence baseFrequency=".65" numOctaves="2" stitchTiles="stitch" type="fractalNoise"/><feColorMatrix values="1 0 0 0 .8 0 1 0 0 .75 0 0 1 0 .55 0 0 0 .11 0"/></filter></defs><rect width="264" height="370" fill="#f7f0dd"/><rect x="10" y="10" width="244" height="350" rx="4" fill="${hue}"/><rect x="18" y="18" width="228" height="334" fill="url(#wave-${seed})" opacity=".5"/><rect x="18" y="18" width="228" height="334" filter="url(#paper-${seed})" opacity=".45"/><path d="M18 226Q55 202 91 226T164 226T246 226V352H18Z" fill="#315e78" opacity=".9"/>${blossoms}<path d="M28 56Q75 34 118 59Q162 29 234 57" fill="none" stroke="#edd8a1" stroke-width="8" stroke-linecap="round" opacity=".9"/>${motif}<rect x="28" y="286" width="208" height="47" rx="3" fill="#f7f0dd" opacity=".93"/><text x="132" y="307" text-anchor="middle" fill="#253229" font-size="13" font-weight="700" font-family="Noto Serif TC, serif">${xmlEscape(title.slice(0, 18))}</text><text x="132" y="324" text-anchor="middle" fill="#806228" font-size="9" font-family="Noto Serif TC, serif">${xmlEscape(card.ukiyoName || '浮世神諭')}</text><rect x="203" y="34" width="27" height="27" fill="${accent}"/><text x="216" y="53" text-anchor="middle" fill="#fff7de" font-size="12" font-weight="900">${number}</text><rect x="10" y="10" width="244" height="350" rx="4" fill="none" stroke="#c9973e" stroke-width="4"/></svg>`;
+  }
+
   global.MeetJoyDivination = {
     TAROT_CARDS,
-    LENORMAND_CARDS
+    LENORMAND_CARDS,
+    renderUkiyoeArt
   };
 
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));
