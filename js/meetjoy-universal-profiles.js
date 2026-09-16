@@ -59,6 +59,96 @@
     return `${parts[0]}-${parts[1]}-${parts[2]}`;
   }
 
+  // ==================== 0. 命盤庫容量與擴充規則 (2026-09-16 愛倫院長拍板) ====================
+  const VAULT_CONFIG = {
+    DEFAULT_FREE_SLOTS: 3, // 每個帳號提供 3 個免費額度
+    EXPANSION_SLOTS_PER_PACK: 30, // 每包擴充 30 個
+    EXPANSION_PRICE_NTD: 300, // 每包 300 元
+    PRODUCT_ID: 228781,
+    PRODUCT_CART_URL: 'https://meetjoy.net/cart/?add-to-cart=228781',
+    ADMIN_EMAILS: ['alanlcgs@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net']
+  };
+
+  function isUserAdmin(user) {
+    if (!user) {
+      const cached = (localStorage.getItem('mj_current_admin_email') || '').toLowerCase().trim();
+      return VAULT_CONFIG.ADMIN_EMAILS.includes(cached);
+    }
+    const email = (user.email || '').toLowerCase().trim();
+    if (VAULT_CONFIG.ADMIN_EMAILS.includes(email)) return true;
+    if (user.role === 'administrator' || user.isAdmin || user.role === 'admin' || user.role === 'instructor') return true;
+    const cached = (localStorage.getItem('mj_current_admin_email') || '').toLowerCase().trim();
+    return VAULT_CONFIG.ADMIN_EMAILS.includes(cached);
+  }
+
+  function getUserVaultQuota(user) {
+    if (isUserAdmin(user)) {
+      return { maxSlots: Infinity, isUnlimited: true, freeSlots: VAULT_CONFIG.DEFAULT_FREE_SLOTS, extraSlots: 999999 };
+    }
+    const email = user ? (user.email || '').toLowerCase().trim() : 'guest';
+    let extra = 0;
+    try {
+      extra = parseInt(localStorage.getItem(`mj_vault_extra_slots_${email}`) || '0', 10);
+      if (user && user.extra_slots) {
+        extra = Math.max(extra, parseInt(user.extra_slots, 10));
+      }
+    } catch(e){}
+    return {
+      maxSlots: VAULT_CONFIG.DEFAULT_FREE_SLOTS + extra,
+      isUnlimited: false,
+      freeSlots: VAULT_CONFIG.DEFAULT_FREE_SLOTS,
+      extraSlots: extra
+    };
+  }
+
+  function showQuotaExceededModal(currentCount, maxSlots) {
+    let modal = document.getElementById('mj_vault_quota_modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'mj_vault_quota_modal';
+      modal.className = 'fixed inset-0 z-[99999] bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white max-w-md w-full rounded-3xl shadow-2xl border border-amber-200 overflow-hidden text-slate-800 animate-in fade-in zoom-in duration-200" style="font-family: inherit;">
+        <div class="bg-gradient-to-r from-[#2E3829] via-[#3E4B37] to-[#1E261B] text-amber-100 p-6 relative">
+          <button type="button" id="mj_btn_close_quota_modal" class="absolute top-4 right-4 text-amber-200/70 hover:text-white text-2xl font-bold p-1 leading-none transition">&times;</button>
+          <div class="inline-block bg-amber-500/30 text-amber-200 text-xs px-2.5 py-1 rounded-full font-bold mb-2">📦 命盤庫免費額度已滿</div>
+          <h3 class="text-xl font-black text-white">擴充專屬雲端命盤容量</h3>
+          <p class="text-xs text-amber-200/80 mt-1">目前已儲存 ${currentCount} / ${maxSlots} 組命盤</p>
+        </div>
+        <div class="p-6 space-y-4 text-xs">
+          <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 text-amber-950 leading-relaxed">
+            <p class="font-bold text-sm text-amber-900 mb-1.5">🌟 每個帳號提供 3 組免費雲端命盤</p>
+            <p>您已存滿免費額度！若需建立並儲存更多親友、學員或個案的命盤檔案，歡迎選購<strong>【雲端命盤庫擴充包】</strong>。</p>
+            <div class="mt-3 pt-3 border-t border-amber-200 flex items-center justify-between text-xs font-bold">
+              <span class="text-slate-700">🛒 容量擴充規格：</span>
+              <span class="text-amber-900 bg-white px-2.5 py-1 rounded-lg border border-amber-300 shadow-2xs">每 30 個容量 · NT$ 300</span>
+            </div>
+          </div>
+          <ul class="text-[11px] text-slate-600 space-y-1.5 pl-1">
+            <li class="flex items-center gap-1.5"><span class="text-emerald-600 font-bold">✓</span> 全站 10 大排盤系統通用（紫微、占星、人類圖、數字等）</li>
+            <li class="flex items-center gap-1.5"><span class="text-emerald-600 font-bold">✓</span> 支援跨電腦、跨手機雲端自動同步，換機不遺失</li>
+            <li class="flex items-center gap-1.5"><span class="text-emerald-600 font-bold">✓</span> 購買後永久有效，可多次購買連續疊加容量</li>
+            <li class="flex items-center gap-1.5"><span class="text-amber-600 font-bold">👑</span> 院長與管理導師具備無限擴充權限</li>
+          </ul>
+          <div class="pt-2 flex flex-col gap-2">
+            <a href="${VAULT_CONFIG.PRODUCT_CART_URL}" target="_blank" class="w-full bg-[#2E3829] hover:bg-[#3E4B37] text-amber-100 font-bold py-3 px-4 rounded-xl text-center text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 border border-amber-900/30">
+              <span>🛒 立即線上擴充 30 組額度 (NT$ 300)</span>
+            </a>
+            <button type="button" id="mj_btn_cancel_quota_modal" class="w-full py-2 text-xs text-slate-500 hover:text-slate-800 font-bold transition">
+              稍後再說
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+    document.getElementById('mj_btn_close_quota_modal').onclick = () => { modal.style.display = 'none'; };
+    document.getElementById('mj_btn_cancel_quota_modal').onclick = () => { modal.style.display = 'none'; };
+  }
+
   // ==================== 1. 會員驗證模組 (MeetJoyAuth) ====================
   const MeetJoyAuth = {
     getUser() {
@@ -304,6 +394,10 @@
         return false;
       }
 
+      const user = MeetJoyAuth.getUser();
+      const quota = getUserVaultQuota(user);
+      const existingList = this.getAll();
+
       const id = profileData.id || `prof_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       const bDate = normalizeDate(profileData.birthDate);
       const bTime = profileData.birthTime || '12:00';
@@ -314,6 +408,14 @@
       const birthCity = profileData.birthCity || 'tw_taipei';
       const notes = profileData.notes || '';
       const now = Date.now();
+
+      // 檢查是否為編輯更新已存在的同名+同生辰命盤（更新既有資料不佔用新名額）
+      const isUpdating = existingList.some(p => p.id === id || (`${p.name}_${normalizeDate(p.birthDate)}_${p.timeIndex}` === `${name}_${bDate}_${timeIdx}`));
+
+      if (!isUpdating && !quota.isUnlimited && existingList.length >= quota.maxSlots) {
+        showQuotaExceededModal(existingList.length, quota.maxSlots);
+        return false;
+      }
 
       const newProfile = {
         id,
@@ -545,6 +647,33 @@
               return `<option value="${p.id}">${catTag}${p.name} · ${p.birthDate} ${p.birthTime} (${p.gender === 'male' ? '乾造' : '坤造'})</option>`;
             }).join('');
 
+        const quota = getUserVaultQuota(user);
+        const isAdmin = isUserAdmin(user);
+
+        let quotaBadgeHtml = '';
+        if (isAdmin) {
+          quotaBadgeHtml = `
+            <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[11px] shadow-2xs cursor-default" title="管理員權限：享無限命盤容量">
+              👑 無限容量 (已存 ${profiles.length})
+            </span>
+          `;
+        } else {
+          const isFull = profiles.length >= quota.maxSlots;
+          const badgeColor = isFull 
+            ? 'bg-rose-50 text-rose-700 border-rose-300' 
+            : 'bg-emerald-50 text-emerald-800 border-emerald-300';
+          quotaBadgeHtml = `
+            <div class="inline-flex items-center gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl ${badgeColor} border font-bold text-[11px] shadow-2xs">
+                📦 容量：${profiles.length} / ${quota.maxSlots} 組
+              </span>
+              <button type="button" id="mj_btn_open_quota_modal" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-[11px] shadow-2xs transition" title="擴充命盤庫容量（每 30 組 NT$ 300）">
+                ⚡️ 擴充
+              </button>
+            </div>
+          `;
+        }
+
         const authHtml = user ? `
           <div class="flex items-center gap-1.5 text-xs text-amber-900 bg-amber-50/90 border border-amber-300/80 px-2.5 py-1.5 rounded-xl shadow-2xs">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -575,8 +704,9 @@
                 </button>
               </div>
 
-              <!-- 記錄至命盤庫 & 會員狀態 -->
-              <div class="flex items-center gap-2 shrink-0">
+              <!-- 容量狀態、記錄至命盤庫 & 會員狀態 -->
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
+                ${quotaBadgeHtml}
                 <button id="mj_btn_save_current" type="button" class="bg-[#2E3829] hover:bg-[#3E4B37] text-amber-100 font-bold px-3.5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs border border-amber-900/30 whitespace-nowrap">
                   <span>💾 記錄此生日至會員命盤庫</span>
                 </button>
@@ -600,6 +730,14 @@
             this.showToast(`✨ 已為您帶入「${target.name}」的生辰資料！`);
           }
         };
+
+        // 擴充按鈕彈窗
+        const openQuotaBtn = container.querySelector('#mj_btn_open_quota_modal');
+        if (openQuotaBtn) {
+          openQuotaBtn.onclick = () => {
+            showQuotaExceededModal(profiles.length, quota.maxSlots);
+          };
+        }
 
         // 刪除選中按鈕
         const delBtn = container.querySelector('#mj_btn_del_profile');
@@ -693,6 +831,15 @@
       };
 
       this.saveProfile(profileToSave);
+    },
+
+    getQuota(user) {
+      return getUserVaultQuota(user || MeetJoyAuth.getUser());
+    },
+
+    showQuotaModal(currentCount, maxSlots) {
+      const q = this.getQuota();
+      showQuotaExceededModal(currentCount !== undefined ? currentCount : this.getAll().length, maxSlots !== undefined ? maxSlots : q.maxSlots);
     }
   };
 
