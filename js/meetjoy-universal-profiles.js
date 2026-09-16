@@ -465,7 +465,6 @@
       }
 
       // 3. 即時非同步同步至 Cloudflare KV 雲端資料庫！
-      const user = MeetJoyAuth.getUser();
       if (user && (user.email || user.id)) {
         fetch('/api/profiles', {
           method: 'POST',
