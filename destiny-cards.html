@@ -661,11 +661,14 @@
       const selB = document.getElementById('profile_select_card_b');
       if (!selA || !selB) return;
 
-      const optsHtml = '<option value="">📁 從命盤庫帶入...</option>' + 
+      const countLabel = profiles.length > 0 ? ` (${profiles.length} 位)` : '';
+      const optsHtmlA = `<option value="">📁 從命盤庫帶入 A${countLabel}...</option>` + 
+        profiles.map(p => `<option value="${p.id}">${p.name || '未命名'} (${p.birthDate || '無生日'})</option>`).join('');
+      const optsHtmlB = `<option value="">📁 從命盤庫帶入 B${countLabel}...</option>` + 
         profiles.map(p => `<option value="${p.id}">${p.name || '未命名'} (${p.birthDate || '無生日'})</option>`).join('');
 
-      selA.innerHTML = optsHtml.replace('從命盤庫帶入...', '📁 從命盤庫帶入 A...');
-      selB.innerHTML = optsHtml.replace('從命盤庫帶入...', '📁 從命盤庫帶入 B...');
+      selA.innerHTML = optsHtmlA;
+      selB.innerHTML = optsHtmlB;
     }
 
     function swapCardAB() {
@@ -1021,6 +1024,12 @@
         // 填充雙人合盤 A / B 命盤庫下拉選單
         populateCardProfileSelects();
         window.addEventListener('meetjoy_profiles_updated', () => {
+          populateCardProfileSelects();
+        });
+        window.addEventListener('mj-profiles-changed', () => {
+          populateCardProfileSelects();
+        });
+        window.addEventListener('mj-auth-changed', () => {
           populateCardProfileSelects();
         });
       }

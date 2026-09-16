@@ -748,20 +748,47 @@
     },
 
     deleteProfile(id) {
-      if (!confirm('確定要刪除這筆已儲存的生辰命盤嗎？')) return;
+      if (!confirm('確定要刪除這筆已儲存的生辰命盤嗎？')) return false;
       try {
+        // 先找到要刪除的目標物件（取得其姓名、生日、時辰等特徵鍵，防範紫微與通用庫ID不一致）
+        const allCurrent = this.getAll();
+        const target = allCurrent.find(p => p.id === id);
+        const targetName = target ? (target.name || '').trim() : '';
+        const targetDate = target ? normalizeDate(target.birthDate) : '';
+        const targetTimeIdx = target ? target.timeIndex : null;
+        const targetKey = target ? `${targetName}_${targetDate}_${targetTimeIdx}` : null;
+
+        // 1. 徹底過濾通用生辰庫 mj_universal_profiles
         let univ = JSON.parse(localStorage.getItem('mj_universal_profiles') || '[]');
-        univ = univ.filter(p => p.id !== id);
+        univ = univ.filter(p => {
+          if (p.id === id) return false;
+          if (targetKey) {
+            const pKey = `${(p.name || '').trim()}_${normalizeDate(p.birthDate)}_${p.timeIndex}`;
+            if (pKey === targetKey) return false;
+          }
+          return true;
+        });
         localStorage.setItem('mj_universal_profiles', JSON.stringify(univ));
 
+        // 2. 徹底過濾紫微斗數庫 ziwei-charts
         let zw = JSON.parse(localStorage.getItem('ziwei-charts') || '[]');
-        zw = zw.filter(c => c.id !== id);
+        zw = zw.filter(c => {
+          if (c.id === id) return false;
+          if (targetKey) {
+            const cDate = normalizeDate(c.solarDate);
+            const cKey = `${(c.name || '').trim()}_${cDate}_${c.timeIndex}`;
+            if (cKey === targetKey) return false;
+          }
+          return true;
+        });
         localStorage.setItem('ziwei-charts', JSON.stringify(zw));
 
-        // 同步刪除雲端紀錄 (以 replace 模式更新全量)
+        // 3. 取得刪除後真實剩餘清單（數字保證即時下降）
+        const allLeft = this.getAll();
+
+        // 4. 同步以 replace 模式覆蓋雲端 KV 備份
         const user = MeetJoyAuth.getUser();
         if (user && (user.email || user.id)) {
-          const allLeft = this.getAll();
           fetch('/api/profiles', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -774,10 +801,15 @@
           }).catch(err => console.warn('[MeetJoyProfiles] Cloud delete sync failed:', err));
         }
 
-        this.showToast('🗑️ 已成功刪除命盤紀錄');
-        window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: { id, deleted: true } }));
+        this.showToast(`🗑️ 已成功刪除命盤紀錄，目前剩餘 ${allLeft.length} 組。`);
+
+        // 5. 立即發出多重全域事件，讓全站所有選單與徽章的數字同步更新
+        window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: { id, deleted: true, count: allLeft.length, profiles: allLeft } }));
+        window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated', { detail: { id, deleted: true, count: allLeft.length, profiles: allLeft } }));
+        return true;
       } catch (e) {
         console.warn('[MeetJoyProfiles] Delete failed:', e);
+        return false;
       }
     },
 
@@ -1006,7 +1038,10 @@
             alert('請先在下拉選單中選擇要刪除的命盤！');
             return;
           }
-          this.deleteProfile(selectedId);
+          const success = this.deleteProfile(selectedId);
+          if (success) {
+            render();
+          }
         };
 
         // 手動同步按鈕
