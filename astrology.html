@@ -167,12 +167,18 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <!-- 甲方 (Person A / 內盤基準) -->
             <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
-              <div class="flex items-center justify-between mb-3 pb-2 border-b border-amber-200">
+              <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-amber-200">
                 <span class="font-black text-sm text-amber-950 flex items-center gap-1.5">
                   <span>🔵 甲方 (Person A)</span>
                   <span class="text-[11px] font-normal text-amber-800 bg-amber-200/60 px-2 py-0.5 rounded-full">內盤宮位基準</span>
                 </span>
                 <span class="text-xs text-slate-500 font-medium">查詢主體</span>
+              </div>
+              <div class="mb-3">
+                <label class="block text-[11px] font-bold text-amber-900 mb-1">📁 從會員命盤庫載入甲方 (A)：</label>
+                <select id="profile_select_astro_a" class="w-full bg-white border border-[#C8A97E] rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                  <option value="">-- 點此選擇已存命盤 (甲方) --</option>
+                </select>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -204,12 +210,18 @@
 
             <!-- 乙方 (Person B / 外盤落入) -->
             <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-200/80">
-              <div class="flex items-center justify-between mb-3 pb-2 border-b border-sky-200">
+              <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-sky-200">
                 <span class="font-black text-sm text-sky-950 flex items-center gap-1.5">
                   <span>🟣 乙方 (Person B)</span>
                   <span class="text-[11px] font-normal text-sky-800 bg-sky-200/60 px-2 py-0.5 rounded-full">外盤星體投影</span>
                 </span>
                 <span class="text-xs text-slate-500 font-medium">關係對象</span>
+              </div>
+              <div class="mb-3">
+                <label class="block text-[11px] font-bold text-sky-900 mb-1">📁 從會員命盤庫載入乙方 (B)：</label>
+                <select id="profile_select_astro_b" class="w-full bg-white border border-sky-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <option value="">-- 點此選擇已存命盤 (乙方) --</option>
+                </select>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -1356,6 +1368,12 @@
         if (toolbar) toolbar.classList.add('hidden');
       }
 
+      if (mode === 'synastry' || mode === 'composite') {
+        if (typeof populateAstroQuickProfiles === 'function') {
+          populateAstroQuickProfiles();
+        }
+      }
+
       renderAstrologyChart();
     }
 
@@ -2060,9 +2078,105 @@
       renderAstrologyChart();
     });
 
+    // 填充西洋占星合盤甲方 (A) 與乙方 (B) 專屬命盤庫下拉選單
+    function populateAstroQuickProfiles() {
+      const selA = document.getElementById('profile_select_astro_a');
+      const selB = document.getElementById('profile_select_astro_b');
+      if (!selA || !selB || !window.MeetJoyProfiles) return;
+
+      const getList = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : (window.MeetJoyProfiles.getProfiles ? window.MeetJoyProfiles.getProfiles() : []);
+      const profiles = Array.isArray(getList) ? getList : [];
+
+      const currentValA = selA.value;
+      const currentValB = selB.value;
+
+      const buildOptions = (targetLabel) => {
+        if (profiles.length === 0) {
+          return `<option value="">-- 命盤庫目前尚無紀錄 (可先儲存) --</option>`;
+        }
+        let html = `<option value="">-- 📁 選擇已存命盤帶入${targetLabel} (${profiles.length} 位) --</option>`;
+        profiles.forEach(p => {
+          const birthStr = p.birthDate || '無日期';
+          const timeStr = p.birthTime ? ` ${p.birthTime}` : '';
+          const catTag = p.category ? `[${p.category}] ` : '';
+          const name = p.name || '未命名';
+          html += `<option value="${p.id}">${catTag}${name} · ${birthStr}${timeStr}</option>`;
+        });
+        return html;
+      };
+
+      selA.innerHTML = buildOptions('甲方 (A)');
+      selB.innerHTML = buildOptions('乙方 (B)');
+
+      if (currentValA && profiles.some(p => p.id === currentValA)) selA.value = currentValA;
+      if (currentValB && profiles.some(p => p.id === currentValB)) selB.value = currentValB;
+    }
+
+    // 綁定 A/B 快速選單變更及雙人欄位監聽事件
+    function setupAstroQuickProfileEvents() {
+      const selA = document.getElementById('profile_select_astro_a');
+      const selB = document.getElementById('profile_select_astro_b');
+
+      const applyProfileToAstro = (profile, target) => {
+        if (!profile) return;
+        const isA = target === 'a';
+        const nameEl = document.getElementById(isA ? 'user_name_a' : 'user_name_b');
+        const genderEl = document.getElementById(isA ? 'user_gender_a' : 'user_gender_b');
+        const dateEl = document.getElementById(isA ? 'birth_date_a' : 'birth_date_b');
+        const timeEl = document.getElementById(isA ? 'birth_time_a' : 'birth_time_b');
+        const cityEl = document.getElementById(isA ? 'birth_city_a' : 'birth_city_b');
+
+        if (profile.name && profile.name !== '未命名' && nameEl) nameEl.value = profile.name;
+        if (profile.gender && genderEl) genderEl.value = profile.gender === 'female' ? 'Female' : 'Male';
+        if (profile.birthDate && dateEl) dateEl.value = profile.birthDate;
+        if (profile.birthTime && timeEl) timeEl.value = profile.birthTime;
+        if (profile.birthCity && cityEl) {
+          if (cityEl.querySelector(`option[value="${profile.birthCity}"]`)) {
+            cityEl.value = profile.birthCity;
+          }
+        }
+        if (window.MeetJoyProfiles && typeof window.MeetJoyProfiles.showToast === 'function') {
+          window.MeetJoyProfiles.showToast(`✨ 已成功載入「${profile.name}」至合盤${isA ? '甲方 (A)' : '乙方 (B)'}！`);
+        }
+        renderAstrologyChart();
+      };
+
+      if (selA) {
+        selA.addEventListener('change', (e) => {
+          const pid = e.target.value;
+          if (!pid || !window.MeetJoyProfiles) return;
+          const profiles = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : window.MeetJoyProfiles.getProfiles();
+          const target = profiles.find(item => item.id === pid);
+          if (target) applyProfileToAstro(target, 'a');
+        });
+      }
+
+      if (selB) {
+        selB.addEventListener('change', (e) => {
+          const pid = e.target.value;
+          if (!pid || !window.MeetJoyProfiles) return;
+          const profiles = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : window.MeetJoyProfiles.getProfiles();
+          const target = profiles.find(item => item.id === pid);
+          if (target) applyProfileToAstro(target, 'b');
+        });
+      }
+
+      // 雙人合盤輸入變更即時重算
+      ['user_name_a', 'user_gender_a', 'birth_date_a', 'birth_time_a', 'birth_city_a',
+       'user_name_b', 'user_gender_b', 'birth_date_b', 'birth_time_b', 'birth_city_b'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', renderAstrologyChart);
+      });
+
+      window.addEventListener('mj-profiles-changed', populateAstroQuickProfiles);
+      window.addEventListener('mj-auth-changed', populateAstroQuickProfiles);
+    }
+
     // 初始化
     window.addEventListener('DOMContentLoaded', () => {
       initCityDropdown();
+      setupAstroQuickProfileEvents();
+      populateAstroQuickProfiles();
 
       // 掛載全站通用命盤生日庫與會員專屬檔案連通組件 (相容紫微斗數)
       if (window.MeetJoyProfiles) {

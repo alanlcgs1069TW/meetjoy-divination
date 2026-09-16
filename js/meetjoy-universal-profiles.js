@@ -286,6 +286,10 @@
       return list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
     },
 
+    getProfiles() {
+      return this.getAll();
+    },
+
     saveProfile(profileData) {
       if (!profileData || !profileData.birthDate) {
         alert('請先填寫正確的出生日期！');

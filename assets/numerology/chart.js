@@ -690,6 +690,7 @@
         if (mode === 'synastry') {
           singleFields.classList.add('hidden');
           dualFields.classList.remove('hidden');
+          populateQuickProfiles();
           submitBtn.textContent = '展開雙人關係中點合盤';
         } else {
           singleFields.classList.remove('hidden');
@@ -792,8 +793,9 @@
 
     // 填充合盤甲方與乙方專屬快速載入下拉選單
     const populateQuickProfiles = () => {
-      if (!window.MeetJoyProfiles || typeof window.MeetJoyProfiles.getAll !== 'function') return;
-      const profiles = window.MeetJoyProfiles.getAll();
+      if (!window.MeetJoyProfiles) return;
+      const getList = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : (window.MeetJoyProfiles.getProfiles ? window.MeetJoyProfiles.getProfiles() : []);
+      const profiles = Array.isArray(getList) ? getList : [];
       const selA = root.querySelector('[data-quick-profile-a]');
       const selB = root.querySelector('[data-quick-profile-b]');
 
@@ -809,7 +811,9 @@
       };
 
       if (selA) {
+        const curValA = selA.value;
         selA.innerHTML = renderOptions('甲方');
+        if (curValA && profiles.some(p => p.id === curValA)) selA.value = curValA;
         selA.onchange = () => {
           const pid = selA.value;
           if (!pid) return;
@@ -832,7 +836,9 @@
       }
 
       if (selB) {
+        const curValB = selB.value;
         selB.innerHTML = renderOptions('乙方');
+        if (curValB && profiles.some(p => p.id === curValB)) selB.value = curValB;
         selB.onchange = () => {
           const pid = selB.value;
           if (!pid) return;
@@ -904,8 +910,10 @@
         }
       });
 
-      // 初始化合盤甲方與乙方選單
+      // 初始化合盤甲方與乙方選單並監聽命盤庫變更
       populateQuickProfiles();
+      window.addEventListener('mj-profiles-changed', populateQuickProfiles);
+      window.addEventListener('mj-auth-changed', populateQuickProfiles);
     }
 
     root.querySelector('[data-print-chart]').addEventListener('click', () => {
