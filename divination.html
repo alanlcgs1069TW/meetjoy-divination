@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>癒見幸福 · 線上占卜大典 (塔羅牌 · 紫微牌卡 · 雷諾曼卡)</title>
+  
+  <!-- 品牌標籤與字體 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- 卡牌資料庫與全站導航 -->
+  <script src="./js/divination-cards.js"></script>
+  <script src="./js/meetjoy-nav.js"></script>
+
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    
+    /* 3D 卡牌翻轉容器 */
+    .card-scene {
+      perspective: 1000px;
+    }
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.25);
+    }
+    .card-back {
+      background: radial-gradient(circle at 50% 50%, #1e293b, #090d16);
+      border: 2px solid #c8a97e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .card-back::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1px dashed rgba(200, 169, 126, 0.4);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+    .card-front {
+      background: #ffffff;
+      transform: rotateY(180deg);
+      border: 2px solid #c8a97e;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px;
+    }
+    .card-reversed {
+      transform: rotate(180deg);
+    }
+
+    /* 洗牌動畫 */
+    @keyframes shuffleDeck {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-15px) rotate(-4deg) translateX(-10px); }
+      50% { transform: translateY(10px) rotate(4deg) translateX(10px); }
+      75% { transform: translateY(-5px) rotate(-2deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    .shuffling {
+      animation: shuffleDeck 0.6s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-[#F6F2EA] text-[#2E3829] min-h-screen flex flex-col items-center p-0 m-0">
+
+  <!-- 全站通用頂部導航 -->
+  <header id="meetjoy_nav_container" class="w-full sticky top-0 z-50 shadow-md"></header>
+
+  <!-- 主體容器 -->
+  <main class="w-full max-w-5xl px-4 py-6 sm:py-8 flex flex-col items-center flex-1">
+    
+    <!-- 標題橫幅 -->
+    <div class="w-full text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2E3829] text-amber-200 text-xs font-bold mb-2 shadow-xs">
+        <span>✨ 癒見幸福 · 魔法占星學院</span>
+        <span class="opacity-40">|</span>
+        <span>心靈牌卡調頻大典</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-black text-[#1F261C] mb-2 tracking-wide font-cinzel">
+        線上占卜大典
+      </h1>
+      <p class="text-stone-600 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+        沉澱思緒，連結當下直覺。結合經典偉特塔羅牌、紫微斗數十四主星能量牌、與歐洲經典雷諾曼卡，以愛倫院長溫暖幽默的魔法魔藥師視角，為你指引日常迷津、調配專屬能量處方。
+      </p>
+    </div>
+
+    <!-- 三大占卜系統主切換 Tabs -->
+    <div class="w-full max-w-xl flex items-center p-1.5 bg-stone-200/90 rounded-2xl mb-6 shadow-inner border border-stone-300">
+      <button type="button" id="tab_tarot" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md">
+        🌟 經典塔羅 (78張)
+      </button>
+      <button type="button" id="tab_ziwei" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700">
+        🔮 紫微牌卡 (26星)
+      </button>
+      <button type="button" id="tab_lenormand" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700">
+        🌿 經典雷諾曼 (36張)
+      </button>
+    </div>
+
+    <!-- 操作控制面板 (牌陣選擇與洗牌抽牌) -->
+    <div class="w-full bg-white/95 backdrop-blur-md border-2 border-[#C8A97E]/70 rounded-3xl p-4 sm:p-6 mb-6 shadow-md">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- 牌陣選擇器 -->
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-bold text-stone-700 whitespace-nowrap">選擇牌陣：</label>
+          <select id="spread_select" class="bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-black text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+            <!-- 動態注入選項 -->
+          </select>
+        </div>
+
+        <!-- 動作按鈕組 -->
+        <div class="flex items-center gap-2">
+          <button type="button" id="btn_shuffle" class="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-black border border-stone-300 transition flex items-center gap-1.5 shadow-xs">
+            <span>🌀 靜心洗牌</span>
+          </button>
+          <button type="button" id="btn_draw_all" class="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md">
+            <span>✨ 一鍵全部翻開</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- 提示說明 -->
+      <div class="mt-3 pt-3 border-t border-stone-200 flex items-center justify-between text-[11px] text-stone-500 font-bold">
+        <span id="spread_hint">💡 心中默念你的問題或想洞悉的領域，點擊下方卡牌進行翻牌。</span>
+        <span class="text-amber-800">可逐張點擊翻牌 ➔</span>
+      </div>
+    </div>
+
+    <!-- 卡牌抽牌舞台 (Card Spread Stage) -->
+    <div id="card_stage" class="w-full mb-8">
+      <!-- 動態排開卡牌網格 -->
+    </div>
+
+    <!-- 解讀展示面板 (Interpretation Result Panel) -->
+    <div id="result_panel" class="w-full bg-white rounded-3xl border-2 border-stone-800 shadow-xl p-5 sm:p-8 hidden">
+      <div class="flex items-center justify-between pb-3 mb-5 border-b-2 border-stone-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📜</span>
+          <h2 class="text-xl sm:text-2xl font-black text-stone-900" id="result_title">占卜解讀報告</h2>
+        </div>
+        <button type="button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-xs text-stone-500 hover:text-amber-700 font-bold">
+          ↑ 回頂部重新抽牌
+        </button>
+      </div>
+
+      <!-- 個別卡牌解讀列表 -->
+      <div id="cards_interpretation_list" class="space-y-4 mb-6">
+        <!-- 動態注入各牌解析 -->
+      </div>
+
+      <!-- 愛倫院長整體魔法魔藥建言 -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-50 via-stone-50 to-white border border-amber-300/80 shadow-2xs space-y-2">
+        <div class="flex items-center gap-2 text-xs font-black text-amber-950">
+          <span>🧪 愛倫院長生活魔藥調頻指引</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 font-bold">整體綜合透視</span>
+        </div>
+        <p id="spread_overall_potion" class="text-xs sm:text-sm text-stone-700 leading-relaxed font-bold pt-1">
+          點擊上方卡牌翻開後，此處將自動整合當前能量流向，提供專屬的植物香氣、晶石頻率與日常落地微儀式。
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 底部版權 -->
+  <footer class="w-full py-6 text-center text-xs text-stone-500 font-bold border-t border-stone-200 bg-white/50">
+    <p>© 2026 癒見幸福療身心靈推廣中心 · 魔法占星學院 · 愛倫院長精神導師</p>
+  </footer>
+
+  <!-- 占卜主控制器程式 -->
+  <script>
+    (function () {
+      'use strict';
+
+      let currentSystem = 'tarot'; // 'tarot' | 'ziwei' | 'lenormand'
+      let currentSpreadKey = 'single';
+      let drawnCards = [];
+      let isShuffling = false;
+
+      // 牌陣設定
+      const SPREADS = {
+        tarot: [
+          { key: 'single', name: '🎯 單張指引 (今日靈感與即刻處方)', count: 1, labels: ['當前核心指引'] },
+          { key: 'timeline', name: '⏳ 時間之流 (過去 · 現在 · 未來)', count: 3, labels: ['源頭過去', '核心現在', '潛在未來'] },
+          { key: 'triangle', name: '🔺 聖三角抉擇 (核心 · 障礙 · 破局)', count: 3, labels: ['核心實況', '阻礙挑戰', '破局建言'] }
+        ],
+        ziwei: [
+          { key: 'single', name: '👑 今日當令主星 (內在氣質與能量焦點)', count: 1, labels: ['當令主星原型'] },
+          { key: 'matrix', name: '🏛️ 三方四正能量矩陣 (本宮 · 遷移 · 官祿 · 財帛)', count: 4, labels: ['命宮 (自處)', '遷移 (外在)', '官祿 (事業)', '財帛 (資產)'] }
+        ],
+        lenormand: [
+          { key: 'single', name: '🌿 單張日運指引 (日常核心事件)', count: 1, labels: ['今日核心象徵'] },
+          { key: 'storyline', name: '📖 三張線性故事線 (起因 ➔ 現況 ➔ 結合理論)', count: 3, labels: ['發起事件', '關鍵轉折', '具體走向'] }
+        ]
+      };
+
+      // 初始化頁面
+      function init() {
+        setupSystemTabs();
+        setupSpreadOptions();
+        setupActions();
+        resetAndDraw();
+      }
+
+      // 切換系統 Tabs
+      function setupSystemTabs() {
+        const tabs = [
+          { id: 'tab_tarot', key: 'tarot' },
+          { id: 'tab_ziwei', key: 'ziwei' },
+          { id: 'tab_lenormand', key: 'lenormand' }
+        ];
+
+        tabs.forEach(t => {
+          const btn = document.getElementById(t.id);
+          if (!btn) return;
+          btn.addEventListener('click', () => {
+            currentSystem = t.key;
+            tabs.forEach(o => {
+              const b = document.getElementById(o.id);
+              if (o.key === currentSystem) {
+                b.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md';
+              } else {
+                b.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700';
+              }
+            });
+            setupSpreadOptions();
+            resetAndDraw();
+          });
+        });
+      }
+
+      // 更新牌陣下拉選單
+      function setupSpreadOptions() {
+        const select = document.getElementById('spread_select');
+        if (!select) return;
+        const list = SPREADS[currentSystem] || [];
+        select.innerHTML = list.map(s => `<option value="${s.key}">${s.name}</option>`).join('');
+        currentSpreadKey = list[0]?.key || 'single';
+
+        select.onchange = (e) => {
+          currentSpreadKey = e.target.value;
+          resetAndDraw();
+        };
+      }
+
+      // 取得目前牌陣設定
+      function getCurrentSpread() {
+        const list = SPREADS[currentSystem] || [];
+        return list.find(s => s.key === currentSpreadKey) || list[0];
+      }
+
+      // 取得牌庫
+      function getDeck() {
+        const db = window.MeetJoyDivination || {};
+        if (currentSystem === 'tarot') return db.TAROT_CARDS || [];
+        if (currentSystem === 'ziwei') return db.ZIWEI_CARDS || [];
+        if (currentSystem === 'lenormand') return db.LENORMAND_CARDS || [];
+        return [];
+      }
+
+      // 洗牌並抽牌
+      function resetAndDraw() {
+        const spread = getCurrentSpread();
+        const deck = [...getDeck()];
+        if (deck.length === 0) return;
+
+        // Fisher-Yates 洗牌演算法
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+
+        // 抽取指定張數
+        drawnCards = [];
+        for (let i = 0; i < spread.count; i++) {
+          const card = deck[i];
+          const isReversed = (currentSystem === 'tarot') ? (Math.random() > 0.5) : false;
+          drawnCards.push({
+            card: card,
+            positionLabel: spread.labels[i] || `位置 ${i + 1}`,
+            isReversed: isReversed,
+            isFlipped: false
+          });
+        }
+
+        renderStage();
+        document.getElementById('result_panel').classList.add('hidden');
+      }
+
+      // 渲染舞台卡牌
+      function renderStage() {
+        const stage = document.getElementById('card_stage');
+        if (!stage) return;
+
+        const count = drawnCards.length;
+        let gridCols = 'grid-cols-1 max-w-xs mx-auto';
+        if (count === 3) gridCols = 'grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto';
+        if (count === 4) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-5xl mx-auto';
+
+        stage.innerHTML = `
+          <div class="grid ${gridCols} gap-4 sm:gap-6">
+            ${drawnCards.map((item, idx) => `
+              <div class="flex flex-col items-center">
+                <span class="text-xs font-black text-stone-600 mb-2 px-3 py-1 rounded-full bg-stone-200/80">
+                  ${item.positionLabel}
+                </span>
+                
+                <div class="card-scene w-48 sm:w-52 h-72 sm:h-80 cursor-pointer" onclick="flipCard(${idx})">
+                  <div class="card-inner ${item.isFlipped ? 'flipped' : ''}" id="card_inner_${idx}">
+                    
+                    <!-- 卡背 -->
+                    <div class="card-face card-back group hover:border-amber-400 transition">
+                      <div class="w-16 h-16 rounded-full border border-amber-300/40 flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                        <span class="text-2xl text-amber-200">✦</span>
+                      </div>
+                      <span class="text-xs font-black text-amber-100 font-cinzel tracking-wider">MEETJOY</span>
+                      <span class="text-[10px] text-amber-200/60 mt-1">點擊翻開</span>
+                    </div>
+
+                    <!-- 卡面 -->
+                    <div class="card-face card-front ${item.isReversed ? 'card-reversed' : ''}">
+                      <div class="flex items-center justify-between text-[11px] font-bold text-stone-500 border-b border-stone-200 pb-1">
+                        <span>${currentSystem === 'lenormand' ? item.card.pips : (item.card.element || '星曜')}</span>
+                        ${item.isReversed ? '<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[10px] font-black">逆位</span>' : '<span class="text-stone-400">正位</span>'}
+                      </div>
+
+                      <div class="flex-1 flex flex-col items-center justify-center text-center my-2">
+                        <div class="text-3xl sm:text-4xl mb-2">
+                          ${item.card.symbol || (currentSystem === 'tarot' ? '🎴' : '✨')}
+                        </div>
+                        <h3 class="text-base sm:text-lg font-black text-stone-900 leading-tight">
+                          ${item.card.name}
+                        </h3>
+                        <span class="text-[11px] text-amber-800 font-bold mt-1">
+                          ${item.card.keywords || item.card.nature || ''}
+                        </span>
+                      </div>
+
+                      <div class="text-[10px] text-stone-400 text-center pt-1 border-t border-stone-100">
+                        魔法占星學院 · 愛倫調頻
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // 翻牌
+      window.flipCard = function (idx) {
+        if (!drawnCards[idx]) return;
+        drawnCards[idx].isFlipped = true;
+        const inner = document.getElementById(`card_inner_${idx}`);
+        if (inner) inner.classList.add('flipped');
+
+        // 檢查是否全部翻開
+        const allFlipped = drawnCards.every(c => c.isFlipped);
+        if (allFlipped) {
+          setTimeout(renderInterpretation, 600);
+        }
+      };
+
+      // 全部翻開按鈕
+      function setupActions() {
+        document.getElementById('btn_draw_all')?.addEventListener('click', () => {
+          drawnCards.forEach((c, idx) => {
+            c.isFlipped = true;
+            const inner = document.getElementById(`card_inner_${idx}`);
+            if (inner) inner.classList.add('flipped');
+          });
+          setTimeout(renderInterpretation, 600);
+        });
+
+        document.getElementById('btn_shuffle')?.addEventListener('click', () => {
+          if (isShuffling) return;
+          isShuffling = true;
+          const stage = document.getElementById('card_stage');
+          if (stage) stage.classList.add('shuffling');
+
+          setTimeout(() => {
+            if (stage) stage.classList.remove('shuffling');
+            isShuffling = false;
+            resetAndDraw();
+          }, 600);
+        });
+      }
+
+      // 渲染詳細解讀結果
+      function renderInterpretation() {
+        const panel = document.getElementById('result_panel');
+        const list = document.getElementById('cards_interpretation_list');
+        const overallPotion = document.getElementById('spread_overall_potion');
+        if (!panel || !list) return;
+
+        list.innerHTML = drawnCards.map(item => {
+          const c = item.card;
+          const isRev = item.isReversed;
+          let meaningText = '';
+          let potionText = c.potion || '以沉穩深呼吸定錨當下，點燃自信與安然。';
+
+          if (currentSystem === 'tarot') {
+            meaningText = isRev ? c.reversed : c.upright;
+          } else if (currentSystem === 'ziwei') {
+            meaningText = c.guidance || c.nature;
+          } else if (currentSystem === 'lenormand') {
+            meaningText = c.desc;
+          }
+
+          return `
+            <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-md bg-[#2E3829] text-amber-100 text-xs font-black">${item.positionLabel}</span>
+                  <h3 class="text-base sm:text-lg font-black text-stone-900">${c.name}</h3>
+                </div>
+                ${isRev ? '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-xs font-black">逆位呈現</span>' : '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black">正向引導</span>'}
+              </div>
+
+              <p class="text-xs sm:text-sm text-stone-700 leading-relaxed font-bold">
+                ${meaningText}
+              </p>
+
+              <div class="pt-2 border-t border-stone-200/80 flex items-center gap-1.5 text-xs text-amber-900 font-bold">
+                <span>🌿 魔法生活建議：</span>
+                <span class="text-stone-600">${potionText}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // 綜合魔藥建言
+        if (currentSystem === 'tarot') {
+          overallPotion.textContent = '今日能量提醒：保持彈性與接納，以清晰思維覺察周遭訊息。推薦以真正薰衣草與甜橙精油擴香，佩戴白水晶，維持心輪敞開與能量場的純淨通透。';
+        } else if (currentSystem === 'ziwei') {
+          overallPotion.textContent = '紫微星曜能量正引領著你的生活節奏。秉持剛毅實事求是的態度，在人際溝通中展現溫柔同理，財運與事業貴人自然隨之聚集。';
+        } else {
+          overallPotion.textContent = '雷諾曼符號傳遞出具體的行動指引：注重日常微小細節，落實具體溝通，將注意力放在可掌控的事物上，必然迎來明朗進展。';
+        }
+
+        panel.classList.remove('hidden');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // 頁面加載完成時執行
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    })();
+  </script>
+</body>
+</html>

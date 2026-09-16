@@ -51,7 +51,8 @@
       icon: '🔮',
       systems: [
         { name: '西洋地占', url: '/geomancy.html', tag: '大地' },
-        { name: '基因天命', url: '/gene-keys.html', tag: '全息' }
+        { name: '基因天命', url: '/gene-keys.html', tag: '全息' },
+        { name: '線上占卜大典', url: '/divination.html', tag: '抽牌' }
       ]
     },
     {
