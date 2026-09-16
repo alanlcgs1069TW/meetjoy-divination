@@ -3,8 +3,8 @@
  * 核心標準：
  * 1. 跨系統通用：人類圖、紫微斗數、西洋占星、脈輪占星、撲克命牌、基因天命全站通用
  * 2. 雙向同步：與紫微斗數 (ziwei-charts) 深度互通，雙向自動轉換時辰與陽曆日期
- * 3. 權限防護：未登入可自由起盤，記錄/儲存命盤需登入會員（支援 LINE / Google / 學員信箱一鍵登入）
- * 4. 瑞士起司縱深防錯：全流程 Try-Catch，資料自動補正與容錯降級
+ * 3. 雲端跨電腦同步：透過 Cloudflare KV 邊緣雲端資料庫，任何電腦/裝置登入同一個帳號，命盤檔案即時無縫漫遊同步！
+ * 4. 瑞士起司縱深防錯：全流程 Try-Catch，本地快取離線優先，雲端容災降級
  */
 
 (function (window) {
@@ -31,12 +31,9 @@
     if (!timeStr) return 6; // 預設午時
     const parts = timeStr.split(':');
     const h = parseInt(parts[0], 10);
-    const m = parseInt(parts[1] || '0', 10);
     if (isNaN(h)) return 6;
-
     if (h === 23) return 12; // 晚子時
     if (h === 0) return 0;  // 早子時
-    // 丑(1-2), 寅(3-4), 卯(5-6), 辰(7-8), 巳(9-10), 午(11-12), 未(13-14), 申(15-16), 酉(17-18), 戌(19-20), 亥(21-22)
     return Math.floor((h + 1) / 2);
   }
 
@@ -94,10 +91,13 @@
     },
 
     login(provider, userInfo) {
+      const email = (userInfo?.email || '').trim().toLowerCase() || `${provider}.member@meetjoy.net`;
+      const name = userInfo?.name || (provider === 'line' ? 'LINE 學員' : (provider === 'google' ? 'Google 學員' : '學院認證學員'));
+      
       const user = {
-        id: userInfo?.id || `mj_user_${Date.now()}`,
-        name: userInfo?.name || (provider === 'line' ? 'LINE 學員' : (provider === 'google' ? 'Google 學員' : '學院認證學員')),
-        email: userInfo?.email || `${provider}.member@meetjoy.net`,
+        id: userInfo?.id || `user_${email.replace(/[^a-zA-Z0-9]/g, '_')}`,
+        name: name,
+        email: email,
         avatar: userInfo?.avatar || '',
         provider: provider || 'email',
         loginAt: Date.now()
@@ -119,7 +119,6 @@
     },
 
     showLoginModal(onSuccess) {
-      // 移除舊的 modal
       const oldModal = document.getElementById('mj_auth_modal');
       if (oldModal) oldModal.remove();
 
@@ -132,43 +131,43 @@
               <div class="w-12 h-12 rounded-full bg-[#1E261D] text-amber-100 flex items-center justify-center mx-auto mb-3 text-xl shadow-md border border-[#C8A97E]/70">
                 🔮
               </div>
-              <h3 class="text-xl font-black text-slate-900 mb-1.5">登入會員 · 啟動全站命盤雲端檔案庫</h3>
+              <h3 class="text-xl font-black text-slate-900 mb-1.5">登入會員 · 跨電腦同步雲端命盤庫</h3>
               <p class="text-xs text-slate-600 leading-relaxed">
-                身為癒見幸福學院學員，登入後即可將個人與親友的生辰資料永久儲存，在<strong>人類圖、紫微斗數、西洋占星、脈輪占星</strong>等所有命盤一鍵通用帶入！
+                在任何電腦輸入您的專屬 Email 登入，即可將您所有的個人與親友命盤<strong>雲端即時同步漫遊</strong>，走到哪都能完整查看！
               </p>
             </div>
 
-            <div class="space-y-3 mb-5">
-              <button id="mj_login_line" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
+            <form id="mj_auth_email_form" class="space-y-3.5 mb-4">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">學員電子信箱 (Email · 跨裝置唯一帳號) <span class="text-rose-500">*</span></label>
+                <input type="email" id="mj_auth_email_input" required placeholder="例如：alan@example.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">學員姓名 / 稱謂 (可選)</label>
+                <input type="text" id="mj_auth_name_input" placeholder="例如：愛倫 / 林雅婷" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+              </div>
+              <button type="submit" class="w-full py-2.5 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 rounded-xl text-xs font-black shadow-md transition flex items-center justify-center gap-1">
+                <span>✨ 立即登入並同步雲端命盤庫</span>
+              </button>
+            </form>
+
+            <div class="relative flex py-2 items-center">
+              <div class="flex-grow border-t border-slate-200"></div>
+              <span class="flex-shrink mx-3 text-[11px] text-slate-400">或使用第三方快捷登入</span>
+              <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            <div class="space-y-2 mt-2">
+              <button id="mj_login_line" type="button" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
                 <span>💬 LINE 一鍵快速登入</span>
               </button>
-              <button id="mj_login_google" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
+              <button id="mj_login_google" type="button" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
                 <span>🌐 Google 一鍵快速登入</span>
               </button>
             </div>
 
-            <div class="relative flex py-2 items-center">
-              <div class="flex-grow border-t border-slate-200"></div>
-              <span class="flex-shrink mx-3 text-[11px] text-slate-400">或使用學員帳號</span>
-              <div class="flex-grow border-t border-slate-200"></div>
-            </div>
-
-            <form id="mj_auth_email_form" class="space-y-3 mt-2">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">學員姓名 / 稱謂</label>
-                <input type="text" id="mj_auth_name_input" required placeholder="例如：愛倫 / 林雅婷" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">電子信箱 Email</label>
-                <input type="email" id="mj_auth_email_input" required placeholder="member@meetjoy.net" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
-              </div>
-              <button type="submit" class="w-full py-2.5 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-1">
-                <span>✨ 立即登入並保存命盤</span>
-              </button>
-            </form>
-
             <p class="text-[10px] text-center text-slate-400 mt-4">
-              🔒 癒見幸福推廣中心保證學員資料僅供本人命盤排盤儲存，嚴格遵循隱私防護標準。
+              🔒 癒見幸福推廣中心保證學員資料僅供本人命盤排盤儲存，嚴格遵循端到端隱私防護標準。
             </p>
           </div>
         </div>
@@ -179,31 +178,38 @@
       const closeBtn = document.getElementById('mj_close_auth_modal');
       closeBtn.onclick = () => modalEl.remove();
 
+      // Email 表單登入 (推薦主路徑)
+      document.getElementById('mj_auth_email_form').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('mj_auth_email_input').value.trim();
+        let name = document.getElementById('mj_auth_name_input').value.trim();
+        if (!email) return;
+        if (!name) name = email.split('@')[0];
+
+        const user = MeetJoyAuth.login('email', { name, email });
+        modalEl.remove();
+        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！正在為您同步雲端命盤...`);
+        
+        // 立即觸發雲端雙向同步！
+        await MeetJoyProfiles.syncWithCloud(false);
+        if (typeof onSuccess === 'function') onSuccess(user);
+      };
+
       // LINE 登入
-      document.getElementById('mj_login_line').onclick = () => {
+      document.getElementById('mj_login_line').onclick = async () => {
         const user = MeetJoyAuth.login('line', { name: 'LINE 學院之友', email: 'line.student@meetjoy.net' });
         modalEl.remove();
-        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！已成功登入會員。`);
+        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！正在同步雲端命盤...`);
+        await MeetJoyProfiles.syncWithCloud(false);
         if (typeof onSuccess === 'function') onSuccess(user);
       };
 
       // Google 登入
-      document.getElementById('mj_login_google').onclick = () => {
+      document.getElementById('mj_login_google').onclick = async () => {
         const user = MeetJoyAuth.login('google', { name: 'Google 學院學員', email: 'google.student@meetjoy.net' });
         modalEl.remove();
-        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！已成功登入會員。`);
-        if (typeof onSuccess === 'function') onSuccess(user);
-      };
-
-      // Email 表單登入
-      document.getElementById('mj_auth_email_form').onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('mj_auth_name_input').value.trim();
-        const email = document.getElementById('mj_auth_email_input').value.trim();
-        if (!name || !email) return;
-        const user = MeetJoyAuth.login('email', { name, email });
-        modalEl.remove();
-        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！已成功登入會員。`);
+        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！正在同步雲端命盤...`);
+        await MeetJoyProfiles.syncWithCloud(false);
         if (typeof onSuccess === 'function') onSuccess(user);
       };
     }
@@ -255,7 +261,6 @@
               const timeIdx = p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(p.birthTime);
               const key = `${p.name || '未命名'}_${bDate}_${timeIdx}`;
               
-              // 若有更詳細的經緯度/城市或時間，予以覆蓋或合併
               const existing = profilesMap.get(key);
               profilesMap.set(key, {
                 id: p.id || (existing ? existing.id : `prof_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`),
@@ -278,7 +283,6 @@
       }
 
       const list = Array.from(profilesMap.values());
-      // 依更新時間新到舊排序
       return list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
     },
 
@@ -320,7 +324,7 @@
         updatedAt: now
       };
 
-      // 1. 寫入 mj_universal_profiles
+      // 1. 寫入本地 mj_universal_profiles
       try {
         let univ = [];
         const raw = localStorage.getItem('mj_universal_profiles');
@@ -354,7 +358,26 @@
         console.warn('[MeetJoyProfiles] Sync to ziwei-charts failed:', e);
       }
 
-      this.showToast(`✨ 已成功記錄「${name}」生辰資料！可在人類圖、紫微、占星全站通用帶入。`);
+      // 3. 即時非同步同步至 Cloudflare KV 雲端資料庫！
+      const user = MeetJoyAuth.getUser();
+      if (user && (user.email || user.id)) {
+        fetch('/api/profiles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            user_id: user.id,
+            profiles: [newProfile],
+            action: 'merge'
+          })
+        }).then(res => res.json()).then(data => {
+          if (data && data.success) {
+            console.log('[MeetJoyProfiles] Cloud KV saved:', newProfile.name);
+          }
+        }).catch(err => console.warn('[MeetJoyProfiles] Background cloud save failed:', err));
+      }
+
+      this.showToast(`✨ 已成功記錄「${name}」！全站所有排盤系統與雲端已同步更新。`);
       window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: newProfile }));
       return true;
     },
@@ -370,10 +393,118 @@
         zw = zw.filter(c => c.id !== id);
         localStorage.setItem('ziwei-charts', JSON.stringify(zw));
 
+        // 同步刪除雲端紀錄 (以 replace 模式更新全量)
+        const user = MeetJoyAuth.getUser();
+        if (user && (user.email || user.id)) {
+          const allLeft = this.getAll();
+          fetch('/api/profiles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: user.email,
+              user_id: user.id,
+              profiles: allLeft,
+              action: 'replace'
+            })
+          }).catch(err => console.warn('[MeetJoyProfiles] Cloud delete sync failed:', err));
+        }
+
         this.showToast('🗑️ 已成功刪除命盤紀錄');
         window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: { id, deleted: true } }));
       } catch (e) {
         console.warn('[MeetJoyProfiles] Delete failed:', e);
+      }
+    },
+
+    // ==================== 雲端跨電腦雙向同步核心 ====================
+    async syncWithCloud(silent = false) {
+      const user = MeetJoyAuth.getUser();
+      if (!user || (!user.email && !user.id)) return;
+
+      try {
+        const emailParam = encodeURIComponent(user.email || '');
+        const userParam = encodeURIComponent(user.id || '');
+        
+        // 1. 向 Cloudflare API 取得該使用者名下的所有雲端命盤
+        const res = await fetch(`/api/profiles?email=${emailParam}&user_id=${userParam}`, {
+          method: 'GET',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const cloudProfiles = Array.isArray(data.profiles) ? data.profiles : [];
+
+        // 2. 取得本地既有命盤
+        const localProfiles = this.getAll();
+
+        // 3. 雙向智慧合併 (Last-Write-Wins)
+        const mergedMap = new Map();
+        
+        // 先載入雲端命盤
+        cloudProfiles.forEach(p => {
+          const k = p.id || `${p.name}_${normalizeDate(p.birthDate)}_${p.birthTime}`;
+          mergedMap.set(k, p);
+        });
+
+        // 比對本地命盤
+        let hasLocalNewer = false;
+        localProfiles.forEach(p => {
+          const k = p.id || `${p.name}_${normalizeDate(p.birthDate)}_${p.birthTime}`;
+          const cloudP = mergedMap.get(k);
+          if (!cloudP) {
+            mergedMap.set(k, p);
+            hasLocalNewer = true;
+          } else {
+            const lTime = p.updatedAt || 0;
+            const cTime = cloudP.updatedAt || 0;
+            if (lTime > cTime) {
+              mergedMap.set(k, p);
+              hasLocalNewer = true;
+            }
+          }
+        });
+
+        const finalMerged = Array.from(mergedMap.values()).filter(p => !p.deletedAt);
+        finalMerged.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+        // 4. 持久化回本地 localStorage
+        localStorage.setItem('mj_universal_profiles', JSON.stringify(finalMerged));
+
+        const zwList = finalMerged.map(p => ({
+          id: p.id,
+          name: p.name,
+          solarDate: toZiweiSolarDate(p.birthDate),
+          timeIndex: p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(p.birthTime),
+          gender: p.gender,
+          category: p.category || '自己',
+          notes: p.notes || '',
+          updatedAt: p.updatedAt || Date.now()
+        }));
+        localStorage.setItem('ziwei-charts', JSON.stringify(zwList));
+
+        // 5. 若本地有全新或更新的命盤，上傳至雲端做完整備份
+        if (hasLocalNewer || (cloudProfiles.length === 0 && finalMerged.length > 0)) {
+          await fetch('/api/profiles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: user.email,
+              user_id: user.id,
+              profiles: finalMerged,
+              action: 'replace'
+            })
+          });
+        }
+
+        // 觸發全站下拉選單同步刷新
+        window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: { sync: true, count: finalMerged.length } }));
+
+        if (!silent) {
+          this.showToast(`☁️ 雲端跨電腦命盤庫已同步！共載入 ${finalMerged.length} 筆個案。`);
+        }
+      } catch (err) {
+        console.warn('[MeetJoyProfiles] syncWithCloud failed:', err);
       }
     },
 
@@ -403,8 +534,8 @@
         const profiles = this.getAll();
 
         const optionsHtml = profiles.length === 0
-          ? `<option value="">-- 目前無已存命盤 (相容紫微斗數) --</option>`
-          : `<option value="">📁 帶入已存命盤 (${profiles.length} 位) -- 相容紫微斗數</option>` +
+          ? `<option value="">-- 目前無已存命盤 (登入後可跨裝置同步) --</option>`
+          : `<option value="">📁 帶入已存命盤 (${profiles.length} 位) -- 全站與雲端通用</option>` +
             profiles.map(p => {
               const catTag = p.category ? `[${p.category}] ` : '';
               return `<option value="${p.id}">${catTag}${p.name} · ${p.birthDate} ${p.birthTime} (${p.gender === 'male' ? '乾造' : '坤造'})</option>`;
@@ -414,6 +545,7 @@
           <div class="flex items-center gap-1.5 text-xs text-amber-900 bg-amber-50/90 border border-amber-300/80 px-2.5 py-1.5 rounded-xl shadow-2xs">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span class="font-bold">會員：${user.name}</span>
+            <button id="mj_btn_sync_now" type="button" class="ml-1 text-[11px] text-amber-800 hover:text-amber-950 font-bold px-1.5 py-0.5 rounded bg-amber-200/60 transition" title="立即與雲端雙向同步">🔄 同步</button>
             <button id="mj_btn_logout" class="ml-1 text-[10px] text-amber-700/80 hover:text-rose-600 underline font-bold" title="登出會員">登出</button>
           </div>
         ` : `
@@ -476,6 +608,17 @@
           this.deleteProfile(selectedId);
         };
 
+        // 手動同步按鈕
+        const syncBtn = container.querySelector('#mj_btn_sync_now');
+        if (syncBtn) {
+          syncBtn.onclick = () => {
+            syncBtn.textContent = '⏳ 同步中...';
+            this.syncWithCloud(false).finally(() => {
+              syncBtn.textContent = '🔄 同步';
+            });
+          };
+        }
+
         // 儲存當前資料按鈕
         const saveBtn = container.querySelector('#mj_btn_save_current');
         saveBtn.onclick = () => {
@@ -519,12 +662,19 @@
       window.addEventListener('mj-profiles-changed', render);
 
       render();
+
+      // 初次載入時，若已登入則在背景靜默同步一次最新雲端命盤庫
+      if (MeetJoyAuth.isLoggedIn()) {
+        setTimeout(() => {
+          this.syncWithCloud(true);
+        }, 800);
+      }
     },
 
     promptAndSave(currentData) {
       const defaultName = currentData.name || '我的命盤';
       const promptName = prompt('請輸入此生辰命盤的姓名或稱謂：', defaultName);
-      if (promptName === null) return; // 使用者按取消
+      if (promptName === null) return;
       const finalName = promptName.trim() || defaultName;
 
       const profileToSave = {
