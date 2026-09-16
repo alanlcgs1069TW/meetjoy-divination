@@ -37,3 +37,70 @@
 @media (max-width: 840px) { .sun-chart__nine-stars-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
 @media (max-width: 580px) { .sun-chart__nine-stars-grid { grid-template-columns: repeat(3, 1fr); } .sun-chart__nine-stars-heading { flex-direction: column; } }
 @media print { .sun-chart__nine-stars-section { break-inside: avoid; } }
+
+/* ==================== 雙人合盤專屬樣式 (Numerology Synastry) ==================== */
+.sun-chart__mode-switch { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(16, 47, 73, 0.08); padding: 5px; border-radius: 12px; border: 1px solid rgba(16, 47, 73, 0.2); }
+.sun-chart__mode-btn { flex: 1; padding: 10px 16px; border: none; background: transparent; color: var(--sun-navy); font-weight: 800; font-size: 13px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.sun-chart__mode-btn.is-active { background: var(--sun-navy); color: #fffaf0; box-shadow: 0 4px 12px rgba(16, 47, 73, 0.25); }
+.sun-chart__mode-btn:not(.is-active):hover { background: rgba(16, 47, 73, 0.1); }
+
+.sun-chart__dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+.sun-chart__party-box { padding: 16px; border: 1px solid rgba(16, 47, 73, 0.3); background: rgba(255, 255, 255, 0.7); border-radius: 8px; }
+.sun-chart__party-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 800; font-size: 14px; color: var(--sun-navy); border-bottom: 1px solid rgba(16, 47, 73, 0.15); padding-bottom: 6px; }
+.sun-chart__party-tag { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; background: rgba(185, 139, 72, 0.2); color: var(--sun-rust); }
+
+.sun-chart__synastry-banner { margin: 24px 0 20px; padding: 18px 24px; background: linear-gradient(135deg, rgba(16, 47, 73, 0.95), rgba(42, 83, 111, 0.9)); color: #fffaf0; border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 47, 73, 0.18); border: 1px solid var(--sun-gold); }
+.sun-chart__synastry-banner-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+.sun-chart__synastry-banner h3 { margin: 0; font-size: 22px; color: #fff; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px; }
+.sun-chart__mid-badge { background: var(--sun-gold); color: #102f49; font-size: 13px; font-weight: 900; padding: 4px 12px; border-radius: 20px; }
+.sun-chart__synastry-banner-desc { margin: 0; font-size: 13px; color: rgba(255, 250, 240, 0.85); line-height: 1.7; }
+.sun-chart__midpoint-details { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.2); flex-wrap: wrap; font-size: 12px; }
+.sun-chart__midpoint-details span { color: var(--sun-gold); font-weight: 700; }
+
+.sun-chart__matrix-section { margin-top: 24px; padding: 22px; background: rgba(255, 253, 246, 0.7); border: 1px solid rgba(16, 47, 73, 0.35); border-radius: 8px; }
+.sun-chart__matrix-header { margin-bottom: 16px; }
+.sun-chart__matrix-header h3 { margin: 0 0 6px 0; font-size: 20px; color: var(--sun-navy); }
+.sun-chart__matrix-header p { margin: 0; color: #5c7480; font-size: 12px; line-height: 1.6; }
+.sun-chart__three-grids { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 16px; align-items: start; }
+.sun-chart__grid-card { padding: 14px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(16, 47, 73, 0.2); border-radius: 8px; text-align: center; }
+.sun-chart__grid-card.is-combined { border: 2px solid var(--sun-rust); background: rgba(255, 250, 240, 0.95); box-shadow: 0 6px 20px rgba(190, 91, 63, 0.15); }
+.sun-chart__grid-card-title { font-weight: 900; font-size: 14px; color: var(--sun-navy); margin-bottom: 4px; }
+.sun-chart__grid-card-sub { font-size: 11px; color: #627b86; margin-bottom: 10px; }
+
+.sun-chart__gap-section { margin-top: 24px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; }
+.sun-chart__gap-card { padding: 22px; background: rgba(255, 253, 246, 0.85); border: 1px solid rgba(16, 47, 73, 0.3); border-radius: 8px; }
+.sun-chart__gap-kpi { display: flex; align-items: center; gap: 14px; margin: 12px 0 16px; padding: 12px 16px; background: rgba(185, 139, 72, 0.15); border-left: 4px solid var(--sun-rust); border-radius: 0 8px 8px 0; }
+.sun-chart__gap-number { font-size: 38px; font-weight: 900; color: var(--sun-rust); line-height: 1; }
+.sun-chart__gap-formula { font-size: 13px; font-weight: 700; color: var(--sun-navy); line-height: 1.4; }
+.sun-chart__gap-desc { font-size: 13px; line-height: 1.8; color: #334e5e; margin: 0; }
+.sun-chart__magic-prescription { margin-top: 14px; padding: 12px 14px; background: rgba(16, 47, 73, 0.06); border: 1px dashed var(--sun-gold); border-radius: 6px; font-size: 12px; line-height: 1.7; color: var(--sun-navy); }
+.sun-chart__magic-prescription b { color: var(--sun-rust); }
+
+.sun-chart__complementary-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.sun-chart__comp-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #fff; border: 1px solid rgba(16, 47, 73, 0.18); border-radius: 6px; font-size: 13px; }
+.sun-chart__comp-item.is-activated { border-color: var(--sun-rust); background: rgba(185, 139, 72, 0.12); }
+.sun-chart__comp-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 12px; white-space: nowrap; }
+.sun-chart__comp-badge.is-gold { background: var(--sun-rust); color: #fff; }
+.sun-chart__comp-badge.is-shared { background: var(--sun-navy); color: #fff; }
+.sun-chart__comp-badge.is-missing { background: #e2e8f0; color: #64748b; }
+
+@media (max-width: 840px) {
+  .sun-chart__dual-grid { grid-template-columns: 1fr; }
+  .sun-chart__three-grids { grid-template-columns: 1fr; }
+  .sun-chart__gap-section { grid-template-columns: 1fr; }
+}
+
+/* 全站通用命盤庫組件容器樣式調和 */
+#universal_profile_bar {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+#universal_profile_bar select {
+  cursor: pointer;
+}
+#universal_profile_bar button {
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+

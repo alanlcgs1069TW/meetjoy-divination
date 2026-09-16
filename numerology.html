@@ -17,6 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="./js/meetjoy-pdf.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
   <script src="./js/meetjoy-nav.js"></script>
   <link rel="stylesheet" href="./assets/numerology/chart.css">
   <style>
@@ -59,7 +60,7 @@
     </div>
   </nav>
 
-  <main class="w-full max-w-6xl px-3 sm:px-6 pb-20">
+  <main class="w-full max-w-7xl px-3 sm:px-6 pb-20">
 
     <section id="sun-chart-main" class="sun-chart" data-sun-chart>
       <div class="sun-chart__mist sun-chart__mist--one" aria-hidden="true"></div>
@@ -68,40 +69,137 @@
       <header class="sun-chart__hero">
         <p class="sun-chart__eyebrow">MEETJOY ATELIER · NUMEROLOGY CONSULTATION</p>
         <h2>數字能量排盤大典</h2>
-        <p>雙盤看先天結構，時間盤看當下節奏。由愛倫院長精心調配，整合太陽外顯盤、月亮潛意識盤、能量強弱統計、九宮格八大連線、三大週期、五大階段數、九年循環三角盤與 18 種天賦禮物量表。純瀏覽器即時運算，100% 隱私安全。</p>
+        <p>雙盤看先天結構，時間盤看當下節奏。支援「個人雙盤」與「雙人關係中點合盤（九宮互補矩陣 ＋ 溝通落差數）」，由愛倫院長精心調配，純瀏覽器即時運算，100% 隱私安全。</p>
       </header>
 
+      <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
+      <div id="universal_profile_bar" class="mb-4"></div>
+
+      <!-- 排盤模式切換開關 (單人雙盤 vs 雙人中點合盤) -->
+      <div class="sun-chart__mode-switch" role="tablist">
+        <button type="button" class="sun-chart__mode-btn is-active" data-mode-btn="single">
+          <span>👤 個人雙盤排盤（太陽盤＋月亮盤）</span>
+        </button>
+        <button type="button" class="sun-chart__mode-btn" data-mode-btn="synastry">
+          <span>💞 雙人關係合盤（中點盤＋連線互補＋溝通落差）</span>
+        </button>
+      </div>
+
       <form class="sun-chart__form" data-chart-form novalidate>
-        <label>
-          <span>個案姓名</span>
-          <input type="text" name="name" maxlength="60" placeholder="例如：王小明" autocomplete="name">
-        </label>
-        <label>
-          <span>國曆生日 <b aria-hidden="true">＊</b></span>
-          <input type="date" name="birthDate" required>
-        </label>
-        <label>
-          <span>出生時間</span>
-          <input type="time" name="birthTime" aria-describedby="sun-chart-time-help">
-          <small id="sun-chart-time-help">五大階段會用到時、分；未知可留白。</small>
-        </label>
-        <label>
-          <span>流運日期</span>
-          <input type="date" name="referenceDate" required>
-        </label>
-        <div class="sun-chart__manual-lunar">
-          <p class="sun-chart__lunar-auto" data-lunar-auto hidden></p>
-          <label class="sun-chart__toggle">
-            <input type="checkbox" name="manualLunar">
-            <span>手動覆寫農曆生日</span>
+        <!-- 隱藏模式識別欄位 -->
+        <input type="hidden" name="chartMode" value="single">
+
+        <!-- ==================== 1. 單人盤輸入欄位 ==================== -->
+        <div class="sun-chart__single-fields contents" data-single-fields>
+          <label>
+            <span>個案姓名</span>
+            <input type="text" name="name" maxlength="60" placeholder="例如：王小明" value="學員個案" autocomplete="name">
           </label>
-          <div class="sun-chart__lunar-fields" hidden>
-            <label><span>農曆年</span><input type="number" name="lunarYear" min="1900" max="2100" inputmode="numeric"></label>
-            <label><span>農曆月</span><input type="number" name="lunarMonth" min="1" max="12" inputmode="numeric"></label>
-            <label><span>農曆日</span><input type="number" name="lunarDay" min="1" max="30" inputmode="numeric"></label>
+          <label>
+            <span>國曆生日 <b aria-hidden="true">＊</b></span>
+            <input type="date" name="birthDate" required value="1990-01-01">
+          </label>
+          <label>
+            <span>出生時間 (24H 制)</span>
+            <input type="time" name="birthTime" value="12:00" aria-describedby="sun-chart-time-help">
+            <small id="sun-chart-time-help">預設 24 小時制（五大階段會用到時分）。</small>
+          </label>
+          <label>
+            <span>流運日期</span>
+            <input type="date" name="referenceDate" required>
+          </label>
+          <div class="sun-chart__manual-lunar">
+            <p class="sun-chart__lunar-auto" data-lunar-auto hidden></p>
+            <label class="sun-chart__toggle">
+              <input type="checkbox" name="manualLunar">
+              <span>手動覆寫農曆生日</span>
+            </label>
+            <div class="sun-chart__lunar-fields" hidden>
+              <label><span>農曆年</span><input type="number" name="lunarYear" min="1900" max="2100" inputmode="numeric"></label>
+              <label><span>農曆月</span><input type="number" name="lunarMonth" min="1" max="12" inputmode="numeric"></label>
+              <label><span>農曆日</span><input type="number" name="lunarDay" min="1" max="30" inputmode="numeric"></label>
+            </div>
           </div>
         </div>
-        <button type="submit">展開命盤</button>
+
+        <!-- ==================== 2. 雙人合盤輸入欄位 ==================== -->
+        <div class="sun-chart__dual-fields col-span-full hidden" data-dual-fields>
+          <div class="sun-chart__dual-grid">
+            <!-- 甲方 (Person A) -->
+            <div class="sun-chart__party-box">
+              <div class="sun-chart__party-title">
+                <span>甲方 (Person A)</span>
+                <span class="sun-chart__party-tag">關係主體</span>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-amber-900 mb-1">📁 從會員命盤庫載入甲方：</label>
+                  <select class="w-full bg-white border border-[#C8A97E] rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#C8A97E]" data-quick-profile-a>
+                    <option value="">-- 點此載入已存命盤 (甲方) --</option>
+                  </select>
+                </div>
+                <label>
+                  <span>姓名 / 稱呼</span>
+                  <input type="text" name="nameA" placeholder="例如：愛倫" value="甲方 (愛倫)">
+                </label>
+                <label>
+                  <span>國曆生日 (公曆) <b aria-hidden="true">＊</b></span>
+                  <input type="date" name="birthDateA" value="1988-08-18">
+                </label>
+                <label>
+                  <span>出生時間 (24H 制)</span>
+                  <input type="time" name="birthTimeA" value="12:00">
+                  <small>預設 12:00 (24小時制)</small>
+                </label>
+                <p class="sun-chart__lunar-auto text-xs" data-lunar-auto-a hidden></p>
+              </div>
+            </div>
+
+            <!-- 乙方 (Person B) -->
+            <div class="sun-chart__party-box">
+              <div class="sun-chart__party-title">
+                <span>乙方 (Person B)</span>
+                <span class="sun-chart__party-tag">關係合盤對象</span>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-sky-900 mb-1">📁 從會員命盤庫載入乙方：</label>
+                  <select class="w-full bg-white border border-sky-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-sky-400" data-quick-profile-b>
+                    <option value="">-- 點此載入已存命盤 (乙方) --</option>
+                  </select>
+                </div>
+                <label>
+                  <span>姓名 / 稱呼</span>
+                  <input type="text" name="nameB" placeholder="例如：伴侶" value="乙方 (伴侶)">
+                </label>
+                <label>
+                  <span>國曆生日 (公曆) <b aria-hidden="true">＊</b></span>
+                  <input type="date" name="birthDateB" value="1990-01-27">
+                </label>
+                <label>
+                  <span>出生時間 (24H 制)</span>
+                  <input type="time" name="birthTimeB" value="11:36">
+                  <small>預設 11:36 (24小時制)</small>
+                </label>
+                <p class="sun-chart__lunar-auto text-xs" data-lunar-auto-b hidden></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mt-2">
+            <label>
+              <span>流運推算基準日期</span>
+              <input type="date" name="referenceDateDual">
+            </label>
+            <div class="flex gap-2">
+              <button type="button" data-sample-dual class="sun-chart__ghost w-full py-2.5 rounded text-xs font-bold border border-stone-300 hover:bg-stone-100 transition">
+                載入示範伴侶合盤
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" data-submit-btn>展開命盤</button>
         <p class="sun-chart__error" data-chart-error role="alert"></p>
       </form>
 
@@ -119,16 +217,25 @@
           </div>
         </div>
 
+        <!-- 🔮 雙人合盤專屬：中點日期時間橫幅 (Midpoint Banner) -->
+        <section class="sun-chart__synastry-banner-wrap" data-synastry-banner-wrap hidden></section>
+
+        <!-- 🔮 雙人合盤專屬：溝通落差數與認知盲區解讀 -->
+        <section class="sun-chart__gap-wrap" data-synastry-gap-wrap hidden></section>
+
+        <!-- 🔮 雙人合盤專屬：九宮格連線互補矩陣 (A + B + 合體共鳴九宮格) -->
+        <section class="sun-chart__matrix-wrap" data-synastry-matrix-wrap hidden></section>
+
         <section class="sun-chart__date-ribbon" data-date-ribbon></section>
 
         <section class="sun-chart__plates" aria-label="太陽盤與月亮盤">
           <div class="sun-chart__plate sun-chart__plate--sun">
-            <div class="sun-chart__plate-heading"><span>太陽盤</span><small>外顯結構</small></div>
+            <div class="sun-chart__plate-heading"><span data-plate-sun-title>太陽盤</span><small>外顯結構</small></div>
             <div class="sun-chart__grid-wrap"><div class="sun-chart__nine-grid" data-solar-grid></div><div class="sun-chart__zero" data-solar-zero></div></div>
             <div class="sun-chart__formula" data-solar-formula></div>
           </div>
           <div class="sun-chart__plate sun-chart__plate--moon">
-            <div class="sun-chart__plate-heading"><span>月亮盤</span><small>內在感受</small></div>
+            <div class="sun-chart__plate-heading"><span data-plate-moon-title>月亮盤</span><small>內在感受</small></div>
             <div class="sun-chart__grid-wrap"><div class="sun-chart__nine-grid" data-lunar-grid></div><div class="sun-chart__zero" data-lunar-zero></div></div>
             <div class="sun-chart__formula" data-lunar-formula></div>
           </div>

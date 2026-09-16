@@ -336,22 +336,313 @@
     grid.innerHTML = itemsHtml;
   }
 
+  const COMMUNICATION_GAPS = {
+    0: {
+      title: '鏡像同頻 · 惺惺相惜',
+      desc: '雙方主修數相同。如同凝視鏡子中的自己，直覺與價值觀高度共鳴，無話不談。但在面對歧見時，容易執著於相同的盲點，互不相讓。',
+      rx: '承認對方的固執正是自己性格的投射；爭執時按下 15 分鐘暫停鍵，各自深呼吸留白。'
+    },
+    1: {
+      title: '齒輪相嵌 · 步調微調',
+      desc: '相差 1 數。步調一動一靜，具有極佳的接力推進動能。日常相處易因快慢節奏差異產生微小焦慮（一人急於推進，另一人還在確認細節）。',
+      rx: '走得快的一方多給對方三分鐘餘裕，慢的一方給予一句明確確認；彼此是協作齒輪，不是田徑賽跑。'
+    },
+    2: {
+      title: '柔韌互補 · 感性理性',
+      desc: '相差 2 數。一方注重感受氛圍與情緒流動，另一方聚焦客觀事實與邏輯條理。容易出現「一人在談心情，另一人卻在講大道理」的落差。',
+      rx: '先接住情緒波浪（「我知道你辛苦了」），再進入客觀討論步驟；溫暖是最好的理性催化劑。'
+    },
+    3: {
+      title: '靈感跳躍 · 務實築底',
+      desc: '相差 3 數。一人天馬行空充滿創意奇想，另一人謹慎嚴密講究落地執行。容易互相覺得對方「過於理想化」或「過於僵化保守」。',
+      rx: '跳躍者負責描繪星空願景，穩健者負責鋪設安全軌道；各自在擅長領域充分發揮，互不挑剔。'
+    },
+    4: {
+      title: '自由破界 · 安全守成',
+      desc: '相差 4 數。一方渴望突破常規探索未知，另一方重視安穩秩序與既定邊界。日常生活中容易因生活習慣或財務規劃的彈性產生拉鋸。',
+      rx: '共同確立不可動搖的「安全底線」（如家庭備用金、基礎承諾），底線之外完全放手給予自由發揮。'
+    },
+    5: {
+      title: '遠方探索 · 當下守護',
+      desc: '相差 5 數。一方心思常在遠方的變革與擴張，另一方專注於營造當下的溫馨港灣。需要平衡「追求目標」與「陪伴日常」。',
+      rx: '每月安排一次輕旅行滿足探索慾望，每週保留一個無科技干擾的寧靜夜晚專注交流。'
+    },
+    6: {
+      title: '理想品質 · 隨性包容',
+      desc: '相差 6 數。一方對細節與秩序有高標準要求，另一方隨遇而安不拘小節。容易把「生活細節的提醒」誤讀為「對感情的挑剔」。',
+      rx: '戒除以「為你好」之名的微觀挑剔；將完美的標準留給專業作品，將寬厚溫柔留給親密伴侶。'
+    },
+    7: {
+      title: '深度探尋 · 現實落實',
+      desc: '相差 7 數。一方探求靈魂、意義與精神層面，另一方聚焦柴米油鹽與具體產出。精神層次容易產生代溝，但結合起來無比完整。',
+      rx: '將崇高的靈性理念翻譯成一杯熱茶與踏實的擁抱；生活微細節就是最好的靈修殿堂。'
+    },
+    8: {
+      title: '極致張力 · 乾坤互曜',
+      desc: '相差 8 數（如 1 數與 9 數）。極致的起點與終點相遇，擁有強大的磁場張力。目標一致時能成就非凡合作，缺乏共識時容易兩極對立。',
+      rx: '清楚劃分主客場勢力範圍；在對方的專業主場完全尊重，在自己的領域全力承擔信任。'
+    }
+  };
+
+  function calculateMidpoint(birthA, timeA, birthB, timeB) {
+    const [yA, mA, dA] = birthA.split('-').map(Number);
+    const [hA, minA] = (timeA || '12:00').split(':').map(Number);
+    const dateA = new Date(Date.UTC(yA, mA - 1, dA, hA, minA));
+
+    const [yB, mB, dB] = birthB.split('-').map(Number);
+    const [hB, minB] = (timeB || '12:00').split(':').map(Number);
+    const dateB = new Date(Date.UTC(yB, mB - 1, dB, hB, minB));
+
+    const midMs = Math.round((dateA.getTime() + dateB.getTime()) / 2);
+    const midDate = new Date(midMs);
+    const midY = midDate.getUTCFullYear();
+    const midM = midDate.getUTCMonth() + 1;
+    const midD = midDate.getUTCDate();
+    const midH = midDate.getUTCHours();
+    const midMin = midDate.getUTCMinutes();
+
+    return {
+      dateStr: `${midY}-${pad(midM)}-${pad(midD)}`,
+      timeStr: `${pad(midH)}:${pad(midMin)}`,
+      parts: { year: midY, month: midM, day: midD },
+      dateObj: new Date(midY, midM - 1, midD, midH, midMin)
+    };
+  }
+
+  function renderSynastryComplementary(root, plateA, plateB, combinedCounts, nameA, nameB) {
+    const matrixWrap = root.querySelector('[data-synastry-matrix-wrap]');
+    if (!matrixWrap) return;
+
+    // 計算 8 條線的互補狀態
+    const compResults = lines.map((line) => {
+      const stateA = lineState(plateA.counts, line.digits);
+      const stateB = lineState(plateB.counts, line.digits);
+      const stateComb = lineState(combinedCounts, line.digits);
+
+      const isAActive = (stateA === '顯性');
+      const isBActive = (stateB === '顯性');
+      const isCombActive = (stateComb === '顯性');
+
+      let statusType = 'normal';
+      let tagText = '未成線';
+      let tagClass = 'is-missing';
+
+      if (!isAActive && !isBActive && isCombActive) {
+        statusType = 'activated';
+        tagText = '✦ 互補接通黃金連線';
+        tagClass = 'is-gold';
+      } else if (isAActive && isBActive) {
+        statusType = 'shared';
+        tagText = '雙方共享連線';
+        tagClass = 'is-shared';
+      } else if (isAActive) {
+        tagText = `${nameA} 既有帶入`;
+        tagClass = 'is-shared';
+      } else if (isBActive) {
+        tagText = `${nameB} 既有帶入`;
+        tagClass = 'is-shared';
+      } else {
+        tagText = '雙方隱性盲點';
+        tagClass = 'is-missing';
+      }
+
+      return { line, stateA, stateB, stateComb, statusType, tagText, tagClass };
+    });
+
+    const activatedCount = compResults.filter(r => r.statusType === 'activated').length;
+
+    matrixWrap.innerHTML = `
+      <div class="sun-chart__matrix-section">
+        <div class="sun-chart__matrix-header">
+          <p class="sun-chart__panel-kicker">SYNASTRY NINE-GRID MATRIX · 九宮格連線互補矩陣</p>
+          <h3>雙人九宮格數位交織 ＆ 合體共鳴矩陣</h3>
+          <p>將雙方出生年月日與主命數數字彙整，檢驗個人既有天賦，以及<strong>兩人相遇後合力接通的全新黃金連線（互補成就）</strong>。</p>
+        </div>
+
+        <div class="sun-chart__three-grids">
+          <!-- 甲方九宮格 -->
+          <div class="sun-chart__grid-card">
+            <div class="sun-chart__grid-card-title">${escapeHtml(nameA)}</div>
+            <div class="sun-chart__grid-card-sub">個人太陽九宮格</div>
+            <div class="sun-chart__nine-grid">${gridMarkup(plateA.counts)}</div>
+          </div>
+
+          <!-- 乙方九宮格 -->
+          <div class="sun-chart__grid-card">
+            <div class="sun-chart__grid-card-title">${escapeHtml(nameB)}</div>
+            <div class="sun-chart__grid-card-sub">個人太陽九宮格</div>
+            <div class="sun-chart__nine-grid">${gridMarkup(plateB.counts)}</div>
+          </div>
+
+          <!-- 合體共鳴九宮格 -->
+          <div class="sun-chart__grid-card is-combined">
+            <div class="sun-chart__grid-card-title">✨ ${escapeHtml(nameA)} ＋ ${escapeHtml(nameB)}</div>
+            <div class="sun-chart__grid-card-sub font-bold text-[#be5b3f]">合體共鳴九宮格（新增 ${activatedCount} 條互補連線）</div>
+            <div class="sun-chart__nine-grid">${gridMarkup(combinedCounts)}</div>
+          </div>
+        </div>
+
+        <!-- 連線互補狀態清單 -->
+        <div class="sun-chart__complementary-list">
+          ${compResults.map(item => `
+            <div class="sun-chart__comp-item ${item.statusType === 'activated' ? 'is-activated' : ''}">
+              <div>
+                <b class="text-[#be5b3f] mr-2">${item.line.digits.join('')}</b>
+                <span class="font-bold text-slate-800 mr-2">${item.line.label}</span>
+                <span class="text-xs text-slate-500 hidden sm:inline">(${nameA}: ${item.stateA} | ${nameB}: ${item.stateB})</span>
+              </div>
+              <span class="sun-chart__comp-badge ${item.tagClass}">${item.tagText}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    matrixWrap.hidden = false;
+  }
+
+  function renderSynastryGap(root, solarA, solarB, nameA, nameB) {
+    const gapWrap = root.querySelector('[data-synastry-gap-wrap]');
+    if (!gapWrap) return;
+
+    const gap = Math.abs(solarA.final - solarB.final);
+    const gapData = COMMUNICATION_GAPS[gap] || COMMUNICATION_GAPS[0];
+
+    gapWrap.innerHTML = `
+      <div class="sun-chart__gap-section">
+        <div class="sun-chart__gap-card">
+          <p class="sun-chart__panel-kicker">COMMUNICATION GAP NUMBER · 溝通落差數</p>
+          <h3>|${escapeHtml(nameA)} ${solarA.final} 數 － ${escapeHtml(nameB)} ${solarB.final} 數| ＝ 落差 ${gap} 數</h3>
+          <div class="sun-chart__gap-kpi">
+            <div class="sun-chart__gap-number">${gap}</div>
+            <div class="sun-chart__gap-formula">
+              <div>溝通落差格局：<strong>${gapData.title}</strong></div>
+              <small class="text-slate-500">主修數相減絕對值，揭示日常溝通盲區</small>
+            </div>
+          </div>
+          <p class="sun-chart__gap-desc">${gapData.desc}</p>
+        </div>
+
+        <div class="sun-chart__gap-card">
+          <p class="sun-chart__panel-kicker">ALAN'S MAGIC PRESCRIPTION · 愛倫院長生活魔藥處方</p>
+          <h3 class="text-lg text-[#be5b3f]">融化心防的通關密語與相處微儀式</h3>
+          <div class="sun-chart__magic-prescription">
+            <p class="mb-2"><strong>🌿 相處避雷微調：</strong></p>
+            <p class="mb-3">${gapData.rx}</p>
+            <p class="text-xs text-slate-500 border-t border-slate-200/60 pt-2 mt-2">
+              <strong>🪄 院長心法：</strong>關係的真正魅力在於「差異的調和」。每一次溝通落差，都是兩顆靈魂互相照亮盲區、拓展全新智慧視野的神聖修煉場。
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+    gapWrap.hidden = false;
+  }
+
   function renderChart(root, values) {
-    const birthDate = localDate(values.birthDate);
-    const referenceDate = localDate(values.referenceDate);
-    const birth = parts(birthDate);
-    const lunar = values.manualLunar ? { year: Number(values.lunarYear), month: Number(values.lunarMonth), day: Number(values.lunarDay), isLeap: false } : lunarFromDate(birthDate);
-    if (!lunar || !lunar.year || lunar.month < 1 || lunar.month > 12 || lunar.day < 1 || lunar.day > 30) throw new Error('無法取得農曆生日。請勾選「手動覆寫農曆生日」後輸入年月日。');
+    const isSynastry = (values.chartMode === 'synastry');
+    const referenceDate = localDate(isSynastry ? (values.referenceDateDual || values.referenceDate) : values.referenceDate);
 
-    const solar = buildPlate(birth);
-    const moon = buildPlate(lunar);
-    const lifeNumber = solar.final || 9;
-    const flowYear = flowTrace('year', birth, referenceDate).final;
-    const name = values.name.trim() || '個案';
-    const lunarTag = lunar.isLeap ? '（閏月）' : '';
+    let birthDate, birth, birthTimeStr, lunar, lifeNumber, name, lunarTag;
+    let solar, moon, flowYear;
 
-    root.querySelector('[data-chart-title]').textContent = `${name}・完整排盤`;
-    root.querySelector('[data-date-ribbon]').innerHTML = `<div><span>國曆生日</span><b>${birth.year} / ${pad(birth.month)} / ${pad(birth.day)}</b></div><i>⊹</i><div><span>農曆生日</span><b>${lunar.year} / ${pad(lunar.month)} / ${pad(lunar.day)} ${lunarTag}</b></div><i>⊹</i><div><span>流運日期</span><b>${referenceDate.getFullYear()} / ${pad(referenceDate.getMonth() + 1)} / ${pad(referenceDate.getDate())}</b></div>`;
+    const bannerWrap = root.querySelector('[data-synastry-banner-wrap]');
+    const gapWrap = root.querySelector('[data-synastry-gap-wrap]');
+    const matrixWrap = root.querySelector('[data-synastry-matrix-wrap]');
+    const sunTitle = root.querySelector('[data-plate-sun-title]');
+    const moonTitle = root.querySelector('[data-plate-moon-title]');
+
+    if (isSynastry) {
+      // 雙人關係合盤：以中點日期時間重新生成完整盤式
+      const nameA = values.nameA?.trim() || '甲方';
+      const nameB = values.nameB?.trim() || '乙方';
+      const birthDateA = values.birthDateA || '1988-08-18';
+      const birthTimeA = values.birthTimeA || '12:00';
+      const birthDateB = values.birthDateB || '1990-01-27';
+      const birthTimeB = values.birthTimeB || '11:36';
+
+      // 1. 計算甲方與乙方個人盤以供互補矩陣與落差數分析
+      const dateObjA = localDate(birthDateA);
+      const dateObjB = localDate(birthDateB);
+      const plateA = buildPlate(parts(dateObjA));
+      const plateB = buildPlate(parts(dateObjB));
+
+      // 2. 精確計算時間中點 (Midpoint Date & Time)
+      const midpoint = calculateMidpoint(birthDateA, birthTimeA, birthDateB, birthTimeB);
+      birthDate = midpoint.dateObj;
+      birth = midpoint.parts;
+      birthTimeStr = midpoint.timeStr;
+      lunar = lunarFromDate(birthDate);
+      if (!lunar) lunar = { year: birth.year, month: birth.month, day: birth.day, isLeap: false };
+
+      solar = buildPlate(birth);
+      moon = buildPlate(lunar);
+      lifeNumber = solar.final || 9;
+      flowYear = flowTrace('year', birth, referenceDate).final;
+      name = `${nameA} & ${nameB}`;
+      lunarTag = lunar.isLeap ? '（閏月）' : '';
+
+      // 合體共鳴九宮格數字彙整
+      const combinedCounts = {};
+      for (let d = 0; d <= 9; d++) {
+        combinedCounts[d] = plateA.counts[d] + plateB.counts[d];
+      }
+
+      // 呈現中點橫幅
+      if (bannerWrap) {
+        bannerWrap.innerHTML = `
+          <div class="sun-chart__synastry-banner">
+            <div class="sun-chart__synastry-banner-top">
+              <h3><span>💞 雙方關係能量中點排盤</span></h3>
+              <span class="sun-chart__mid-badge">關係共同主命數：${lifeNumber} 數</span>
+            </div>
+            <p class="sun-chart__synastry-banner-desc">
+              非單純數字相加，而是以雙方精確生辰時間戳記淬煉出之<strong>「時間中點日期時間（Relationship Midpoint）」</strong>重新排定。此盤象徵這段關係作為一個獨立能量生命體走向世間時，共同展現的外顯氣質、默契感受與流年週期。
+            </p>
+            <div class="sun-chart__midpoint-details">
+              <div><span>關係西元中點：</span>${birth.year} 年 ${pad(birth.month)} 月 ${pad(birth.day)} 日 ${birthTimeStr} (24H 制)</div>
+              <div><span>中點農曆對照：</span>${lunar.year} 年 ${pad(lunar.month)} 月 ${pad(lunar.day)} 日 ${lunarTag}</div>
+              <div><span>推算流年：</span>${referenceDate.getFullYear()} 年（流年 ${flowYear} 數）</div>
+            </div>
+          </div>
+        `;
+        bannerWrap.hidden = false;
+      }
+
+      // 呈現溝通落差數
+      renderSynastryGap(root, plateA, plateB, nameA, nameB);
+
+      // 呈現九宮格連線互補矩陣
+      renderSynastryComplementary(root, plateA, plateB, combinedCounts, nameA, nameB);
+
+      // 修改盤式標題
+      if (sunTitle) sunTitle.textContent = '關係外顯盤 (中點太陽盤)';
+      if (moonTitle) moonTitle.textContent = '關係默契盤 (中點月亮盤)';
+      root.querySelector('[data-chart-title]').textContent = `${name}・雙人關係中點完整排盤`;
+
+    } else {
+      // 個人雙盤模式
+      birthDate = localDate(values.birthDate);
+      birth = parts(birthDate);
+      birthTimeStr = values.birthTime || '12:00';
+      lunar = values.manualLunar ? { year: Number(values.lunarYear), month: Number(values.lunarMonth), day: Number(values.lunarDay), isLeap: false } : lunarFromDate(birthDate);
+      if (!lunar || !lunar.year || lunar.month < 1 || lunar.month > 12 || lunar.day < 1 || lunar.day > 30) throw new Error('無法取得農曆生日。請勾選「手動覆寫農曆生日」後輸入年月日。');
+
+      solar = buildPlate(birth);
+      moon = buildPlate(lunar);
+      lifeNumber = solar.final || 9;
+      flowYear = flowTrace('year', birth, referenceDate).final;
+      name = values.name.trim() || '個案';
+      lunarTag = lunar.isLeap ? '（閏月）' : '';
+
+      if (bannerWrap) bannerWrap.hidden = true;
+      if (gapWrap) gapWrap.hidden = true;
+      if (matrixWrap) matrixWrap.hidden = true;
+      if (sunTitle) sunTitle.textContent = '太陽盤';
+      if (moonTitle) moonTitle.textContent = '月亮盤';
+      root.querySelector('[data-chart-title]').textContent = `${name}・完整排盤`;
+    }
+
+    root.querySelector('[data-date-ribbon]').innerHTML = `<div><span>${isSynastry ? '關係中點公曆' : '國曆生日'}</span><b>${birth.year} / ${pad(birth.month)} / ${pad(birth.day)} ${birthTimeStr}</b></div><i>⊹</i><div><span>${isSynastry ? '關係中點農曆' : '農曆生日'}</span><b>${lunar.year} / ${pad(lunar.month)} / ${pad(lunar.day)} ${lunarTag}</b></div><i>⊹</i><div><span>流運日期</span><b>${referenceDate.getFullYear()} / ${pad(referenceDate.getMonth() + 1)} / ${pad(referenceDate.getDate())}</b></div>`;
     showPlate(root, 'solar', solar);
     showPlate(root, 'lunar', moon);
     renderEnergy(root, solar, moon);
@@ -359,7 +650,7 @@
     renderGifts(root, solar, moon);
     renderFlows(root, birth, referenceDate);
     root.querySelector('[data-life-number]').textContent = lifeNumber;
-    renderCycleLists(root, birth, values.birthTime, referenceDate, lifeNumber);
+    renderCycleLists(root, birth, birthTimeStr, referenceDate, lifeNumber);
     renderTriangle(root, lifeNumber, flowYear);
     renderNineStars(root, lifeNumber, flowYear);
     root.querySelector('[data-chart-result]').hidden = false;
@@ -372,21 +663,63 @@
     const manual = form.elements.manualLunar;
     const manualFields = root.querySelector('.sun-chart__lunar-fields');
     const lunarAuto = root.querySelector('[data-lunar-auto]');
-    form.elements.referenceDate.value = toInputDate(new Date());
+    const lunarAutoA = root.querySelector('[data-lunar-auto-a]');
+    const lunarAutoB = root.querySelector('[data-lunar-auto-b]');
+
+    const modeBtns = root.querySelectorAll('[data-mode-btn]');
+    const singleFields = root.querySelector('[data-single-fields]');
+    const dualFields = root.querySelector('[data-dual-fields]');
+    const submitBtn = root.querySelector('[data-submit-btn]');
+    const sampleDualBtn = root.querySelector('[data-sample-dual]');
+
+    // 預設日期與時間 (24小時制)
+    const todayStr = toInputDate(new Date());
+    form.elements.referenceDate.value = todayStr;
+    if (form.elements.referenceDateDual) form.elements.referenceDateDual.value = todayStr;
     form.elements.birthDate.value = '1990-01-01';
     form.elements.birthTime.value = '12:00';
 
+    // 模式切換邏輯
+    modeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeBtns.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const mode = btn.dataset.modeBtn;
+        form.elements.chartMode.value = mode;
+
+        if (mode === 'synastry') {
+          singleFields.classList.add('hidden');
+          dualFields.classList.remove('hidden');
+          submitBtn.textContent = '展開雙人關係中點合盤';
+        } else {
+          singleFields.classList.remove('hidden');
+          dualFields.classList.add('hidden');
+          submitBtn.textContent = '展開命盤';
+        }
+      });
+    });
+
+    // 示範合盤載入
+    if (sampleDualBtn) {
+      sampleDualBtn.addEventListener('click', () => {
+        form.elements.nameA.value = '愛倫院長';
+        form.elements.birthDateA.value = '1988-08-18';
+        form.elements.birthTimeA.value = '12:00';
+
+        form.elements.nameB.value = '靈魂伴侶';
+        form.elements.birthDateB.value = '1990-01-27';
+        form.elements.birthTimeB.value = '11:36';
+
+        showAutoLunarA();
+        showAutoLunarB();
+      });
+    }
+
     const showAutoLunar = () => {
       const value = form.elements.birthDate.value;
-      if (!value) {
-        lunarAuto.hidden = true;
-        return;
-      }
+      if (!value) { lunarAuto.hidden = true; return; }
       const lunar = lunarFromDate(localDate(value));
-      if (!lunar || !lunar.month) {
-        lunarAuto.hidden = true;
-        return;
-      }
+      if (!lunar || !lunar.month) { lunarAuto.hidden = true; return; }
       lunarAuto.textContent = `對應農曆生日：${lunar.year} 年 ${lunar.month} 月 ${lunar.day} 日${lunar.isLeap ? '（閏月）' : ''}`;
       form.elements.lunarYear.value = lunar.year;
       form.elements.lunarMonth.value = lunar.month;
@@ -394,23 +727,187 @@
       lunarAuto.hidden = false;
     };
 
+    const showAutoLunarA = () => {
+      if (!lunarAutoA || !form.elements.birthDateA) return;
+      const val = form.elements.birthDateA.value;
+      if (!val) { lunarAutoA.hidden = true; return; }
+      const l = lunarFromDate(localDate(val));
+      if (l && l.month) {
+        lunarAutoA.textContent = `農曆：${l.year}年${l.month}月${l.day}日${l.isLeap ? '(閏)' : ''}`;
+        lunarAutoA.hidden = false;
+      }
+    };
+
+    const showAutoLunarB = () => {
+      if (!lunarAutoB || !form.elements.birthDateB) return;
+      const val = form.elements.birthDateB.value;
+      if (!val) { lunarAutoB.hidden = true; return; }
+      const l = lunarFromDate(localDate(val));
+      if (l && l.month) {
+        lunarAutoB.textContent = `農曆：${l.year}年${l.month}月${l.day}日${l.isLeap ? '(閏)' : ''}`;
+        lunarAutoB.hidden = false;
+      }
+    };
+
     form.elements.birthDate.addEventListener('change', showAutoLunar);
     form.elements.birthDate.addEventListener('input', showAutoLunar);
     showAutoLunar();
+
+    if (form.elements.birthDateA) {
+      form.elements.birthDateA.addEventListener('change', showAutoLunarA);
+      form.elements.birthDateA.addEventListener('input', showAutoLunarA);
+      showAutoLunarA();
+    }
+    if (form.elements.birthDateB) {
+      form.elements.birthDateB.addEventListener('change', showAutoLunarB);
+      form.elements.birthDateB.addEventListener('input', showAutoLunarB);
+      showAutoLunarB();
+    }
+
     manual.addEventListener('change', () => { manualFields.hidden = !manual.checked; });
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       error.textContent = '';
-      if (!form.elements.birthDate.value || !form.elements.referenceDate.value) {
-        error.textContent = '請先填寫國曆生日與流運日期。';
-        return;
+      const mode = form.elements.chartMode.value;
+
+      if (mode === 'synastry') {
+        if (!form.elements.birthDateA.value || !form.elements.birthDateB.value) {
+          error.textContent = '請先填寫甲方與乙方的國曆生日。';
+          return;
+        }
+      } else {
+        if (!form.elements.birthDate.value || !form.elements.referenceDate.value) {
+          error.textContent = '請先填寫國曆生日與流運日期。';
+          return;
+        }
       }
+
       try {
         renderChart(root, Object.fromEntries(new FormData(form).entries()));
       } catch (exception) {
         error.textContent = exception.message || '排盤時發生錯誤，請檢查輸入資料。';
       }
     });
+
+    // 填充合盤甲方與乙方專屬快速載入下拉選單
+    const populateQuickProfiles = () => {
+      if (!window.MeetJoyProfiles || typeof window.MeetJoyProfiles.getAll !== 'function') return;
+      const profiles = window.MeetJoyProfiles.getAll();
+      const selA = root.querySelector('[data-quick-profile-a]');
+      const selB = root.querySelector('[data-quick-profile-b]');
+
+      const renderOptions = (label) => {
+        if (!profiles || profiles.length === 0) {
+          return `<option value="">-- 目前無已存命盤 (相容紫微斗數) --</option>`;
+        }
+        return `<option value="">-- 📁 選擇已存命盤帶入${label} (${profiles.length} 位) --</option>` +
+          profiles.map(p => {
+            const catTag = p.category ? `[${p.category}] ` : '';
+            return `<option value="${p.id}">${catTag}${p.name} · ${p.birthDate} ${p.birthTime || '12:00'}</option>`;
+          }).join('');
+      };
+
+      if (selA) {
+        selA.innerHTML = renderOptions('甲方');
+        selA.onchange = () => {
+          const pid = selA.value;
+          if (!pid) return;
+          const target = profiles.find(p => p.id === pid);
+          if (target) {
+            form.elements.nameA.value = target.name || '甲方';
+            form.elements.birthDateA.value = target.birthDate;
+            form.elements.birthTimeA.value = target.birthTime || '12:00';
+            showAutoLunarA();
+            if (window.MeetJoyProfiles.showToast) {
+              window.MeetJoyProfiles.showToast(`✨ 已成功載入「${target.name}」至合盤甲方！`);
+            }
+            try {
+              renderChart(root, Object.fromEntries(new FormData(form).entries()));
+            } catch (e) {
+              console.warn(e);
+            }
+          }
+        };
+      }
+
+      if (selB) {
+        selB.innerHTML = renderOptions('乙方');
+        selB.onchange = () => {
+          const pid = selB.value;
+          if (!pid) return;
+          const target = profiles.find(p => p.id === pid);
+          if (target) {
+            form.elements.nameB.value = target.name || '乙方';
+            form.elements.birthDateB.value = target.birthDate;
+            form.elements.birthTimeB.value = target.birthTime || '12:00';
+            showAutoLunarB();
+            if (window.MeetJoyProfiles.showToast) {
+              window.MeetJoyProfiles.showToast(`✨ 已成功載入「${target.name}」至合盤乙方！`);
+            }
+            try {
+              renderChart(root, Object.fromEntries(new FormData(form).entries()));
+            } catch (e) {
+              console.warn(e);
+            }
+          }
+        };
+      }
+    };
+
+    // 掛載全站通用命盤檔案庫 (MeetJoyProfiles)
+    if (window.MeetJoyProfiles) {
+      MeetJoyProfiles.mount('#universal_profile_bar', {
+        getCurrentData: () => {
+          const mode = form.elements.chartMode.value;
+          if (mode === 'synastry') {
+            const nameA = form.elements.nameA.value || '甲方';
+            const nameB = form.elements.nameB.value || '乙方';
+            const bA = form.elements.birthDateA.value;
+            const tA = form.elements.birthTimeA.value || '12:00';
+            const bB = form.elements.birthDateB.value;
+            const tB = form.elements.birthTimeB.value || '12:00';
+            const mid = calculateMidpoint(bA, tA, bB, tB);
+            return {
+              name: `${nameA} & ${nameB} (中點合盤)`,
+              birthDate: mid.birthDate,
+              birthTime: mid.birthTime,
+              category: '合盤'
+            };
+          }
+          return {
+            name: form.elements.name.value || '數字盤',
+            birthDate: form.elements.birthDate.value,
+            birthTime: form.elements.birthTime.value || '12:00',
+            category: '自己'
+          };
+        },
+        onSelect: (p) => {
+          const mode = form.elements.chartMode.value;
+          if (mode === 'synastry') {
+            if (p.name) form.elements.nameA.value = p.name;
+            if (p.birthDate) form.elements.birthDateA.value = p.birthDate;
+            if (p.birthTime) form.elements.birthTimeA.value = p.birthTime;
+            showAutoLunarA();
+          } else {
+            if (p.name) form.elements.name.value = p.name;
+            if (p.birthDate) form.elements.birthDate.value = p.birthDate;
+            if (p.birthTime) form.elements.birthTime.value = p.birthTime;
+            showAutoLunar();
+          }
+          // 選取後立即自動重新起盤展示
+          try {
+            renderChart(root, Object.fromEntries(new FormData(form).entries()));
+          } catch (e) {
+            console.warn(e);
+          }
+        }
+      });
+
+      // 初始化合盤甲方與乙方選單
+      populateQuickProfiles();
+    }
+
     root.querySelector('[data-print-chart]').addEventListener('click', () => {
       if (window.MeetJoyPDF && typeof window.MeetJoyPDF.exportPDF === 'function') {
         const title = root.querySelector('[data-chart-title]')?.textContent || '數字能量排盤報告';
@@ -419,6 +916,7 @@
         window.print();
       }
     });
+
     root.querySelector('[data-copy-summary]').addEventListener('click', async (event) => {
       const title = root.querySelector('[data-chart-title]').textContent;
       const date = root.querySelector('[data-date-ribbon]').innerText.replace(/\n/g, '；');
@@ -432,8 +930,21 @@
         error.textContent = '瀏覽器未允許複製，請改用列印／另存 PDF。';
       }
     });
+
+    // 頁面預設自動排盤渲染一次，確保初次進入不留白
+    try {
+      renderChart(root, Object.fromEntries(new FormData(form).entries()));
+    } catch (e) {
+      console.warn('[Numerology] Auto-init render failed:', e);
+    }
   }
 
-  document.addEventListener('DOMContentLoaded', () => document.querySelectorAll('[data-sun-chart]').forEach(initialize));
+  const startNumerologyApp = () => document.querySelectorAll('[data-sun-chart]').forEach(initialize);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startNumerologyApp);
+  } else {
+    startNumerologyApp();
+  }
 })();
+
 

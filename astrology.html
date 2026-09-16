@@ -66,7 +66,7 @@
     </div>
   </nav>
 
-  <main class="w-full max-w-6xl px-3 sm:px-6 pb-20">
+  <main class="w-full max-w-[1720px] px-3 sm:px-6 lg:px-8 pb-20">
     
     <!-- 標題與排盤表單 -->
     <div class="mb-8 bg-white/95 backdrop-blur-md border border-[#E2D9C8] rounded-3xl p-6 sm:p-8 shadow-sm">
@@ -74,8 +74,24 @@
         <p class="text-xs tracking-[0.3em] font-bold text-[#987315] uppercase mb-1 cinzel">WESTERN ASTROLOGY RADIX CHART</p>
         <h1 class="text-2xl sm:text-4xl font-black text-[#1E293B] tracking-wide mb-2">西洋古典與現代占星星盤大典</h1>
         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          瑞士星曆表級高精度天文星曆，精確排定黃道十二宮位、四軸與十大行星度數；嚴格校準出生地地理經緯度與歷史夏令時間。
+          瑞士星曆表級高精度天文星曆，精確排定黃道十二宮位、四軸與十大行星度數；嚴格校準出生地地理經緯度與歷史夏令時間。支援本命單盤、行運雙盤、雙人比較合盤 (Synastry) 與組合中點盤 (Composite)。
         </p>
+      </div>
+
+      <!-- 🔮 四大占星排盤模式切換頁籤 -->
+      <div class="flex items-center gap-2 mb-4 bg-amber-100/50 p-1.5 rounded-2xl border border-[#C8A97E]/40 overflow-x-auto select-none">
+        <button type="button" id="tab_natal" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-50 shadow-xs whitespace-nowrap">
+          🏛️ 本命單盤 (Natal)
+        </button>
+        <button type="button" id="tab_transits" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700 whitespace-nowrap">
+          ⏳ 行運推運雙盤 (Transits)
+        </button>
+        <button type="button" id="tab_synastry" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700 whitespace-nowrap">
+          💞 雙人比較合盤 (Synastry)
+        </button>
+        <button type="button" id="tab_composite" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700 whitespace-nowrap">
+          🔮 組合中點盤 (Composite)
+        </button>
       </div>
 
       <!-- 輸入表單 -->
@@ -83,7 +99,8 @@
         <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
         <div id="universal_profile_bar"></div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5 items-end">
+        <!-- 1. 單人 / 甲方輸入欄位 (本命與行運使用) -->
+        <div id="single_inputs_row" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5 items-end">
           
           <!-- 姓名與性別 -->
           <div>
@@ -103,9 +120,9 @@
             <input type="date" id="birth_date" required value="1990-01-27" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
           </div>
 
-          <!-- 出生時分 -->
+          <!-- 出生時分 (24H 制) -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 出生時分 (Time · 24H)</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 出生時分 (Time · 24H 制)</label>
             <input type="time" id="birth_time" required value="11:36" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
           </div>
 
@@ -142,6 +159,100 @@
             <button type="button" id="btn_sample_alan" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold px-2.5 py-2.5 rounded-xl text-xs transition whitespace-nowrap" title="載入 1990-03-21 台北春分範例盤">
               範例
             </button>
+          </div>
+        </div>
+
+        <!-- 2. 雙人合盤專屬輸入欄位 (Synastry / Composite 模式顯示) -->
+        <div id="dual_inputs_container" class="hidden mt-2 space-y-4">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- 甲方 (Person A / 內盤基準) -->
+            <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-amber-200">
+                <span class="font-black text-sm text-amber-950 flex items-center gap-1.5">
+                  <span>🔵 甲方 (Person A)</span>
+                  <span class="text-[11px] font-normal text-amber-800 bg-amber-200/60 px-2 py-0.5 rounded-full">內盤宮位基準</span>
+                </span>
+                <span class="text-xs text-slate-500 font-medium">查詢主體</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">姓名 / 稱謂</label>
+                  <div class="flex gap-1.5">
+                    <input type="text" id="user_name_a" value="愛倫院長" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                    <select id="user_gender_a" class="bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-xs font-bold text-slate-700">
+                      <option value="Male">男</option>
+                      <option value="Female" selected>女</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">出生日期 (公曆)</label>
+                  <input type="date" id="birth_date_a" value="1988-08-18" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">出生時分 (24H 制)</label>
+                  <input type="time" id="birth_time_a" value="12:00" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">出生城市</label>
+                  <select id="birth_city_a" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                    <!-- 動態填入全球城市 -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 乙方 (Person B / 外盤落入) -->
+            <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-200/80">
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-sky-200">
+                <span class="font-black text-sm text-sky-950 flex items-center gap-1.5">
+                  <span>🟣 乙方 (Person B)</span>
+                  <span class="text-[11px] font-normal text-sky-800 bg-sky-200/60 px-2 py-0.5 rounded-full">外盤星體投影</span>
+                </span>
+                <span class="text-xs text-slate-500 font-medium">關係對象</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">姓名 / 稱謂</label>
+                  <div class="flex gap-1.5">
+                    <input type="text" id="user_name_b" value="靈魂伴侶" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                    <select id="user_gender_b" class="bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-xs font-bold text-slate-700">
+                      <option value="Male" selected>男</option>
+                      <option value="Female">女</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">出生日期 (公曆)</label>
+                  <input type="date" id="birth_date_b" value="1990-01-27" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">出生時分 (24H 制)</label>
+                  <input type="time" id="birth_time_b" value="11:36" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">出生城市</label>
+                  <select id="birth_city_b" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                    <!-- 動態填入全球城市 -->
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 合盤專屬快捷操作列 -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn_swap_ab" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-amber-100/60 text-slate-800 font-black text-xs transition flex items-center gap-1.5 shadow-2xs">
+                <span>🔁 一鍵互換主客視角 (A ⇄ B)</span>
+              </button>
+              <button type="button" id="btn_sample_couple" class="px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs transition">
+                載入示範伴侶資料
+              </button>
+            </div>
+            <div class="text-xs text-slate-500 font-medium">
+              💡 提示：點擊「一鍵互換」可即時切換由誰擔任內盤宮位基準（看對方行星點亮你的哪間房間）
+            </div>
           </div>
         </div>
 
@@ -360,10 +471,10 @@
 
     const SIGN_SYMBOLS_SVG = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
 
-    // 初始化出生城市選單
-    function initCityDropdown() {
-      const select = document.getElementById('birth_city');
-      select.innerHTML = '';
+    // 填充單一城市下拉選單
+    function populateCitySelect(selectElem, defaultId = 'tw_taipei') {
+      if (!selectElem) return;
+      selectElem.innerHTML = '';
       let curGroup = '';
       let optGroup = null;
 
@@ -372,25 +483,32 @@
           curGroup = c.group;
           optGroup = document.createElement('optgroup');
           optGroup.label = curGroup;
-          select.appendChild(optGroup);
+          selectElem.appendChild(optGroup);
         }
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = c.name;
-        if (c.id === 'tw_taipei') opt.selected = true;
+        if (c.id === defaultId) opt.selected = true;
         optGroup.appendChild(opt);
       });
+    }
 
+    // 初始化出生城市選單 (單人盤 + 雙人合盤 A/B)
+    function initCityDropdown() {
+      populateCitySelect(document.getElementById('birth_city'), 'tw_taipei');
+      populateCitySelect(document.getElementById('birth_city_a'), 'tw_taipei');
+      populateCitySelect(document.getElementById('birth_city_b'), 'tw_taipei');
       updateGeoInfo();
     }
 
-    function getSelectedCity() {
-      const cid = document.getElementById('birth_city').value;
+    function getSelectedCity(selectId = 'birth_city') {
+      const el = document.getElementById(selectId);
+      const cid = el ? el.value : 'tw_taipei';
       return CITIES_DB.find(c => c.id === cid) || CITIES_DB[0];
     }
 
     function updateGeoInfo() {
-      const city = getSelectedCity();
+      const city = getSelectedCity('birth_city');
       const dateStr = document.getElementById('birth_date').value;
       const isDST = isTaiwanDST(dateStr) && city.country === 'TW';
 
@@ -410,11 +528,12 @@
       geoText.textContent = `座標：${lngDir} ${Math.abs(city.lng).toFixed(2)}° ${latDir} ${Math.abs(city.lat).toFixed(2)}° ｜ 時區：UTC${city.tz >= 0 ? '+' : ''}${city.tz} ${chk.checked ? '(DST -1h 生效)' : ''}`;
     }
 
-    // 癒見占星魔法 全域行運狀態
+    // 占星排盤模式狀態：'natal', 'transits', 'synastry', 'composite'
+    let currentAstroMode = 'natal';
     let currentTransitDate = new Date('2026-08-25T21:56:25+08:00');
-    let isBiWheelMode = true;
+    let isBiWheelMode = false;
 
-    // 格式化 癒見占星魔法 經典雙盤資訊字串
+    // 格式化 癒見占星魔法 經典雙盤資訊字串 (強制預設 24 小時制)
     function format癒見占星魔法DateTime(date, tz) {
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -423,19 +542,134 @@
       const y = date.getFullYear();
       const dayName = days[date.getDay()];
       
-      let hours = date.getHours();
+      const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       const seconds = date.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
 
       const tzNum = tz !== undefined ? tz : 8;
-      const tzStr = `AWST -${Math.abs(tzNum)}:00`;
+      const tzStr = tzNum >= 0 ? `+${tzNum}:00` : `-${Math.abs(tzNum)}:00`;
 
       return {
         dateStr: `${m} ${d.toString().padStart(2, '0')} ${y}, ${dayName}`,
-        timeStr: `${hours}:${minutes}:${seconds} ${ampm} ${tzStr}`
+        timeStr: `${hours}:${minutes}:${seconds} (UTC${tzStr})`
+      };
+    }
+
+    // 計算跨盤互照相位 (Synastry Inter-Chart Aspects)
+    function calculateSynastryAspects(planetsA, planetsB) {
+      const majorAspects = [
+        { name: '合相', en: 'Conjunction', symbol: '☌', angle: 0, orb: 7.5, color: '#991B1B', type: 'major' },
+        { name: '三分相', en: 'Trine', symbol: '△', angle: 120, orb: 6.5, color: '#1D4ED8', type: 'soft' },
+        { name: '對分相', en: 'Opposition', symbol: '☍', angle: 180, orb: 7.0, color: '#991B1B', type: 'hard' },
+        { name: '四分相', en: 'Square', symbol: '□', angle: 90, orb: 5.5, color: '#991B1B', type: 'hard' },
+        { name: '六分相', en: 'Sextile', symbol: '⚹', angle: 60, orb: 4.5, color: '#0D9488', type: 'soft' }
+      ];
+
+      const pKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
+      const aspects = [];
+
+      for (const kA of pKeys) {
+        for (const kB of pKeys) {
+          const pA = planetsA[kA];
+          const pB = planetsB[kB];
+          if (!pA || !pB) continue;
+
+          const diff = Math.abs(((pA.longitude - pB.longitude + 180) % 360 + 360) % 360 - 180);
+
+          for (const asp of majorAspects) {
+            const delta = Math.abs(diff - asp.angle);
+            if (delta <= asp.orb) {
+              aspects.push({
+                p1: pA.name,
+                p1Key: kA,
+                p1Symbol: pA.symbol,
+                p1Lon: pA.longitude,
+                p2: pB.name,
+                p2Key: kB,
+                p2Symbol: pB.symbol,
+                p2Lon: pB.longitude,
+                aspect: asp.name,
+                aspectEn: asp.en,
+                aspectSymbol: asp.symbol,
+                angle: asp.angle,
+                orb: parseFloat(delta.toFixed(2)),
+                color: asp.color,
+                type: asp.type
+              });
+              break;
+            }
+          }
+        }
+      }
+      return aspects;
+    }
+
+    // 計算組合中點盤行星 (Composite Chart Planatary Midpoints)
+    function calculateCompositePlanets(planetsA, planetsB) {
+      const pKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode', 'SouthNode'];
+      const comp = {};
+
+      pKeys.forEach(k => {
+        const pA = planetsA[k];
+        const pB = planetsB[k];
+        if (!pA || !pB) return;
+
+        let diff = (pB.longitude - pA.longitude) % 360;
+        if (diff < 0) diff += 360;
+        let midLon;
+        if (diff <= 180) {
+          midLon = (pA.longitude + diff / 2) % 360;
+        } else {
+          midLon = (pA.longitude + diff / 2 + 180) % 360;
+        }
+
+        const signIdx = Math.floor(midLon / 30);
+        const sign = ZODIAC_SIGNS[signIdx];
+        const degInSign = midLon - signIdx * 30;
+        const deg = Math.floor(degInSign);
+        const min = Math.floor((degInSign - deg) * 60);
+
+        comp[k] = {
+          ...pA,
+          longitude: midLon,
+          sign: sign.name,
+          signEn: sign.en,
+          signSymbol: sign.symbol,
+          degree: deg,
+          minute: min,
+          formatted: `${sign.name} ${deg}°${min.toString().padStart(2, '0')}'`
+        };
+      });
+
+      return comp;
+    }
+
+    // 計算四元素比例 (Fire, Earth, Air, Water)
+    function calculateElementBalance(planets) {
+      const pKeys = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'];
+      const elemCounts = { '火': 0, '土': 0, '風': 0, '水': 0 };
+      const elementMap = {
+        '白羊座': '火', '金牛座': '土', '雙子座': '風', '巨蟹座': '水',
+        '獅子座': '火', '處女座': '土', '天秤座': '風', '天蠍座': '水',
+        '射手座': '火', '摩羯座': '土', '水瓶座': '風', '雙魚座': '水'
+      };
+
+      pKeys.forEach(k => {
+        const p = planets[k];
+        if (!p) return;
+        const elem = elementMap[p.sign] || '火';
+        // 日月加重權重為 2，其餘各 1
+        const weight = (k === 'Sun' || k === 'Moon') ? 2 : 1;
+        elemCounts[elem] += weight;
+      });
+
+      const total = 12;
+      return {
+        fire: Math.round((elemCounts['火'] / total) * 100),
+        earth: Math.round((elemCounts['土'] / total) * 100),
+        air: Math.round((elemCounts['風'] / total) * 100),
+        water: Math.round((elemCounts['水'] / total) * 100),
+        counts: elemCounts
       };
     }
 
@@ -778,12 +1012,12 @@
       // 5. 內圈相位網 (Aspect Lines)
       const aspectLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       aspects.forEach(asp => {
-        const p1 = planets[asp.p1Key];
-        const p2 = planets[asp.p2Key];
-        if (!p1 || !p2) return;
+        const lon1 = asp.p1Lon !== undefined ? asp.p1Lon : planets[asp.p1Key]?.longitude;
+        const lon2 = asp.p2Lon !== undefined ? asp.p2Lon : planets[asp.p2Key]?.longitude;
+        if (lon1 === undefined || lon2 === undefined) return;
 
-        const a1 = lonToSvgAngle(p1.longitude);
-        const a2 = lonToSvgAngle(p2.longitude);
+        const a1 = lonToSvgAngle(lon1);
+        const a2 = lonToSvgAngle(lon2);
         const pt1 = polarToCartesian(cx, cy, rHouseInner - 2, a1);
         const pt2 = polarToCartesian(cx, cy, rHouseInner - 2, a2);
 
@@ -1066,18 +1300,502 @@
       }
     }
 
-    // 主排盤函數 (本命盤 + 癒見占星魔法 行運推運雙盤計算)
+    // 輔助判斷行星落入第幾宮 (支援 360 度迴旋)
+    function getPlanetHouseIndex(lon, cusps) {
+      for (let i = 0; i < 12; i++) {
+        const c1 = cusps[i].longitude;
+        const c2 = cusps[i === 11 ? 0 : i + 1].longitude;
+        const span = ((c2 - c1) % 360 + 360) % 360;
+        const diff = ((lon - c1) % 360 + 360) % 360;
+        if (diff < span) return i + 1;
+      }
+      return 1;
+    }
+
+    // 計算兩個時間點之中點 Date 物件
+    function calculateMidpointDate(d1Str, t1Str, d2Str, t2Str) {
+      const dt1 = new Date(`${d1Str}T${t1Str}:00`);
+      const dt2 = new Date(`${d2Str}T${t2Str}:00`);
+      const midMs = Math.round((dt1.getTime() + dt2.getTime()) / 2);
+      return new Date(midMs);
+    }
+
+    // 切換占星排盤模式
+    function setAstroMode(mode) {
+      currentAstroMode = mode;
+      const tabs = [
+        { id: 'tab_natal', mode: 'natal' },
+        { id: 'tab_transits', mode: 'transits' },
+        { id: 'tab_synastry', mode: 'synastry' },
+        { id: 'tab_composite', mode: 'composite' }
+      ];
+
+      tabs.forEach(t => {
+        const el = document.getElementById(t.id);
+        if (!el) return;
+        if (t.mode === mode) {
+          el.className = 'flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-50 shadow-xs whitespace-nowrap';
+        } else {
+          el.className = 'flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700 whitespace-nowrap';
+        }
+      });
+
+      const singleRow = document.getElementById('single_inputs_row');
+      const dualContainer = document.getElementById('dual_inputs_container');
+      const toolbar = document.querySelector('#divination_card > div:first-child');
+
+      if (mode === 'natal' || mode === 'transits') {
+        if (singleRow) singleRow.classList.remove('hidden');
+        if (dualContainer) dualContainer.classList.add('hidden');
+        isBiWheelMode = (mode === 'transits');
+        if (toolbar) toolbar.classList.remove('hidden');
+      } else {
+        if (singleRow) singleRow.classList.add('hidden');
+        if (dualContainer) dualContainer.classList.remove('hidden');
+        isBiWheelMode = (mode === 'synastry');
+        if (toolbar) toolbar.classList.add('hidden');
+      }
+
+      renderAstrologyChart();
+    }
+
+    // 主排盤核心函數
     function renderAstrologyChart() {
+      const hSys = document.getElementById('house_system').value;
+      const hSysName = hSys === 'whole_sign' ? 'Whole Sign' : (hSys === 'equal' ? 'Equal' : 'Placidus');
+      const hLabel = document.getElementById('house_type_label');
+      if (hLabel) {
+        hLabel.textContent = hSys === 'whole_sign' ? '整宮制 (Whole Sign)' : (hSys === 'equal' ? '等宮制 (Equal)' : '普拉西度制 (Placidus)');
+      }
+
+      // ==========================================
+      // 分支一：雙人比較合盤 (Synastry Mode)
+      // ==========================================
+      if (currentAstroMode === 'synastry') {
+        const nameA = document.getElementById('user_name_a').value.trim() || '甲方';
+        const genderA = document.getElementById('user_gender_a').value;
+        const dateA = document.getElementById('birth_date_a').value;
+        const timeA = document.getElementById('birth_time_a').value;
+        const cityA = getSelectedCity('birth_city_a');
+
+        const nameB = document.getElementById('user_name_b').value.trim() || '乙方';
+        const genderB = document.getElementById('user_gender_b').value;
+        const dateB = document.getElementById('birth_date_b').value;
+        const timeB = document.getElementById('birth_time_b').value;
+        const cityB = getSelectedCity('birth_city_b');
+
+        const applyDST = document.getElementById('chk_dst').checked;
+
+        // 計算 A 盤（內盤宮位基準）
+        const utcA = calculateUTCDatetime(dateA, timeA, cityA.tz, applyDST && isTaiwanDST(dateA) && cityA.country === 'TW');
+        const planetsA = AstroCalc.calculatePlanetaryPositions(utcA);
+        const housesA = AstroCalc.calculateHousesAndAxes(utcA, cityA.lat, cityA.lng, hSys);
+
+        // 計算 B 盤（外盤投影星曜）
+        const utcB = calculateUTCDatetime(dateB, timeB, cityB.tz, applyDST && isTaiwanDST(dateB) && cityB.country === 'TW');
+        const planetsB = AstroCalc.calculatePlanetaryPositions(utcB);
+        const housesB = AstroCalc.calculateHousesAndAxes(utcB, cityB.lat, cityB.lng, hSys);
+
+        // 跨盤互照相位與四元素
+        const aspectsAB = calculateSynastryAspects(planetsA, planetsB);
+        const elemA = calculateElementBalance(planetsA);
+        const elemB = calculateElementBalance(planetsB);
+
+        // 抬頭資訊更新 (左 A 內盤，右 B 外盤)
+        const dtA = new Date(`${dateA}T${timeA}:00`);
+        const dtB = new Date(`${dateB}T${timeB}:00`);
+        const infoA = format癒見占星魔法DateTime(dtA, cityA.tz);
+        const infoB = format癒見占星魔法DateTime(dtB, cityB.tz);
+
+        document.getElementById('disp_name').textContent = nameA;
+        document.getElementById('disp_gender').textContent = genderA === 'Female' ? '女 ♀' : '男 ♂';
+        document.getElementById('disp_natal_date').textContent = infoA.dateStr;
+        document.getElementById('disp_natal_time').textContent = infoA.timeStr;
+        document.getElementById('disp_natal_place').textContent = `${cityA.name} (內盤基準)`;
+        document.getElementById('disp_natal_hsys').textContent = hSysName;
+
+        const transitHeader = document.getElementById('divination_header_transit');
+        if (transitHeader) {
+          transitHeader.innerHTML = `
+            <h2 class="text-xl sm:text-2xl font-black text-sky-950 mb-0.5">${nameB}</h2>
+            <div class="flex items-center justify-end gap-2 mb-1">
+              <span class="px-2 py-0.5 rounded bg-sky-200/80 text-sky-950 font-black text-xs">Outer 乙方外盤</span>
+              <span class="font-black text-slate-900 text-sm">${genderB === 'Female' ? '女 ♀' : '男 ♂'}</span>
+            </div>
+            <p class="text-slate-900 font-mono font-bold text-xs sm:text-sm">${infoB.dateStr}</p>
+            <p class="text-slate-800 font-mono font-bold text-xs sm:text-sm">${infoB.timeStr}</p>
+            <p class="text-slate-800 font-bold text-xs sm:text-sm">${cityB.name} (投影落點)</p>
+            <p class="text-stone-600 font-bold text-xs">雙人能量交織 · <span class="text-sky-800 font-black">星曜照耀</span></p>
+          `;
+        }
+
+        // 更新四軸指標卡為合盤核心指標
+        const summaryDiv = document.getElementById('astro_summary_cards');
+        if (summaryDiv) {
+          summaryDiv.innerHTML = `
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">甲方上升 (A's Asc)</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${housesA.asc.formatted}</p>
+              <p class="text-[11px] text-slate-500 mt-1">內盤宮位地基與第一視角</p>
+            </div>
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">日月交互共鳴</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${planetsA.Sun.sign} ⇄ ${planetsB.Moon.sign}</p>
+              <p class="text-[11px] text-slate-500 mt-1">A太陽與B月亮的靈魂滋養</p>
+            </div>
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">金火吸引力</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${planetsA.Venus.sign} ⇄ ${planetsB.Mars.sign}</p>
+              <p class="text-[11px] text-slate-500 mt-1">浪漫美感與火花張力</p>
+            </div>
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">跨盤緊密相位</p>
+              <p class="text-sm sm:text-base font-black text-[#991B1B]">${aspectsAB.length} 組強連結</p>
+              <p class="text-[11px] text-slate-500 mt-1">日常互動共振與磨合課題</p>
+            </div>
+          `;
+        }
+
+        // 繪製雙輪星盤：內 A 外 B，跨盤相位連線
+        renderAstrologyWheel(planetsA, housesA, aspectsAB, planetsB, { mode: 'synastry' });
+
+        // 右欄 1：乙方星曜落入甲方宮位明細表 (House Overlays)
+        const tableDiv = document.getElementById('planets_table_container');
+        const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
+        
+        const houseOverlayDescriptions = {
+          1: '直接照耀甲方的外在形象與自我認同，存在感極強',
+          2: '激發甲方的金錢觀與自我價值感，牽動共同理財節奏',
+          3: '引爆日常靈感交流與思維溝通，話題不斷、心智活躍',
+          4: '深觸甲方的內心底層安全感，帶來家庭般的親密與歸屬',
+          5: '點燃浪漫火花、玩樂熱情與創造力，自帶戀愛濾鏡',
+          6: '滲透甲方的日常生活細節與工作作息，帶來具體照料',
+          7: '命中注定的伴侶投射區，視為不可或缺的靈魂搭檔',
+          8: '觸動極度深層的情感轉化、信任底線與無保留的深刻牽絆',
+          9: '拓展甲方的世界觀、哲學視野與人生理想，共同成長',
+          10: '對甲方的事業格局與社會聲譽帶來顯著推動力或期待',
+          11: '如同最懂自己的知己好友，共享願景圈子與群體歸屬',
+          12: '靈魂前世般的默契與潛意識感應，需留心暗中未說出口的脆弱'
+        };
+
+        tableDiv.innerHTML = `
+          <div class="mb-3 text-xs text-slate-600 bg-sky-50 border border-sky-200 rounded-xl p-3 font-medium">
+            <span class="font-black text-sky-950">💡 比較盤核心邏輯：</span>
+            以下呈現「<span class="font-bold text-sky-900">${nameB}</span>」的星曜分別點亮了「<span class="font-bold text-amber-900">${nameA}</span>」的哪一間人生房間，代表對方的能量如何在你的世界裡著陸發揮。
+          </div>
+          <table class="w-full text-left text-sm sm:text-base">
+            <thead>
+              <tr class="bg-sky-100/60 border-b-2 border-sky-300 text-slate-950 font-black">
+                <th class="py-2.5 px-3">乙方星曜</th>
+                <th class="py-2.5 px-3">落入甲方宮位</th>
+                <th class="py-2.5 px-3">在關係中的生活效應</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 font-medium">
+              ${pOrder.map(k => {
+                const p = planetsB[k];
+                if (!p) return '';
+                const h = getPlanetHouseIndex(p.longitude, housesA.cusps);
+                const desc = houseOverlayDescriptions[h] || '為該領域注入獨特能量';
+                return `
+                  <tr class="hover:bg-sky-50/60 transition">
+                    <td class="py-2.5 px-3">
+                      <div class="flex items-center gap-2">
+                        <span class="text-xl sm:text-2xl font-black text-sky-900">${p.symbol}</span>
+                        <div>
+                          <span class="text-sm font-black text-slate-950">${p.name}</span>
+                          <span class="text-xs text-slate-500 font-mono block">${p.formatted}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-center sm:text-left">
+                      <span class="inline-block px-3 py-1 rounded-lg bg-amber-100 text-amber-950 font-black text-xs sm:text-sm border border-amber-300">
+                        第 ${h} 宮
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-xs sm:text-sm text-slate-700 font-bold">
+                      ${desc}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+
+        // 右欄 2：跨盤關鍵相位表 (Inter-Chart Aspects)
+        const houseDiv = document.getElementById('houses_table_container');
+        if (aspectsAB.length === 0) {
+          houseDiv.innerHTML = `
+            <div class="col-span-2 p-4 rounded-2xl bg-stone-50 text-slate-500 text-center font-bold text-sm">
+              雙方行星間無主要容許度內的緊密相位，互動更偏向獨立自主。
+            </div>
+          `;
+        } else {
+          houseDiv.innerHTML = aspectsAB.slice(0, 8).map(asp => {
+            const isHard = (asp.angle === 90 || asp.angle === 180);
+            return `
+              <div class="p-3.5 rounded-2xl border-2 flex flex-col justify-between ${isHard ? 'bg-rose-50/70 border-rose-200' : 'bg-emerald-50/70 border-emerald-200'} shadow-2xs">
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="font-black text-sm text-slate-900 flex items-center gap-1.5">
+                    <span class="text-base text-amber-900">${asp.p1Symbol}</span>
+                    <span>${asp.p1}</span>
+                    <span class="font-bold text-xs px-1.5 py-0.5 rounded ${isHard ? 'bg-rose-200 text-rose-950' : 'bg-emerald-200 text-emerald-950'}">${asp.aspectSymbol} ${asp.aspect}</span>
+                    <span class="text-base text-sky-900">${asp.p2Symbol}</span>
+                    <span>${asp.p2}</span>
+                  </span>
+                  <span class="font-mono text-xs font-bold text-slate-500">容許 ${asp.orb}°</span>
+                </div>
+                <div class="text-[11px] text-slate-600 font-medium">
+                  ${isHard ? '⚡ 成長與磨合磨礪點，練習放下主觀成見、建立彈性邊界' : '🌿 能量自然流動，日常相處自帶默契與理解包容'}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // 右欄 3：愛倫院長生活魔藥處方 (雙人關係專屬調頻)
+        const rxDiv = document.getElementById('astro_rx_container');
+        rxDiv.innerHTML = `
+          <!-- 四元素天秤卡片 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#E2D9C8] text-slate-800">
+            <p class="font-black text-base sm:text-lg mb-3 flex items-center gap-2 text-slate-900">
+              <span>⚖️</span> <span>雙方四元素共振天秤</span>
+            </p>
+            <div class="grid grid-cols-4 gap-2 text-center text-xs font-black">
+              <div class="p-2 rounded-xl bg-rose-50 border border-rose-200">
+                <span class="text-rose-900 block mb-1">🔥 火象 (熱情/行動)</span>
+                <span class="text-amber-900 text-xs">A: ${elemA.fire}%</span><br>
+                <span class="text-sky-900 text-xs">B: ${elemB.fire}%</span>
+              </div>
+              <div class="p-2 rounded-xl bg-amber-50 border border-amber-200">
+                <span class="text-amber-900 block mb-1">🌱 土象 (務實/穩定)</span>
+                <span class="text-amber-900 text-xs">A: ${elemA.earth}%</span><br>
+                <span class="text-sky-900 text-xs">B: ${elemB.earth}%</span>
+              </div>
+              <div class="p-2 rounded-xl bg-sky-50 border border-sky-200">
+                <span class="text-sky-900 block mb-1">💨 風象 (思維/溝通)</span>
+                <span class="text-amber-900 text-xs">A: ${elemA.air}%</span><br>
+                <span class="text-sky-900 text-xs">B: ${elemB.air}%</span>
+              </div>
+              <div class="p-2 rounded-xl bg-indigo-50 border border-indigo-200">
+                <span class="text-indigo-900 block mb-1">💧 水象 (直覺/情感)</span>
+                <span class="text-amber-900 text-xs">A: ${elemA.water}%</span><br>
+                <span class="text-sky-900 text-xs">B: ${elemB.water}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 愛倫院長調頻處方 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-950 font-medium">
+            <p class="font-black text-base sm:text-lg mb-2 flex items-center gap-2">
+              <span>🧪</span> <span>愛倫院長合盤相處生活魔藥</span>
+            </p>
+            <div class="space-y-2 text-xs sm:text-sm text-stone-800 leading-relaxed font-bold">
+              <p>🌿 <span class="text-amber-950">專屬香氣配方：</span>羅馬洋甘菊 2 滴 ＋ 甜橙 3 滴。在共處空間擴香，撫平對話時的急躁，讓每一次溝通都回到溫潤的同理頻率。</p>
+              <p>💎 <span class="text-amber-950">能量共鳴水晶：</span>綠簾石搭粉晶。在客廳或書房放置原礦，穩定雙方心輪的包容磁場。</p>
+              <p>🕯️ <span class="text-amber-950">日常微儀式：</span>每日睡前 10 分鐘「無手機泡茶時光」，輪流分享今天最值得感謝彼此的一個小舉動。</p>
+              <p>✨ <span class="text-amber-950">關係共振肯定金句：</span>「我們是彼此生命的鏡子與禮物，在每一次磨合中看見更成熟的自己。」</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // ==========================================
+      // 分支二：組合中點盤 (Composite Chart Mode)
+      // ==========================================
+      if (currentAstroMode === 'composite') {
+        const nameA = document.getElementById('user_name_a').value.trim() || '甲方';
+        const dateA = document.getElementById('birth_date_a').value;
+        const timeA = document.getElementById('birth_time_a').value;
+        const cityA = getSelectedCity('birth_city_a');
+
+        const nameB = document.getElementById('user_name_b').value.trim() || '乙方';
+        const dateB = document.getElementById('birth_date_b').value;
+        const timeB = document.getElementById('birth_time_b').value;
+        const cityB = getSelectedCity('birth_city_b');
+
+        const applyDST = document.getElementById('chk_dst').checked;
+
+        const utcA = calculateUTCDatetime(dateA, timeA, cityA.tz, applyDST && isTaiwanDST(dateA) && cityA.country === 'TW');
+        const planetsA = AstroCalc.calculatePlanetaryPositions(utcA);
+
+        const utcB = calculateUTCDatetime(dateB, timeB, cityB.tz, applyDST && isTaiwanDST(dateB) && cityB.country === 'TW');
+        const planetsB = AstroCalc.calculatePlanetaryPositions(utcB);
+
+        // 組合中點行星計算
+        const compPlanets = calculateCompositePlanets(planetsA, planetsB);
+
+        // 組合中點時間與地點（取兩者中點時間與中點經緯度推導宮位）
+        const midUtcDate = new Date(Math.round((utcA.getTime() + utcB.getTime()) / 2));
+        const midLat = (cityA.lat + cityB.lat) / 2;
+        const midLng = (cityA.lng + cityB.lng) / 2;
+        const compHouses = AstroCalc.calculateHousesAndAxes(midUtcDate, midLat, midLng, hSys);
+        const compAspects = AstroCalc.calculateAspects(compPlanets);
+
+        // 更新抬頭資訊
+        const midLocalDt = calculateMidpointDate(dateA, timeA, dateB, timeB);
+        const midInfo = format癒見占星魔法DateTime(midLocalDt, cityA.tz);
+
+        document.getElementById('disp_name').textContent = `${nameA} & ${nameB}`;
+        document.getElementById('disp_gender').textContent = '合體關係實體';
+        document.getElementById('disp_natal_date').textContent = midInfo.dateStr;
+        document.getElementById('disp_natal_time').textContent = midInfo.timeStr;
+        document.getElementById('disp_natal_place').textContent = `中點時空坐標`;
+        document.getElementById('disp_natal_hsys').textContent = hSysName;
+
+        const transitHeader = document.getElementById('divination_header_transit');
+        if (transitHeader) {
+          transitHeader.innerHTML = `
+            <h2 class="text-xl sm:text-2xl font-black text-purple-950 mb-0.5">Composite Chart</h2>
+            <div class="flex items-center justify-end gap-2 mb-1">
+              <span class="px-2 py-0.5 rounded bg-purple-200/80 text-purple-950 font-black text-xs">第三生命體</span>
+              <span class="font-black text-slate-900 text-sm">關係本質</span>
+            </div>
+            <p class="text-slate-900 font-mono font-bold text-xs sm:text-sm">黃道最短弧中點</p>
+            <p class="text-slate-800 font-mono font-bold text-xs sm:text-sm">共同靈魂功課</p>
+            <p class="text-slate-800 font-bold text-xs sm:text-sm">合盤命運軌跡</p>
+            <p class="text-stone-600 font-bold text-xs">獨立能量場 · <span class="text-purple-800 font-black">實體運作</span></p>
+          `;
+        }
+
+        // 更新四軸指標卡
+        const summaryDiv = document.getElementById('astro_summary_cards');
+        if (summaryDiv) {
+          summaryDiv.innerHTML = `
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">組合上升 (Comp Asc)</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${compHouses.asc.formatted}</p>
+              <p class="text-[11px] text-slate-500 mt-1">外界眼中這段關係的氛圍與樣貌</p>
+            </div>
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">組合天頂 (Comp MC)</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${compHouses.mc.formatted}</p>
+              <p class="text-[11px] text-slate-500 mt-1">兩人攜手創造的社會成就與方向</p>
+            </div>
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">組合太陽 (Comp Sun)</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${compPlanets.Sun.formatted}</p>
+              <p class="text-[11px] text-slate-500 mt-1">這段關係共同追尋的使命核心</p>
+            </div>
+            <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
+              <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">組合月亮 (Comp Moon)</p>
+              <p class="text-sm sm:text-base font-black text-slate-800">${compPlanets.Moon.formatted}</p>
+              <p class="text-[11px] text-slate-500 mt-1">私下共處時的情感默契與底層安全感</p>
+            </div>
+          `;
+        }
+
+        // 繪製單輪組合星盤 (不畫外輪)
+        renderAstrologyWheel(compPlanets, compHouses, compAspects, null);
+
+        // 右欄 1：組合行星落宮明細表
+        const tableDiv = document.getElementById('planets_table_container');
+        const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode'];
+        tableDiv.innerHTML = `
+          <table class="w-full text-left text-sm sm:text-base">
+            <thead>
+              <tr class="bg-purple-100/60 border-b-2 border-purple-300 text-slate-950 font-black">
+                <th class="py-2.5 px-3">組合星曜</th>
+                <th class="py-2.5 px-3">落入星座度數</th>
+                <th class="py-2.5 px-3 text-center">宮位</th>
+                <th class="py-2.5 px-3">關係本質象徵</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 font-medium">
+              ${pOrder.map(k => {
+                const p = compPlanets[k];
+                if (!p) return '';
+                const h = getPlanetHouseIndex(p.longitude, compHouses.cusps);
+                const meanings = {
+                  'Sun': '兩人結合後共同散發的生命光芒與目標',
+                  'Moon': '共處私密時光的真實情緒感受與情感寄託',
+                  'Mercury': '日常溝通交流、共同決策與生活習慣節奏',
+                  'Venus': '相處時的和諧度、美感浪漫與共享財物觀',
+                  'Mars': '面對外部挑戰時的共同行動力與衝勁',
+                  'Jupiter': '關係中最大的恩典、包容度與運勢擴展領域',
+                  'Saturn': '這段感情最嚴肅的現實考驗與承諾支柱',
+                  'NorthNode': '靈魂共同進化的演變方向與成長課題'
+                };
+                return `
+                  <tr class="hover:bg-purple-50/60 transition">
+                    <td class="py-2.5 px-3">
+                      <div class="flex items-center gap-2">
+                        <span class="text-xl sm:text-2xl font-black text-purple-900">${p.symbol}</span>
+                        <span class="text-sm font-black text-slate-950">${p.name}</span>
+                      </div>
+                    </td>
+                    <td class="py-2.5 px-3 font-mono font-bold text-slate-900">
+                      ${p.formatted}
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                      <span class="inline-block px-3 py-1 rounded-lg bg-purple-100 text-purple-950 font-black text-xs sm:text-sm border border-purple-300">
+                        第 ${h} 宮
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-xs sm:text-sm text-slate-700 font-bold">
+                      ${meanings[k] || '關係核心動力'}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+
+        // 右欄 2：組合宮位起點表
+        const houseDiv = document.getElementById('houses_table_container');
+        const cardinalLabels = { 1: '組合上升', 4: '組合天底', 7: '組合下降', 10: '組合天頂' };
+        houseDiv.innerHTML = compHouses.cusps.map(c => {
+          const isCardinal = [1, 4, 7, 10].includes(c.house);
+          return `
+            <div class="p-3.5 rounded-2xl border-2 flex items-center justify-between ${isCardinal ? 'bg-purple-100/60 border-purple-400 shadow-xs' : 'bg-stone-50 border-stone-200'}">
+              <div class="flex items-center gap-2">
+                <span class="font-black text-base ${isCardinal ? 'text-purple-950' : 'text-slate-900'}">第 ${c.house} 宮</span>
+                ${isCardinal ? `<span class="px-2 py-0.5 rounded-md bg-purple-300 text-purple-950 text-xs font-black">${cardinalLabels[c.house]}</span>` : ''}
+              </div>
+              <span class="font-mono text-base font-black text-slate-900">${c.formatted}</span>
+            </div>
+          `;
+        }).join('');
+
+        // 右欄 3：組合盤生活魔藥指南
+        const rxDiv = document.getElementById('astro_rx_container');
+        rxDiv.innerHTML = `
+          <div class="p-4 sm:p-5 rounded-2xl bg-purple-100/90 border-2 border-purple-300 text-purple-950 font-medium">
+            <p class="font-black text-base sm:text-lg mb-1.5 flex items-center gap-2">
+              <span>🔮</span> <span>組合盤核心使命：太陽【${compPlanets.Sun.sign}】× 月亮【${compPlanets.Moon.sign}】</span>
+            </p>
+            <p class="text-xs sm:text-sm font-bold text-stone-800 leading-relaxed">
+              組合盤是「你們兩人在一起後孕育出的第三個生命體」。太陽落入【${compPlanets.Sun.sign}】昭示著這段關係是以實踐共同理想、相互扶持為最高原則；月亮落入【${compPlanets.Moon.sign}】則提醒兩人在繁瑣的生活中，一定要建立獨屬於你們的親密默契儀式。
+            </p>
+          </div>
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#E2D9C8] text-slate-800">
+            <p class="font-black text-base sm:text-lg mb-1.5 flex items-center gap-2">
+              <span>🌿</span> <span>愛倫院長組合能量調頻配方</span>
+            </p>
+            <div class="space-y-1.5 text-xs sm:text-sm text-stone-800 font-bold leading-relaxed">
+              <p>🪔 <span class="text-purple-950">空間守護芳香：</span>乳香 2 滴 ＋ 佛手柑 3 滴，淨化外在紛擾，鞏固兩人的神聖私密場域。</p>
+              <p>🔮 <span class="text-purple-950">共同顯化微習慣：</span>每逢新月時，一起寫下未來一個月想共同完成的一件小確幸。</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // ==========================================
+      // 分支三：本命單盤 (Natal) 與 行運推運雙盤 (Transits)
+      // ==========================================
       const userName = document.getElementById('user_name').value.trim() || 'YuYang';
       const userGender = document.getElementById('user_gender').value;
       const dateStr = document.getElementById('birth_date').value;
       const timeStr = document.getElementById('birth_time').value;
-      const city = getSelectedCity();
+      const city = getSelectedCity('birth_city');
       const applyDST = document.getElementById('chk_dst').checked;
-      const hSys = document.getElementById('house_system').value;
 
       // 1. 精準換算本命盤 UTC Date
-      const utcDate = calculateUTCDatetime(dateStr, timeStr, city.tz, applyDST);
+      const utcDate = calculateUTCDatetime(dateStr, timeStr, city.tz, applyDST && isTaiwanDST(dateStr) && city.country === 'TW');
 
       // 2. 本命盤行星與宮位計算
       const planets = AstroCalc.calculatePlanetaryPositions(utcDate);
@@ -1088,43 +1806,36 @@
       const transitUtcDate = new Date(currentTransitDate.getTime() - city.tz * 3600000);
       const transitPlanets = AstroCalc.calculatePlanetaryPositions(transitUtcDate);
 
-      // 4. 更新 癒見占星魔法 經典雙盤抬頭資訊
+      // 4. 更新經典雙盤抬頭資訊
       const nDt = new Date(`${dateStr}T${timeStr}:00`);
       const natalAstroInfo = format癒見占星魔法DateTime(nDt, city.tz);
       const transitAstroInfo = format癒見占星魔法DateTime(currentTransitDate, city.tz);
 
-      const hSysName = hSys === 'whole_sign' ? 'Whole Sign' : (hSys === 'equal' ? 'Equal' : 'Placidus');
-
       document.getElementById('disp_name').textContent = userName;
-      document.getElementById('disp_gender').textContent = userGender;
+      document.getElementById('disp_gender').textContent = userGender === 'Female' ? '女 ♀' : '男 ♂';
       document.getElementById('disp_natal_date').textContent = natalAstroInfo.dateStr;
       document.getElementById('disp_natal_time').textContent = natalAstroInfo.timeStr;
       document.getElementById('disp_natal_place').textContent = `${city.name}, Taiwan`;
       document.getElementById('disp_natal_hsys').textContent = hSysName;
 
-      document.getElementById('disp_transit_date').textContent = transitAstroInfo.dateStr;
-      document.getElementById('disp_transit_time').textContent = transitAstroInfo.timeStr;
-      document.getElementById('disp_transit_place').textContent = `${city.name}, Taiwan`;
-      document.getElementById('disp_transit_hsys').textContent = hSysName;
-
-      // 更新分宮制標籤
-      const hLabel = document.getElementById('house_type_label');
-      if (hLabel) {
-        hLabel.textContent = hSys === 'whole_sign' ? '整宮制 (Whole Sign)' : (hSys === 'equal' ? '等宮制 (Equal)' : '普拉西度制 (Placidus)');
+      const transitHeader = document.getElementById('divination_header_transit');
+      if (transitHeader) {
+        transitHeader.innerHTML = `
+          <h2 class="text-xl sm:text-2xl font-black text-slate-950 mb-0.5">Transits</h2>
+          <div class="flex items-center justify-end gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded bg-sky-200/80 text-sky-950 font-black text-xs">Outer 行運外盤</span>
+            <span class="font-black text-slate-900 text-sm">即時推運</span>
+          </div>
+          <p class="text-slate-900 font-mono font-bold text-xs sm:text-sm" id="disp_transit_date">${transitAstroInfo.dateStr}</p>
+          <p class="text-slate-800 font-mono font-bold text-xs sm:text-sm" id="disp_transit_time">${transitAstroInfo.timeStr}</p>
+          <p class="text-slate-800 font-bold text-xs sm:text-sm" id="disp_transit_place">${city.name}, Taiwan</p>
+          <p class="text-stone-600 font-bold text-xs">動態星象 · <span id="disp_transit_hsys" class="text-amber-800 font-black">同宮推演</span></p>
+        `;
       }
 
       // 5. 更新四軸指標卡
-      const kpiAsc = document.getElementById('kpi_asc');
-      const kpiMc = document.getElementById('kpi_mc');
-      const kpiSun = document.getElementById('kpi_sun');
-      const kpiMoon = document.getElementById('kpi_moon');
-      if (kpiAsc) kpiAsc.textContent = houses.asc.formatted;
-      if (kpiMc) kpiMc.textContent = houses.mc.formatted;
-      if (kpiSun) kpiSun.textContent = planets.Sun.formatted;
-      if (kpiMoon) kpiMoon.textContent = planets.Moon.formatted;
-
       const summaryDiv = document.getElementById('astro_summary_cards');
-      if (summaryDiv && !kpiAsc) {
+      if (summaryDiv) {
         summaryDiv.innerHTML = `
           <div class="bg-white border border-[#E2D9C8] rounded-2xl p-4 shadow-xs">
             <p class="text-[11px] font-bold text-[#987315] uppercase tracking-wider mb-0.5">上升點 (Ascendant · As)</p>
@@ -1149,24 +1860,12 @@
         `;
       }
 
-      // 6. 繪製 癒見占星魔法 圓形星盤 (雙輪模式)
-      renderAstrologyWheel(planets, houses, aspects, transitPlanets);
+      // 6. 繪製圓形星盤
+      renderAstrologyWheel(planets, houses, aspects, isBiWheelMode ? transitPlanets : null);
 
-      // 7. 生成行星落點表格
+      // 7. 生成本命行星落點表格
       const tableDiv = document.getElementById('planets_table_container');
       const pOrder = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'NorthNode', 'SouthNode'];
-      
-      // 輔助判斷行星落入第幾宮 (支援全黃道 360 度迴旋)
-      function getPlanetHouse(lon) {
-        for (let i = 0; i < 12; i++) {
-          const c1 = houses.cusps[i].longitude;
-          const c2 = houses.cusps[i === 11 ? 0 : i + 1].longitude;
-          const span = ((c2 - c1) % 360 + 360) % 360;
-          const diff = ((lon - c1) % 360 + 360) % 360;
-          if (diff < span) return i + 1;
-        }
-        return 1;
-      }
 
       tableDiv.innerHTML = `
         <table class="w-full text-left text-sm sm:text-base">
@@ -1182,7 +1881,7 @@
             ${pOrder.map(k => {
               const p = planets[k];
               if (!p) return '';
-              const h = getPlanetHouse(p.longitude);
+              const h = getPlanetHouseIndex(p.longitude, houses.cusps);
               return `
                 <tr class="hover:bg-amber-50/70 transition">
                   <td class="py-3 px-3">
@@ -1211,7 +1910,7 @@
         </table>
       `;
 
-      // 6. 生成 12 宮位起點表 (高亮四軸宮位 · 比照紫微斗數大器卡片)
+      // 8. 生成 12 宮位起點表
       const houseDiv = document.getElementById('houses_table_container');
       const cardinalLabels = { 1: '上升 Asc', 4: '天底 IC', 7: '下降 Dsc', 10: '天頂 MC' };
       houseDiv.innerHTML = houses.cusps.map(c => {
@@ -1227,21 +1926,21 @@
         `;
       }).join('');
 
-      // 7. 愛倫院長命主星生活魔藥處方 (大字體舒適閱讀)
+      // 9. 愛倫院長命主星生活魔藥處方
       const ascSign = houses.asc.sign;
       const rulerMap = {
-        '白羊座': { planet: '火星', advice: '以純粹的勇氣開拓新賽道，但學會給衝刺後的自己留下一壺安靜調頻的茶。' },
-        '金牛座': { planet: '金星', advice: '用五感的沉穩享受生活，富足來自於身心的安定，而非倉促的追逐。' },
-        '雙子座': { planet: '水星', advice: '好奇心是你的魔法羽翼，練習將散落的靈感收斂成一套深刻的知識體系。' },
+        '白羊座': { planet: '火星', advice: '以純粹的勇氣開拓新賽道，給衝刺後的自己留下一壺安靜調頻的茶。' },
+        '金牛座': { planet: '金星', advice: '用五感的沉穩享受生活，富足來自身心的安定，而非倉促的追逐。' },
+        '雙子座': { planet: '水星', advice: '好奇心是你的魔法羽翼，練習將散落的靈感收斂成深刻的知識體系。' },
         '巨蟹座': { planet: '月亮', advice: '情緒是心靈的潮汐，先餵飽自己的安全感，才能溫柔滋養身邊所有人。' },
-        '獅子座': { planet: '太陽', advice: '你生來就該自帶光芒，但真正的王者從不需要大聲喧嘩，定力即是威嚴。' },
-        '處女座': { planet: '水星', advice: '細節是神聖的居所，放下對絕對完美的執念，接納生活本身的生動與缺憾。' },
-        '天秤座': { planet: '金星', advice: '在關係的鏡子裡看見優雅的自己，建立溫和而堅定的界線，才是最高的情商。' },
+        '獅子座': { planet: '太陽', advice: '生來就自帶光芒，真正的王者從不需要大聲喧嘩，定力即是威嚴。' },
+        '處女座': { planet: '水星', advice: '細節是神聖的居所，放下絕對完美的執念，接納生活本身的生動。' },
+        '天秤座': { planet: '金星', advice: '在關係的鏡子裡看見優雅的自己，建立溫和而堅定的界線才是高情商。' },
         '天蠍座': { planet: '冥王星', advice: '每一次低谷都是靈魂的淬煉蛻變，信任涅槃重生的力量，你擁有翻盤王牌。' },
         '射手座': { planet: '木星', advice: '朝向遠方的星空射出利箭，保持赤子般的哲學樂觀，世界是你的修煉場。' },
-        '摩羯座': { planet: '土星', advice: '時間是你最忠實的盟友，踏實砌好每一塊磚石，歲月必將賦予你皇冠。' },
-        '水瓶座': { planet: '天王星', advice: '與眾不同是你的天賦印記，站在未來的維度思考，引領當下的變革。' },
-        '雙魚座': { planet: '海王星', advice: '浩瀚的直覺與夢想是你的靈感寶庫，用生活儀式為靈魂扎根，大地正守護著你。' }
+        '摩羯座': { planet: '土星', advice: '時間是最忠實的盟友，踏實砌好每一塊磚石，歲月必將賦予你皇冠。' },
+        '水瓶座': { planet: '天王星', advice: '與眾不同是天賦印記，站在未來的維度思考，引領當下的變革。' },
+        '雙魚座': { planet: '海王星', advice: '浩瀚的直覺與夢想是靈感寶庫，用生活儀式為靈魂扎根，大地正守護著你。' }
       };
 
       const rulerInfo = rulerMap[ascSign] || rulerMap['白羊座'];
@@ -1257,7 +1956,7 @@
           <p class="font-black text-base sm:text-lg mb-1.5 flex items-center gap-2">
             <span>🔮</span> <span>日月雙核調頻指南</span>
           </p>
-          <p class="text-sm sm:text-base font-bold text-stone-800 leading-relaxed">太陽【${planets.Sun.sign}】指引你發光的核心動能，月亮【${planets.Moon.sign}】則是你在深夜最需要被安撫的情緒容器。當太陽與月亮學會互相握手，人生的大局自會豁然開朗。</p>
+          <p class="text-sm sm:text-base font-bold text-stone-800 leading-relaxed">太陽【${planets.Sun.sign}】指引你發光的核心動能，月亮【${planets.Moon.sign}】則是你在深夜最需要被安撫的情緒容器。當太陽與月亮攜手共鳴，人生的大局自會豁然開朗。</p>
         </div>
       `;
     }
@@ -1282,6 +1981,52 @@
     // 事件綁定
     document.getElementById('astro_form').addEventListener('submit', (e) => {
       e.preventDefault();
+      renderAstrologyChart();
+    });
+
+    // 模式頁籤事件綁定
+    document.getElementById('tab_natal').addEventListener('click', () => setAstroMode('natal'));
+    document.getElementById('tab_transits').addEventListener('click', () => setAstroMode('transits'));
+    document.getElementById('tab_synastry').addEventListener('click', () => setAstroMode('synastry'));
+    document.getElementById('tab_composite').addEventListener('click', () => setAstroMode('composite'));
+
+    // 一鍵互換 A/B 視角 (A ⇄ B)
+    document.getElementById('btn_swap_ab').addEventListener('click', () => {
+      const fields = [
+        { a: 'user_name_a', b: 'user_name_b' },
+        { a: 'user_gender_a', b: 'user_gender_b' },
+        { a: 'birth_date_a', b: 'birth_date_b' },
+        { a: 'birth_time_a', b: 'birth_time_b' },
+        { a: 'birth_city_a', b: 'birth_city_b' }
+      ];
+
+      fields.forEach(f => {
+        const elA = document.getElementById(f.a);
+        const elB = document.getElementById(f.b);
+        if (elA && elB) {
+          const temp = elA.value;
+          elA.value = elB.value;
+          elB.value = temp;
+        }
+      });
+
+      renderAstrologyChart();
+    });
+
+    // 載入示範伴侶資料
+    document.getElementById('btn_sample_couple').addEventListener('click', () => {
+      document.getElementById('user_name_a').value = '愛倫院長';
+      document.getElementById('user_gender_a').value = 'Female';
+      document.getElementById('birth_date_a').value = '1988-08-18';
+      document.getElementById('birth_time_a').value = '12:00';
+      document.getElementById('birth_city_a').value = 'tw_taipei';
+
+      document.getElementById('user_name_b').value = '靈魂伴侶';
+      document.getElementById('user_gender_b').value = 'Male';
+      document.getElementById('birth_date_b').value = '1990-01-27';
+      document.getElementById('birth_time_b').value = '11:36';
+      document.getElementById('birth_city_b').value = 'tw_taipei';
+
       renderAstrologyChart();
     });
 
@@ -1323,6 +2068,15 @@
       if (window.MeetJoyProfiles) {
         MeetJoyProfiles.mount('#universal_profile_bar', {
           getCurrentData: () => {
+            if (currentAstroMode === 'synastry' || currentAstroMode === 'composite') {
+              return {
+                name: document.getElementById('user_name_a').value.trim() || '占星盤A',
+                gender: document.getElementById('user_gender_a').value.toLowerCase().includes('female') ? 'female' : 'male',
+                birthDate: document.getElementById('birth_date_a').value,
+                birthTime: document.getElementById('birth_time_a').value,
+                birthCity: document.getElementById('birth_city_a').value
+              };
+            }
             return {
               name: document.getElementById('user_name').value.trim() || '占星盤',
               gender: document.getElementById('user_gender').value.toLowerCase().includes('female') ? 'female' : 'male',
@@ -1332,21 +2086,28 @@
             };
           },
           onSelect: (profile) => {
+            const isDual = (currentAstroMode === 'synastry' || currentAstroMode === 'composite');
+            const nameTarget = isDual ? 'user_name_a' : 'user_name';
+            const genderTarget = isDual ? 'user_gender_a' : 'user_gender';
+            const dateTarget = isDual ? 'birth_date_a' : 'birth_date';
+            const timeTarget = isDual ? 'birth_time_a' : 'birth_time';
+            const cityTarget = isDual ? 'birth_city_a' : 'birth_city';
+
             if (profile.name && profile.name !== '未命名') {
-              document.getElementById('user_name').value = profile.name;
+              document.getElementById(nameTarget).value = profile.name;
             }
             if (profile.gender) {
-              document.getElementById('user_gender').value = profile.gender === 'female' ? 'Female' : 'Male';
+              document.getElementById(genderTarget).value = profile.gender === 'female' ? 'Female' : 'Male';
             }
             if (profile.birthDate) {
-              document.getElementById('birth_date').value = profile.birthDate;
+              document.getElementById(dateTarget).value = profile.birthDate;
             }
             if (profile.birthTime) {
-              document.getElementById('birth_time').value = profile.birthTime;
+              document.getElementById(timeTarget).value = profile.birthTime;
             }
             if (profile.birthCity) {
-              const citySel = document.getElementById('birth_city');
-              if (citySel.querySelector(`option[value="${profile.birthCity}"]`)) {
+              const citySel = document.getElementById(cityTarget);
+              if (citySel && citySel.querySelector(`option[value="${profile.birthCity}"]`)) {
                 citySel.value = profile.birthCity;
               }
             }
