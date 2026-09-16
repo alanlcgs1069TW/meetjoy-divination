@@ -572,4 +572,14 @@
     updateAuth: updateNavAuthStatus,
     departments: DEPARTMENTS
   };
+
+  // 自動載入版權與防複製保護模組 (MeetJoy Protect)
+  if (!window.MeetJoyProtect) {
+    const pScript = document.createElement('script');
+    const currentScript = document.currentScript || Array.from(document.querySelectorAll('script')).find(s => s.src && s.src.includes('meetjoy-nav.js'));
+    const basePath = currentScript && currentScript.src ? currentScript.src.replace(/meetjoy-nav\.js.*$/, '') : './js/';
+    pScript.src = basePath + 'meetjoy-protect.js';
+    pScript.defer = true;
+    document.head.appendChild(pScript);
+  }
 })();
