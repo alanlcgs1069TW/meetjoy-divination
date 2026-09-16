@@ -81,37 +81,123 @@
         </div>
       </div>
 
-      <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
-      <div id="universal_profile_bar" class="mb-4"></div>
+      <!-- 模式切換按鈕：本命誕生牌陣 vs 雙人生命撲克合盤 -->
+      <div class="flex items-center gap-3 mb-6 border-b border-[#EADFC7] pb-4">
+        <button type="button" id="btn_card_mode_single" onclick="switchCardMode('single')" class="px-5 py-2.5 rounded-xl font-bold text-sm bg-[#2E3829] text-[#F7E7CE] shadow-sm transition flex items-center gap-2">
+          <span>🌟 個人本命牌陣</span>
+        </button>
+        <button type="button" id="btn_card_mode_synastry" onclick="switchCardMode('synastry')" class="px-5 py-2.5 rounded-xl font-bold text-sm bg-white hover:bg-stone-100 text-stone-700 border border-stone-300 transition flex items-center gap-2">
+          <span>💞 雙人生命撲克合盤</span>
+        </button>
+      </div>
 
-      <!-- 輸入表單 -->
-      <form id="destinyCardForm" onsubmit="handleCalculateCards(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">您的姓名 / 稱呼</label>
-          <input type="text" id="cardNameInput" placeholder="例如：愛倫 (可不填)" value="學員個案" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+      <!-- 單人本命表單區塊 -->
+      <div id="single_card_form_wrap">
+        <!-- 🔮 全站通用命盤生日庫與會員專屬檔案連通組件 -->
+        <div id="universal_profile_bar" class="mb-4"></div>
+
+        <!-- 輸入表單 -->
+        <form id="destinyCardForm" onsubmit="handleCalculateCards(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">您的姓名 / 稱呼</label>
+            <input type="text" id="cardNameInput" placeholder="例如：愛倫 (可不填)" value="學員個案" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">出生日期 (公曆) *</label>
+            <input type="date" id="cardDateInput" required value="1988-08-18" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">欲推算之年齡 / 流年歲數</label>
+            <input type="number" id="cardAgeInput" min="0" max="90" placeholder="預設依當前年齡" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+          </div>
+
+          <div class="sm:col-span-3 flex flex-wrap items-center justify-end gap-2.5 mt-2">
+            <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '撲克命牌生命之書神聖牌陣' })" class="px-5 py-3 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 border border-amber-900/20 text-sm">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>匯出 PDF 報告</span>
+            </button>
+            <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+              <i class="fa-solid fa-clone"></i>
+              <span>解開生命撲克密碼</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 雙人合盤表單區塊 (預設隱藏) -->
+      <div id="synastry_card_form_wrap" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-amber-50/40 rounded-2xl border border-amber-200/60 mb-4">
+          <!-- 甲方 (A) -->
+          <div class="p-4 bg-white rounded-xl border border-amber-100 shadow-sm space-y-3">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-2">
+              <span class="text-xs font-bold text-[#536349] uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-user text-amber-600"></i>
+                <span>甲方 (Partner A)</span>
+              </span>
+              <select id="profile_select_card_a" onchange="loadCardProfile('a', this.value)" class="text-xs bg-stone-50 border border-stone-300 rounded-lg px-2 py-1 outline-none">
+                <option value="">📁 從命盤庫帶入 A...</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-stone-600 mb-1">甲方姓名</label>
+                <input type="text" id="cardNameA" value="甲方 (案主)" class="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-sm bg-stone-50/50">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-stone-600 mb-1">甲方公曆生日</label>
+                <input type="date" id="cardDateA" value="1988-08-18" class="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-sm bg-stone-50/50">
+              </div>
+            </div>
+          </div>
+
+          <!-- 乙方 (B) -->
+          <div class="p-4 bg-white rounded-xl border border-amber-100 shadow-sm space-y-3">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-2">
+              <span class="text-xs font-bold text-[#536349] uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-heart text-rose-500"></i>
+                <span>乙方 (Partner B)</span>
+              </span>
+              <select id="profile_select_card_b" onchange="loadCardProfile('b', this.value)" class="text-xs bg-stone-50 border border-stone-300 rounded-lg px-2 py-1 outline-none">
+                <option value="">📁 從命盤庫帶入 B...</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-stone-600 mb-1">乙方姓名</label>
+                <input type="text" id="cardNameB" value="乙方 (伴侶)" class="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-sm bg-stone-50/50">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-stone-600 mb-1">乙方公曆生日</label>
+                <input type="date" id="cardDateB" value="1990-03-25" class="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-sm bg-stone-50/50">
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">出生日期 (公曆) *</label>
-          <input type="date" id="cardDateInput" required value="1988-08-18" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="swapCardAB()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-stone-100 hover:bg-stone-200 text-stone-700 transition flex items-center gap-1">
+              <i class="fa-solid fa-arrow-right-arrow-left"></i>
+              <span>A ⇄ B 視角互換</span>
+            </button>
+            <button type="button" onclick="loadSampleCardSynastry()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 transition">
+              載入示範情侶組合
+            </button>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '撲克命牌雙人合盤報告' })" class="px-5 py-2.5 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 border border-amber-900/20 text-sm">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>匯出合盤 PDF</span>
+            </button>
+            <button type="button" onclick="handleCalculateCardsSynastry()" class="px-8 py-2.5 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+              <i class="fa-solid fa-heart-circle-check"></i>
+              <span>解讀雙人撲克合盤</span>
+            </button>
+          </div>
         </div>
-
-        <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">欲推算之年齡 / 流年歲數</label>
-          <input type="number" id="cardAgeInput" min="0" max="90" placeholder="預設依當前年齡" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 focus:border-[#C8A97E] focus:ring-2 focus:ring-[#C8A97E]/30 outline-none text-sm bg-stone-50/50">
-        </div>
-
-        <div class="sm:col-span-3 flex flex-wrap items-center justify-end gap-2.5 mt-2">
-          <button type="button" onclick="MeetJoyPDF.exportPDF({ title: '撲克命牌生命之書神聖牌陣' })" class="px-5 py-3 bg-[#C8A97E] hover:bg-[#B8986D] text-stone-900 font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 border border-amber-900/20 text-sm">
-            <i class="fa-solid fa-file-pdf"></i>
-            <span>匯出 PDF 報告</span>
-          </button>
-          <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#2E3829] hover:bg-[#3E4B37] text-[#F7E7CE] font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
-            <i class="fa-solid fa-clone"></i>
-            <span>解開生命撲克密碼</span>
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
 
     <!-- 排盤結果展示區 (動態填入) -->
@@ -337,6 +423,142 @@
 
     </div>
 
+    <!-- 雙人撲克合盤結果展示區 (預設隱藏) -->
+    <div id="synastryCardsResultContainer" class="space-y-8 hidden">
+
+      <!-- 1. 雙方本命牌雙子星對照大卡 -->
+      <div class="bg-gradient-to-br from-[#1E261D] via-[#2A3427] to-[#1E261D] text-amber-50 rounded-3xl p-6 sm:p-8 shadow-xl border border-[#C8A97E]/60 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <!-- A 方卡片 -->
+          <div class="flex items-center gap-4">
+            <div id="syn_card_visual_a" class="w-24 sm:w-32 h-36 sm:h-48 rounded-xl bg-white border-2 border-amber-300 shadow-xl overflow-hidden shrink-0"></div>
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#C8A97E] text-stone-900 mb-1">
+                <span id="syn_name_a_tag">甲方</span>
+              </div>
+              <h3 id="syn_card_title_a" class="text-xl sm:text-2xl font-black text-[#F7E7CE]">--</h3>
+              <p id="syn_card_suit_a" class="text-xs text-amber-200/80">--</p>
+              <p id="syn_card_sign_a" class="text-xs text-stone-400 mt-1">--</p>
+            </div>
+          </div>
+
+          <!-- 中央合盤標章與中點合體牌縮影 -->
+          <div class="flex flex-col items-center justify-center p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 text-center min-w-[200px]">
+            <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center mb-2">
+              <i class="fa-solid fa-heart-pulse text-lg"></i>
+            </div>
+            <div class="text-xs font-bold text-amber-300 mb-0.5">中點靈魂合體牌</div>
+            <div id="syn_midpoint_title" class="text-base font-black text-white">--</div>
+            <div id="syn_midpoint_desc" class="text-[11px] text-amber-200/70 mt-0.5">關係顯化之共同人格</div>
+          </div>
+
+          <!-- B 方卡片 -->
+          <div class="flex items-center gap-4">
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-400 text-stone-900 mb-1">
+                <span id="syn_name_b_tag">乙方</span>
+              </div>
+              <h3 id="syn_card_title_b" class="text-xl sm:text-2xl font-black text-[#F7E7CE]">--</h3>
+              <p id="syn_card_suit_b" class="text-xs text-amber-200/80">--</p>
+              <p id="syn_card_sign_b" class="text-xs text-stone-400 mt-1">--</p>
+            </div>
+            <div id="syn_card_visual_b" class="w-24 sm:w-32 h-36 sm:h-48 rounded-xl bg-white border-2 border-rose-400 shadow-xl overflow-hidden shrink-0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 中點合體牌深度解讀與前世業力牽絆 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 中點合體牌核心剖析 -->
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-[#E2D9C8] shadow-sm space-y-4">
+          <div class="flex items-center gap-2 border-b border-stone-100 pb-3">
+            <div class="w-8 h-8 rounded-full bg-amber-100 text-[#536349] flex items-center justify-center">
+              <i class="fa-solid fa-gem text-sm"></i>
+            </div>
+            <div>
+              <h4 class="text-base font-black text-[#1F261C]">中點靈魂合體牌核心課題</h4>
+              <p class="text-xs text-stone-500">以雙方公曆中點日推算之關係靈魂神聖原型</p>
+            </div>
+          </div>
+          <div class="flex gap-4 items-center">
+            <div id="syn_midpoint_visual" class="w-20 h-28 rounded-xl bg-white border border-stone-300 shadow-sm shrink-0 overflow-hidden"></div>
+            <div class="text-xs text-stone-700 leading-relaxed space-y-2" id="syn_midpoint_analysis">
+              <!-- 中點牌解讀 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 業力牌 (Karma Cards) 前世宿命牽絆 -->
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-[#E2D9C8] shadow-sm space-y-4">
+          <div class="flex items-center gap-2 border-b border-stone-100 pb-3">
+            <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center">
+              <i class="fa-solid fa-infinity text-sm"></i>
+            </div>
+            <div>
+              <h4 class="text-base font-black text-[#1F261C]">靈魂業力牌牽絆檢驗 (Karma Ties)</h4>
+              <p class="text-xs text-stone-500">檢視雙方誕生牌是否存在前世債務與恩典交集</p>
+            </div>
+          </div>
+          <div id="syn_karma_ties_content" class="text-xs text-stone-700 leading-relaxed space-y-3">
+            <!-- 業力牽絆動態注入 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 四大能量維度相容互補度 -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2D9C8] shadow-sm">
+        <h4 class="text-lg font-black text-[#1F261C] mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-[#536349]"></i>
+          <span>雙方生命撲克能量互動動力矩陣</span>
+        </h4>
+        <p class="text-xs text-stone-500 mb-6">從四大花色元素（水/情感、風/心智、土/物質、以太/靈性）評估日常相處共振點</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="syn_dimensions_grid">
+          <!-- 4 大維度卡片 -->
+        </div>
+      </div>
+
+      <!-- 4. 愛倫院長雙人撲克生活魔藥調頻處方 -->
+      <div class="bg-gradient-to-br from-[#FAF8F5] to-[#F1ECE1] border-2 border-[#C8A97E]/60 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-[#536349] uppercase mb-2">
+          <i class="fa-solid fa-mortar-pestle text-amber-600"></i>
+          <span>Alen's Magical Prescription · 愛倫院長關係魔藥處方</span>
+        </div>
+        <h4 class="text-xl font-black text-[#1F261C] mb-4">
+          雙人生命撲克生活調頻指引
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-stone-700">
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="font-bold text-[#536349] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-seedling"></i> 雙人能量調和精油
+            </div>
+            <p id="syn_oil_potion" class="text-stone-600 leading-relaxed">
+              動態調配中...
+            </p>
+          </div>
+
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="font-bold text-[#536349] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-ring"></i> 雙人晶石能量定錨
+            </div>
+            <p id="syn_crystal_potion" class="text-stone-600 leading-relaxed">
+              動態調配中...
+            </p>
+          </div>
+
+          <div class="bg-white/90 p-5 rounded-2xl border border-stone-200">
+            <div class="font-bold text-[#9B3B4C] mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-feather-pointed"></i> 雙人相處默契微儀式
+            </div>
+            <p id="syn_ritual_potion" class="text-stone-600 leading-relaxed italic font-serif">
+              動態調配中...
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- 底部預約諮詢區塊 (Call To Action) -->
     <div class="w-full max-w-4xl mx-auto mt-12 mb-6 px-3 sm:px-0 no-print">
       <div class="bg-gradient-to-br from-[#FFFDF9] via-[#FAF6ED] to-[#F4EDE0] border-2 border-[#C8A97E]/70 rounded-3xl p-6 sm:p-8 shadow-md text-center relative overflow-hidden">
@@ -382,7 +604,251 @@
   <script src="./js/destiny-cards-data.js"></script>
   <script src="./js/destiny-cards-engine.js"></script>
   <script>
+    let currentCardMode = 'single';
     let currentCardsResult = null;
+    let currentSynastryResult = null;
+
+    function switchCardMode(mode) {
+      currentCardMode = mode;
+      const btnSingle = document.getElementById('btn_card_mode_single');
+      const btnSyn = document.getElementById('btn_card_mode_synastry');
+      const singleWrap = document.getElementById('single_card_form_wrap');
+      const synWrap = document.getElementById('synastry_card_form_wrap');
+      const singleRes = document.getElementById('cardsResultContainer');
+      const synRes = document.getElementById('synastryCardsResultContainer');
+
+      if (mode === 'single') {
+        btnSingle.className = 'px-5 py-2.5 rounded-xl font-bold text-sm bg-[#2E3829] text-[#F7E7CE] shadow-sm transition flex items-center gap-2';
+        btnSyn.className = 'px-5 py-2.5 rounded-xl font-bold text-sm bg-white hover:bg-stone-100 text-stone-700 border border-stone-300 transition flex items-center gap-2';
+        singleWrap.classList.remove('hidden');
+        synWrap.classList.add('hidden');
+        if (currentCardsResult) singleRes.classList.remove('hidden');
+        synRes.classList.add('hidden');
+      } else {
+        btnSyn.className = 'px-5 py-2.5 rounded-xl font-bold text-sm bg-[#2E3829] text-[#F7E7CE] shadow-sm transition flex items-center gap-2';
+        btnSingle.className = 'px-5 py-2.5 rounded-xl font-bold text-sm bg-white hover:bg-stone-100 text-stone-700 border border-stone-300 transition flex items-center gap-2';
+        singleWrap.classList.add('hidden');
+        synWrap.classList.remove('hidden');
+        singleRes.classList.add('hidden');
+        if (currentSynastryResult) {
+          synRes.classList.remove('hidden');
+        } else {
+          handleCalculateCardsSynastry();
+        }
+      }
+    }
+
+    function loadCardProfile(target, profileId) {
+      if (!profileId || !window.MeetJoyProfiles) return;
+      const profiles = MeetJoyProfiles.getProfiles();
+      const p = profiles.find(item => item.id === profileId);
+      if (!p) return;
+
+      if (target === 'a') {
+        if (p.name) document.getElementById('cardNameA').value = p.name;
+        if (p.birthDate) document.getElementById('cardDateA').value = p.birthDate;
+      } else if (target === 'b') {
+        if (p.name) document.getElementById('cardNameB').value = p.name;
+        if (p.birthDate) document.getElementById('cardDateB').value = p.birthDate;
+      }
+      handleCalculateCardsSynastry();
+    }
+
+    function populateCardProfileSelects() {
+      if (!window.MeetJoyProfiles) return;
+      const profiles = MeetJoyProfiles.getProfiles();
+      const selA = document.getElementById('profile_select_card_a');
+      const selB = document.getElementById('profile_select_card_b');
+      if (!selA || !selB) return;
+
+      const optsHtml = '<option value="">📁 從命盤庫帶入...</option>' + 
+        profiles.map(p => `<option value="${p.id}">${p.name || '未命名'} (${p.birthDate || '無生日'})</option>`).join('');
+
+      selA.innerHTML = optsHtml.replace('從命盤庫帶入...', '📁 從命盤庫帶入 A...');
+      selB.innerHTML = optsHtml.replace('從命盤庫帶入...', '📁 從命盤庫帶入 B...');
+    }
+
+    function swapCardAB() {
+      const nameA = document.getElementById('cardNameA').value;
+      const dateA = document.getElementById('cardDateA').value;
+      const nameB = document.getElementById('cardNameB').value;
+      const dateB = document.getElementById('cardDateB').value;
+
+      document.getElementById('cardNameA').value = nameB;
+      document.getElementById('cardDateA').value = dateB;
+      document.getElementById('cardNameB').value = nameA;
+      document.getElementById('cardDateB').value = dateA;
+
+      handleCalculateCardsSynastry();
+    }
+
+    function loadSampleCardSynastry() {
+      document.getElementById('cardNameA').value = '愛倫 (示範)';
+      document.getElementById('cardDateA').value = '1988-08-18';
+      document.getElementById('cardNameB').value = '靈魂伴侶 (示範)';
+      document.getElementById('cardDateB').value = '1990-03-25';
+      handleCalculateCardsSynastry();
+    }
+
+    function handleCalculateCardsSynastry() {
+      const nameA = document.getElementById('cardNameA').value || '甲方';
+      const dateAVal = document.getElementById('cardDateA').value;
+      const nameB = document.getElementById('cardNameB').value || '乙方';
+      const dateBVal = document.getElementById('cardDateB').value;
+
+      if (!dateAVal || !dateBVal) return;
+
+      const [yA, mA, dA] = dateAVal.split('-').map(Number);
+      const [yB, mB, dB] = dateBVal.split('-').map(Number);
+
+      const resA = calculateDestinyCard(yA, mA, dA);
+      const resB = calculateDestinyCard(yB, mB, dB);
+
+      // 計算中點日期 (Midpoint Date)
+      const timeA = new Date(yA, mA - 1, dA).getTime();
+      const timeB = new Date(yB, mB - 1, dB).getTime();
+      const midTime = new Date((timeA + timeB) / 2);
+      const midY = midTime.getFullYear();
+      const midM = midTime.getMonth() + 1;
+      const midD = midTime.getDate();
+
+      const midRes = calculateDestinyCard(midY, midM, midD);
+
+      currentSynastryResult = {
+        partnerA: { name: nameA, res: resA, dateStr: `${yA}-${mA}-${dA}` },
+        partnerB: { name: nameB, res: resB, dateStr: `${yB}-${mB}-${dB}` },
+        midpoint: { dateStr: `${midY}年${midM}月${midD}日`, res: midRes }
+      };
+
+      renderCardsSynastryResult(currentSynastryResult);
+    }
+
+    function renderCardsSynastryResult(data) {
+      const container = document.getElementById('synastryCardsResultContainer');
+      container.classList.remove('hidden');
+
+      const a = data.partnerA;
+      const b = data.partnerB;
+      const mid = data.midpoint;
+
+      // 1. 雙方大卡
+      document.getElementById('syn_name_a_tag').innerText = `${a.name}`;
+      document.getElementById('syn_card_title_a').innerText = a.res.birthCard.zh;
+      document.getElementById('syn_card_suit_a').innerText = `${a.res.birthCard.suitZh} (${a.res.birthCard.element})`;
+      document.getElementById('syn_card_sign_a').innerText = `${a.res.sunSign.name} · 生日 ${a.dateStr}`;
+      document.getElementById('syn_card_visual_a').innerHTML = renderMiniCardHTML(a.res.birthCard);
+
+      document.getElementById('syn_name_b_tag').innerText = `${b.name}`;
+      document.getElementById('syn_card_title_b').innerText = b.res.birthCard.zh;
+      document.getElementById('syn_card_suit_b').innerText = `${b.res.birthCard.suitZh} (${b.res.birthCard.element})`;
+      document.getElementById('syn_card_sign_b').innerText = `${b.res.sunSign.name} · 生日 ${b.dateStr}`;
+      document.getElementById('syn_card_visual_b').innerHTML = renderMiniCardHTML(b.res.birthCard);
+
+      // 中央中點牌標籤
+      document.getElementById('syn_midpoint_title').innerText = mid.res.birthCard.zh;
+      document.getElementById('syn_midpoint_desc').innerText = `中點日：${mid.dateStr}`;
+
+      // 2. 中點牌解析
+      document.getElementById('syn_midpoint_visual').innerHTML = renderMiniCardHTML(mid.res.birthCard);
+      const suitThemes = {
+        'H': '這段關係的核心原型定錨在【情感滋養與愛之共鳴】。你們相處時最重要的是彼此情緒的流動與安全感，學會溫柔表達內心脆弱是兩人的靈魂修煉。',
+        'C': '這段關係的核心原型定錨在【心智啟發與思想交流】。你們是彼此的最佳靈感火花激盪者，喜歡深度對話、共同學習新知，溝通透明度是維繫感情的關鍵。',
+        'D': '這段關係的核心原型定錨在【價值實踐與生活共築】。你們重視現實財務安全、生活品味與長遠目標，共同累積實質成果能為關係注入強大的基石。',
+        'S': '這段關係的核心原型定錨在【靈魂蛻變與意志磨練】。這是一段帶著深度轉化考驗的深刻連結，能喚醒彼此內在最真實的勇氣與自我超越。'
+      };
+      document.getElementById('syn_midpoint_analysis').innerHTML = `
+        <div class="font-bold text-[#1F261C] text-sm">${mid.res.birthCard.zh} · 關係靈魂守護</div>
+        <p class="text-stone-600">${suitThemes[mid.res.birthCard.suit] || '這段關係乘載著獨特的命定課題，在日常中相互輝映。'}</p>
+        <p class="text-stone-500 text-[11px] bg-amber-50/70 p-2.5 rounded-xl border border-amber-200/50">
+          💡 <strong>愛倫院長指引</strong>：當兩人意見相左時，請將彼此放在「${mid.res.birthCard.rankName}」的共通高度——放下「誰對誰錯」的二元執著，專注於合體牌帶來的更高合作願景。
+        </p>
+      `;
+
+      // 3. 業力牌牽絆檢驗
+      const cardACode = a.res.birthCard.code;
+      const cardBCode = b.res.birthCard.code;
+      const karmaA = a.res.karmaCards;
+      const karmaB = b.res.karmaCards;
+
+      const ties = [];
+      if (cardACode === karmaB.first.code) {
+        ties.push(`<li>🔗 <strong>深度業力償還連結</strong>：${a.name} 是 ${b.name} 的「第一業力牌」。在靈魂劇本中，${b.name} 本能地想為 ${a.name} 付出與照顧，是前世恩怨平衡的清算者。</li>`);
+      }
+      if (cardACode === karmaB.second.code) {
+        ties.push(`<li>🎁 <strong>靈魂恩典賜予者</strong>：${a.name} 是 ${b.name} 的「第二業力牌」。${a.name} 能帶給 ${b.name} 豐盛的禮物、靈感啟蒙與精神療癒，是生命中的貴人。</li>`);
+      }
+      if (cardBCode === karmaA.first.code) {
+        ties.push(`<li>🔗 <strong>深度業力償還連結</strong>：${b.name} 是 ${a.name} 的「第一業力牌」。在靈魂劇本中，${a.name} 會不自覺地對 ${b.name} 充滿牽掛、責任感並渴望包容對方。</li>`);
+      }
+      if (cardBCode === karmaA.second.code) {
+        ties.push(`<li>🎁 <strong>靈魂恩典賜予者</strong>：${b.name} 是 ${a.name} 的「第二業力牌」。${b.name} 就像帶著光芒來到 ${a.name} 生命中，給予無條件的信任與溫暖滋養。</li>`);
+      }
+
+      if (ties.length === 0) {
+        // 同花色或特殊連結
+        if (a.res.birthCard.suit === b.res.birthCard.suit) {
+          ties.push(`<li>🌱 <strong>同源花色靈魂鏡像</strong>：兩人皆為【${a.res.birthCard.suitZh}】靈魂！在情感感知與本能直覺上有著極高的默契與同頻率，能一眼看透對方的想法。</li>`);
+        } else {
+          ties.push(`<li>✨ <strong>自然緣分探索夥伴</strong>：雙方未帶有沉重的前世宿命業力負擔，這是一段自由度高、能在此生由彼此自由譜寫劇本的「清爽健康緣分」。</li>`);
+        }
+      }
+
+      document.getElementById('syn_karma_ties_content').innerHTML = `
+        <ul class="space-y-2 text-stone-700">
+          ${ties.join('')}
+        </ul>
+        <div class="mt-3 p-3 bg-stone-50 rounded-xl border border-stone-200 text-[11px] text-stone-500">
+          📜 <strong>業力法則解碼</strong>：撲克命牌中互為業力牌的機率極其稀有。每一次相遇皆是靈魂生生世世的相約，善待每一次的情緒互動，即是化解因果的最佳魔法。
+        </div>
+      `;
+
+      // 4. 四大維度相容矩陣
+      const suitA = a.res.birthCard.suit;
+      const suitB = b.res.birthCard.suit;
+      
+      const calcScore = (suitChar) => {
+        let score = 70;
+        if (suitA === suitChar) score += 12;
+        if (suitB === suitChar) score += 12;
+        if (mid.res.birthCard.suit === suitChar) score += 6;
+        return Math.min(score, 98);
+      };
+
+      const dimH = calcScore('H');
+      const dimC = calcScore('C');
+      const dimD = calcScore('D');
+      const dimS = calcScore('S');
+
+      document.getElementById('syn_dimensions_grid').innerHTML = `
+        <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/70 text-center">
+          <div class="text-rose-600 font-bold text-xs mb-1">♥ 情感共鳴度</div>
+          <div class="text-2xl font-black text-rose-950">${dimH}%</div>
+          <p class="text-[11px] text-rose-800/80 mt-1">心靈相吸、溫柔共情與安全感深度</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-sky-50/60 border border-sky-200/70 text-center">
+          <div class="text-sky-600 font-bold text-xs mb-1">♣ 智性溝通度</div>
+          <div class="text-2xl font-black text-sky-950">${dimC}%</div>
+          <p class="text-[11px] text-sky-800/80 mt-1">思想激盪、共同話題與邏輯對話默契</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 text-center">
+          <div class="text-amber-600 font-bold text-xs mb-1">♦ 價值合拍度</div>
+          <div class="text-2xl font-black text-amber-950">${dimD}%</div>
+          <p class="text-[11px] text-amber-800/80 mt-1">金錢觀念、物質實踐與長遠生涯規劃</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-200/70 text-center">
+          <div class="text-indigo-600 font-bold text-xs mb-1">♠ 意志轉化度</div>
+          <div class="text-2xl font-black text-indigo-950">${dimS}%</div>
+          <p class="text-[11px] text-indigo-800/80 mt-1">共度風雨、靈魂蛻變與目標執行力</p>
+        </div>
+      `;
+
+      // 5. 雙人魔藥處方
+      document.getElementById('syn_oil_potion').innerText = `推薦使用【波旁天竺葵 3滴 + 佛手柑 2滴 + 大西洋雪松 1滴】調和於荷荷芭油中。天竺葵柔和溝通防線，佛手柑消弭誤解焦慮，雪松提供長久陪伴的安全感基石。`;
+      document.getElementById('syn_crystal_potion').innerText = `建議雙方共同配戴或於床頭擺放【粉晶 (Rose Quartz) 與 綠幽靈 (Green Phantom)】。粉晶滋養彼此無條件接納的慈悲心，綠幽靈守護生活現實豐盛，平衡浪漫與麵包。`;
+      document.getElementById('syn_ritual_potion').innerText = `「每週五晚間進行 10 分鐘『零手機對視聊天微儀式』：每人輪流分享一件本週感謝對方的微小事，說完後深呼吸擁抱 30 秒，讓能量場重新校準合一。」`;
+
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     function loadSampleCard(type) {
       if (type === 1) {
@@ -550,6 +1016,12 @@
             }
             handleCalculateCards();
           }
+        });
+
+        // 填充雙人合盤 A / B 命盤庫下拉選單
+        populateCardProfileSelects();
+        window.addEventListener('meetjoy_profiles_updated', () => {
+          populateCardProfileSelects();
         });
       }
 

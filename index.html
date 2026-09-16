@@ -111,7 +111,7 @@
     <div class="w-full flex items-center justify-start sm:justify-center overflow-x-auto pb-4 mb-8 gap-2 text-xs sm:text-sm font-bold no-scrollbar">
       <button type="button" onclick="filterCategory('all')" id="tab_all" class="filter-tab active px-4 py-2 rounded-xl bg-white border border-stone-300 text-stone-700 transition whitespace-nowrap flex items-center gap-1.5 shadow-xs">
         <span>🌟 全部系統</span>
-        <span class="px-1.5 py-0.2 rounded-full bg-amber-200/50 text-[11px] font-black">10</span>
+        <span class="px-1.5 py-0.2 rounded-full bg-amber-200/50 text-[11px] font-black">11</span>
       </button>
       <button type="button" onclick="filterCategory('dept-2')" id="tab_dept-2" class="filter-tab px-4 py-2 rounded-xl bg-white border border-stone-300 text-stone-700 transition whitespace-nowrap flex items-center gap-1.5 shadow-xs">
         <span>🧬 陰陽數字人類系</span>
@@ -119,7 +119,7 @@
       </button>
       <button type="button" onclick="filterCategory('dept-3')" id="tab_dept-3" class="filter-tab px-4 py-2 rounded-xl bg-white border border-stone-300 text-stone-700 transition whitespace-nowrap flex items-center gap-1.5 shadow-xs">
         <span>⛩️ 東方時空命理系</span>
-        <span class="px-1.5 py-0.2 rounded-full bg-stone-200 text-[11px] font-black">3</span>
+        <span class="px-1.5 py-0.2 rounded-full bg-stone-200 text-[11px] font-black">4</span>
       </button>
       <button type="button" onclick="filterCategory('dept-1')" id="tab_dept-1" class="filter-tab px-4 py-2 rounded-xl bg-white border border-stone-300 text-stone-700 transition whitespace-nowrap flex items-center gap-1.5 shadow-xs">
         <span>🏛️ 蒼穹星象天命系</span>
@@ -135,7 +135,7 @@
       </button>
     </div>
 
-    <!-- 十大排盤系統卡片網格 (皆配備標準方形圖) -->
+    <!-- 十一大學系排盤系統卡片網格 (皆配備標準方形圖) -->
     <div id="system_grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mb-12">
 
       <!-- 1. 數字能量排盤大典 (系所二) -->
@@ -235,7 +235,40 @@
         </div>
       </a>
 
-      <!-- 4. 紫微斗數星盤大典 (系所三) -->
+      <!-- 4. 八字命理星盤大典 (系所三) -->
+      <a href="/bazi.html" data-category="dept-3" class="system-card card-hover flex flex-col justify-between bg-[#fffdf8] border-2 border-[#b45309] rounded-3xl p-5 sm:p-6 relative overflow-hidden group shadow-md transition">
+        <div>
+          <!-- 標準 1:1 方形大圖 -->
+          <div class="w-full aspect-square rounded-2xl overflow-hidden mb-4 border border-[#b45309]/30 shadow-inner relative group-hover:shadow-md transition bg-stone-100">
+            <img src="/images/systems/bazi.jpg" alt="八字命理星盤大典" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-[#1E261D]/85 text-[#F7E7CE] backdrop-blur-md text-[11px] font-bold border border-[#C8A97E]/40">
+              ⛩️ 系所三 · 東方時空
+            </span>
+            <span class="absolute bottom-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-900 text-[10px] font-black shadow-xs">
+              ✨ 頂級經典
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-black border border-amber-300 whitespace-nowrap">
+              四柱八字 · 臟腑體檢 · 雙人合盤
+            </span>
+            <span class="text-xs font-bold text-stone-400 group-hover:text-[#b45309] transition shrink-0 whitespace-nowrap">立即排盤 ➔</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#b45309] transition">八字命理星盤大典</h2>
+          <p class="card-desc text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
+            正統四柱天干地支、主星十神與藏副星精確排盤。整合十二長生運、地支神煞、納音五行、生肖姓名學三才五格（純繁體）、十干臟腑先天體檢、會合刑沖破害與大運喜用神，支援會員命盤庫跨裝置秒選與雙人八字天命合盤。
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-stone-500 pt-3 border-t border-amber-100/60">
+          <span class="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md font-black whitespace-nowrap">四柱八字</span>
+          <span class="bg-rose-50 text-rose-800 px-2.5 py-0.5 rounded-md font-bold whitespace-nowrap">先天體檢</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">地支刑沖</span>
+          <span class="bg-stone-100 px-2.5 py-0.5 rounded-md whitespace-nowrap">雙人合盤</span>
+        </div>
+      </a>
+
+      <!-- 5. 紫微斗數星盤大典 (系所三) -->
       <a href="/ziwei.html" data-category="dept-3" class="system-card card-hover flex flex-col justify-between bg-[#fffdf8] border-2 border-[#C8A97E] rounded-3xl p-5 sm:p-6 relative overflow-hidden group shadow-md transition">
         <div>
           <!-- 標準 1:1 方形大圖 -->

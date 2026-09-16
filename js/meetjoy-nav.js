@@ -29,6 +29,7 @@
       fullName: '東方時空命理學系',
       icon: '⛩️',
       systems: [
+        { name: '八字命理', url: '/bazi.html', tag: '四柱' },
         { name: '紫微斗數', url: '/ziwei.html', tag: '十二宮' },
         { name: '四盤小六壬', url: '/xiao-liu-ren.html', tag: '時空' },
         { name: '文王六爻', url: '/liu-yao.html', tag: '卦象' }

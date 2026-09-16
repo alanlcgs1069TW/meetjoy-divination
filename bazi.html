@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>癒見幸福 · 八字命理星盤大典 (MeetJoy BaZi Atelier)</title>
+  <!-- 品牌標籤與字體 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <!-- 核心運算庫與通用組件 -->
+  <script src="./js/lunar.js"></script>
+  <script src="./js/bazi-engine.js"></script>
+  <script src="./js/meetjoy-universal-profiles.js"></script>
+  <script src="./js/meetjoy-nav.js"></script>
+  <style>
+    body { font-family: 'Noto Serif TC', serif; }
+    .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .pillar-col { min-width: 68px; }
+    .wuxing-wood { color: #166534; }
+    .wuxing-fire { color: #dc2626; }
+    .wuxing-earth { color: #854d0e; }
+    .wuxing-metal { color: #b45309; }
+    .wuxing-water { color: #1d4ed8; }
+    .bg-wood-light { background-color: #f0fdf4; }
+    .bg-fire-light { background-color: #fef2f2; }
+    .bg-earth-light { background-color: #fefce8; }
+    .bg-metal-light { background-color: #fafaf9; }
+    .bg-water-light { background-color: #eff6ff; }
+    /* 列印專屬優化 */
+    @media print {
+      nav, #universal_profile_bar, .no-print { display: none !important; }
+      body { background: white !important; padding: 0 !important; }
+      .print-full-width { max-width: 100% !important; width: 100% !important; }
+    }
+  </style>
+</head>
+<body class="bg-[#F6F2EA] text-[#2E3829] min-h-screen flex flex-col items-center p-0 m-0">
+
+  <!-- 全域導覽列 -->
+  <nav class="w-full text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b-2 border-[#C8A97E]/70 shadow-lg sticky top-0 z-50 backdrop-blur-md" style="background-image: linear-gradient(90deg, rgba(16, 23, 16, 0.94) 0%, rgba(22, 30, 21, 0.85) 45%, rgba(22, 30, 21, 0.4) 100%), url('/images/meetjoy-banner-geometry-washi.jpg'); background-size: cover; background-position: right center;">
+    <div class="flex items-center gap-3">
+      <a href="https://meetjoy.net/" id="logo_official_home" title="返回癒見幸福官方網站首頁" class="block shrink-0 group cursor-pointer">
+        <img src="https://meetjoy.net/wp-content/uploads/2026/09/meetjoy-official-logo.png" alt="癒見幸福官方 Logo" class="w-10 h-10 rounded-full border-2 border-[#C8A97E]/80 shadow-md bg-white object-cover group-hover:scale-105 group-hover:border-amber-300 transition-all">
+      </a>
+      <div>
+        <a href="/index.html" title="回到魔法神算排盤大典首頁" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+          <span>🔮 癒見幸福 · 魔法神算</span>
+        </a>
+        <span class="text-[11px] text-amber-200/70 hidden sm:inline">東方時空命理系 · 八字星盤大典</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 text-xs sm:text-sm font-medium">
+      <a href="/index.html" class="px-3 py-1.5 bg-[#C8A97E] text-stone-900 font-bold rounded-lg hover:bg-amber-300 transition flex items-center gap-1 shadow-xs">
+        <span>🏛️ 排盤大典總目錄</span>
+      </a>
+      <button id="btn_copy_link" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-amber-100 font-bold rounded-lg transition flex items-center gap-1 border border-white/20">
+        <span>📋 複製排盤連結</span>
+      </button>
+      <button onclick="window.print()" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-amber-100 transition font-bold border border-white/20 flex items-center gap-1">
+        <span>🖨️ 列印匯出</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="w-full max-w-7xl px-3 sm:px-6 py-6 sm:py-10 flex flex-col items-center">
+
+    <!-- 標題說明 -->
+    <div class="text-center max-w-3xl mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#EADFC7] text-[#536349] text-xs font-bold tracking-widest uppercase mb-2">
+        <span>⛩️ 系所三 · 東方時空命理系</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-black text-[#1F261C] mb-2 tracking-wide">
+        八字命理星盤大典
+      </h1>
+      <p class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+        依據愛倫院長正統東方命理體系設計。整合四柱天干地支、主星十神、地支藏副星、十二長生運、地支神煞、納音五行、生肖姓名學三才五格（純繁體）、先天臟腑體檢、地支會合刑沖破害與大運喜用神，支援會員命盤庫秒選即排與雙人八字合盤。
+      </p>
+    </div>
+
+    <!-- 全站通用會員命盤庫載入條 -->
+    <div id="universal_profile_bar" class="w-full max-w-5xl mb-4"></div>
+
+    <!-- 排盤輸入卡片 -->
+    <div class="w-full max-w-5xl bg-white/90 backdrop-blur-md border-2 border-[#C8A97E]/70 rounded-3xl p-4 sm:p-6 mb-6 shadow-md">
+      
+      <!-- 模式切換 Tabs -->
+      <div class="flex items-center justify-center p-1 bg-stone-100/90 rounded-2xl mb-5 border border-stone-200/80 max-w-md mx-auto">
+        <button type="button" id="tab_mode_natal" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-50 shadow-xs">
+          🌟 本命四柱全景盤
+        </button>
+        <button type="button" id="tab_mode_synastry" class="flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700">
+          💞 雙人八字合盤 (喜忌與刑沖)
+        </button>
+      </div>
+
+      <!-- 單人輸入欄位 -->
+      <div id="single_inputs_row" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="md:col-span-1">
+          <label class="block text-xs font-bold text-stone-700 mb-1">姓名 / 稱謂</label>
+          <input type="text" id="user_name" value="史可法" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-xs font-bold text-stone-700 mb-1">生理性別</label>
+          <select id="user_gender" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+            <option value="male" selected>陽男 (乾造)</option>
+            <option value="female">陰女 (坤造)</option>
+          </select>
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-xs font-bold text-stone-700 mb-1">出生日期 (公曆)</label>
+          <input type="date" id="birth_date" value="1604-02-04" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-xs font-bold text-stone-700 mb-1">出生時分 (24H 制)</label>
+          <input type="time" id="birth_time" value="06:00" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+        </div>
+        <div class="md:col-span-1 flex items-end">
+          <button type="button" id="btn_render_single" class="w-full py-2 bg-[#2E3829] hover:bg-[#3d4b37] text-amber-100 font-black rounded-xl text-xs sm:text-sm transition shadow-xs">
+            排命盤 ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- 雙人合盤輸入欄位 (預設隱藏) -->
+      <div id="dual_inputs_container" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 甲方 -->
+          <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200">
+            <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-amber-200">
+              <span class="font-black text-sm text-amber-950">🔵 甲方 (Person A)</span>
+              <span class="text-xs text-stone-500 font-medium">關係主體</span>
+            </div>
+            <div class="mb-2.5">
+              <label class="block text-[11px] font-bold text-amber-900 mb-1">📁 從會員命盤庫載入甲方：</label>
+              <select id="profile_select_bazi_a" class="w-full bg-white border border-[#C8A97E] rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs">
+                <option value="">-- 點此選擇已存命盤 (甲方) --</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">姓名 / 稱謂</label>
+                <input type="text" id="user_name_a" value="愛倫院長" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">性別</label>
+                <select id="user_gender_a" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+                  <option value="female" selected>坤造 (女)</option>
+                  <option value="male">乾造 (男)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">出生日期</label>
+                <input type="date" id="birth_date_a" value="1988-08-18" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">時間 (24H)</label>
+                <input type="time" id="birth_time_a" value="12:00" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+              </div>
+            </div>
+          </div>
+
+          <!-- 乙方 -->
+          <div class="p-4 rounded-2xl bg-sky-50/60 border border-sky-200">
+            <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-sky-200">
+              <span class="font-black text-sm text-sky-950">🟣 乙方 (Person B)</span>
+              <span class="text-xs text-stone-500 font-medium">關係對象</span>
+            </div>
+            <div class="mb-2.5">
+              <label class="block text-[11px] font-bold text-sky-900 mb-1">📁 從會員命盤庫載入乙方：</label>
+              <select id="profile_select_bazi_b" class="w-full bg-white border border-sky-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs">
+                <option value="">-- 點此選擇已存命盤 (乙方) --</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">姓名 / 稱謂</label>
+                <input type="text" id="user_name_b" value="靈魂伴侶" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">性別</label>
+                <select id="user_gender_b" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+                  <option value="male" selected>乾造 (男)</option>
+                  <option value="female">坤造 (女)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">出生日期</label>
+                <input type="date" id="birth_date_b" value="1990-01-27" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-700 mb-1">時間 (24H)</label>
+                <input type="time" id="birth_time_b" value="11:36" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 pt-2">
+          <div class="flex gap-2">
+            <button type="button" id="btn_swap_ab" class="px-3 py-1.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-50 text-xs font-bold text-stone-700 transition">
+              ⇄ A / B 視角互換
+            </button>
+            <button type="button" id="btn_sample_couple" class="px-3 py-1.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-50 text-xs font-bold text-stone-700 transition">
+              載入示範伴侶資料
+            </button>
+          </div>
+          <button type="button" id="btn_render_dual" class="px-6 py-2 bg-[#2E3829] hover:bg-[#3d4b37] text-amber-100 font-black rounded-xl text-xs sm:text-sm transition shadow-xs">
+            展開雙人八字合盤 ➔
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==========================================
+         八字命盤展示大典 (高密度專業盤面 · 嚴格對齊桌面截圖)
+         ========================================== -->
+    <div id="bazi_chart_container" class="w-full max-w-5xl bg-white border-2 border-stone-800 rounded-2xl shadow-xl overflow-hidden print-full-width">
+      
+      <!-- 頂部區塊 (四柱主盤 + 姓名學三才五格 + 命主易卦) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 border-b-2 border-stone-800">
+        
+        <!-- 1. 四柱八字核心表格 (佔 5 欄) -->
+        <div class="lg:col-span-5 border-b lg:border-b-0 lg:border-r-2 border-stone-800 overflow-x-auto">
+          <table class="w-full h-full text-center border-collapse text-xs">
+            <thead>
+              <tr class="bg-stone-100/90 border-b border-stone-400 font-black text-stone-800">
+                <th class="p-2 border-r border-stone-300 w-1/5 text-rose-600" id="th_time_star">正財</th>
+                <th class="p-2 border-r border-stone-300 w-1/5 text-blue-600" id="th_day_star">命主</th>
+                <th class="p-2 border-r border-stone-300 w-1/5 text-rose-600" id="th_month_star">正印</th>
+                <th class="p-2 border-r border-stone-300 w-1/5 text-rose-600" id="th_year_star">正官</th>
+                <th class="p-2 bg-stone-200/90 w-1/5 text-stone-700 shrink-0">主星</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 四柱天干地支 -->
+              <tr class="border-b-2 border-stone-800 text-sm font-black">
+                <td class="p-2 border-r border-stone-300 bg-stone-50" id="td_time_pillar">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_tgan">金</span>
+                    <span class="text-xl text-blue-600" id="t_gan">辛</span>
+                    <span class="text-xl text-blue-600" id="t_zhi">卯</span>
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_tzhi">木</span>
+                  </div>
+                </td>
+                <td class="p-2 border-r border-stone-300 bg-amber-50/40" id="td_day_pillar">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_dgan">火</span>
+                    <span class="text-xl text-blue-600" id="d_gan">丙</span>
+                    <span class="text-xl text-blue-600" id="d_zhi">辰</span>
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_dzhi">土</span>
+                  </div>
+                </td>
+                <td class="p-2 border-r border-stone-300 bg-stone-50" id="td_month_pillar">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_mgan">木</span>
+                    <span class="text-xl text-blue-600" id="m_gan">乙</span>
+                    <span class="text-xl text-blue-600" id="m_zhi">丑</span>
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_mzhi">土</span>
+                  </div>
+                </td>
+                <td class="p-2 border-r border-stone-300 bg-stone-50" id="td_year_pillar">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_ygan">水</span>
+                    <span class="text-xl text-blue-600" id="y_gan">癸</span>
+                    <span class="text-xl text-blue-600" id="y_zhi">卯</span>
+                    <span class="text-[10px] text-stone-500 font-bold" id="wuxing_yzhi">木</span>
+                  </div>
+                </td>
+                <td class="p-2 bg-stone-200/90 text-stone-700 font-bold">四柱</td>
+              </tr>
+              <!-- 藏干與副星 -->
+              <tr class="border-b border-stone-300 text-xs font-bold text-stone-700">
+                <td class="p-2 border-r border-stone-300 align-top" id="td_hidden_time">
+                  <div class="space-y-1">
+                    <div class="text-stone-800">乙</div>
+                    <div class="text-blue-600 text-[11px]">正印</div>
+                  </div>
+                </td>
+                <td class="p-2 border-r border-stone-300 align-top bg-amber-50/40" id="td_hidden_day">
+                  <div class="space-y-1">
+                    <div class="text-stone-800 flex justify-center gap-2"><span>癸</span><span>乙</span><span>戊</span></div>
+                    <div class="text-rose-600 text-[11px] flex justify-center gap-2"><span>正官</span><span>正印</span><span>食神</span></div>
+                  </div>
+                </td>
+                <td class="p-2 border-r border-stone-300 align-top" id="td_hidden_month">
+                  <div class="space-y-1">
+                    <div class="text-stone-800 flex justify-center gap-2"><span>辛</span><span>癸</span><span>己</span></div>
+                    <div class="text-rose-600 text-[11px] flex justify-center gap-2"><span>正財</span><span>正官</span><span>傷官</span></div>
+                  </div>
+                </td>
+                <td class="p-2 border-r border-stone-300 align-top" id="td_hidden_year">
+                  <div class="space-y-1">
+                    <div class="text-stone-800">乙</div>
+                    <div class="text-blue-600 text-[11px]">正印</div>
+                  </div>
+                </td>
+                <td class="p-2 bg-stone-200/90 text-stone-700 font-bold">藏副星</td>
+              </tr>
+              <!-- 長生運 -->
+              <tr class="border-b border-stone-300 font-bold text-stone-800">
+                <td class="p-2 border-r border-stone-300" id="td_dishi_time">沐浴</td>
+                <td class="p-2 border-r border-stone-300 bg-amber-50/40" id="td_dishi_day">冠帶</td>
+                <td class="p-2 border-r border-stone-300" id="td_dishi_month">養</td>
+                <td class="p-2 border-r border-stone-300" id="td_dishi_year">沐浴</td>
+                <td class="p-2 bg-stone-200/90 text-stone-700">運</td>
+              </tr>
+              <!-- 地支神煞 (紫色縱向排列) -->
+              <tr class="border-b border-stone-300 text-purple-800 font-black text-xs">
+                <td class="p-2 border-r border-stone-300 align-top" id="td_shensha_time">
+                  <div class="leading-relaxed">學士<br>金匱</div>
+                </td>
+                <td class="p-2 border-r border-stone-300 align-top bg-amber-50/40" id="td_shensha_day">
+                  <div class="leading-relaxed">十靈</div>
+                </td>
+                <td class="p-2 border-r border-stone-300 align-top" id="td_shensha_month">
+                  <div class="leading-relaxed">天德合<br>月德合<br>天狗</div>
+                </td>
+                <td class="p-2 border-r border-stone-300 align-top" id="td_shensha_year">
+                  <div class="leading-relaxed">學士</div>
+                </td>
+                <td class="p-2 bg-stone-200/90 text-stone-700 font-bold leading-tight">地支<br>神煞</td>
+              </tr>
+              <!-- 納音五行 -->
+              <tr class="font-bold text-stone-700 bg-stone-50">
+                <td class="p-2 border-r border-stone-300" id="td_nayin_time">松柏木</td>
+                <td class="p-2 border-r border-stone-300 bg-amber-50/40" id="td_nayin_day">砂中土</td>
+                <td class="p-2 border-r border-stone-300" id="td_nayin_month">海中金</td>
+                <td class="p-2 border-r border-stone-300" id="td_nayin_year">金箔金</td>
+                <td class="p-2 bg-stone-200/90 text-stone-700">納</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2. 姓名學三才五格表格 (純繁體，佔 4 欄 · 截圖中上) -->
+        <div class="lg:col-span-4 border-b lg:border-b-0 lg:border-r-2 border-stone-800 p-2 sm:p-3 flex flex-col justify-between">
+          <div class="bg-rose-700 text-white font-bold text-xs py-1 px-2 rounded-t-lg flex items-center justify-between">
+            <span>生肖姓名學 (純繁體解析)</span>
+            <span class="text-[11px] opacity-80">三才五格格局</span>
+          </div>
+          
+          <!-- 姓名漢字筆劃拆解表 (剔除簡體欄位！) -->
+          <div class="border border-stone-300 rounded-b-lg overflow-hidden mb-2">
+            <table class="w-full text-center text-xs border-collapse">
+              <thead>
+                <tr class="bg-stone-100 font-bold text-stone-600 border-b border-stone-300">
+                  <th class="py-1 px-1.5 border-r border-stone-200">繁體</th>
+                  <th class="py-1 px-1.5 border-r border-stone-200">筆劃</th>
+                  <th class="py-1 px-1.5 border-r border-stone-200">部首</th>
+                  <th class="py-1 px-1.5">五行</th>
+                </tr>
+              </thead>
+              <tbody id="tbody_name_chars">
+                <tr class="border-b border-stone-200">
+                  <td class="py-1 text-base font-black text-rose-800 border-r border-stone-200">史</td>
+                  <td class="py-1 font-bold text-rose-600 border-r border-stone-200">5</td>
+                  <td class="py-1 text-stone-600 border-r border-stone-200">口</td>
+                  <td class="py-1 font-bold text-green-700">金</td>
+                </tr>
+                <tr class="border-b border-stone-200">
+                  <td class="py-1 text-base font-black text-rose-800 border-r border-stone-200">可</td>
+                  <td class="py-1 font-bold text-rose-600 border-r border-stone-200">5</td>
+                  <td class="py-1 text-stone-600 border-r border-stone-200">口</td>
+                  <td class="py-1 font-bold text-green-700">木</td>
+                </tr>
+                <tr>
+                  <td class="py-1 text-base font-black text-rose-800 border-r border-stone-200">法</td>
+                  <td class="py-1 font-bold text-rose-600 border-r border-stone-200">9</td>
+                  <td class="py-1 text-stone-600 border-r border-stone-200">水</td>
+                  <td class="py-1 font-bold text-green-700">水</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 五格數理展現 (天格、人格、地格、外格、總格) -->
+          <div class="grid grid-cols-2 gap-1.5 text-xs">
+            <div class="p-1.5 rounded-lg border border-stone-200 bg-stone-50 flex items-center justify-between">
+              <span class="font-bold text-stone-700">天格</span>
+              <div class="flex items-center gap-1">
+                <span class="font-black text-blue-600" id="num_tiange">6</span>
+                <span class="text-stone-800 font-bold" id="wx_tiange">土</span>
+                <span class="text-green-600 font-bold" id="sym_tiange">⭕</span>
+              </div>
+            </div>
+            <div class="p-1.5 rounded-lg border border-stone-200 bg-stone-50 flex items-center justify-between">
+              <span class="font-bold text-stone-700">人格</span>
+              <div class="flex items-center gap-1">
+                <span class="font-black text-blue-600" id="num_renge">10</span>
+                <span class="text-stone-800 font-bold" id="wx_renge">水</span>
+                <span class="text-rose-500 font-bold" id="sym_renge">❌</span>
+              </div>
+            </div>
+            <div class="p-1.5 rounded-lg border border-stone-200 bg-stone-50 flex items-center justify-between">
+              <span class="font-bold text-stone-700">地格</span>
+              <div class="flex items-center gap-1">
+                <span class="font-black text-blue-600" id="num_dige">14</span>
+                <span class="text-stone-800 font-bold" id="wx_dige">火</span>
+                <span class="text-rose-500 font-bold" id="sym_dige">❌</span>
+              </div>
+            </div>
+            <div class="p-1.5 rounded-lg border border-stone-200 bg-stone-50 flex items-center justify-between">
+              <span class="font-bold text-stone-700">外格</span>
+              <div class="flex items-center gap-1">
+                <span class="font-black text-blue-600" id="num_waige">10</span>
+                <span class="text-stone-800 font-bold" id="wx_waige">水</span>
+                <span class="text-rose-500 font-bold" id="sym_waige">❌</span>
+              </div>
+            </div>
+            <div class="col-span-2 p-1.5 rounded-lg border border-stone-300 bg-amber-50/50 flex items-center justify-between font-black">
+              <span class="text-stone-800">總格</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-700 text-sm" id="num_zongge">19</span>
+                <span class="text-stone-900" id="wx_zongge">水</span>
+                <span class="text-rose-600 text-sm" id="sym_zongge">❌ (浮沉動態)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. 基本命主農曆與易卦 (佔 3 欄 · 截圖右上) -->
+        <div class="lg:col-span-3 p-3 flex flex-col justify-between bg-stone-50/80">
+          <div class="flex items-center justify-between pb-2 border-b border-stone-300">
+            <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-xs" id="badge_zodiac_gender">
+              肖兔 陽男
+            </span>
+            <span class="text-stone-900 font-black text-base" id="lbl_user_name">史可法</span>
+          </div>
+
+          <div class="space-y-1.5 text-xs my-2 text-stone-700">
+            <div class="flex justify-between">
+              <span class="text-stone-500">公曆：</span>
+              <span class="font-bold text-stone-900" id="lbl_solar_date">1604年 2月4日 6時</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-stone-500">農曆：</span>
+              <span class="font-bold text-stone-900" id="lbl_lunar_date">正月初五 卯時建生</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-stone-500">星期：</span>
+              <span class="font-bold text-stone-800" id="lbl_week_day">星期三</span>
+            </div>
+          </div>
+
+          <!-- 本命易卦 -->
+          <div class="p-2.5 rounded-xl border border-stone-300 bg-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="text-center font-black leading-tight text-stone-900">
+                <div class="text-sm">巽 ☴</div>
+                <div class="text-sm">坎 ☵</div>
+              </div>
+              <div class="border-l border-stone-300 pl-2">
+                <div class="text-[10px] text-stone-500">本命卦象</div>
+                <div class="text-sm font-black text-rose-800" id="lbl_gua_name">風水渙</div>
+              </div>
+            </div>
+            <div class="text-[11px] font-bold text-stone-600 bg-stone-100 px-2 py-1 rounded-lg" id="lbl_house_group">
+              東四 ☵ 坎
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 中部區塊 (空亡命宮 + 先天體檢 + 刑沖會合害) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 border-b-2 border-stone-800">
+        
+        <!-- 4. 神煞空亡、胎元命宮與先天體檢 (佔 8 欄 · 截圖中下) -->
+        <div class="lg:col-span-8 border-b lg:border-b-0 lg:border-r-2 border-stone-800 p-3 sm:p-4">
+          
+          <!-- 橫向空亡、胎元、命身宮表格 -->
+          <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold mb-4 border border-stone-300 rounded-xl overflow-hidden bg-stone-50">
+            <div class="p-1 border-r border-stone-300 bg-stone-200/80 text-stone-700">日空</div>
+            <div class="p-1 border-r border-stone-300 bg-stone-200/80 text-stone-700">年空</div>
+            <div class="p-1 border-r border-stone-300 bg-stone-200/80 text-stone-700">胎息</div>
+            <div class="p-1 border-r border-stone-300 bg-stone-200/80 text-stone-700">胎元</div>
+            <div class="p-1 border-r border-stone-300 bg-stone-200/80 text-stone-700">命格</div>
+            <div class="p-1 border-r border-stone-300 bg-stone-200/80 text-stone-700">身宮</div>
+            <div class="p-1 bg-stone-200/80 text-stone-700">命宮</div>
+
+            <div class="p-1.5 border-r border-stone-300 text-green-700" id="val_day_kong">子丑</div>
+            <div class="p-1.5 border-r border-stone-300 text-stone-800" id="val_year_kong">辰巳</div>
+            <div class="p-1.5 border-r border-stone-300 text-rose-700" id="val_tai_xi">辛酉</div>
+            <div class="p-1.5 border-r border-stone-300 text-purple-700" id="val_tai_yuan">丙辰</div>
+            <div class="p-1.5 border-r border-stone-300 text-rose-700" id="val_ming_ge">正官</div>
+            <div class="p-1.5 border-r border-stone-300 text-green-700" id="val_shen_gong">己未</div>
+            <div class="p-1.5 text-purple-700" id="val_ming_gong">甲子</div>
+          </div>
+
+          <!-- 先天體檢 (十天干對應人體臟腑能量) -->
+          <div class="border border-stone-300 rounded-xl p-2.5 bg-amber-50/30 mb-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black text-stone-800 flex items-center gap-1.5">
+                <span>🩺 先天體檢 (五臟六腑五行弱點統計)</span>
+              </span>
+              <span class="text-[11px] text-stone-500 font-bold">天干＋藏干能量加總</span>
+            </div>
+
+            <!-- 十干臟腑卡片橫排展開 (完全對齊截圖紅字計數) -->
+            <div class="grid grid-cols-10 gap-1 text-center text-xs font-bold" id="grid_organ_checkup">
+              <!-- 動態由 JavaScript 填入 -->
+            </div>
+          </div>
+
+          <!-- 交大運起運提示 -->
+          <div class="flex flex-wrap items-center justify-between text-xs text-stone-600 bg-stone-100/90 px-3 py-2 rounded-xl border border-stone-200">
+            <div class="font-bold flex items-center gap-1" id="lbl_start_yun_desc">
+              <span>📅 出生後 9 年 8 個月又 3 天上大運</span>
+            </div>
+            <div class="font-medium text-stone-500" id="lbl_exchange_yun_desc">
+              每逢癸或戊年秋分後 14 天交大運
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 5. 地支刑沖會合害速查表 (佔 4 欄 · 截圖右下) -->
+        <div class="lg:col-span-4 p-3 sm:p-4 bg-white flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-300">
+              <span class="font-black text-xs text-stone-800">⚡ 地支會合刑沖破害速查表</span>
+              <span class="text-[10px] text-stone-400">以本命時/日支查合沖</span>
+            </div>
+
+            <table class="w-full text-xs border-collapse">
+              <tbody class="divide-y divide-stone-200 font-medium">
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold w-16">三合</td>
+                  <td class="py-1.5 font-bold text-rose-700" id="rel_san_he">未羊, 亥豬</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold">三會</td>
+                  <td class="py-1.5 font-bold text-purple-700" id="rel_san_hui">寅虎, 辰龍</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold">六合</td>
+                  <td class="py-1.5 font-bold text-rose-700" id="rel_liu_he">戌狗</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold">沖</td>
+                  <td class="py-1.5 font-bold text-green-700" id="rel_chong">酉雞</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold">刑</td>
+                  <td class="py-1.5 font-bold text-green-700" id="rel_xing">子鼠</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold">破</td>
+                  <td class="py-1.5 font-bold text-purple-700" id="rel_po">午馬</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-stone-500 font-bold">害</td>
+                  <td class="py-1.5 font-bold text-stone-800" id="rel_hai">辰龍</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 下部區塊 (大運排盤 + 日主旺度與五行喜忌) -->
+      <div class="p-4 sm:p-6 bg-stone-50/50">
+        
+        <!-- 大運排盤橫條 (由歲數依序展開) -->
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black text-stone-800 flex items-center gap-1.5">
+              <span>🚀 十年大運流程</span>
+              <span class="text-[11px] font-normal text-stone-500">起運歲數與大運干支</span>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5 text-center text-xs" id="grid_dayun_list">
+            <!-- 動態填入大運卡片 -->
+          </div>
+        </div>
+
+        <!-- 五行喜忌、旺相休囚死與日主強弱 -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold pt-4 border-t border-stone-300">
+          
+          <!-- 陽宅命卦與用事 -->
+          <div class="p-3 bg-white rounded-xl border border-stone-200">
+            <div class="text-stone-500 text-[11px] mb-1">陽宅命卦 / 人元用事</div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-stone-700">陽宅命卦：</span>
+              <span class="text-rose-700 font-black" id="foot_house_gua">東四 ☵ 坎</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-stone-700">人元用事：</span>
+              <span class="text-blue-700 font-black" id="foot_ren_yuan">己傷官</span>
+            </div>
+          </div>
+
+          <!-- 五行喜用神 -->
+          <div class="p-3 bg-white rounded-xl border border-stone-200">
+            <div class="text-stone-500 text-[11px] mb-1">五行旺相休囚死與喜忌</div>
+            <div class="grid grid-cols-2 gap-1 text-[11px]">
+              <div>喜：<span class="text-rose-600 font-black" id="val_xi">火</span>　旺：<span class="text-stone-800" id="val_wang">土</span></div>
+              <div>閒：<span class="text-yellow-700 font-black" id="val_xian">土</span>　相：<span class="text-amber-600" id="val_xiang">金</span></div>
+              <div>仇：<span class="text-amber-600 font-black" id="val_chou">金</span>　死：<span class="text-blue-600" id="val_si">水</span></div>
+              <div>忌：<span class="text-blue-600 font-black" id="val_ji">水</span>　囚：<span class="text-green-600" id="val_qiu">木</span></div>
+              <div class="col-span-2">用：<span class="text-green-700 font-black" id="val_yong">木</span>　休：<span class="text-rose-600" id="val_xiu">火</span></div>
+            </div>
+          </div>
+
+          <!-- 日主旺度 -->
+          <div class="p-3 bg-white rounded-xl border border-stone-200 flex flex-col justify-between">
+            <div class="text-stone-500 text-[11px] mb-1">日主旺衰強弱評估</div>
+            <div class="flex items-center justify-between font-black text-sm my-1">
+              <span class="text-blue-600" id="val_score_pos">+ 750 (生扶)</span>
+              <span class="text-rose-600" id="val_score_neg">- 820 (剋洩)</span>
+            </div>
+            <div class="text-[11px] text-stone-600" id="val_weak_strong_desc">
+              日主偏弱，喜木印生身、火比劫助勢；忌水官殺剋制。
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==========================================
+         愛倫院長專屬 · 八字生活魔藥調頻處方卡
+         ========================================== -->
+    <div id="potion_prescription_card" class="w-full max-w-5xl mt-6 bg-[#FAF7F0] border-2 border-[#C8A97E]/60 rounded-3xl p-5 sm:p-7 shadow-md">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-2xl">🧪</span>
+        <h3 class="text-lg sm:text-xl font-black text-[#2E3829]">
+          愛倫院長 · 八字生活魔藥調頻處方
+        </h3>
+      </div>
+      <p class="text-stone-600 text-xs sm:text-sm leading-relaxed mb-4">
+        依據命主日元五行與喜用神能量，將深奧的八字生剋轉化為生活中隨手可得的芳香植物、能量晶石與轉念微儀式，平衡臟腑機能與情緒氣場。
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="p-3.5 bg-white rounded-2xl border border-amber-200/80 shadow-2xs">
+          <div class="font-bold text-amber-900 text-sm mb-1.5 flex items-center gap-1.5">
+            <span>🌿 植物香氣精油處方</span>
+          </div>
+          <p class="text-stone-600 leading-relaxed" id="potion_essential_oil">
+            推薦使用「甜橙、苦橙葉與乳香」，透過溫暖果香與樹脂木質調，補足心火與印星木氣，舒緩肝膽緊繃，撫平焦慮日常。
+          </p>
+        </div>
+        <div class="p-3.5 bg-white rounded-2xl border border-amber-200/80 shadow-2xs">
+          <div class="font-bold text-amber-900 text-sm mb-1.5 flex items-center gap-1.5">
+            <span>💎 守護晶石配方</span>
+          </div>
+          <p class="text-stone-600 leading-relaxed" id="potion_crystal">
+            配戴「綠幽靈石、紅膠花或粉晶」，引導大自然溫潤生發之生機，強化貴人運勢與人際親和力，轉化職場高壓。
+          </p>
+        </div>
+        <div class="p-3.5 bg-white rounded-2xl border border-amber-200/80 shadow-2xs">
+          <div class="font-bold text-amber-900 text-sm mb-1.5 flex items-center gap-1.5">
+            <span>✨ 日常魔法微儀式</span>
+          </div>
+          <p class="text-stone-600 leading-relaxed" id="potion_ritual">
+            每日清晨面向陽光深呼吸 3 次，雙手摩擦溫熱敷在眼部與後頸，心中默念：「我的生命由內而外綻放溫暖與光芒，每一步都在正軌之上。」
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         雙人八字合盤深度解析卡片 (雙人模式下動態呈現)
+         ========================================== -->
+    <div id="dual_analysis_card" class="w-full max-w-5xl mt-6 bg-gradient-to-br from-amber-50/90 to-sky-50/90 border-2 border-[#C8A97E] rounded-3xl p-5 sm:p-7 shadow-lg hidden">
+      <div class="flex items-center justify-between mb-3 border-b border-amber-300 pb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">💞</span>
+          <h3 class="text-lg sm:text-xl font-black text-stone-900">
+            雙人八字天命合盤 · 關係動力深度解析
+          </h3>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-amber-200 text-amber-900 text-xs font-black">
+          五行互補 × 刑沖合害
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs mb-4">
+        <div class="p-4 bg-white/95 rounded-2xl border border-amber-200">
+          <div class="font-black text-amber-950 text-sm mb-1">🔗 日主天干相合度</div>
+          <p class="text-stone-600 leading-relaxed" id="synastry_tiangan_desc">
+            正在計算雙方日元天干五合（甲己、乙庚、丙辛、丁壬、戊癸）之引力共鳴...
+          </p>
+        </div>
+        <div class="p-4 bg-white/95 rounded-2xl border border-sky-200">
+          <div class="font-black text-sky-950 text-sm mb-1">🏡 夫妻宮 (日支) 關係</div>
+          <p class="text-stone-600 leading-relaxed" id="synastry_dizhi_desc">
+            分析雙方日支夫妻宮是否存在六合、三合、相沖或相刑之深層互動氣場...
+          </p>
+        </div>
+        <div class="p-4 bg-white/95 rounded-2xl border border-emerald-200">
+          <div class="font-black text-emerald-950 text-sm mb-1">⚖️ 五行互補雷達</div>
+          <p class="text-stone-600 leading-relaxed" id="synastry_wuxing_desc">
+            評估甲方的匱乏能量是否能由乙方的旺盛五行溫和補足，達到陰陽平衡...
+          </p>
+        </div>
+      </div>
+
+      <div class="p-4 bg-white/90 rounded-2xl border border-stone-300 text-xs leading-relaxed text-stone-700" id="synastry_advice_box">
+        💡 伴侶相處金句：愛是兩棵各自獨立的大樹，根在地下交融，枝在風中輕唱。接納彼此的五行脾氣，就是最溫柔的調頻魔法。
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // 全域變數
+    let currentBaziMode = 'natal';
+
+    // 格式化輔助
+    function getWuXingClass(wx) {
+      if (wx === '木') return 'wuxing-wood';
+      if (wx === '火') return 'wuxing-fire';
+      if (wx === '土') return 'wuxing-earth';
+      if (wx === '金') return 'wuxing-metal';
+      if (wx === '水') return 'wuxing-water';
+      return 'text-stone-800';
+    }
+
+    // 渲染本命單人盤面
+    function renderBaziChart() {
+      const name = document.getElementById('user_name').value.trim() || '史可法';
+      const gender = document.getElementById('user_gender').value;
+      const bDate = document.getElementById('birth_date').value || '1604-02-04';
+      const bTime = document.getElementById('birth_time').value || '06:00';
+
+      if (!window.MeetJoyBaZi) {
+        console.error('MeetJoyBaZi 尚未就緒');
+        return;
+      }
+
+      try {
+        const data = MeetJoyBaZi.buildBaZiChart(bDate, bTime, gender, name);
+        
+        // 1. 基本資訊與易卦
+        document.getElementById('lbl_user_name').textContent = data.userName;
+        document.getElementById('badge_zodiac_gender').textContent = `${data.zodiac} ${data.genderLabel}`;
+        document.getElementById('lbl_solar_date').textContent = `${bDate} ${bTime}`;
+        document.getElementById('lbl_lunar_date').textContent = data.lunarString.replace('農曆 ', '');
+        document.getElementById('lbl_week_day').textContent = data.solarString.split(' ').pop();
+        document.getElementById('lbl_gua_name').textContent = data.gua.guaName;
+        document.getElementById('lbl_house_group').textContent = data.gua.houseGua;
+
+        // 2. 四柱大表主星與干支
+        const fp = data.fourPillars;
+        
+        // 時柱
+        document.getElementById('th_time_star').textContent = fp.time.mainStar;
+        document.getElementById('t_gan').textContent = fp.time.gan;
+        document.getElementById('t_zhi').textContent = fp.time.zhi;
+        document.getElementById('wuxing_tgan').textContent = fp.time.ganWuxing;
+        document.getElementById('wuxing_tzhi').textContent = fp.time.zhiWuxing;
+        document.getElementById('td_dishi_time').textContent = fp.time.diShi;
+        document.getElementById('td_nayin_time').textContent = fp.time.naYin;
+        document.getElementById('td_shensha_time').innerHTML = fp.time.shenSha.length ? fp.time.shenSha.join('<br>') : '—';
+        document.getElementById('td_hidden_time').innerHTML = `
+          <div class="space-y-1">
+            <div class="text-stone-800 flex justify-center gap-2">${fp.time.hidden.map(h => `<span>${h.stem}</span>`).join('')}</div>
+            <div class="text-rose-600 text-[11px] flex justify-center gap-2">${fp.time.hidden.map(h => `<span>${h.shiShen}</span>`).join('')}</div>
+          </div>
+        `;
+
+        // 日柱 (命主)
+        document.getElementById('th_day_star').textContent = fp.day.mainStar;
+        document.getElementById('d_gan').textContent = fp.day.gan;
+        document.getElementById('d_zhi').textContent = fp.day.zhi;
+        document.getElementById('wuxing_dgan').textContent = fp.day.ganWuxing;
+        document.getElementById('wuxing_dzhi').textContent = fp.day.zhiWuxing;
+        document.getElementById('td_dishi_day').textContent = fp.day.diShi;
+        document.getElementById('td_nayin_day').textContent = fp.day.naYin;
+        document.getElementById('td_shensha_day').innerHTML = fp.day.shenSha.length ? fp.day.shenSha.join('<br>') : '—';
+        document.getElementById('td_hidden_day').innerHTML = `
+          <div class="space-y-1">
+            <div class="text-stone-800 flex justify-center gap-2">${fp.day.hidden.map(h => `<span>${h.stem}</span>`).join('')}</div>
+            <div class="text-rose-600 text-[11px] flex justify-center gap-2">${fp.day.hidden.map(h => `<span>${h.shiShen}</span>`).join('')}</div>
+          </div>
+        `;
+
+        // 月柱
+        document.getElementById('th_month_star').textContent = fp.month.mainStar;
+        document.getElementById('m_gan').textContent = fp.month.gan;
+        document.getElementById('m_zhi').textContent = fp.month.zhi;
+        document.getElementById('wuxing_mgan').textContent = fp.month.ganWuxing;
+        document.getElementById('wuxing_mzhi').textContent = fp.month.zhiWuxing;
+        document.getElementById('td_dishi_month').textContent = fp.month.diShi;
+        document.getElementById('td_nayin_month').textContent = fp.month.naYin;
+        document.getElementById('td_shensha_month').innerHTML = fp.month.shenSha.length ? fp.month.shenSha.join('<br>') : '—';
+        document.getElementById('td_hidden_month').innerHTML = `
+          <div class="space-y-1">
+            <div class="text-stone-800 flex justify-center gap-2">${fp.month.hidden.map(h => `<span>${h.stem}</span>`).join('')}</div>
+            <div class="text-rose-600 text-[11px] flex justify-center gap-2">${fp.month.hidden.map(h => `<span>${h.shiShen}</span>`).join('')}</div>
+          </div>
+        `;
+
+        // 年柱
+        document.getElementById('th_year_star').textContent = fp.year.mainStar;
+        document.getElementById('y_gan').textContent = fp.year.gan;
+        document.getElementById('y_zhi').textContent = fp.year.zhi;
+        document.getElementById('wuxing_ygan').textContent = fp.year.ganWuxing;
+        document.getElementById('wuxing_yzhi').textContent = fp.year.zhiWuxing;
+        document.getElementById('td_dishi_year').textContent = fp.year.diShi;
+        document.getElementById('td_nayin_year').textContent = fp.year.naYin;
+        document.getElementById('td_shensha_year').innerHTML = fp.year.shenSha.length ? fp.year.shenSha.join('<br>') : '—';
+        document.getElementById('td_hidden_year').innerHTML = `
+          <div class="space-y-1">
+            <div class="text-stone-800 flex justify-center gap-2">${fp.year.hidden.map(h => `<span>${h.stem}</span>`).join('')}</div>
+            <div class="text-blue-600 text-[11px] flex justify-center gap-2">${fp.year.hidden.map(h => `<span>${h.shiShen}</span>`).join('')}</div>
+          </div>
+        `;
+
+        // 3. 姓名學三才五格 (純繁體)
+        const sc = data.sancai;
+        const tbodyChars = document.getElementById('tbody_name_chars');
+        tbodyChars.innerHTML = sc.charList.map((c, i) => `
+          <tr class="${i === sc.charList.length - 1 ? '' : 'border-b border-stone-200'}">
+            <td class="py-1 text-base font-black text-rose-800 border-r border-stone-200">${c.char}</td>
+            <td class="py-1 font-bold text-rose-600 border-r border-stone-200">${c.strokes}</td>
+            <td class="py-1 text-stone-600 border-r border-stone-200">${c.radical}</td>
+            <td class="py-1 font-bold ${getWuXingClass(c.wuxing)}">${c.wuxing}</td>
+          </tr>
+        `).join('');
+
+        document.getElementById('num_tiange').textContent = sc.tianGe.num;
+        document.getElementById('wx_tiange').textContent = sc.tianGe.wuxing;
+        document.getElementById('sym_tiange').textContent = sc.tianGe.isLucky ? '⭕' : '❌';
+
+        document.getElementById('num_renge').textContent = sc.renGe.num;
+        document.getElementById('wx_renge').textContent = sc.renGe.wuxing;
+        document.getElementById('sym_renge').textContent = sc.renGe.isLucky ? '⭕' : '❌';
+
+        document.getElementById('num_dige').textContent = sc.diGe.num;
+        document.getElementById('wx_dige').textContent = sc.diGe.wuxing;
+        document.getElementById('sym_dige').textContent = sc.diGe.isLucky ? '⭕' : '❌';
+
+        document.getElementById('num_waige').textContent = sc.waiGe.num;
+        document.getElementById('wx_waige').textContent = sc.waiGe.wuxing;
+        document.getElementById('sym_waige').textContent = sc.waiGe.isLucky ? '⭕' : '❌';
+
+        document.getElementById('num_zongge').textContent = sc.zongGe.num;
+        document.getElementById('wx_zongge').textContent = sc.zongGe.wuxing;
+        document.getElementById('sym_zongge').textContent = sc.zongGe.isLucky ? '⭕ (吉順吉祥)' : '❌ (浮沉動態)';
+
+        // 4. 空亡命宮身宮
+        const aux = data.auxiliary;
+        document.getElementById('val_day_kong').textContent = aux.dayKong || '子丑';
+        document.getElementById('val_year_kong').textContent = aux.yearKong || '辰巳';
+        document.getElementById('val_tai_xi').textContent = aux.taiXi || '辛酉';
+        document.getElementById('val_tai_yuan').textContent = aux.taiYuan || '丙辰';
+        document.getElementById('val_ming_ge').textContent = aux.mingGe || '正官';
+        document.getElementById('val_shen_gong').textContent = aux.shenGong || '己未';
+        document.getElementById('val_ming_gong').textContent = aux.mingGong || '甲子';
+
+        // 5. 先天體檢 (十干臟腑)
+        const checkupGrid = document.getElementById('grid_organ_checkup');
+        checkupGrid.innerHTML = data.organCheckup.map(item => `
+          <div class="p-1 rounded-lg bg-white border border-stone-200">
+            <div class="font-black text-rose-600 text-sm leading-none mb-1">${item.count}</div>
+            <div class="font-black text-stone-800 text-xs">${item.stem}</div>
+            <div class="text-[10px] text-stone-500 font-bold">${item.organ}</div>
+          </div>
+        `).join('');
+
+        document.getElementById('lbl_start_yun_desc').textContent = `📅 ${data.daYun.startDesc}`;
+        document.getElementById('lbl_exchange_yun_desc').textContent = data.daYun.exchangeDesc;
+
+        // 6. 地支刑沖會合害
+        const inter = data.interactions;
+        document.getElementById('rel_san_he').textContent = inter.sanHe || '無';
+        document.getElementById('rel_san_hui').textContent = inter.sanHui || '無';
+        document.getElementById('rel_liu_he').textContent = inter.liuHe || '無';
+        document.getElementById('rel_chong').textContent = inter.chong || '無';
+        document.getElementById('rel_xing').textContent = inter.xing || '無';
+        document.getElementById('rel_po').textContent = inter.po || '無';
+        document.getElementById('rel_hai').textContent = inter.hai || '無';
+
+        // 7. 十年大運橫條
+        const dyGrid = document.getElementById('grid_dayun_list');
+        if (data.daYun.list.length) {
+          dyGrid.innerHTML = data.daYun.list.map(d => `
+            <div class="p-1.5 rounded-xl border border-stone-200 bg-white shadow-2xs">
+              <div class="text-[10px] text-stone-400 font-bold">${d.age} 歲</div>
+              <div class="text-sm font-black text-stone-900 my-0.5">${d.ganZhi}</div>
+              <div class="text-[10px] text-rose-700 font-bold">${d.shiShen || '大運'}</div>
+            </div>
+          `).join('');
+        }
+
+        // 8. 五行旺相休囚死與喜用
+        const wb = data.wuxingBalance;
+        document.getElementById('foot_house_gua').textContent = data.gua.houseGua;
+        document.getElementById('foot_ren_yuan').textContent = `${fp.month.hidden[0]?.stem || '己'}${fp.month.hidden[0]?.shiShen || '傷官'}`;
+        document.getElementById('val_xi').textContent = wb.xi;
+        document.getElementById('val_xian').textContent = wb.xian;
+        document.getElementById('val_chou').textContent = wb.chou;
+        document.getElementById('val_ji').textContent = wb.ji;
+        document.getElementById('val_yong').textContent = wb.yong;
+        document.getElementById('val_wang').textContent = wb.wang;
+        document.getElementById('val_xiang').textContent = wb.xiang;
+        document.getElementById('val_si').textContent = wb.si;
+        document.getElementById('val_qiu').textContent = wb.qiu;
+        document.getElementById('val_xiu').textContent = wb.xiu;
+        document.getElementById('val_score_pos').textContent = wb.scorePos;
+        document.getElementById('val_score_neg').textContent = wb.scoreNeg;
+
+        // 9. 生活魔藥處方更新
+        updatePotionPrescription(data);
+
+      } catch (err) {
+        console.error('八字排盤發生錯誤：', err);
+      }
+    }
+
+    // 依喜用神微調愛倫院長生活魔藥處方
+    function updatePotionPrescription(data) {
+      const yong = data.wuxingBalance.yong;
+      const oilEl = document.getElementById('potion_essential_oil');
+      const cryEl = document.getElementById('potion_crystal');
+      const ritEl = document.getElementById('potion_ritual');
+
+      if (yong === '木') {
+        oilEl.textContent = '推薦使用「佛手柑、迷迭香與真正薰衣草」，借青翠木氣調暢肝經氣機，激發靈感活力。';
+        cryEl.textContent = '配戴「綠幽靈、天河石或橄欖石」，滋養慈悲寬容與開拓能量，守護生機氣場。';
+        ritEl.textContent = '清晨面向東方進行深呼吸，赤腳踏草地感受大地之木氣生發，心中默念：「我如初春新芽，擁有無窮的生長力量。」';
+      } else if (yong === '火') {
+        oilEl.textContent = '推薦使用「大馬士革玫瑰、甜橙與肉桂」，以溫暖火元素活絡小腸經與心氣，驅散低迷陰冷。';
+        cryEl.textContent = '配戴「紅膠花、紅紋石或太陽石」，點燃自信與創造力，照耀內在熱情。';
+        ritEl.textContent = '中午沐浴在正午陽光下 5 分鐘，雙手交疊放於心輪感受溫度，默念：「我願接納生命的明亮與歡喜。」';
+      } else if (yong === '水') {
+        oilEl.textContent = '推薦使用「絲柏、乳香與大西洋雪松」，透過深邃水精油潤澤腎經元氣，滋養智慧直覺。';
+        cryEl.textContent = '配戴「海藍寶、黑曜石或藍晶石」，穩定情緒深層水流，清晰判斷外界邊界。';
+        ritEl.textContent = '夜間靜心時配合白噪音冥想，放鬆背部脊椎，默念：「我如流水般靈動包容，穿越一切阻礙。」';
+      } else if (yong === '金') {
+        oilEl.textContent = '推薦使用「茶樹、尤加利與沒藥」，清肅肺經鬱熱，提升自我邊界感與決策定力。';
+        cryEl.textContent = '配戴「白水晶、金鈦晶或月光石」，強化心智聚光焦點，隔絕干擾雜訊。';
+        ritEl.textContent = '整理書桌與儀容，練習清晰說出「是」與「不」，默念：「我堅定明確，清楚知曉自己的方向。」';
+      } else {
+        oilEl.textContent = '推薦使用「廣藿香、岩蘭草與生薑」，以厚實土香踏實脾胃中焦，給予踏實定錨感。';
+        cryEl.textContent = '配戴「黃水晶、虎眼石或茶晶」，穩固大地根基，轉化焦躁疑慮。';
+        ritEl.textContent = '飯後平靜散步 10 分鐘，雙腳踏實著地，默念：「我沉穩安住於此刻，萬物皆在我身邊和諧運作。」';
+      }
+    }
+
+    // 雙人八字合盤運算
+    function renderDualBazi() {
+      const nameA = document.getElementById('user_name_a').value.trim() || '甲方';
+      const genderA = document.getElementById('user_gender_a').value;
+      const dateA = document.getElementById('birth_date_a').value || '1988-08-18';
+      const timeA = document.getElementById('birth_time_a').value || '12:00';
+
+      const nameB = document.getElementById('user_name_b').value.trim() || '乙方';
+      const genderB = document.getElementById('user_gender_b').value;
+      const dateB = document.getElementById('birth_date_b').value || '1990-01-27';
+      const timeB = document.getElementById('birth_time_b').value || '11:36';
+
+      try {
+        const dataA = MeetJoyBaZi.buildBaZiChart(dateA, timeA, genderA, nameA);
+        const dataB = MeetJoyBaZi.buildBaZiChart(dateB, timeB, genderB, nameB);
+
+        const ganA = dataA.fourPillars.day.gan;
+        const ganB = dataB.fourPillars.day.gan;
+        const zhiA = dataA.fourPillars.day.zhi;
+        const zhiB = dataB.fourPillars.day.zhi;
+
+        // 天干五合檢驗
+        const hePairs = [
+          ['甲', '己', '土'], ['乙', '庚', '金'], ['丙', '辛', '水'],
+          ['丁', '壬', '木'], ['戊', '癸', '火']
+        ];
+        const isGanHe = hePairs.some(p => (p[0] === ganA && p[1] === ganB) || (p[0] === ganB && p[1] === ganA));
+
+        const tgDesc = isGanHe
+          ? `✨ 雙方日元呈現正統天干五合（${ganA} 與 ${ganB}），具備極為天然的吸引力與心意相通之共鳴，能快速拉近彼此距離。`
+          : `雙方日元分別為「${ganA}」與「${ganB}」，各自具備鮮明獨立的性格特質，適合以平等的智者視角就事論事，互不干預彼此成長步調。`;
+        document.getElementById('synastry_tiangan_desc').textContent = tgDesc;
+
+        // 夫妻宮 (日支) 刑沖合害
+        let dzDesc = `甲方夫妻宮為「${zhiA}」，乙方夫妻宮為「${zhiB}」。`;
+        if (dataA.interactions.liuHe.includes(zhiB)) {
+          dzDesc += ` 兩者日支呈現「六合」吉象，私下相處具備高度默契與信任感。`;
+        } else if (dataA.interactions.sanHe.includes(zhiB)) {
+          dzDesc += ` 兩者日支形成「三合」良局，目標一致時能發揮一加一大於二的合作合力。`;
+        } else if (dataA.interactions.chong.includes(zhiB)) {
+          dzDesc += ` 兩者日支逢「相沖」，日常生活中容易在小習慣、生活細節或情緒節奏上產生碰撞，需要多一份包容與留白。`;
+        } else {
+          dzDesc += ` 兩者夫妻宮無嚴重沖剋，生活節奏平穩溫和，能按各自舒適的步伐長期共處。`;
+        }
+        document.getElementById('synastry_dizhi_desc').textContent = dzDesc;
+
+        // 五行互補
+        const yongA = dataA.wuxingBalance.yong;
+        const yongB = dataB.wuxingBalance.yong;
+        document.getElementById('synastry_wuxing_desc').textContent =
+          `甲方命局喜用「${yongA}」，乙方喜用「${yongB}」。透過相處能帶動彼此氣場的五行平衡，形成天然互補與良性調頻循環。`;
+
+        document.getElementById('dual_analysis_card').classList.remove('hidden');
+
+        // 以甲方為主渲染主要盤面
+        document.getElementById('user_name').value = nameA;
+        document.getElementById('user_gender').value = genderA;
+        document.getElementById('birth_date').value = dateA;
+        document.getElementById('birth_time').value = timeA;
+        renderBaziChart();
+
+      } catch (err) {
+        console.error('合盤計算發生錯誤：', err);
+      }
+    }
+
+    // 模式切換邏輯
+    function setBaziMode(mode) {
+      currentBaziMode = mode;
+      const tabNatal = document.getElementById('tab_mode_natal');
+      const tabSynastry = document.getElementById('tab_mode_synastry');
+      const singleRow = document.getElementById('single_inputs_row');
+      const dualContainer = document.getElementById('dual_inputs_container');
+      const dualCard = document.getElementById('dual_analysis_card');
+
+      if (mode === 'natal') {
+        tabNatal.className = 'flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-50 shadow-xs';
+        tabSynastry.className = 'flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700';
+        singleRow.classList.remove('hidden');
+        dualContainer.classList.add('hidden');
+        dualCard.classList.add('hidden');
+        renderBaziChart();
+      } else {
+        tabSynastry.className = 'flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-50 shadow-xs';
+        tabNatal.className = 'flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-slate-700';
+        singleRow.classList.add('hidden');
+        dualContainer.classList.remove('hidden');
+        populateBaziQuickProfiles();
+        renderDualBazi();
+      }
+    }
+
+    // 填充合盤甲方與乙方專屬下拉選單
+    function populateBaziQuickProfiles() {
+      const selA = document.getElementById('profile_select_bazi_a');
+      const selB = document.getElementById('profile_select_bazi_b');
+      if (!selA || !selB || !window.MeetJoyProfiles) return;
+
+      const getList = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : (window.MeetJoyProfiles.getProfiles ? window.MeetJoyProfiles.getProfiles() : []);
+      const profiles = Array.isArray(getList) ? getList : [];
+
+      const curA = selA.value;
+      const curB = selB.value;
+
+      const buildOptions = (targetLabel) => {
+        if (profiles.length === 0) {
+          return `<option value="">-- 命盤庫目前尚無紀錄 (可先儲存) --</option>`;
+        }
+        let html = `<option value="">-- 📁 選擇已存命盤帶入${targetLabel} (${profiles.length} 位) --</option>`;
+        profiles.forEach(p => {
+          const birthStr = p.birthDate || '無日期';
+          const timeStr = p.birthTime ? ` ${p.birthTime}` : '';
+          const catTag = p.category ? `[${p.category}] ` : '';
+          const name = p.name || '未命名';
+          html += `<option value="${p.id}">${catTag}${name} · ${birthStr}${timeStr}</option>`;
+        });
+        return html;
+      };
+
+      selA.innerHTML = buildOptions('甲方 (A)');
+      selB.innerHTML = buildOptions('乙方 (B)');
+
+      if (curA && profiles.some(p => p.id === curA)) selA.value = curA;
+      if (curB && profiles.some(p => p.id === curB)) selB.value = curB;
+    }
+
+    function setupBaziQuickProfileEvents() {
+      const selA = document.getElementById('profile_select_bazi_a');
+      const selB = document.getElementById('profile_select_bazi_b');
+
+      const applyProfile = (p, target) => {
+        if (!p) return;
+        const isA = target === 'a';
+        const nameEl = document.getElementById(isA ? 'user_name_a' : 'user_name_b');
+        const genderEl = document.getElementById(isA ? 'user_gender_a' : 'user_gender_b');
+        const dateEl = document.getElementById(isA ? 'birth_date_a' : 'birth_date_b');
+        const timeEl = document.getElementById(isA ? 'birth_time_a' : 'birth_time_b');
+
+        if (p.name && nameEl) nameEl.value = p.name;
+        if (p.gender && genderEl) genderEl.value = (p.gender === 'female' || p.gender === 'Female') ? 'female' : 'male';
+        if (p.birthDate && dateEl) dateEl.value = p.birthDate;
+        if (p.birthTime && timeEl) timeEl.value = p.birthTime;
+
+        if (window.MeetJoyProfiles && typeof window.MeetJoyProfiles.showToast === 'function') {
+          window.MeetJoyProfiles.showToast(`✨ 已成功載入「${p.name}」至八字合盤${isA ? '甲方' : '乙方'}！`);
+        }
+        renderDualBazi();
+      };
+
+      if (selA) {
+        selA.addEventListener('change', (e) => {
+          const pid = e.target.value;
+          if (!pid || !window.MeetJoyProfiles) return;
+          const profiles = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : window.MeetJoyProfiles.getProfiles();
+          const target = profiles.find(item => item.id === pid);
+          if (target) applyProfile(target, 'a');
+        });
+      }
+
+      if (selB) {
+        selB.addEventListener('change', (e) => {
+          const pid = e.target.value;
+          if (!pid || !window.MeetJoyProfiles) return;
+          const profiles = window.MeetJoyProfiles.getAll ? window.MeetJoyProfiles.getAll() : window.MeetJoyProfiles.getProfiles();
+          const target = profiles.find(item => item.id === pid);
+          if (target) applyProfile(target, 'b');
+        });
+      }
+
+      window.addEventListener('mj-profiles-changed', populateBaziQuickProfiles);
+      window.addEventListener('mj-auth-changed', populateBaziQuickProfiles);
+    }
+
+    // 頁面初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      // 模式切換按鈕綁定
+      document.getElementById('tab_mode_natal').addEventListener('click', () => setBaziMode('natal'));
+      document.getElementById('tab_mode_synastry').addEventListener('click', () => setBaziMode('synastry'));
+
+      // 單人排盤按鈕與變更監聽
+      document.getElementById('btn_render_single').addEventListener('click', renderBaziChart);
+      ['user_name', 'user_gender', 'birth_date', 'birth_time'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', renderBaziChart);
+      });
+
+      // 雙人合盤按鈕與互換
+      document.getElementById('btn_render_dual').addEventListener('click', renderDualBazi);
+      document.getElementById('btn_swap_ab').addEventListener('click', () => {
+        const fields = [
+          { a: 'user_name_a', b: 'user_name_b' },
+          { a: 'user_gender_a', b: 'user_gender_b' },
+          { a: 'birth_date_a', b: 'birth_date_b' },
+          { a: 'birth_time_a', b: 'birth_time_b' }
+        ];
+        fields.forEach(f => {
+          const elA = document.getElementById(f.a);
+          const elB = document.getElementById(f.b);
+          if (elA && elB) {
+            const temp = elA.value;
+            elA.value = elB.value;
+            elB.value = temp;
+          }
+        });
+        renderDualBazi();
+      });
+
+      document.getElementById('btn_sample_couple').addEventListener('click', () => {
+        document.getElementById('user_name_a').value = '愛倫院長';
+        document.getElementById('user_gender_a').value = 'female';
+        document.getElementById('birth_date_a').value = '1988-08-18';
+        document.getElementById('birth_time_a').value = '12:00';
+
+        document.getElementById('user_name_b').value = '靈魂伴侶';
+        document.getElementById('user_gender_b').value = 'male';
+        document.getElementById('birth_date_b').value = '1990-01-27';
+        document.getElementById('birth_time_b').value = '11:36';
+        renderDualBazi();
+      });
+
+      setupBaziQuickProfileEvents();
+
+      // 掛載全站通用會員命盤檔案庫
+      if (window.MeetJoyProfiles) {
+        MeetJoyProfiles.mount('#universal_profile_bar', {
+          getCurrentData: () => {
+            if (currentBaziMode === 'synastry') {
+              return {
+                name: document.getElementById('user_name_a').value.trim() || '八字盤A',
+                gender: document.getElementById('user_gender_a').value === 'female' ? 'female' : 'male',
+                birthDate: document.getElementById('birth_date_a').value,
+                birthTime: document.getElementById('birth_time_a').value,
+                category: '合盤'
+              };
+            }
+            return {
+              name: document.getElementById('user_name').value.trim() || '八字盤',
+              gender: document.getElementById('user_gender').value === 'female' ? 'female' : 'male',
+              birthDate: document.getElementById('birth_date').value,
+              birthTime: document.getElementById('birth_time').value,
+              category: '自己'
+            };
+          },
+          onSelect: (p) => {
+            const isDual = (currentBaziMode === 'synastry');
+            const nameTarget = isDual ? 'user_name_a' : 'user_name';
+            const genderTarget = isDual ? 'user_gender_a' : 'user_gender';
+            const dateTarget = isDual ? 'birth_date_a' : 'birth_date';
+            const timeTarget = isDual ? 'birth_time_a' : 'birth_time';
+
+            if (p.name) document.getElementById(nameTarget).value = p.name;
+            if (p.gender) document.getElementById(genderTarget).value = (p.gender === 'female' || p.gender === 'Female') ? 'female' : 'male';
+            if (p.birthDate) document.getElementById(dateTarget).value = p.birthDate;
+            if (p.birthTime) document.getElementById(timeTarget).value = p.birthTime;
+
+            if (isDual) renderDualBazi();
+            else renderBaziChart();
+          }
+        });
+      }
+
+      // 預設渲染史可法範例命盤
+      renderBaziChart();
+    });
+  </script>
+
+</body>
+</html>
