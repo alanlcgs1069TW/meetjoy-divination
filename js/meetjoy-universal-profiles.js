@@ -213,6 +213,61 @@
       } catch (e) {}
     },
 
+    async checkAccountExists(email) {
+      if (!email) return { exists: false };
+      email = email.trim().toLowerCase();
+
+      // 1. 管理導師專屬信箱
+      if (VAULT_CONFIG.ADMIN_EMAILS.includes(email)) {
+        return { exists: true, name: '愛倫院長', isAdmin: true };
+      }
+
+      // 2. 檢查本地歷史已登入身分
+      try {
+        const stored = localStorage.getItem('mj_member_user');
+        if (stored) {
+          const u = JSON.parse(stored);
+          if (u && u.email && u.email.toLowerCase() === email) {
+            return { exists: true, name: u.name || email.split('@')[0], isAdmin: !!u.isAdmin };
+          }
+        }
+      } catch (e) {}
+
+      // 3. 查詢 WordPress 主站 REST API 判定是否已有該帳號
+      try {
+        const wpRes = await fetch(`https://meetjoy.net/wp-json/meetjoy/v1/check-email?email=${encodeURIComponent(email)}`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (wpRes.ok) {
+          const wpData = await wpRes.json();
+          if (wpData && wpData.exists) {
+            return { exists: true, name: wpData.name || email.split('@')[0], isAdmin: false };
+          }
+        }
+      } catch (e) {
+        console.warn('[MeetJoyAuth] WP check-email error:', e);
+      }
+
+      // 4. 查詢 Cloudflare KV 是否有雲端命盤庫檔案
+      try {
+        const kvRes = await fetch(`/api/profiles?email=${encodeURIComponent(email)}`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (kvRes.ok) {
+          const kvData = await kvRes.json();
+          if (kvData && kvData.success && (kvData.count > 0 || (Array.isArray(kvData.profiles) && kvData.profiles.length > 0))) {
+            return { exists: true, name: email.split('@')[0], isAdmin: false };
+          }
+        }
+      } catch (e) {
+        console.warn('[MeetJoyAuth] KV check-profiles error:', e);
+      }
+
+      return { exists: false };
+    },
+
     showLoginModal(onSuccess) {
       const oldModal = document.getElementById('mj_auth_modal');
       if (oldModal) oldModal.remove();
@@ -220,30 +275,65 @@
       const modalHtml = `
         <div id="mj_auth_modal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in font-serif">
           <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-[#C8A97E]/60 text-slate-800 relative">
-            <button id="mj_close_auth_modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl font-bold p-1 leading-none">&times;</button>
+            <button id="mj_close_auth_modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl font-bold p-1 leading-none cursor-pointer">&times;</button>
             
-            <div class="text-center mb-6">
+            <div class="text-center mb-5">
               <div class="w-12 h-12 rounded-full bg-[#1E261D] text-amber-100 flex items-center justify-center mx-auto mb-3 text-xl shadow-md border border-[#C8A97E]/70">
                 🔮
               </div>
-              <h3 class="text-xl font-black text-slate-900 mb-1.5">登入會員 · 跨電腦同步雲端命盤庫</h3>
-              <p class="text-xs text-slate-600 leading-relaxed">
-                在任何電腦輸入您的專屬 Email 登入，即可將您所有的個人與親友命盤<strong>雲端即時同步漫遊</strong>，走到哪都能完整查看！
+              <h3 id="mj_auth_modal_title" class="text-xl font-black text-slate-900 mb-1">登入會員 · 跨電腦同步雲端命盤庫</h3>
+              <p id="mj_auth_modal_subtitle" class="text-xs text-slate-600 leading-relaxed">
+                輸入您的學員 Email 登入，即可將個人與親友命盤<strong>雲端即時同步漫遊</strong>，走到哪都能完整查看！
               </p>
             </div>
 
-            <form id="mj_auth_email_form" class="space-y-3.5 mb-4">
+            <!-- Tab 標籤切換：預設為登入 -->
+            <div class="flex items-center justify-center p-1 bg-slate-100 rounded-2xl mb-4 border border-slate-200/80">
+              <button type="button" id="mj_tab_login" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 bg-[#2E3829] text-amber-100 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>✨ 會員登入</span>
+              </button>
+              <button type="button" id="mj_tab_register" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>🌱 註冊新帳號</span>
+              </button>
+            </div>
+
+            <!-- 動態提示橫幅 (自動切換註冊時顯示) -->
+            <div id="mj_auth_notice_box" class="hidden mb-4 p-3 bg-amber-50/90 border border-amber-300 rounded-xl text-amber-950 text-xs leading-relaxed font-medium"></div>
+
+            <!-- 1. 登入表單 (預設顯示) -->
+            <form id="mj_auth_login_form" class="space-y-3.5 mb-4">
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">學員電子信箱 (Email · 跨裝置唯一帳號) <span class="text-rose-500">*</span></label>
-                <input type="email" id="mj_auth_email_input" required placeholder="例如：alan@example.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                <input type="email" id="mj_auth_login_email" required placeholder="例如：alan@example.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+              </div>
+              <button type="submit" id="mj_btn_submit_login" class="w-full py-2.5 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 rounded-xl text-xs font-black shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>✨ 登入並同步雲端命盤庫</span>
+              </button>
+              <div class="text-center pt-1">
+                <button type="button" id="mj_btn_switch_to_reg" class="text-[11px] text-[#8C6D3F] hover:text-[#5B4626] font-bold underline cursor-pointer">
+                  尚未建立學員檔案？立即註冊新帳號 ➔
+                </button>
+              </div>
+            </form>
+
+            <!-- 2. 註冊表單 (預設隱藏) -->
+            <form id="mj_auth_reg_form" class="space-y-3.5 mb-4 hidden">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">學員電子信箱 (Email · 跨裝置唯一帳號) <span class="text-rose-500">*</span></label>
+                <input type="email" id="mj_auth_reg_email" required placeholder="例如：alan@example.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
               </div>
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">學員姓名 / 稱謂 (可選)</label>
-                <input type="text" id="mj_auth_name_input" placeholder="例如：愛倫 / 林雅婷" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">學員姓名 / 稱謂 (建立個人檔案) <span class="text-rose-500">*</span></label>
+                <input type="text" id="mj_auth_reg_name" required placeholder="例如：愛倫 / 林雅婷" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E]">
               </div>
-              <button type="submit" class="w-full py-2.5 bg-[#2E3829] hover:bg-[#3E4B37] text-amber-50 rounded-xl text-xs font-black shadow-md transition flex items-center justify-center gap-1">
-                <span>✨ 立即登入並同步雲端命盤庫</span>
+              <button type="submit" id="mj_btn_submit_reg" class="w-full py-2.5 bg-[#8C6D3F] hover:bg-[#725730] text-amber-50 rounded-xl text-xs font-black shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>🌱 立即註冊並啟動命盤庫</span>
               </button>
+              <div class="text-center pt-1">
+                <button type="button" id="mj_btn_switch_to_login" class="text-[11px] text-slate-500 hover:text-slate-800 font-bold underline cursor-pointer">
+                  已有學員帳號？返回會員登入 ➔
+                </button>
+              </div>
             </form>
 
             <div class="relative flex py-2 items-center">
@@ -254,13 +344,13 @@
 
             <div class="space-y-2.5 mt-2">
               <a href="https://meetjoy.net/wp-login.php?loginSocial=line&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
-                <span>💬 使用 LINE 帳號快速登入</span>
+                <span>💬 使用 LINE 帳號快速登入 / 註冊</span>
               </a>
               <a href="https://meetjoy.net/wp-login.php?loginSocial=google&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs no-underline cursor-pointer">
-                <span>🌐 使用 Google 帳號快速登入</span>
+                <span>🌐 使用 Google 帳號快速登入 / 註冊</span>
               </a>
               <a href="https://meetjoy.net/wp-login.php?loginSocial=facebook&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
-                <span>🔵 使用 Facebook 帳號快速登入</span>
+                <span>🔵 使用 Facebook 帳號快速登入 / 註冊</span>
               </a>
             </div>
 
@@ -274,19 +364,124 @@
 
       const modalEl = document.getElementById('mj_auth_modal');
       const closeBtn = document.getElementById('mj_close_auth_modal');
+      const tabLogin = document.getElementById('mj_tab_login');
+      const tabRegister = document.getElementById('mj_tab_register');
+      const loginForm = document.getElementById('mj_auth_login_form');
+      const regForm = document.getElementById('mj_auth_reg_form');
+      const loginEmailInput = document.getElementById('mj_auth_login_email');
+      const regEmailInput = document.getElementById('mj_auth_reg_email');
+      const regNameInput = document.getElementById('mj_auth_reg_name');
+      const noticeBox = document.getElementById('mj_auth_notice_box');
+      const modalTitle = document.getElementById('mj_auth_modal_title');
+      const modalSubtitle = document.getElementById('mj_auth_modal_subtitle');
+      const submitLoginBtn = document.getElementById('mj_btn_submit_login');
+      const submitRegBtn = document.getElementById('mj_btn_submit_reg');
+
       closeBtn.onclick = () => modalEl.remove();
 
-      // Email 表單登入 (推薦主路徑)
-      document.getElementById('mj_auth_email_form').onsubmit = async (e) => {
+      // 切換至【登入】Tab
+      function setTabLogin() {
+        tabLogin.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 bg-[#2E3829] text-amber-100 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer';
+        tabRegister.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 cursor-pointer';
+        loginForm.classList.remove('hidden');
+        regForm.classList.add('hidden');
+        modalTitle.textContent = '登入會員 · 跨電腦同步雲端命盤庫';
+        modalSubtitle.innerHTML = '輸入您的學員 Email 登入，即可將個人與親友命盤<strong>雲端即時同步漫遊</strong>，走到哪都能完整查看！';
+        noticeBox.classList.add('hidden');
+        loginEmailInput.focus();
+      }
+
+      // 切換至【註冊】Tab
+      function setTabRegister(emailToPrefill = '', noticeMsg = '') {
+        tabRegister.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 bg-[#8C6D3F] text-amber-100 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer';
+        tabLogin.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 cursor-pointer';
+        loginForm.classList.add('hidden');
+        regForm.classList.remove('hidden');
+        modalTitle.textContent = '註冊新學員 · 啟動專屬雲端命盤庫';
+        modalSubtitle.innerHTML = '首次使用？建立專屬學員檔案，立即啟動 <strong>3 組免費雲端命盤空間</strong>！';
+        
+        if (emailToPrefill) {
+          regEmailInput.value = emailToPrefill;
+        }
+        if (noticeMsg) {
+          noticeBox.innerHTML = noticeMsg;
+          noticeBox.classList.remove('hidden');
+        } else {
+          noticeBox.classList.add('hidden');
+        }
+        
+        if (regEmailInput.value) {
+          regNameInput.focus();
+        } else {
+          regEmailInput.focus();
+        }
+      }
+
+      // 監聽 Tab 按鈕與切換連結
+      tabLogin.onclick = () => setTabLogin();
+      tabRegister.onclick = () => setTabRegister(loginEmailInput.value.trim());
+      document.getElementById('mj_btn_switch_to_reg').onclick = () => setTabRegister(loginEmailInput.value.trim());
+      document.getElementById('mj_btn_switch_to_login').onclick = () => setTabLogin();
+
+      // 登入提交處理：自動判別是否已存在帳號，沒有才切換至註冊頁面！
+      loginForm.onsubmit = async (e) => {
         e.preventDefault();
-        const email = document.getElementById('mj_auth_email_input').value.trim().toLowerCase();
-        let name = document.getElementById('mj_auth_name_input').value.trim();
+        const email = loginEmailInput.value.trim().toLowerCase();
         if (!email) return;
-        if (!name) name = email.split('@')[0];
+
+        // 載入狀態
+        submitLoginBtn.disabled = true;
+        const originalBtnText = submitLoginBtn.innerHTML;
+        submitLoginBtn.innerHTML = `<span>⏳ 正在比對學員帳號...</span>`;
+
+        try {
+          const accountStatus = await MeetJoyAuth.checkAccountExists(email);
+
+          if (accountStatus.exists) {
+            // 已有帳號！直接順利登入
+            const isAdmin = !!accountStatus.isAdmin || VAULT_CONFIG.ADMIN_EMAILS.includes(email);
+            const user = MeetJoyAuth.login('email', {
+              name: accountStatus.name || (isAdmin ? '愛倫院長' : email.split('@')[0]),
+              email: email,
+              isAdmin: isAdmin
+            });
+            if (isAdmin) {
+              localStorage.setItem('mj_current_admin_email', email);
+            }
+            modalEl.remove();
+            MeetJoyProfiles.showToast(isAdmin ? `👑 歡迎愛倫院長！享無限命盤容量，正在同步雲端命盤庫...` : `🌿 歡迎回來，${user.name}！正在為您同步雲端命盤...`);
+            await MeetJoyProfiles.syncWithCloud(false);
+            if (typeof onSuccess === 'function') onSuccess(user);
+          } else {
+            // 尚未有帳號！自動流暢切換到註冊 Tab
+            submitLoginBtn.disabled = false;
+            submitLoginBtn.innerHTML = originalBtnText;
+            setTabRegister(
+              email, 
+              `💡 系統查無此信箱的學員資料，已自動為您切換至<strong>【註冊新帳號】</strong>。請填寫您的稱謂即可一鍵開通雲端命盤庫！`
+            );
+          }
+        } catch (err) {
+          console.error('[MeetJoyAuth] loginForm error:', err);
+          submitLoginBtn.disabled = false;
+          submitLoginBtn.innerHTML = originalBtnText;
+          setTabRegister(email, `💡 系統查無此信箱紀錄，已為您切換至<strong>【註冊新帳號】</strong>，請填寫稱謂開通！`);
+        }
+      };
+
+      // 註冊提交處理
+      regForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const email = regEmailInput.value.trim().toLowerCase();
+        let name = regNameInput.value.trim();
+        if (!email || !name) return;
+
+        submitRegBtn.disabled = true;
+        submitRegBtn.innerHTML = `<span>🌱 正在建立學員檔案...</span>`;
 
         const isAdmin = VAULT_CONFIG.ADMIN_EMAILS.includes(email);
-        const user = MeetJoyAuth.login('email', { 
-          name: isAdmin ? (name === email.split('@')[0] ? '愛倫院長' : name) : name, 
+        const user = MeetJoyAuth.login('email', {
+          name: isAdmin ? (name === email.split('@')[0] ? '愛倫院長' : name) : name,
           email: email,
           isAdmin: isAdmin
         });
@@ -294,9 +489,7 @@
           localStorage.setItem('mj_current_admin_email', email);
         }
         modalEl.remove();
-        MeetJoyProfiles.showToast(isAdmin ? `👑 歡迎愛倫院長！享無限命盤容量，正在同步雲端命盤庫...` : `🌿 歡迎回來，${user.name}！正在為您同步雲端命盤...`);
-        
-        // 立即觸發雲端雙向同步！
+        MeetJoyProfiles.showToast(`🌱 恭喜開通！歡迎加入學院，${user.name}！已為您啟動 3 組免費雲端命盤庫。`);
         await MeetJoyProfiles.syncWithCloud(false);
         if (typeof onSuccess === 'function') onSuccess(user);
       };
