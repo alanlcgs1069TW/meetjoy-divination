@@ -3,6 +3,18 @@
  * 解決使用者在不同電腦 / 裝置登入時，命盤庫資料不一致的問題。
  */
 
+function normalizeDateStr(dStr) {
+  if (!dStr) return '1990-01-01';
+  const parts = dStr.split('-').map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return dStr;
+  const y = String(parts[0]);
+  const m = String(parts[1]).padStart(2, '0');
+  const d = String(parts[2]).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+const hasValidExactTime = (t) => t && t !== 'None' && t !== '12:00';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -26,7 +38,31 @@ export async function onRequestGet(context) {
 
   try {
     const raw = await env.PROFILES_KV.get(key);
-    const profiles = raw ? JSON.parse(raw) : [];
+    let profiles = raw ? JSON.parse(raw) : [];
+    const dedupMap = new Map();
+    profiles.filter(p => !p.deletedAt).forEach(p => {
+      const bDate = normalizeDateStr(p.birthDate);
+      const cleanName = (p.name || '').trim();
+      const k = `${cleanName}_${bDate}`;
+      const prev = dedupMap.get(k);
+      if (!prev) {
+        dedupMap.set(k, { ...p, name: cleanName, birthDate: bDate });
+      } else {
+        const pExact = hasValidExactTime(p.birthTime);
+        const prevExact = hasValidExactTime(prev.birthTime);
+        const chosenTime = pExact ? p.birthTime : (prevExact ? prev.birthTime : (p.birthTime || prev.birthTime));
+        dedupMap.set(k, {
+          ...prev,
+          ...p,
+          id: (prev.id && prev.id.startsWith('prof_ag_')) ? prev.id : (p.id || prev.id),
+          name: cleanName,
+          birthDate: bDate,
+          birthTime: chosenTime
+        });
+      }
+    });
+    profiles = Array.from(dedupMap.values());
+    profiles.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
     return new Response(JSON.stringify({ success: true, count: profiles.length, profiles }), {
       headers: {
         'Content-Type': 'application/json',
@@ -69,32 +105,73 @@ export async function onRequestPost(context) {
     let finalProfiles = [];
 
     if (action === 'replace') {
-      finalProfiles = incomingProfiles.filter(p => !p.deletedAt);
+      const dedupMap = new Map();
+      incomingProfiles.filter(p => !p.deletedAt).forEach(p => {
+        const bDate = normalizeDateStr(p.birthDate);
+        const cleanName = (p.name || '').trim();
+        const k = `${cleanName}_${bDate}`;
+        const prev = dedupMap.get(k);
+        if (!prev) {
+          dedupMap.set(k, { ...p, name: cleanName, birthDate: bDate });
+        } else {
+          const pExact = hasValidExactTime(p.birthTime);
+          const prevExact = hasValidExactTime(prev.birthTime);
+          const chosenTime = pExact ? p.birthTime : (prevExact ? prev.birthTime : (p.birthTime || prev.birthTime));
+          dedupMap.set(k, {
+            ...prev,
+            ...p,
+            id: (prev.id && prev.id.startsWith('prof_ag_')) ? prev.id : (p.id || prev.id),
+            name: cleanName,
+            birthDate: bDate,
+            birthTime: chosenTime
+          });
+        }
+      });
+      finalProfiles = Array.from(dedupMap.values());
     } else {
-      // 雙向合併模式 (Merge with Last-Write-Wins)
+      // 雙向合併模式 (Merge with Last-Write-Wins 與同名同日嚴格語意去重)
       const raw = await env.PROFILES_KV.get(key);
       const existing = raw ? JSON.parse(raw) : [];
 
       const map = new Map();
+
       existing.forEach(p => {
-        const k = p.id || `${p.name}_${p.birthDate}_${p.birthTime}`;
-        map.set(k, p);
+        const bDate = normalizeDateStr(p.birthDate);
+        const cleanName = (p.name || '').trim();
+        const k = `${cleanName}_${bDate}`;
+        map.set(k, { ...p, name: cleanName, birthDate: bDate });
       });
 
       incomingProfiles.forEach(p => {
-        const k = p.id || `${p.name}_${p.birthDate}_${p.birthTime}`;
+        const bDate = normalizeDateStr(p.birthDate);
+        const cleanName = (p.name || '').trim();
+        const k = `${cleanName}_${bDate}`;
         const prev = map.get(k);
+
         if (!prev) {
-          if (!p.deletedAt) map.set(k, p);
+          if (!p.deletedAt) map.set(k, { ...p, name: cleanName, birthDate: bDate });
         } else {
-          // 比對更新時間
-          const prevTime = prev.updatedAt || 0;
-          const currTime = p.updatedAt || Date.now();
-          if (currTime >= prevTime) {
-            if (p.deletedAt) {
-              map.delete(k);
-            } else {
-              map.set(k, p);
+          if (p.deletedAt) {
+            map.delete(k);
+          } else {
+            // 比對更新時間，同時保護精確分鐘時間不被 dummy/None 覆蓋
+            const prevTime = prev.updatedAt || 0;
+            const currTime = p.updatedAt || Date.now();
+            const pExact = hasValidExactTime(p.birthTime);
+            const prevExact = hasValidExactTime(prev.birthTime);
+            const chosenTime = pExact ? p.birthTime : (prevExact ? prev.birthTime : (p.birthTime || prev.birthTime));
+
+            if (currTime >= prevTime) {
+              map.set(k, {
+                ...prev,
+                ...p,
+                id: (prev.id && prev.id.startsWith('prof_ag_')) ? prev.id : (p.id || prev.id),
+                name: cleanName,
+                birthDate: bDate,
+                birthTime: chosenTime
+              });
+            } else if (pExact && !prevExact) {
+              prev.birthTime = p.birthTime;
             }
           }
         }
