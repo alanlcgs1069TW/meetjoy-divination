@@ -71,9 +71,13 @@
   }
 
   function findDepartmentByPath(path) {
+    const cleanPath = path.replace(/\.html$/, '').toLowerCase();
     for (let i = 0; i < DEPARTMENTS.length; i++) {
       const dept = DEPARTMENTS[i];
-      if (dept.systems.some(s => s.url === path || path.endsWith(s.url))) {
+      if (dept.systems.some(s => {
+        const cleanUrl = s.url.replace(/\.html$/, '').toLowerCase();
+        return cleanPath === cleanUrl || cleanPath.endsWith(cleanUrl) || cleanPath.includes(cleanUrl.replace(/^\//, ''));
+      })) {
         return dept;
       }
     }
@@ -374,8 +378,10 @@
 
       // 生成 Tier 2 初始系統子項目
       function generateSystemsHtml(dept) {
+        const cleanCurrent = current.replace(/\.html$/, '').toLowerCase();
         const sysLinks = dept.systems.map(s => {
-          const isCurrent = (s.url === current || current.endsWith(s.url));
+          const cleanUrl = s.url.replace(/\.html$/, '').toLowerCase();
+          const isCurrent = (cleanCurrent === cleanUrl || cleanCurrent.endsWith(cleanUrl) || cleanCurrent.includes(cleanUrl.replace(/^\//, '')));
           return `
             <a href="${s.url}" class="mj-sys-pill ${isCurrent ? 'current-page' : ''}" title="${s.name}">
               <span>${s.name}</span>
@@ -449,8 +455,10 @@
           // 動畫切換 Tier 2 內容
           tier2Container.style.opacity = '0.3';
           setTimeout(() => {
+            const cleanCurrent = current.replace(/\.html$/, '').toLowerCase();
             const sysLinks = targetDept.systems.map(s => {
-              const isCurrent = (s.url === current || current.endsWith(s.url));
+              const cleanUrl = s.url.replace(/\.html$/, '').toLowerCase();
+              const isCurrent = (cleanCurrent === cleanUrl || cleanCurrent.endsWith(cleanUrl) || cleanCurrent.includes(cleanUrl.replace(/^\//, '')));
               return `
                 <a href="${s.url}" class="mj-sys-pill ${isCurrent ? 'current-page' : ''}" title="${s.name}">
                   <span>${s.name}</span>
