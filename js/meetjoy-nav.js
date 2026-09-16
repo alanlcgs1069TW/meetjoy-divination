@@ -506,7 +506,8 @@
 
     if (user && (user.email || user.name)) {
       const displayName = user.name || (user.email ? user.email.split('@')[0] : '會員');
-      const isAdmin = user.isAdmin || user.email === 'alanlcgs1069@gmail.com';
+      const userEmail = (user.email || '').toLowerCase().trim();
+      const isAdmin = user.isAdmin || ['alanlcgs@gmail.com', 'alanlc@gmail.com', 'alanlcgs1069@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net'].includes(userEmail);
       const badgeIcon = isAdmin ? '👑' : '🟢';
       container.innerHTML = `
         <div style="display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 8px; background: rgba(200, 169, 126, 0.18); border: 1px solid rgba(200, 169, 126, 0.45); color: #F7E7CE; font-size: 11px; white-space: nowrap;">

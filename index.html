@@ -624,7 +624,8 @@
 
       if (user && (user.email || user.name)) {
         const displayName = user.name || (user.email ? user.email.split('@')[0] : '會員');
-        const isAdmin = user.isAdmin || user.email === 'alanlcgs1069@gmail.com';
+        const userEmail = (user.email || '').toLowerCase().trim();
+        const isAdmin = user.isAdmin || ['alanlcgs@gmail.com', 'alanlc@gmail.com', 'alanlcgs1069@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net'].includes(userEmail);
         portalBox.innerHTML = `
           <div class="flex flex-col md:flex-row items-center justify-between gap-5">
             <div class="space-y-1.5 text-center md:text-left">

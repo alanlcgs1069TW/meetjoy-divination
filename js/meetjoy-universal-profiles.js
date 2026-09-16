@@ -65,7 +65,7 @@
     PRODUCT_SLUG: 'vault-expansion-pack-30',
     PRODUCT_URL: 'https://meetjoy.net/product/vault-expansion-pack-30/',
     PRODUCT_CART_URL: 'https://meetjoy.net/cart/?add-to-cart=228781',
-    ADMIN_EMAILS: ['alanlc@gmail.com', 'alanlcgs@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net']
+    ADMIN_EMAILS: ['alanlc@gmail.com', 'alanlcgs@gmail.com', 'alanlcgs1069@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net']
   };
 
   function isUserAdmin(user) {
@@ -158,7 +158,13 @@
         const stored = localStorage.getItem('mj_member_user');
         if (stored) {
           const user = JSON.parse(stored);
-          if (user && user.id) return user;
+          if (user && (user.id || user.email)) {
+            const email = (user.email || '').toLowerCase().trim();
+            if (!user.isAdmin && (VAULT_CONFIG.ADMIN_EMAILS.includes(email) || isUserAdmin(user))) {
+              user.isAdmin = true;
+            }
+            return user;
+          }
         }
         // 檢查 Supabase 或後台既有 session
         const zwUser = localStorage.getItem('ziwei-user');
@@ -1158,44 +1164,7 @@
       };
 
       // 1. 自動檢查 URL Query 參數（由 WordPress 主站或轉址傳遞）
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramEmail = (urlParams.get('mj_email') || urlParams.get('user_email') || '').trim().toLowerCase();
-        const paramName = (urlParams.get('mj_name') || urlParams.get('user_name') || '').trim();
-        const paramAdmin = urlParams.get('mj_admin') || urlParams.get('is_admin');
-
-        if (paramEmail) {
-          const current = MeetJoyAuth.getUser();
-          const isAdminUser = paramAdmin === '1' || VAULT_CONFIG.ADMIN_EMAILS.includes(paramEmail);
-          const loggedUser = MeetJoyAuth.login('url_sync', {
-            email: paramEmail,
-            name: paramName || (isAdminUser ? '愛倫院長' : paramEmail.split('@')[0]),
-            isAdmin: isAdminUser
-          });
-          if (isAdminUser) {
-            localStorage.setItem('mj_current_admin_email', paramEmail);
-          }
-          // 立即同步雲端命盤
-          this.syncWithCloud(false);
-          window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: loggedUser }));
-          window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
-          window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
-
-          // 淨化 URL，移除臨時登入參數，保持在當前頁面（愛倫院長指示：回到同一個頁面）
-          try {
-            const cleanUrl = new URL(window.location.href);
-            cleanUrl.searchParams.delete('mj_email');
-            cleanUrl.searchParams.delete('user_email');
-            cleanUrl.searchParams.delete('mj_name');
-            cleanUrl.searchParams.delete('user_name');
-            cleanUrl.searchParams.delete('mj_admin');
-            cleanUrl.searchParams.delete('is_admin');
-            window.history.replaceState({}, document.title, cleanUrl.toString());
-          } catch (err) {}
-        }
-      } catch (e) {
-        console.warn('[MeetJoyProfiles] URL param sync error:', e);
-      }
+      checkAndApplyUrlAuth();
 
       // 2. 監聽 WordPress 父層 iframe 傳來的跨網域認證訊息
       window.addEventListener('message', (event) => {
@@ -1263,8 +1232,58 @@
     }
   };
 
+  // 全域自動檢驗 URL 認證參數（無論任何頁面加載即自動秒登入與淨化網址）
+  function checkAndApplyUrlAuth() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramEmail = (urlParams.get('mj_email') || urlParams.get('user_email') || '').trim().toLowerCase();
+      const paramName = (urlParams.get('mj_name') || urlParams.get('user_name') || '').trim();
+      const paramAdmin = urlParams.get('mj_admin') || urlParams.get('is_admin');
+      const paramExtra = urlParams.get('mj_extra');
+
+      if (paramEmail) {
+        const isAdminUser = paramAdmin === '1' || VAULT_CONFIG.ADMIN_EMAILS.includes(paramEmail);
+        const loggedUser = MeetJoyAuth.login('url_sync', {
+          email: paramEmail,
+          name: paramName || (isAdminUser ? '愛倫院長' : paramEmail.split('@')[0]),
+          isAdmin: isAdminUser,
+          extra_slots: paramExtra ? parseInt(paramExtra, 10) : 0
+        });
+        if (isAdminUser) {
+          localStorage.setItem('mj_current_admin_email', paramEmail);
+        }
+        if (paramExtra) {
+          localStorage.setItem(`mj_vault_extra_slots_${paramEmail}`, paramExtra);
+        }
+
+        setTimeout(() => {
+          if (window.MeetJoyProfiles && typeof window.MeetJoyProfiles.syncWithCloud === 'function') {
+            window.MeetJoyProfiles.syncWithCloud(false);
+          }
+        }, 100);
+
+        window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: loggedUser }));
+        window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+        window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+
+        // 徹底淨化 URL，移除臨時登入參數與 SSO 附屬標籤，保持在當前頁面
+        try {
+          const cleanUrl = new URL(window.location.href);
+          const removeParams = ['mj_email', 'user_email', 'mj_name', 'user_name', 'mj_admin', 'is_admin', 'mj_extra', 'nsl-notice', 'nsl_bypass_cache'];
+          removeParams.forEach(p => cleanUrl.searchParams.delete(p));
+          window.history.replaceState({}, document.title, cleanUrl.toString());
+        } catch (err) {}
+      }
+    } catch (e) {
+      console.warn('[MeetJoyProfiles] URL param sync error:', e);
+    }
+  }
+
   // 全域暴露
   window.MeetJoyAuth = MeetJoyAuth;
   window.MeetJoyProfiles = MeetJoyProfiles;
+
+  // 立即在加載當下執行自動認證檢查
+  checkAndApplyUrlAuth();
 
 })(window);

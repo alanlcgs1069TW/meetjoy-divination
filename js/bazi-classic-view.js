@@ -119,6 +119,99 @@
         margin-left: 2px;
         vertical-align: middle;
       }
+
+      /* ─── 刑衝會和害長條軌跡示意圖樣式 (嚴格對齊桌面 刑衝會和害關係長條.jpg 截圖) ─── */
+      .bazi-track-card {
+        background: #ffffff;
+        border: 2px solid #C8A97E;
+        border-radius: 18px;
+        box-shadow: 0 6px 24px -5px rgba(0,0,0,0.08);
+        overflow: hidden;
+      }
+      .bazi-track-board {
+        min-width: 680px;
+        background: #ffffff;
+        position: relative;
+      }
+      .bazi-track-lane {
+        position: relative;
+        height: 34px;
+        border-bottom: 1px dashed #e2e8f0;
+        display: flex;
+        align-items: center;
+      }
+      .bazi-track-lane:last-child {
+        border-bottom: none;
+      }
+      .bazi-track-col-grid {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        pointer-events: none;
+      }
+      .bazi-track-col-line {
+        border-right: 1px solid #f1f5f9;
+        height: 100%;
+      }
+      .bazi-node-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 900;
+        background: #ffffff;
+        border: 1.5px solid currentColor;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        z-index: 5;
+      }
+      .bazi-track-badge {
+        font-size: 10px;
+        font-weight: 900;
+        padding: 1px 6px;
+        border-radius: 9999px;
+        z-index: 6;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        white-space: nowrap;
+      }
+      .bazi-track-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        background: #475569;
+        color: #ffffff;
+        border-radius: 3px;
+        font-size: 9px;
+        font-weight: 900;
+        line-height: 1;
+        margin: 0 2px;
+        z-index: 6;
+      }
+      .bazi-pillar-footer-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        background: #ffffff;
+        border-top: 2px solid #cbd5e1;
+      }
+      .bazi-pillar-col {
+        border-right: 1px solid #e2e8f0;
+        padding: 10px 4px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .bazi-pillar-col:last-child {
+        border-right: none;
+      }
+      .bazi-pillar-col.active-day {
+        background: #fffbeb;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -167,6 +260,475 @@
     return relations;
   }
 
+  // ─── ⚡️ 六柱時空刑衝會合害全軌道示意圖 (嚴格對齊桌面 刑衝會和害關係長條.jpg 截圖) ───
+  function generateBaziTrackDiagram(data) {
+    if (!data || !data.fourPillars) return '';
+
+    const STEM_WU_XING = { '甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水' };
+    const BRANCH_WU_XING = { '子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水' };
+    const BRANCH_MAIN_STEM = { '子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳':'丙','午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬' };
+
+    function getShiShen(dayGan, targetGan) {
+      if (!targetGan) return '';
+      if (dayGan === targetGan) return '命主';
+      const YIN_YANG = { '甲':1,'丙':1,'戊':1,'庚':1,'壬':1, '乙':0,'丁':0,'己':0,'辛':0,'癸':0 };
+      const eDay = STEM_WU_XING[dayGan];
+      const eTar = STEM_WU_XING[targetGan];
+      const sameYY = (YIN_YANG[dayGan] === YIN_YANG[targetGan]);
+
+      if (eDay === eTar) return sameYY ? '比肩' : '劫財';
+      if ((eTar === '木' && eDay === '火') || (eTar === '火' && eDay === '土') || (eTar === '土' && eDay === '金') || (eTar === '金' && eDay === '水') || (eTar === '水' && eDay === '木')) {
+        return sameYY ? '偏印' : '正印';
+      }
+      if ((eDay === '木' && eTar === '火') || (eDay === '火' && eTar === '土') || (eDay === '土' && eTar === '金') || (eDay === '金' && eTar === '水') || (eDay === '水' && eTar === '木')) {
+        return sameYY ? '食神' : '傷官';
+      }
+      if ((eTar === '木' && eDay === '土') || (eTar === '火' && eDay === '金') || (eTar === '土' && eDay === '水') || (eTar === '金' && eDay === '木') || (eTar === '水' && eDay === '火')) {
+        return sameYY ? '七殺' : '正官';
+      }
+      return sameYY ? '偏財' : '正財';
+    }
+
+    const fp = data.fourPillars;
+    const dGan = fp.day.gan;
+
+    // 1. 流年 (預設今年 2026 丙午)
+    const curYear = 2026;
+    const ganArr = ['癸','甲','乙','丙','丁','戊','己','庚','辛','壬'];
+    const zhiArr = ['亥','子','丑','寅','卯','辰','巳','午','未','申','酉','戌'];
+    const fGan = ganArr[(curYear - 3) % 10];
+    const fZhi = zhiArr[(curYear - 3) % 12];
+    const fMainStem = BRANCH_MAIN_STEM[fZhi];
+
+    // 2. 當前大運
+    let curDaYun = null;
+    if (data.daYun && data.daYun.list && data.daYun.list.length) {
+      curDaYun = data.daYun.list.find(d => d.age <= (data.lunarAge || 30) && (data.lunarAge || 30) < d.age + 10) || data.daYun.list[0];
+    }
+    const dyGan = curDaYun ? curDaYun.gan : '己';
+    const dyZhi = curDaYun ? curDaYun.zhi : '丑';
+    const dyAge = curDaYun ? curDaYun.age : (data.startAge || 9);
+
+    // 構建 6 柱欄位陣列 (由左至右：流年、大運、時、日、月、年)
+    const pillars = [
+      {
+        col: 0,
+        key: 'flowYear',
+        name: '流年',
+        sub: `${curYear}年`,
+        gan: fGan,
+        zhi: fZhi,
+        ganWuxing: STEM_WU_XING[fGan],
+        zhiWuxing: BRANCH_WU_XING[fZhi],
+        ganShiShen: getShiShen(dGan, fGan),
+        zhiShiShen: getShiShen(dGan, fMainStem),
+        hiddenStems: [{ stem: fMainStem, shiShen: getShiShen(dGan, fMainStem) }]
+      },
+      {
+        col: 1,
+        key: 'dayun',
+        name: '大運',
+        sub: `${dyAge}歲`,
+        gan: dyGan,
+        zhi: dyZhi,
+        ganWuxing: STEM_WU_XING[dyGan],
+        zhiWuxing: BRANCH_WU_XING[dyZhi],
+        ganShiShen: getShiShen(dGan, dyGan),
+        zhiShiShen: getShiShen(dGan, BRANCH_MAIN_STEM[dyZhi]),
+        hiddenStems: [{ stem: BRANCH_MAIN_STEM[dyZhi], shiShen: getShiShen(dGan, BRANCH_MAIN_STEM[dyZhi]) }]
+      },
+      {
+        col: 2,
+        key: 'time',
+        name: '時柱',
+        sub: '時',
+        gan: fp.time.gan,
+        zhi: fp.time.zhi,
+        ganWuxing: fp.time.ganWuxing,
+        zhiWuxing: fp.time.zhiWuxing,
+        ganShiShen: fp.time.mainStar || getShiShen(dGan, fp.time.gan),
+        zhiShiShen: getShiShen(dGan, BRANCH_MAIN_STEM[fp.time.zhi]),
+        hiddenStems: fp.time.hidden || []
+      },
+      {
+        col: 3,
+        key: 'day',
+        name: '日柱',
+        sub: '命主自我',
+        isDay: true,
+        gan: fp.day.gan,
+        zhi: fp.day.zhi,
+        ganWuxing: fp.day.ganWuxing,
+        zhiWuxing: fp.day.zhiWuxing,
+        ganShiShen: '命主',
+        zhiShiShen: getShiShen(dGan, BRANCH_MAIN_STEM[fp.day.zhi]),
+        hiddenStems: fp.day.hidden || []
+      },
+      {
+        col: 4,
+        key: 'month',
+        name: '月柱',
+        sub: '月',
+        gan: fp.month.gan,
+        zhi: fp.month.zhi,
+        ganWuxing: fp.month.ganWuxing,
+        zhiWuxing: fp.month.zhiWuxing,
+        ganShiShen: fp.month.mainStar || getShiShen(dGan, fp.month.gan),
+        zhiShiShen: getShiShen(dGan, BRANCH_MAIN_STEM[fp.month.zhi]),
+        hiddenStems: fp.month.hidden || []
+      },
+      {
+        col: 5,
+        key: 'year',
+        name: '年柱',
+        sub: '年',
+        gan: fp.year.gan,
+        zhi: fp.year.zhi,
+        ganWuxing: fp.year.ganWuxing,
+        zhiWuxing: fp.year.zhiWuxing,
+        ganShiShen: fp.year.mainStar || getShiShen(dGan, fp.year.gan),
+        zhiShiShen: getShiShen(dGan, BRANCH_MAIN_STEM[fp.year.zhi]),
+        hiddenStems: fp.year.hidden || []
+      }
+    ];
+
+    // 軌道收集
+    const lanes = [];
+
+    // 1. 天干五合 (甲己合土、乙庚合金、丙辛合水、丁壬合木、戊癸合火)
+    const STEM_HE_MAP = {
+      '甲己': '土', '己甲': '土',
+      '乙庚': '金', '庚乙': '金',
+      '丙辛': '水', '辛丙': '水',
+      '丁壬': '木', '壬丁': '木',
+      '戊癸': '火', '癸戊': '火'
+    };
+    const pairedGanHe = new Set();
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        const pair = pillars[i].gan + pillars[j].gan;
+        if (STEM_HE_MAP[pair]) {
+          pairedGanHe.add(`${i}-${j}`);
+          const targetElement = STEM_HE_MAP[pair];
+          lanes.push({
+            type: 'gan-he',
+            from: i, to: j,
+            char1: pillars[i].gan, char2: pillars[j].gan,
+            char1Wx: pillars[i].ganWuxing, char2Wx: pillars[j].ganWuxing,
+            label: `合 (${targetElement}) 成化`,
+            badgeClass: 'bg-emerald-600 text-white shadow-xs',
+            lineColor: '#059669',
+            desc: `天干 ${pillars[i].gan}${pillars[j].gan} 相合化${targetElement}`
+          });
+        }
+      }
+    }
+
+    // 2. 天干相剋
+    const STEM_KE_MAP = {
+      '庚甲':1, '辛乙':1, '庚乙':1, '辛甲':1,
+      '甲戊':1, '乙己':1, '甲己':1, '乙戊':1,
+      '戊壬':1, '己癸':1, '戊癸':1, '己壬':1,
+      '壬丙':1, '癸丁':1, '壬丁':1, '癸丙':1,
+      '丙庚':1, '丁辛':1, '丙辛':1, '丁庚':1
+    };
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        if (pairedGanHe.has(`${i}-${j}`)) continue; // 貪合忘剋
+        const pair = pillars[i].gan + pillars[j].gan;
+        const rpair = pillars[j].gan + pillars[i].gan;
+        if (STEM_KE_MAP[pair] || STEM_KE_MAP[rpair]) {
+          lanes.push({
+            type: 'gan-ke',
+            from: i, to: j,
+            char1: pillars[i].gan, char2: pillars[j].gan,
+            char1Wx: pillars[i].ganWuxing, char2Wx: pillars[j].ganWuxing,
+            label: '剋',
+            badgeClass: 'bg-rose-600 text-white shadow-xs',
+            lineColor: '#e11d48',
+            desc: `天干 ${pillars[i].gan}${pillars[j].gan} 相剋`
+          });
+        }
+      }
+    }
+
+    // 3. 地支六沖
+    const ZHI_CHONG_MAP = { '子午':1,'午子':1,'丑未':1,'未丑':1,'寅申':1,'申寅':1,'卯酉':1,'酉卯':1,'辰戌':1,'戌辰':1,'巳亥':1,'亥巳':1 };
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        const pair = pillars[i].zhi + pillars[j].zhi;
+        if (ZHI_CHONG_MAP[pair]) {
+          lanes.push({
+            type: 'zhi-chong',
+            from: i, to: j,
+            char1: pillars[i].zhi, char2: pillars[j].zhi,
+            char1Wx: pillars[i].zhiWuxing, char2Wx: pillars[j].zhiWuxing,
+            label: '沖',
+            badgeClass: 'bg-red-600 text-white font-black shadow-xs',
+            lineColor: '#dc2626',
+            desc: `地支 ${pillars[i].zhi}${pillars[j].zhi} 正沖`
+          });
+        }
+      }
+    }
+
+    // 4. 地支三合 / 三會
+    const SAN_HE_CONFIGS = [
+      { name: '申子辰', element: '水', chars: ['申','子','辰'] },
+      { name: '寅午戌', element: '火', chars: ['寅','午','戌'] },
+      { name: '亥卯未', element: '木', chars: ['亥','卯','未'] },
+      { name: '巳酉丑', element: '金', chars: ['巳','酉','丑'] }
+    ];
+    SAN_HE_CONFIGS.forEach(cfg => {
+      const matchCols = [];
+      cfg.chars.forEach(char => {
+        const found = pillars.find(p => p.zhi === char);
+        if (found) matchCols.push(found.col);
+      });
+      if (matchCols.length === 3) {
+        matchCols.sort((a, b) => a - b);
+        lanes.push({
+          type: 'zhi-sanhe',
+          from: matchCols[0], to: matchCols[2],
+          midCol: matchCols[1],
+          char1: pillars[matchCols[0]].zhi,
+          char2: pillars[matchCols[2]].zhi,
+          charMid: pillars[matchCols[1]].zhi,
+          char1Wx: pillars[matchCols[0]].zhiWuxing,
+          char2Wx: pillars[matchCols[2]].zhiWuxing,
+          label: `合 (${cfg.element}) 三合成化`,
+          badgeClass: 'bg-indigo-700 text-white font-black shadow-xs',
+          lineColor: '#4338ca',
+          desc: `地支 ${cfg.name} 三合${cfg.element}局`
+        });
+      }
+    });
+
+    // 5. 地支六合
+    const ZHI_HE_MAP = { '子丑':'土','丑子':'土','寅亥':'木','亥寅':'木','卯戌':'火','戌卯':'火','辰酉':'金','酉辰':'金','巳申':'水','申巳':'水','午未':'火' };
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        const pair = pillars[i].zhi + pillars[j].zhi;
+        if (ZHI_HE_MAP[pair]) {
+          lanes.push({
+            type: 'zhi-he',
+            from: i, to: j,
+            char1: pillars[i].zhi, char2: pillars[j].zhi,
+            char1Wx: pillars[i].zhiWuxing, char2Wx: pillars[j].zhiWuxing,
+            label: `合 (${ZHI_HE_MAP[pair]}) 六合`,
+            badgeClass: 'bg-teal-600 text-white shadow-xs',
+            lineColor: '#0d9488',
+            desc: `地支 ${pillars[i].zhi}${pillars[j].zhi} 六合化${ZHI_HE_MAP[pair]}`
+          });
+        }
+      }
+    }
+
+    // 6. 地支相刑與自刑
+    const ZHI_XING_MAP = {
+      '子卯':'無禮之刑','卯子':'無禮之刑',
+      '寅巳':'恃勢之刑','巳申':'恃勢之刑','申寅':'恃勢之刑','巳寅':'恃勢之刑','申巳':'恃勢之刑','寅申':'恃勢之刑',
+      '丑戌':'無恩之刑','戌未':'無恩之刑','未丑':'無恩之刑','戌丑':'無恩之刑','未戌':'無恩之刑','丑未':'無恩之刑',
+      '辰辰':'自刑','午午':'自刑','酉酉':'自刑','亥亥':'自刑'
+    };
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        const pair = pillars[i].zhi + pillars[j].zhi;
+        if (ZHI_XING_MAP[pair]) {
+          const isZiXing = ZHI_XING_MAP[pair] === '自刑';
+          lanes.push({
+            type: 'zhi-xing',
+            from: i, to: j,
+            char1: pillars[i].zhi, char2: pillars[j].zhi,
+            char1Wx: pillars[i].zhiWuxing, char2Wx: pillars[j].zhiWuxing,
+            label: isZiXing ? '自刑' : '刑',
+            badgeClass: 'bg-amber-700 text-white shadow-xs',
+            lineColor: '#b45309',
+            desc: `地支 ${pillars[i].zhi}${pillars[j].zhi} ${ZHI_XING_MAP[pair]}`
+          });
+        }
+      }
+    }
+
+    // 7. 地支六害 (穿)
+    const ZHI_HAI_MAP = { '子未':1,'未子':1,'丑午':1,'午丑':1,'寅巳':1,'巳寅':1,'卯辰':1,'辰卯':1,'申亥':1,'亥申':1,'酉戌':1,'戌酉':1 };
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        const pair = pillars[i].zhi + pillars[j].zhi;
+        if (ZHI_HAI_MAP[pair]) {
+          lanes.push({
+            type: 'zhi-hai',
+            from: i, to: j,
+            char1: pillars[i].zhi, char2: pillars[j].zhi,
+            char1Wx: pillars[i].zhiWuxing, char2Wx: pillars[j].zhiWuxing,
+            label: '害',
+            badgeClass: 'bg-purple-700 text-white shadow-xs',
+            lineColor: '#7e22ce',
+            desc: `地支 ${pillars[i].zhi}${pillars[j].zhi} 六害相穿`
+          });
+        }
+      }
+    }
+
+    // 8. 地支六破
+    const ZHI_PO_MAP = { '子酉':1,'酉子':1,'卯午':1,'午卯':1,'辰丑':1,'丑辰':1,'未戌':1,'戌未':1,'寅亥':1,'亥寅':1,'巳申':1,'申巳':1 };
+    for (let i = 0; i < pillars.length; i++) {
+      for (let j = i + 1; j < pillars.length; j++) {
+        const pair = pillars[i].zhi + pillars[j].zhi;
+        if (ZHI_PO_MAP[pair]) {
+          lanes.push({
+            type: 'zhi-po',
+            from: i, to: j,
+            char1: pillars[i].zhi, char2: pillars[j].zhi,
+            char1Wx: pillars[i].zhiWuxing, char2Wx: pillars[j].zhiWuxing,
+            label: '破',
+            badgeClass: 'bg-slate-600 text-white shadow-xs',
+            lineColor: '#475569',
+            desc: `地支 ${pillars[i].zhi}${pillars[j].zhi} 相破`
+          });
+        }
+      }
+    }
+
+    // 渲染軌道 HTML
+    const colCenter = col => ((col + 0.5) * (100 / 6)).toFixed(4);
+    const colLeft = (from, to) => ((Math.min(from, to) + 0.5) * (100 / 6)).toFixed(4);
+    const colWidth = (from, to) => (Math.abs(to - from) * (100 / 6)).toFixed(4);
+    const colMid = (from, to) => (((from + to) / 2 + 0.5) * (100 / 6)).toFixed(4);
+
+    let lanesHtml = '';
+    if (lanes.length === 0) {
+      lanesHtml = `
+        <div class="bazi-track-lane flex items-center justify-center text-xs font-bold text-emerald-800 bg-emerald-50/50">
+          ✨ 六柱能量平順相生，氣象祥和，無劇烈刑衝偏激。
+        </div>
+      `;
+    } else {
+      lanesHtml = lanes.map(l => {
+        const dist = Math.abs(l.to - l.from);
+        const leftP = colLeft(l.from, l.to);
+        const widthP = colWidth(l.from, l.to);
+        const midP = colMid(l.from, l.to);
+        const c1P = colCenter(l.from);
+        const c2P = colCenter(l.to);
+
+        const midNodeHtml = (l.midCol !== undefined)
+          ? `<div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bazi-node-circle" style="left: ${colCenter(l.midCol)}%; border-color: ${l.lineColor}; color: ${l.lineColor};">${esc(l.charMid)}</div>`
+          : '';
+
+        return `
+          <div class="bazi-track-lane" title="${esc(l.desc)}">
+            <div class="bazi-track-col-grid">
+              <div class="bazi-track-col-line"></div>
+              <div class="bazi-track-col-line"></div>
+              <div class="bazi-track-col-line"></div>
+              <div class="bazi-track-col-line"></div>
+              <div class="bazi-track-col-line"></div>
+              <div class="bazi-track-col-line" style="border-right:none;"></div>
+            </div>
+
+            <!-- 連接水平線 -->
+            <div class="absolute h-[2px] top-1/2 -translate-y-1/2 z-[4]" style="left: ${leftP}%; width: ${widthP}%; background-color: ${l.lineColor}; opacity: 0.85;"></div>
+
+            <!-- 左側節點圓圈 -->
+            <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bazi-node-circle" style="left: ${c1P}%; border-color: ${l.lineColor}; color: ${l.lineColor};">
+              ${esc(l.char1)}
+            </div>
+
+            ${midNodeHtml}
+
+            <!-- 中間徽章 (柱距計數 + 動作標籤) -->
+            <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center z-[6]" style="left: ${midP}%;">
+              <span class="bazi-track-count" title="柱距跨越 ${dist} 柱">${dist}</span>
+              <span class="bazi-track-badge ${l.badgeClass}">${esc(l.label)}</span>
+            </div>
+
+            <!-- 右側節點圓圈 -->
+            <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bazi-node-circle" style="left: ${c2P}%; border-color: ${l.lineColor}; color: ${l.lineColor};">
+              ${esc(l.char2)}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染底部六柱直欄
+    const footerColumnsHtml = pillars.map(p => {
+      const isDay = !!p.isDay;
+      const hiddenListHtml = (p.hiddenStems && p.hiddenStems.length)
+        ? p.hiddenStems.map(h => `<span class="inline-block px-1 py-0.5 m-0.5 rounded text-[10px] bg-stone-100 text-stone-700 font-bold border border-stone-200">${esc(h.stem)}<sub class="text-[9px] text-stone-500 font-normal">(${esc(h.shiShen || '')})</sub></span>`).join('')
+        : '—';
+
+      return `
+        <div class="bazi-pillar-col ${isDay ? 'active-day' : ''}">
+          <!-- 柱別膠囊 -->
+          <div class="w-full pb-1 mb-1 border-b border-stone-200">
+            <span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-black ${isDay ? 'bg-amber-500 text-stone-900 shadow-xs' : 'bg-stone-200 text-stone-700'}">
+              ${esc(p.name)}
+            </span>
+            <div class="text-[10px] font-bold text-stone-500 mt-0.5">${esc(p.sub)}</div>
+          </div>
+
+          <!-- 天干十神與天干大字 -->
+          <div class="py-1">
+            <span class="text-[11px] font-black ${isDay ? 'text-amber-800' : 'text-rose-700'} block mb-0.5">${esc(p.ganShiShen)}</span>
+            <div class="bazi-gan-zhi-char ${wxClass(p.ganWuxing)}">${esc(p.gan)}</div>
+            <span class="text-[10px] font-bold ${wxClass(p.ganWuxing)} opacity-80">${esc(p.ganWuxing)}</span>
+          </div>
+
+          <!-- 地支大字與地支十神 -->
+          <div class="py-1 border-t border-dashed border-stone-200 w-full">
+            <div class="bazi-gan-zhi-char ${wxClass(p.zhiWuxing)}">${esc(p.zhi)}</div>
+            <span class="text-[10px] font-bold ${wxClass(p.zhiWuxing)} opacity-80">${esc(p.zhiWuxing)}</span>
+            <span class="text-[11px] font-bold text-stone-600 block mt-0.5">${esc(p.zhiShiShen)}</span>
+          </div>
+
+          <!-- 藏干列表 -->
+          <div class="w-full pt-1.5 mt-1 border-t border-stone-200 text-center">
+            <div class="text-[9px] text-stone-400 font-bold mb-0.5">地支藏干</div>
+            <div class="flex flex-wrap justify-center">
+              ${hiddenListHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="bazi-track-card my-3">
+        <!-- 卡片頂部標題列 -->
+        <div class="px-3.5 py-2.5 bg-gradient-to-r from-stone-800 via-stone-700 to-amber-950 text-white flex flex-wrap items-center justify-between gap-2 border-b border-amber-500/40">
+          <div class="flex items-center gap-2">
+            <span class="text-base">⚡️</span>
+            <div>
+              <h4 class="text-sm font-black text-amber-100 tracking-wide">六柱時空刑衝會合害 · 全軌道動態長條圖譜</h4>
+              <p class="text-[10px] text-amber-200/80">流年 ⟷ 大運 ⟷ 時柱 ⟷ 日柱 (本我) ⟷ 月柱 ⟷ 年柱 時空能量動態對照</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 text-[10px] font-bold">
+            <span class="px-2 py-0.5 rounded bg-emerald-700 text-white">合化</span>
+            <span class="px-2 py-0.5 rounded bg-red-600 text-white">沖</span>
+            <span class="px-2 py-0.5 rounded bg-rose-600 text-white">剋</span>
+            <span class="px-2 py-0.5 rounded bg-amber-700 text-white">刑</span>
+            <span class="px-2 py-0.5 rounded bg-purple-700 text-white">害</span>
+            <span class="px-2 py-0.5 rounded bg-slate-600 text-white">破</span>
+          </div>
+        </div>
+
+        <!-- 軌道展示板 -->
+        <div class="overflow-x-auto">
+          <div class="bazi-track-board">
+            ${lanesHtml}
+            <!-- 底部六柱直欄 -->
+            <div class="bazi-pillar-footer-grid">
+              ${footerColumnsHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   // 核心渲染主函數
   global.renderUnifiedBaziView = function (data) {
     ensureStyles();
@@ -178,6 +740,7 @@
     const aux = data.auxiliary;
     const bal = data.wuxingBalance;
     const jq = data.jieQiTimeline || {};
+    const trackDiagramHtml = generateBaziTrackDiagram(data);
 
     // 1. 姓名學剖象計算 (依據康熙字典與 8051 格式 · 以人格為本體)
     const nameAnalysis = (global.MeetJoyKangXi && typeof global.MeetJoyKangXi.analyzeName === 'function')
@@ -537,6 +1100,11 @@
             </div>
           </div>
 
+          <!-- ⚡️ 六柱時空刑衝會合害 · 全軌道動態長條圖譜 (嚴格對齊桌面 刑衝會和害關係長條.jpg 截圖) -->
+          <div class="p-3 sm:p-4 bg-stone-100/70 border-b-2 border-stone-700 overflow-x-auto">
+            ${trackDiagramHtml}
+          </div>
+
           <!-- 輔助分析區 -->
           <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x-2 divide-stone-700 bg-white">
             
@@ -615,6 +1183,11 @@
               <p class="text-xs text-stone-600">透視四柱與大運間之「伏吟、反吟、天地合、刑沖會合破害」深層意涵</p>
             </div>
             <span class="px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-900 text-xs font-bold">生活微情境解讀</span>
+          </div>
+
+          <!-- ⚡️ 六柱時空刑衝會合害 · 全軌道動態長條圖譜 (頂部全景導航) -->
+          <div class="overflow-x-auto">
+            ${trackDiagramHtml}
           </div>
 
           <!-- 四柱兩兩關係診斷卡 -->
