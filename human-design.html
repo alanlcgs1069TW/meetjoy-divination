@@ -1879,11 +1879,13 @@
     function renderHdDualChart() {
       const dateA = document.getElementById('birth_date_a').value || '1988-08-18';
       const timeA = document.getElementById('birth_time_a').value || '12:00';
-      const cityA = GLOBAL_CITIES[document.getElementById('birth_city_a').value] || GLOBAL_CITIES['tw_taipei'];
+      const cityIdA = document.getElementById('birth_city_a') ? document.getElementById('birth_city_a').value : 'tw_taipei';
+      const cityA = CITIES_DB.find(c => c.id === cityIdA) || CITIES_DB[0];
 
       const dateB = document.getElementById('birth_date_b').value || '1990-01-27';
       const timeB = document.getElementById('birth_time_b').value || '11:36';
-      const cityB = GLOBAL_CITIES[document.getElementById('birth_city_b').value] || GLOBAL_CITIES['tw_taipei'];
+      const cityIdB = document.getElementById('birth_city_b') ? document.getElementById('birth_city_b').value : 'tw_taipei';
+      const cityB = CITIES_DB.find(c => c.id === cityIdB) || CITIES_DB[0];
 
       const utcA = calculateUTCDatetime(dateA, timeA, cityA.tz, false);
       const utcB = calculateUTCDatetime(dateB, timeB, cityB.tz, false);
@@ -2049,12 +2051,35 @@
       const selCityA = document.getElementById('birth_city_a');
       const selCityB = document.getElementById('birth_city_b');
       if (selCityA && selCityB) {
-        Object.entries(GLOBAL_CITIES).forEach(([key, city]) => {
-          const optA = new Option(city.name, key);
-          const optB = new Option(city.name, key);
-          if (key === 'tw_taipei') { optA.selected = true; optB.selected = true; }
-          selCityA.appendChild(optA);
-          selCityB.appendChild(optB);
+        selCityA.innerHTML = '';
+        selCityB.innerHTML = '';
+        let curGroupA = '', curGroupB = '';
+        let optGroupA = null, optGroupB = null;
+
+        CITIES_DB.forEach(c => {
+          if (c.group !== curGroupA) {
+            curGroupA = c.group;
+            optGroupA = document.createElement('optgroup');
+            optGroupA.label = curGroupA;
+            selCityA.appendChild(optGroupA);
+          }
+          if (c.group !== curGroupB) {
+            curGroupB = c.group;
+            optGroupB = document.createElement('optgroup');
+            optGroupB.label = curGroupB;
+            selCityB.appendChild(optGroupB);
+          }
+          const optA = document.createElement('option');
+          optA.value = c.id;
+          optA.textContent = c.name;
+          if (c.id === 'tw_taipei') optA.selected = true;
+          optGroupA.appendChild(optA);
+
+          const optB = document.createElement('option');
+          optB.value = c.id;
+          optB.textContent = c.name;
+          if (c.id === 'tw_taipei') optB.selected = true;
+          optGroupB.appendChild(optB);
         });
       }
 
