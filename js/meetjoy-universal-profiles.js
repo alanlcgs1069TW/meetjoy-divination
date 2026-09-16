@@ -219,22 +219,29 @@
         localStorage.removeItem('mj_member_user');
         localStorage.removeItem('mj_current_admin_email');
         localStorage.removeItem('ziwei-user');
+        localStorage.removeItem('ziwei-current-chart');
+        localStorage.removeItem('ziwei-last-sync');
 
         // 2. 清除所有本地命盤紀錄快取（愛倫院長指示：登出不應該有之前的命盤紀錄）
         localStorage.removeItem('mj_universal_profiles');
         localStorage.removeItem('ziwei-charts');
 
-        // 3. 清除特定帳號之容量額度快取
+        // 3. 清除特定帳號之容量額度快取、所有 Supabase token、所有 mj_、ziwei- 開頭快取
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
-          if (k && k.startsWith('mj_vault_extra_slots_')) {
+          if (k && (k.startsWith('mj_') || k.startsWith('sb-') || k.startsWith('ziwei-'))) {
             keysToRemove.push(k);
           }
         }
         keysToRemove.forEach(k => localStorage.removeItem(k));
 
-        // 4. 發出全域身分與檔案清除事件
+        // 4. 清除 sessionStorage
+        try {
+          sessionStorage.clear();
+        } catch (e) {}
+
+        // 5. 發出全域身分與檔案清除事件
         window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: null }));
         window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
         window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
@@ -242,10 +249,18 @@
         console.error('[MeetJoyAuth] logout error:', e);
       }
 
-      // 5. 立即重新整理當前頁面（愛倫院長指示：會員登出應該要重新整理）
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+      // 6. 徹底清除 URL query 參數並導向乾淨網址（防止重整後因 URL query 參數自動重新登入）
+      try {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState(null, '', cleanUrl);
+        setTimeout(() => {
+          window.location.href = cleanUrl;
+        }, 80);
+      } catch (err) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 80);
+      }
     },
 
     async checkAccountExists(email) {
@@ -753,31 +768,41 @@
         // 先找到要刪除的目標物件（取得其姓名、生日、時辰等特徵鍵，防範紫微與通用庫ID不一致）
         const allCurrent = this.getAll();
         const target = allCurrent.find(p => p.id === id);
+        const targetId = target ? target.id : id;
         const targetName = target ? (target.name || '').trim() : '';
         const targetDate = target ? normalizeDate(target.birthDate) : '';
         const targetTimeIdx = target ? target.timeIndex : null;
-        const targetKey = target ? `${targetName}_${targetDate}_${targetTimeIdx}` : null;
 
         // 1. 徹底過濾通用生辰庫 mj_universal_profiles
         let univ = JSON.parse(localStorage.getItem('mj_universal_profiles') || '[]');
         univ = univ.filter(p => {
-          if (p.id === id) return false;
-          if (targetKey) {
-            const pKey = `${(p.name || '').trim()}_${normalizeDate(p.birthDate)}_${p.timeIndex}`;
-            if (pKey === targetKey) return false;
+          if (p.id === id || p.id === targetId) return false;
+          const pName = (p.name || '').trim();
+          const pDate = normalizeDate(p.birthDate);
+          if (targetName && targetDate && pName === targetName && pDate === targetDate) {
+            const pTimeIdx = p.timeIndex !== undefined ? p.timeIndex : timeToTimeIndex(p.birthTime);
+            if (targetTimeIdx != null && pTimeIdx != null) {
+              if (pTimeIdx === targetTimeIdx) return false;
+            } else {
+              return false;
+            }
           }
           return true;
         });
         localStorage.setItem('mj_universal_profiles', JSON.stringify(univ));
 
-        // 2. 徹底過濾紫微斗數庫 ziwei-charts
+        // 2. 徹底過濾紫微斗數庫 ziwei-charts (移除硬刪與軟刪記錄)
         let zw = JSON.parse(localStorage.getItem('ziwei-charts') || '[]');
         zw = zw.filter(c => {
-          if (c.id === id) return false;
-          if (targetKey) {
-            const cDate = normalizeDate(c.solarDate);
-            const cKey = `${(c.name || '').trim()}_${cDate}_${c.timeIndex}`;
-            if (cKey === targetKey) return false;
+          if (c.id === id || c.id === targetId) return false;
+          const cName = (c.name || '').trim();
+          const cDate = normalizeDate(c.solarDate);
+          if (targetName && targetDate && cName === targetName && cDate === targetDate) {
+            if (targetTimeIdx != null && c.timeIndex != null) {
+              if (c.timeIndex === targetTimeIdx) return false;
+            } else {
+              return false;
+            }
           }
           return true;
         });

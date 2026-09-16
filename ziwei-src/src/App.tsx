@@ -93,8 +93,56 @@ function App() {
   }, []);
 
   async function handleLogout() {
-    await supabase.auth.signOut();
-    // user state updated via onAuthStateChange
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.warn('Supabase signOut error:', e);
+    }
+    try {
+      // 1. 清除紫微斗數所有本地 storage
+      localStorage.removeItem('ziwei-user');
+      localStorage.removeItem('ziwei-charts');
+      localStorage.removeItem('ziwei-current-chart');
+      localStorage.removeItem('ziwei-last-sync');
+
+      // 2. 清除通用庫與會員資料
+      localStorage.removeItem('mj_member_user');
+      localStorage.removeItem('mj_universal_profiles');
+      localStorage.removeItem('mj_current_admin_email');
+
+      // 3. 清除所有相關 key (mj_, sb-, ziwei-)
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('mj_') || k.startsWith('sb-') || k.startsWith('ziwei-'))) {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach(k => localStorage.removeItem(k));
+
+      // 4. 清除 sessionStorage
+      sessionStorage.clear();
+
+      // 5. 派發事件
+      window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: null }));
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+    } catch (e) {
+      console.warn('Logout cleanup error:', e);
+    }
+
+    // 6. 徹底清理 URL query 並重新載入乾淨頁面
+    try {
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState(null, '', cleanUrl);
+      setTimeout(() => {
+        window.location.href = cleanUrl;
+      }, 80);
+    } catch {
+      setTimeout(() => {
+        window.location.reload();
+      }, 80);
+    }
   }
 
   // ── Dynamic zh-mode font sizing based on viewport ─────────────────────────
@@ -182,6 +230,21 @@ function App() {
     setSavedCharts(getActiveCharts());
   }
 
+  // 監聽全站通用命盤庫變更事件（如跨分頁、其他工具或頂部通用 Bar 異動）
+  useEffect(() => {
+    function handleProfileSync() {
+      refreshCharts();
+    }
+    window.addEventListener('mj-profiles-changed', handleProfileSync);
+    window.addEventListener('meetjoy_profiles_updated', handleProfileSync);
+    window.addEventListener('storage', handleProfileSync);
+    return () => {
+      window.removeEventListener('mj-profiles-changed', handleProfileSync);
+      window.removeEventListener('meetjoy_profiles_updated', handleProfileSync);
+      window.removeEventListener('storage', handleProfileSync);
+    };
+  }, []);
+
   // ── Categories ───────────────────────────────────────────────────────────────
   const [customCategories, setCustomCategories] = useState<string[]>(() => getCustomCategories());
 
@@ -225,11 +288,94 @@ function App() {
     upsertChart({ ...data, id, updatedAt: Date.now() });
     refreshCharts();
     setModalState(null);
+
+    // 同步儲存至全站通用生辰庫 mj_universal_profiles
+    try {
+      const rawUniv = localStorage.getItem('mj_universal_profiles');
+      let univ = rawUniv ? JSON.parse(rawUniv) : [];
+      if (Array.isArray(univ)) {
+        univ = univ.filter((p: any) => p.id !== id);
+        univ.push({
+          id,
+          name: data.name || '未命名',
+          birthDate: data.solarDate,
+          timeIndex: data.timeIndex,
+          gender: data.gender,
+          category: data.category || '自己',
+          notes: data.notes || '',
+          updatedAt: Date.now()
+        });
+        localStorage.setItem('mj_universal_profiles', JSON.stringify(univ));
+      }
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+    } catch (e) {
+      console.warn('[Ziwei] Auto sync to universal profiles failed:', e);
+    }
   }
 
   function handleDeleteChart(id: string) {
+    const target = savedCharts.find(c => c.id === id);
     softDeleteChart(id);
     refreshCharts();
+
+    // 徹底從通用生辰庫 mj_universal_profiles 刪除
+    try {
+      const rawUniv = localStorage.getItem('mj_universal_profiles');
+      let univLeft: any[] = [];
+      if (rawUniv) {
+        const univ = JSON.parse(rawUniv);
+        if (Array.isArray(univ)) {
+          const tName = target ? (target.name || '').trim() : '';
+          const tDate = target ? target.solarDate.replace(/-0?/g, '-') : '';
+          univLeft = univ.filter((p: any) => {
+            if (p.id === id) return false;
+            if (tName && tDate) {
+              const pName = (p.name || '').trim();
+              const pDate = (p.birthDate || '').replace(/-0?/g, '-');
+              if (pName === tName && pDate === tDate) return false;
+            }
+            return true;
+          });
+          localStorage.setItem('mj_universal_profiles', JSON.stringify(univLeft));
+        }
+      }
+
+      // 取得紫微有效剩餘清單
+      const activeLeft = getActiveCharts().map(c => ({
+        id: c.id,
+        name: c.name,
+        birthDate: c.solarDate,
+        timeIndex: c.timeIndex,
+        gender: c.gender,
+        category: c.category || '自己',
+        notes: c.notes || '',
+        updatedAt: c.updatedAt
+      }));
+
+      // 同步覆蓋雲端 KV 備份
+      const rawUser = localStorage.getItem('mj_member_user') || localStorage.getItem('ziwei-user');
+      if (rawUser) {
+        const userObj = JSON.parse(rawUser);
+        if (userObj && (userObj.email || userObj.id)) {
+          fetch('/api/profiles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: userObj.email,
+              user_id: userObj.id,
+              profiles: activeLeft,
+              action: 'replace'
+            })
+          }).catch(err => console.warn('[Ziwei] Cloud delete sync failed:', err));
+        }
+      }
+
+      // 派發全域同步事件
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: { id, deleted: true, count: activeLeft.length } }));
+      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated', { detail: { id, deleted: true, count: activeLeft.length } }));
+    } catch (e) {
+      console.warn('[Ziwei] Delete cross-sync failed:', e);
+    }
   }
 
   // ── Chart view state ─────────────────────────────────────────────────────────
