@@ -68,7 +68,7 @@
     PRODUCT_SLUG: 'vault-expansion-pack-30',
     PRODUCT_URL: 'https://meetjoy.net/product/vault-expansion-pack-30/',
     PRODUCT_CART_URL: 'https://meetjoy.net/cart/?add-to-cart=228781',
-    ADMIN_EMAILS: ['alanlcgs@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net']
+    ADMIN_EMAILS: ['alanlc@gmail.com', 'alanlcgs@gmail.com', 'shenolawrenc@gmail.com', 'admin@meetjoy.net']
   };
 
   function isUserAdmin(user) {
@@ -252,13 +252,16 @@
               <div class="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <div class="space-y-2 mt-2">
-              <button id="mj_login_line" type="button" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
-                <span>💬 LINE 一鍵快速登入</span>
-              </button>
-              <button id="mj_login_google" type="button" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
-                <span>🌐 Google 一鍵快速登入</span>
-              </button>
+            <div class="space-y-2.5 mt-2">
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=line&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
+                <span>💬 使用 LINE 帳號快速登入</span>
+              </a>
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=google&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs no-underline cursor-pointer">
+                <span>🌐 使用 Google 帳號快速登入</span>
+              </a>
+              <a href="https://meetjoy.net/wp-login.php?loginSocial=facebook&redirect=https%3A%2F%2Fmeetjoy.net%2Fapp%2F" target="_top" class="w-full py-2.5 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm no-underline cursor-pointer">
+                <span>🔵 使用 Facebook 帳號快速登入</span>
+              </a>
             </div>
 
             <p class="text-[10px] text-center text-slate-400 mt-4">
@@ -276,34 +279,24 @@
       // Email 表單登入 (推薦主路徑)
       document.getElementById('mj_auth_email_form').onsubmit = async (e) => {
         e.preventDefault();
-        const email = document.getElementById('mj_auth_email_input').value.trim();
+        const email = document.getElementById('mj_auth_email_input').value.trim().toLowerCase();
         let name = document.getElementById('mj_auth_name_input').value.trim();
         if (!email) return;
         if (!name) name = email.split('@')[0];
 
-        const user = MeetJoyAuth.login('email', { name, email });
+        const isAdmin = VAULT_CONFIG.ADMIN_EMAILS.includes(email);
+        const user = MeetJoyAuth.login('email', { 
+          name: isAdmin ? (name === email.split('@')[0] ? '愛倫院長' : name) : name, 
+          email: email,
+          isAdmin: isAdmin
+        });
+        if (isAdmin) {
+          localStorage.setItem('mj_current_admin_email', email);
+        }
         modalEl.remove();
-        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！正在為您同步雲端命盤...`);
+        MeetJoyProfiles.showToast(isAdmin ? `👑 歡迎愛倫院長！享無限命盤容量，正在同步雲端命盤庫...` : `🌿 歡迎回來，${user.name}！正在為您同步雲端命盤...`);
         
         // 立即觸發雲端雙向同步！
-        await MeetJoyProfiles.syncWithCloud(false);
-        if (typeof onSuccess === 'function') onSuccess(user);
-      };
-
-      // LINE 登入
-      document.getElementById('mj_login_line').onclick = async () => {
-        const user = MeetJoyAuth.login('line', { name: 'LINE 學院之友', email: 'line.student@meetjoy.net' });
-        modalEl.remove();
-        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！正在同步雲端命盤...`);
-        await MeetJoyProfiles.syncWithCloud(false);
-        if (typeof onSuccess === 'function') onSuccess(user);
-      };
-
-      // Google 登入
-      document.getElementById('mj_login_google').onclick = async () => {
-        const user = MeetJoyAuth.login('google', { name: 'Google 學院學員', email: 'google.student@meetjoy.net' });
-        modalEl.remove();
-        MeetJoyProfiles.showToast(`🌿 歡迎回來，${user.name}！正在同步雲端命盤...`);
         await MeetJoyProfiles.syncWithCloud(false);
         if (typeof onSuccess === 'function') onSuccess(user);
       };
@@ -802,6 +795,53 @@
           };
         }
       };
+
+      // 1. 自動檢查 URL Query 參數（由 WordPress 主站或轉址傳遞）
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramEmail = (urlParams.get('mj_email') || urlParams.get('user_email') || '').trim().toLowerCase();
+        const paramName = (urlParams.get('mj_name') || urlParams.get('user_name') || '').trim();
+        const paramAdmin = urlParams.get('mj_admin') || urlParams.get('is_admin');
+
+        if (paramEmail) {
+          const current = MeetJoyAuth.getUser();
+          if (!current || current.email !== paramEmail) {
+            const isAdminUser = paramAdmin === '1' || VAULT_CONFIG.ADMIN_EMAILS.includes(paramEmail);
+            MeetJoyAuth.login('url_sync', {
+              email: paramEmail,
+              name: paramName || (isAdminUser ? '愛倫院長' : paramEmail.split('@')[0]),
+              isAdmin: isAdminUser
+            });
+            if (isAdminUser) {
+              localStorage.setItem('mj_current_admin_email', paramEmail);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('[MeetJoyProfiles] URL param sync error:', e);
+      }
+
+      // 2. 監聽 WordPress 父層 iframe 傳來的跨網域認證訊息
+      window.addEventListener('message', (event) => {
+        try {
+          if (event.data && event.data.type === 'MJ_AUTH_SYNC' && event.data.user) {
+            const u = event.data.user;
+            if (u.email) {
+              const email = u.email.trim().toLowerCase();
+              const isAdminUser = u.isAdmin || VAULT_CONFIG.ADMIN_EMAILS.includes(email);
+              MeetJoyAuth.login('parent_sync', {
+                email: email,
+                name: u.name || (isAdminUser ? '愛倫院長' : email.split('@')[0]),
+                isAdmin: isAdminUser
+              });
+              if (isAdminUser) {
+                localStorage.setItem('mj_current_admin_email', email);
+              }
+              this.syncWithCloud(true);
+            }
+          }
+        } catch (err) {}
+      });
 
       // 監聽外部事件更新
       window.addEventListener('mj-auth-changed', render);
