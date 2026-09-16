@@ -528,13 +528,14 @@
         const isTarot = (currentSystem === 'tarot');
         const hasImg = Boolean(c.image) && (isZiwei || isTarot);
 
-        let wCls = 'w-48 sm:w-52 aspect-[1/1.65]';
-        if (size === 'sm') wCls = 'w-full aspect-[1/1.65]';
-        if (size === 'xs') wCls = 'w-full aspect-[1/1.65]';
+        const cardAspect = isTarot ? 'aspect-[1/1.52]' : (isZiwei ? 'aspect-[1/1.83]' : 'aspect-[1/1.65]');
+        let wCls = `w-48 sm:w-52 ${cardAspect}`;
+        if (size === 'sm') wCls = `w-full ${cardAspect}`;
+        if (size === 'xs') wCls = `w-full ${cardAspect}`;
         const art = !hasImg && window.MeetJoyDivination?.renderUkiyoeArt
           ? window.MeetJoyDivination.renderUkiyoeArt(c, currentSystem)
           : '';
-        const backClass = hasImg ? 'ziwei-card-back' : (currentSystem === 'tarot' ? 'tarot-back' : 'lenormand-back');
+        const backClass = hasImg ? (isTarot ? 'tarot-card-back' : 'ziwei-card-back') : (currentSystem === 'tarot' ? 'tarot-back' : 'lenormand-back');
         const timeLabel = c.group === 'life'
           ? (c.dimensions?.timing || '時間數值：1～12（天／週／月）')
           : '';
@@ -548,12 +549,12 @@
             <div class="card-scene ${wCls} cursor-pointer" onclick="flipCard(${idx})">
               <div class="card-inner ${item.isFlipped ? 'flipped' : ''}" id="card_inner_${idx}">
                 
-                <!-- 卡背 -->
+                <!-- 卡背 (正逆位完美 180 度點對稱神聖幾何) -->
                 <div class="card-face card-back ${backClass} group hover:border-amber-400 transition">
                   ${hasImg && c.backImage ? `
                     <img src="${c.backImage}" alt="${isTarot ? '塔羅牌背' : (c.groupLabel || '紫微') + '牌背'}" class="card-back-image" onerror="this.remove()">
-                    <div class="card-back-copy absolute inset-0 flex flex-col items-center justify-center bg-slate-950/20">
-                      <span class="rounded-full bg-black/45 px-3 py-1 text-[10px] font-black tracking-widest text-amber-100">點擊翻開</span>
+                    <div class="card-back-copy absolute inset-0 flex flex-col items-center justify-center bg-slate-950/15 group-hover:bg-slate-950/5 transition">
+                      <span class="rounded-full bg-black/40 backdrop-blur-xs px-3 py-1 text-[10px] font-black tracking-widest text-amber-100 border border-white/20 shadow-md">點擊翻開</span>
                     </div>
                   ` : `
                     <div class="w-12 h-12 rounded-full border border-amber-300/40 flex items-center justify-center mb-1.5 group-hover:scale-110 transition">
@@ -564,21 +565,25 @@
                   `}
                 </div>
 
-                <!-- 卡面 -->
-                <div class="card-face card-front">
+                <!-- 卡面 (實體高維神聖塔羅/紫微卡面) -->
+                <div class="card-face card-front p-1 sm:p-1.5 bg-stone-900 border-2 border-[#C8A97E]/80">
                   
                   ${hasImg ? `
-                    <!-- 實體牌卡圖案展示：塔羅與紫微均使用卡庫指定牌面。 -->
-                    <div class="w-full h-full rounded-xl overflow-hidden relative flex flex-col justify-between p-1 bg-stone-900">
+                    <!-- 實體牌卡圖案展示：塔羅與紫微均使用卡庫指定高解析牌面 -->
+                    <div class="w-full h-full rounded-xl overflow-hidden relative flex flex-col justify-between bg-stone-950">
                       <img src="${c.image}" alt="${c.name}" class="${isTarot ? 'tarot-card-image' : 'ziwei-card-image'} ${item.isReversed ? 'card-art-reversed' : ''} w-full h-full object-cover rounded-lg" onerror="this.style.display='none'">
-                      <div class="absolute bottom-1 left-1 right-1 bg-black/75 backdrop-blur-xs rounded-md p-1 text-center text-white">
-                        <span class="text-xs font-black block">${c.name}</span>
-                        <span class="text-[9px] text-amber-300 font-bold">${item.isReversed ? '逆位' : '正位'}</span>
+                      
+                      <!-- 卡面右上角正逆位柔光標籤 -->
+                      <div class="absolute top-1.5 right-1.5 z-10">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black backdrop-blur-md shadow-md ${item.isReversed ? 'bg-rose-900/80 text-rose-200 border border-rose-400/30' : 'bg-emerald-900/80 text-emerald-200 border border-emerald-400/30'}">
+                          ${item.isReversed ? '逆位 ↷' : '正位 ✦'}
+                        </span>
                       </div>
+
                       ${timeLabel ? `<span class="absolute top-2 left-2 right-2 rounded-md bg-amber-300/95 px-1.5 py-1 text-center text-[9px] font-black text-stone-900 shadow-sm">${timeLabel}</span>` : ''}
                     </div>
                   ` : `
-                    <!-- 塔羅與雷諾曼：逐張內嵌浮世繪木版畫，倒牌旋轉畫作而不破壞 3D 正面 -->
+                    <!-- 雷諾曼：逐張內嵌浮世繪木版畫，倒牌旋轉畫作而不破壞 3D 正面 -->
                     <div class="card-art-wrap ${item.isReversed ? 'card-art-reversed' : ''}">${art}</div>
                     <div class="absolute top-2 left-2 flex items-center gap-1.5"><span class="hanko-stamp">${c.hanko || '浮世'}</span><span class="rounded bg-white/85 px-1.5 py-0.5 text-[9px] font-black ${item.isReversed ? 'text-rose-700' : 'text-emerald-700'}">${item.isReversed ? '逆位' : '正位'}</span></div>
                   `}
@@ -587,6 +592,16 @@
 
               </div>
             </div>
+
+            <!-- 卡牌外部標籤 (翻開後清晰顯示中文牌名與正逆位) -->
+            ${item.isFlipped ? `
+              <div class="mt-2 text-center max-w-[190px]">
+                <span class="text-xs font-black text-stone-800 block truncate" title="${c.name}">${c.name}</span>
+                <span class="text-[10px] font-black ${item.isReversed ? 'text-rose-600' : 'text-emerald-700'}">${item.isReversed ? '倒牌 · 逆位思考' : '正牌 · 順流引領'}</span>
+              </div>
+            ` : `
+              <div class="mt-2 text-center h-8"></div>
+            `}
 
           </div>
         `;

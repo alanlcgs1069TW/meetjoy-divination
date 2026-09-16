@@ -1025,6 +1025,37 @@
     "ukiyoMotif": "江戶浮世繪木版畫刻繪，背景為傳統浮世青海波紋飾與金箔點綴。"
   }
 ];
+
+  // 實體 Light Language Cards 牌面：索引與 t_00 ～ t_77 一一對應，避免依名稱推測檔案。
+  const TAROT_IMAGE_FILENAMES = [
+    'LLC_01_0_Source.png', 'LLC_02_I_Miracle.png', 'LLC_03_II_Priestess.png', 'LLC_04_Ⅲ_MotherEarth.png',
+    'LLC_05_IV_LightEmperor.png', 'LLC_06_V_Explorer.png', 'LLC_07_VI_TwinRay.png', 'LLC_08_VII_BreakThrough.png',
+    'LLC_09_VIII_Balance.png', 'LLC_10_IX_WiseMan.png', 'LLC_11_X_Fortune.png', 'LLC_12_XI_Self-Awareness.png',
+    'LLC_13_XII_Co-Creation.png', 'LLC_14_XIII_Death.png', 'LLC_15_XIV_Alchemy.png', 'LLC_16_XV_Duality.png',
+    'LLC_17_XVI_Awakening.png', 'LLC_18_XVII_Star.png', 'LLC_19_XVIII_Moon.png', 'LLC_20_XIX_Sun.png',
+    'LLC_21_XX_Multi-Dimension.png', 'LLC_22_XXI_Universe.png',
+    'LLC_53_Spit1_Inspiration-.png', 'LLC_54_Spit2_Akashic.png', 'LLC_55_Spit3_Abundance.png', 'LLC_56_Spit4_NewVision.png',
+    'LLC_57_Spit5_FreeWill.png', 'LLC_58_Spit6_Surrender.png', 'LLC_59_Spit7_Change.png', 'LLC_60_Spit8_Harmony.png',
+    'LLC_61_Spit9_Integrity.png', 'LLC_62_Spit10_Trust.png', 'LLC_63_★_Andromeda.png', 'LLC_64_★_Arcturus.png',
+    'LLC_65_★_Sirius.png', 'LLC_66_★_Pleades.png',
+    'LLC_33_Heart1_Joy.png', 'LLC_34_Heart2_Innocence.png', 'LLC_35_Heart3_Love.png', 'LLC_36_Heart4_Anger.png',
+    'LLC_37_Heart5_Curiosity.png', 'LLC_38_Heart6_Sorrow.png', 'LLC_39_Heart7_Fear.png', 'LLC_40_Heart8_Receptivity.png',
+    'LLC_41_Heart9_Arigato.png', 'LLC_42_Heart10_Passion.png', 'LLC_67_★_Orion.png', 'LLC_68_★_ZetaReticuli.png',
+    'LLC_69_★_Essassani.png', 'LLC_70_★_Mercury.png',
+    'LLC_23_Mind1_Intention.png', 'LLC_24_Mind2_Perspective.png', 'LLC_25_Mind3_Creativity.png', 'LLC_26_Mind4_Logic.png',
+    'LLC_27_Mind5_Darkness.png', 'LLC_28_Mind6_Paradox.png', 'LLC_29_Mind7_Limits.png', 'LLC_30_Mind8_Judge.png',
+    'LLC_31_Mind9_Mindfulness.png', 'LLC_32_Mind10_IllusionNeptune.png', 'LLC_71_★_Venus.png', 'LLC_72_★_Mars.png',
+    'LLC_73_★_Saturn.png', 'LLC_74_★_Uranus.png',
+    'LLC_43_Life1_Birth.png', 'LLC_44_Life2_Reflection.png', 'LLC_45_Life3_Nurturing.png', 'LLC_46_Life4_Professional.png',
+    'LLC_47_Life5_SoundBody.png', 'LLC_48_Life6_Contact.png', 'LLC_49_Life7_Quest.png', 'LLC_50_Life8_Stagnation.png',
+    'LLC_51_Life-9_Sustainability.png', 'LLC_52_Life10_Reward.png', 'LLC_75_★_Atlantis.png', 'LLC_76_★_Lemuria.png',
+    'LLC_77_★_Home.png', 'LLC_78_★_TheCoucilofLight.png'
+  ];
+
+  TAROT_CARDS.forEach((card, index) => {
+    card.image = `images/tarot/${TAROT_IMAGE_FILENAMES[index]}`;
+    card.backImage = 'images/tarot/tarot-back.jpg';
+  });
   const LENORMAND_CARDS = [
   {
     "num": 1,
