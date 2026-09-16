@@ -293,14 +293,15 @@
 
     // 5. 地支刑沖會合害列表 (三合、三會、六合、沖、刑、破、害 · 18:57 截圖)
     const rels = data.interactions || {};
+    const relText = value => Array.isArray(value) ? value.join('、') : (value || '—');
     const relItems = [
-      { label: '三合', val: (rels.sanHe || []).join('、') || '—', color: 'text-rose-600' },
-      { label: '三會', val: (rels.sanHui || []).join('、') || '—', color: 'text-purple-600' },
-      { label: '六合', val: (rels.liuHe || []).join('、') || '—', color: 'text-rose-700' },
-      { label: '沖', val: (rels.chong || []).join('、') || '—', color: 'text-emerald-700' },
-      { label: '刑', val: (rels.xing || []).join('、') || '—', color: 'text-blue-700' },
-      { label: '破', val: (rels.po || []).join('、') || '—', color: 'text-amber-800' },
-      { label: '害', val: (rels.hai || []).join('、') || '—', color: 'text-stone-700' }
+      { label: '三合', val: relText(rels.sanHe), color: 'text-rose-600' },
+      { label: '三會', val: relText(rels.sanHui), color: 'text-purple-600' },
+      { label: '六合', val: relText(rels.liuHe), color: 'text-rose-700' },
+      { label: '沖', val: relText(rels.chong), color: 'text-emerald-700' },
+      { label: '刑', val: relText(rels.xing), color: 'text-blue-700' },
+      { label: '破', val: relText(rels.po), color: 'text-amber-800' },
+      { label: '害', val: relText(rels.hai), color: 'text-stone-700' }
     ];
     const relsTableHtml = relItems.map(item => `
       <div class="flex items-center justify-between py-1 border-b border-stone-200 text-xs">
