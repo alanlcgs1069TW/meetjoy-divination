@@ -388,14 +388,29 @@
     const gateSpan = 5.625; // 360 / 64
     const idx = Math.floor(norm / gateSpan);
     const gate = RAVE_MANDALA_GATES[idx];
+
     const withinGate = norm % gateSpan;
-    const line = Math.floor(withinGate / (gateSpan / 6)) + 1;
-    const tone = Math.floor((withinGate % (gateSpan / 6)) / (gateSpan / 6 / 6)) + 1;
+    const lineSpan = gateSpan / 6; // 0.9375° = 56' 15"
+    const line = Math.floor(withinGate / lineSpan) + 1;
+
+    const withinLine = withinGate % lineSpan;
+    const colorSpan = lineSpan / 6; // 0.15625° = 9' 22.5"
+    const color = Math.floor(withinLine / colorSpan) + 1;
+
+    const withinColor = withinLine % colorSpan;
+    const toneSpan = colorSpan / 6; // 0.0260416667° = 1' 33.75"
+    const tone = Math.floor(withinColor / toneSpan) + 1;
+
+    const withinTone = withinColor % toneSpan;
+    const baseSpan = toneSpan / 5; // 0.0052083333° = 18.75"
+    const base = Math.floor(withinTone / baseSpan) + 1;
 
     return {
       gate: gate,
       line: line,
+      color: color,
       tone: tone,
+      base: base,
       degree: mod(deg, 360),
       formatted: `${gate}.${line}`
     };
@@ -773,6 +788,313 @@
     }
   }
 
+  // ==========================================
+  // 人類圖高階原初健康系統 (PHS) 與心智次結構資料庫
+  // ==========================================
+  const HD_COGNITIONS = {
+    1: { key: 'Smell', nameZh: '氣味感官 (Smell)', sub: '嗅覺敏銳 · 危機直覺 · 本能辨識', desc: '透過氣味與場域氣息捕捉最真實的安全信號，直覺本能強大。' },
+    2: { key: 'Taste', nameZh: '品味鑑賞 (Taste)', sub: '細膩鑑賞 · 挑剔去雜 · 質地品味', desc: '對人事物、飲食環境的純正度有天然挑剔感，擅長品味鑑賞。' },
+    3: { key: 'Outer Vision', nameZh: '外在視覺 (Outer Vision)', sub: '幾何美學 · 模式辨析 · 光影線條', desc: '敏銳捕捉外部幾何、美學與線條規律，擅長客觀視覺拆解。' },
+    4: { key: 'Inner Vision', nameZh: '內在心像 (Inner Vision)', sub: '心靈影像 · 想像投射 · 概念轉化', desc: '豐富的內在畫面感與夢境直覺，擅長將抽象頻率具象化為心靈畫面。' },
+    5: { key: 'Feeling', nameZh: '頻率共振 (Feeling)', sub: '電磁感應 · 場域氣氛 · 微細震顫', desc: '對空間氛圍、電磁波動與人心底層震顫高度敏感，如同活體雷達。' },
+    6: { key: 'Touch', nameZh: '靈性觸覺 (Touch)', sub: '身心接觸 · 能量交換 · 指尖直覺', desc: '透過身體接觸、手感質地與物質實體交換訊息，直通心靈核心。' }
+  };
+
+  const HD_DETERMINATIONS = {
+    1: {
+      key: 'Appetite',
+      nameZh: '食慾模式 (Appetite)',
+      leftKey: 'Consecutive',
+      leftZh: '單一攝取 (Consecutive)',
+      rightKey: 'Alternating',
+      rightZh: '交替攝取 (Alternating)',
+      desc: '簡單原始飲食體質，減少繁複調味與多食材混煮，維持腸道純淨度。'
+    },
+    2: {
+      key: 'Taste',
+      nameZh: '品味模式 (Taste)',
+      leftKey: 'Open',
+      leftZh: '開放嘗鮮 (Open)',
+      rightKey: 'Closed',
+      rightZh: '固定安全 (Closed)',
+      desc: '尊重個人專屬味覺偏好，吃當季時令或信賴之熟悉食物，促進神經修復。'
+    },
+    3: {
+      key: 'Thirst',
+      nameZh: '口渴模式 (Thirst)',
+      leftKey: 'Hot',
+      leftZh: '溫熱暖胃 (Hot)',
+      rightKey: 'Cold',
+      rightZh: '清涼降溫 (Cold)',
+      desc: '消化系統受溫度深切影響，需順應自身對高於體溫或清涼溫度的天然渴望。'
+    },
+    4: {
+      key: 'Touch',
+      nameZh: '觸覺氛圍 (Touch)',
+      leftKey: 'Calm',
+      leftZh: '平靜安寧 (Calm)',
+      rightKey: 'Nervous',
+      rightZh: '熱鬧活絡 (Nervous)',
+      desc: '進食環境能量氛圍。平靜模式需遠離爭端喧囂；活絡模式則需熱鬧環境刺激神經元。'
+    },
+    5: {
+      key: 'Sound',
+      nameZh: '聲音共振 (Sound)',
+      leftKey: 'High',
+      leftZh: '高頻聲響 (High)',
+      rightKey: 'Low',
+      rightZh: '低頻寧靜 (Low)',
+      desc: '吸收時的聲場頻率。適合伴隨特定音樂、談話或在絕對安靜無聲中消化運作。'
+    },
+    6: {
+      key: 'Light',
+      nameZh: '日夜節律 (Light)',
+      leftKey: 'Direct',
+      leftZh: '日間日光 (Direct)',
+      rightKey: 'Indirect',
+      rightZh: '夜間夜光 (Indirect)',
+      desc: '光線與晝夜節律。直接模式適合白晝日光充足時進食；間接模式宜於日落後或陰柔光線下吸收。'
+    }
+  };
+
+  const HD_ENVIRONMENTS = {
+    1: {
+      key: 'Caves',
+      nameZh: '洞穴堡壘 (Caves)',
+      leftKey: 'Selective',
+      leftZh: '單一隱蔽 (Selective)',
+      rightKey: 'Blending',
+      rightZh: '溫馨交融 (Blending)',
+      desc: '安全感第一，背後有靠、單一視野出口，能掌控人員進出的私密自我充電堡壘。'
+    },
+    2: {
+      key: 'Markets',
+      nameZh: '流動市集 (Markets)',
+      leftKey: 'Internal',
+      leftZh: '室內市集 (Internal)',
+      rightKey: 'External',
+      rightZh: '戶外市集 (External)',
+      desc: '人潮絡繹不絕、資訊與資源高速流轉的集散地，充滿商業與交流活力。'
+    },
+    3: {
+      key: 'Kitchens',
+      nameZh: '轉化工坊 (Kitchens)',
+      leftKey: 'Wet',
+      leftZh: '濕潤工坊 (Wet)',
+      rightKey: 'Dry',
+      rightZh: '乾燥裝配 (Dry)',
+      desc: '將原料轉化為成品的工坊、工作室或實驗室，在動手實作轉化中獲得滋養。'
+    },
+    4: {
+      key: 'Mountains',
+      nameZh: '高山之巔 (Mountains)',
+      leftKey: 'Active',
+      leftZh: '高山清風 (Active)',
+      rightKey: 'Passive',
+      rightZh: '清幽隱居 (Passive)',
+      desc: '高樓層、高海拔、空氣清新、能居高臨下俯瞰全局，抽離地表混濁紛擾。'
+    },
+    5: {
+      key: 'Valleys',
+      nameZh: '山谷匯流 (Valleys)',
+      leftKey: 'Narrow',
+      leftZh: '幽谷通道 (Narrow)',
+      rightKey: 'Wide',
+      rightZh: '寬廣盆地 (Wide)',
+      desc: '地面層、兩側有靠但視野四通八達的資訊交流中心，適合深度與人連結互動。'
+    },
+    6: {
+      key: 'Shores',
+      nameZh: '海岸邊際 (Shores)',
+      leftKey: 'Natural',
+      leftZh: '自然海濱 (Natural)',
+      rightKey: 'Artificial',
+      rightZh: '人造交界 (Artificial)',
+      desc: '不同元素的交界處（水陸相交、城鄉過渡、跨界領域），站在前沿探索未至之境。'
+    }
+  };
+
+  const HD_SENSES = {
+    1: { key: 'Security', nameZh: '安全防衛 (Security)', desc: '對生存環境的安全基底具有天然的警覺與築基能力。' },
+    2: { key: 'Uncertainty', nameZh: '不確定性 (Uncertainty)', desc: '對未知、變動與生命轉折抱持敏銳探索，能自混沌中理出新路徑。' },
+    3: { key: 'Action', nameZh: '即刻行動 (Action)', desc: '身體力行、當機立斷，在動態交互中校準人生命運。' },
+    4: { key: 'Meditation', nameZh: '靜心冥想 (Meditation)', desc: '退後一步看清大局，在沉思與定靜中洞見事物核心。' },
+    5: { key: 'Judgment', nameZh: '客觀評判 (Judgment)', desc: '冷靜衡量真偽利弊，精準辨別哪些體制與關係值得投入。' },
+    6: { key: 'Acceptance', nameZh: '超越接納 (Acceptance)', desc: '對生命流動抱持全然接納與超然臣服，散發平靜同理的磁場。' }
+  };
+
+  const HD_MOTIVATIONS = {
+    1: { key: 'Fear', nameZh: '恐懼探究 (Fear)', transference: 'Need (匱乏需求)', desc: '求知求存，深入鑽研事物底層原理以化解未知不安。' },
+    2: { key: 'Hope', nameZh: '信任希望 (Hope)', transference: 'Guilt (過度罪疚)', desc: '對生命奇蹟抱持深層信任，相信萬物皆有最好的安排。' },
+    3: { key: 'Desire', nameZh: '引導慾望 (Desire)', transference: 'Innocence (消極天真)', desc: '渴望追求卓越、引領方向、成為團隊航行的前導力量。' },
+    4: { key: 'Need', nameZh: '務實需求 (Need)', transference: 'Fear (恐慌焦慮)', desc: '聚焦核心要素與基本條件的具體落實，確保生存所需穩固。' },
+    5: { key: 'Guilt', nameZh: '修復責任 (Guilt)', transference: 'Hope (盲目樂觀)', desc: '承擔修復責任，主動挑出系統弱點與幫助他人撥亂反正。' },
+    6: { key: 'Innocence', nameZh: '純真臣服 (Innocence)', transference: 'Desire (躁進慾望)', desc: '順應天命不強求，以純粹存在本身照亮身邊的一切。' }
+  };
+
+  const HD_VIEWS = {
+    1: { key: 'Survival', nameZh: '生存基石 (Survival)', distraction: 'Wanting (匱乏妄求)', desc: '觀察事物如何延續生存與穩固根基，關注防禦與安全。' },
+    2: { key: 'Possibility', nameZh: '無限可能 (Possibility)', distraction: 'Probability (定局固著)', desc: '看見尚未成形的潛力與機會之門，擅長激發想像。' },
+    3: { key: 'Power', nameZh: '力量格局 (Power)', distraction: 'Personal (個人恩怨)', desc: '洞察權力運作、資源配置與誰具有真正的掌控力與實力。' },
+    4: { key: 'Wanting', nameZh: '追求渴望 (Wanting)', distraction: 'Survival (過度防守)', desc: '觀察環境中缺乏什麼、如何追求補全與提升生活品質。' },
+    5: { key: 'Probability', nameZh: '機率因果 (Probability)', distraction: 'Possibility (空泛幻想)', desc: '基於現實客觀數據與因果規律，評估事情成功機率。' },
+    6: { key: 'Personal', nameZh: '個體獨特性 (Personal)', distraction: 'Power (權力爭奪)', desc: '看清每個個體的獨特特質與差異，避免群體盲從。' }
+  };
+
+  const HD_TRAJECTORIES = {
+    1: { key: 'Master', nameZh: '大師之路 (Master)', desc: '從生存自保轉化為專精領域的大師典範。' },
+    2: { key: 'Visionary', nameZh: '遠見先驅 (Visionary)', desc: '從尋找可能躍升為開創未來的遠見引路人。' },
+    3: { key: 'Leader', nameZh: '領袖引領 (Leader)', desc: '從受制於結構提升為引領變革的真誠領袖。' },
+    4: { key: 'Creator', nameZh: '實相創造 (Creator)', desc: '從填補匱乏進化為無中生有的豐盛創造者。' },
+    5: { key: 'Strategist', nameZh: '格局策士 (Strategist)', desc: '從計算機率躍升為宏觀運籌帷幄的戰略家。' },
+    6: { key: 'Observer', nameZh: '超然智者 (Observer)', desc: '從糾纏個人恩怨昇華為全知慈悲的世間觀察者。' }
+  };
+
+  /**
+   * 推導人類圖 PHS 高階資訊 (Cognition, Determination, Environment, Variables, Sense, Motivation, Transference, View, Distraction, Trajectory)
+   */
+  function getHighLevelHumanDesignInfo(chartData) {
+    const dSun = chartData.design['Sun'];
+    const dNode = chartData.design['NorthNode'];
+    const pSun = chartData.personality['Sun'];
+    const pNode = chartData.personality['NorthNode'];
+
+    // 1. Cognition (Design Sun Tone: 1~6)
+    const cognMeta = HD_COGNITIONS[dSun.tone] || HD_COGNITIONS[1];
+    const cognition = {
+      tone: dSun.tone,
+      key: cognMeta.key,
+      nameZh: cognMeta.nameZh,
+      sub: cognMeta.sub,
+      desc: cognMeta.desc
+    };
+
+    // 2. Determination (Design Sun Color: 1~6 & Tone: Left/Right)
+    const isDetLeft = dSun.tone <= 3;
+    const detMeta = HD_DETERMINATIONS[dSun.color] || HD_DETERMINATIONS[1];
+    const detSubKey = isDetLeft ? detMeta.leftKey : detMeta.rightKey;
+    const detSubZh = isDetLeft ? detMeta.leftZh : detMeta.rightZh;
+    const determination = {
+      color: dSun.color,
+      tone: dSun.tone,
+      key: detMeta.key,
+      nameZh: detMeta.nameZh,
+      subKey: detSubKey,
+      subZh: detSubZh,
+      combinedKey: `${detSubKey} - ${detMeta.key}`,
+      combinedZh: `${detSubZh.split('(')[0].trim()} · ${detMeta.nameZh.split('(')[0].trim()}`,
+      isLeft: isDetLeft,
+      desc: detMeta.desc
+    };
+
+    // 3. Environment (Design Node Color: 1~6 & Tone: Left/Right)
+    const isEnvLeft = dNode.tone <= 3;
+    const envMeta = HD_ENVIRONMENTS[dNode.color] || HD_ENVIRONMENTS[1];
+    const envSubKey = isEnvLeft ? envMeta.leftKey : envMeta.rightKey;
+    const envSubZh = isEnvLeft ? envMeta.leftZh : envMeta.rightZh;
+    const environment = {
+      color: dNode.color,
+      tone: dNode.tone,
+      key: envMeta.key,
+      nameZh: envMeta.nameZh,
+      subKey: envSubKey,
+      subZh: envSubZh,
+      combinedKey: `${envSubKey} - ${envMeta.key}`,
+      combinedZh: `${envSubZh.split('(')[0].trim()} · ${envMeta.nameZh.split('(')[0].trim()}`,
+      isLeft: isEnvLeft,
+      desc: envMeta.desc
+    };
+
+    // 4. Variables
+    const brainDir = dSun.tone <= 3 ? 'left' : 'right';
+    const envDir = dNode.tone <= 3 ? 'left' : 'right';
+    const mindDir = pSun.tone <= 3 ? 'left' : 'right';
+    const viewDir = pNode.tone <= 3 ? 'left' : 'right';
+    const pCode = (mindDir === 'left' ? 'L' : 'R') + (viewDir === 'left' ? 'L' : 'R');
+    const dCode = (brainDir === 'left' ? 'L' : 'R') + (envDir === 'left' ? 'L' : 'R');
+    const variablesCode = `P${pCode}D${dCode}`;
+
+    const variables = {
+      brain: brainDir,
+      environment: envDir,
+      mind: mindDir,
+      view: viewDir,
+      motivation: mindDir,
+      code: variablesCode
+    };
+
+    // 5. Sense (Personality Node Tone: 1~6)
+    const senseMeta = HD_SENSES[pNode.tone] || HD_SENSES[1];
+    const sense = {
+      tone: pNode.tone,
+      key: senseMeta.key,
+      nameZh: senseMeta.nameZh,
+      desc: senseMeta.desc
+    };
+
+    // 6. Motivation (Personality Sun Color: 1~6)
+    const motMeta = HD_MOTIVATIONS[pSun.color] || HD_MOTIVATIONS[1];
+    const motivation = {
+      color: pSun.color,
+      key: motMeta.key,
+      nameZh: motMeta.nameZh,
+      transference: motMeta.transference,
+      desc: motMeta.desc
+    };
+
+    // 7. Transference (Harmonic Color: 1<->4, 2<->5, 3<->6)
+    const transColorMap = { 1: 4, 2: 5, 3: 6, 4: 1, 5: 2, 6: 3 };
+    const transColor = transColorMap[pSun.color] || 6;
+    const transMeta = HD_MOTIVATIONS[transColor] || HD_MOTIVATIONS[6];
+    const transference = {
+      color: transColor,
+      key: transMeta.key,
+      nameZh: transMeta.nameZh,
+      desc: `當落入非自己或壓力制約時，核心動機「${motMeta.nameZh}」會偏離並滑向對極的「${transMeta.nameZh}」，此時宜暫停決策、回歸內在權威調頻。`
+    };
+
+    // 8. View / Perspective (Personality Node Color: 1~6)
+    const viewMeta = HD_VIEWS[pNode.color] || HD_VIEWS[1];
+    const view = {
+      color: pNode.color,
+      key: viewMeta.key,
+      nameZh: viewMeta.nameZh,
+      distraction: viewMeta.distraction,
+      desc: viewMeta.desc
+    };
+
+    // 9. Distraction (Harmonic View Color: 1<->4, 2<->5, 3<->6)
+    const distColor = transColorMap[pNode.color] || 6;
+    const distMeta = HD_VIEWS[distColor] || HD_VIEWS[6];
+    const distraction = {
+      color: distColor,
+      key: distMeta.key,
+      nameZh: distMeta.nameZh,
+      desc: `當心智過度焦慮時，觀察焦點會從健康的「${viewMeta.nameZh}」分心轉向「${distMeta.nameZh}」，陷入無謂的心力耗損。`
+    };
+
+    // 10. Trajectory
+    const trajMeta = HD_TRAJECTORIES[pNode.color] || HD_TRAJECTORIES[3];
+    const trajectory = {
+      key: trajMeta.key,
+      nameZh: trajMeta.nameZh,
+      desc: trajMeta.desc
+    };
+
+    return {
+      cognition,
+      determination,
+      environment,
+      variables,
+      sense,
+      motivation,
+      transference,
+      view,
+      distraction,
+      trajectory
+    };
+  }
+
   /**
    * 完整人類圖全盤推導
    */
@@ -908,12 +1230,30 @@
 
     // 四顆箭頭 (Variables / Four Arrows)
     // 依據 Tone (1-3 為左 Left, 4-6 為右 Right)
+    const brainDir = design['Sun'].tone <= 3 ? 'left' : 'right';
+    const envDir = design['NorthNode'].tone <= 3 ? 'left' : 'right';
+    const mindDir = personality['Sun'].tone <= 3 ? 'left' : 'right';
+    const viewDir = personality['NorthNode'].tone <= 3 ? 'left' : 'right';
+
+    const pCode = (mindDir === 'left' ? 'L' : 'R') + (viewDir === 'left' ? 'L' : 'R');
+    const dCode = (brainDir === 'left' ? 'L' : 'R') + (envDir === 'left' ? 'L' : 'R');
+    const variablesCode = `P${pCode}D${dCode}`;
+
     const variables = {
-      brain: design['Sun'].tone <= 3 ? 'left' : 'right',      // 左上：大腦運作
-      environment: design['NorthNode'].tone <= 3 ? 'left' : 'right', // 左下：環境/消化
-      view: personality['NorthNode'].tone <= 3 ? 'left' : 'right',  // 右上：視角
-      motivation: personality['Sun'].tone <= 3 ? 'left' : 'right'   // 右下：動機
+      brain: brainDir,          // 左上：大腦運作 (Design Sun Tone)
+      environment: envDir,      // 左下：環境/消化 (Design Node Tone)
+      mind: mindDir,            // 右上：心智動機 (Personality Sun Tone)
+      view: viewDir,            // 右下：視角 (Personality Node Tone)
+      motivation: mindDir,
+      code: variablesCode
     };
+
+    // PHS 高階資訊
+    const highLevel = getHighLevelHumanDesignInfo({
+      design,
+      personality,
+      variables
+    });
 
     return {
       birthUtc: birthUtcDate,
@@ -932,7 +1272,271 @@
       incarnationCross: incarnationCross,
       signature: signature,
       notSelf: notSelf,
-      variables: variables
+      variables: variables,
+      highLevel: highLevel
+    };
+  }
+
+  // ==========================================
+  // 天體回歸與生命週期演算法 (Planetary Returns & Life Cycles)
+  // ==========================================
+
+  function findPlanetLongitudeReturn(body, targetLon, estDate) {
+    let t = new Date(estDate.getTime());
+    for (let i = 0; i < 35; i++) {
+      const curLon = Astronomy.Ecliptic(Astronomy.GeoVector(body, t, true)).elon;
+      let diff = mod(curLon - targetLon + 180, 360) - 180;
+      if (Math.abs(diff) < 0.0001) break;
+      const tNext = new Date(t.getTime() + 86400000);
+      const nextLon = Astronomy.Ecliptic(Astronomy.GeoVector(body, tNext, true)).elon;
+      let speed = mod(nextLon - curLon + 180, 360) - 180;
+      if (Math.abs(speed) < 0.001) speed = 0.03;
+      const deltaDays = diff / speed;
+      const step = Math.max(-60, Math.min(60, deltaDays));
+      t = new Date(t.getTime() - step * 86400000);
+    }
+    return t;
+  }
+
+  function findSunReturn(targetLon, year, month, day) {
+    let t = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+    for (let i = 0; i < 25; i++) {
+      const curLon = Astronomy.Ecliptic(Astronomy.GeoVector('Sun', t, true)).elon;
+      let diff = mod(curLon - targetLon + 180, 360) - 180;
+      if (Math.abs(diff) < 0.00005) break;
+      const deltaDays = diff / 0.9856;
+      t = new Date(t.getTime() - deltaDays * 86400000);
+    }
+    return t;
+  }
+
+  function findMoonReturn(targetLon, baseDate) {
+    let t = new Date(baseDate.getTime());
+    for (let i = 0; i < 25; i++) {
+      const curLon = Astronomy.Ecliptic(Astronomy.GeoVector('Moon', t, true)).elon;
+      let diff = mod(curLon - targetLon + 180, 360) - 180;
+      if (Math.abs(diff) < 0.0001) break;
+      const deltaDays = diff / 13.176;
+      t = new Date(t.getTime() - deltaDays * 86400000);
+    }
+    return t;
+  }
+
+  function findChironReturn(birthUtcDate) {
+    const ephem = (typeof window !== 'undefined' && window.CHIRON_EPHEM) ||
+                  (typeof global !== 'undefined' && global.CHIRON_EPHEM);
+    if (!ephem) {
+      return new Date(birthUtcDate.getTime() + 50.4 * 365.25 * 86400000);
+    }
+    const startTs = new Date(ephem.start).getTime();
+    const stepMs = ephem.stepDays * 86400000;
+    const lons = ephem.lons;
+
+    function getChironLon(date) {
+      const ts = date.getTime();
+      const idxFloat = (ts - startTs) / stepMs;
+      if (idxFloat <= 0) return lons[0];
+      if (idxFloat >= lons.length - 1) return lons[lons.length - 1];
+      const idx = Math.floor(idxFloat);
+      const frac = idxFloat - idx;
+      const l0 = lons[idx];
+      const l1 = lons[idx + 1];
+      const diff = ((l1 - l0 + 180) % 360) - 180;
+      return ((l0 + diff * frac) % 360 + 360) % 360;
+    }
+
+    const birthLon = getChironLon(birthUtcDate);
+    const startSearch = new Date(birthUtcDate.getTime() + 48.0 * 365.25 * 86400000);
+    const endSearch = new Date(birthUtcDate.getTime() + 52.0 * 365.25 * 86400000);
+
+    let bestDate = null;
+    let minDiff = 999;
+    for (let t = startSearch.getTime(); t <= endSearch.getTime(); t += 86400000) {
+      const curLon = getChironLon(new Date(t));
+      const diff = Math.abs(((curLon - birthLon + 180) % 360) - 180);
+      if (diff < minDiff) {
+        minDiff = diff;
+        bestDate = new Date(t);
+        if (minDiff < 0.05) break;
+      }
+    }
+
+    if (!bestDate) bestDate = new Date(birthUtcDate.getTime() + 50.4 * 365.25 * 86400000);
+
+    let refinedDate = bestDate;
+    minDiff = 999;
+    for (let min = -1440; min <= 1440; min += 10) {
+      const curT = new Date(bestDate.getTime() + min * 60000);
+      const curLon = getChironLon(curT);
+      const diff = Math.abs(((curLon - birthLon + 180) % 360) - 180);
+      if (diff < minDiff) {
+        minDiff = diff;
+        refinedDate = curT;
+      }
+    }
+    return refinedDate;
+  }
+
+  /**
+   * 計算完整行星回歸與生命週期歷程 (Saturn Return, Uranus Opposition, Chiron Return, Second Saturn, Solar, Lunar, More)
+   */
+  function calculatePlanetaryReturns(birthUtcDate, targetSolarYear) {
+    const birthTs = birthUtcDate.getTime();
+    const natalPlanets = calculatePlanetaryPositions(birthUtcDate);
+    const now = new Date();
+
+    function formatReturnDateUtc(d) {
+      if (!d) return '--';
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const day = d.getUTCDate();
+      let suffix = 'th';
+      if (day === 1 || day === 21 || day === 31) suffix = 'st';
+      else if (day === 2 || day === 22) suffix = 'nd';
+      else if (day === 3 || day === 23) suffix = 'rd';
+
+      const mStr = months[d.getUTCMonth()];
+      const y = d.getUTCFullYear();
+      let hours = d.getUTCHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const hStr = String(hours).padStart(2, '0');
+      const minStr = String(d.getUTCMinutes()).padStart(2, '0');
+
+      return `${mStr} ${day}${suffix}, ${y} - ${hStr}:${minStr} ${ampm} (UTC)`;
+    }
+
+    function formatReturnDateLocal(d) {
+      if (!d) return '--';
+      const pad = n => String(n).padStart(2, '0');
+      const localD = new Date(d.getTime() + 8 * 3600000); // UTC+8
+      return `${localD.getUTCFullYear()}年${pad(localD.getUTCMonth() + 1)}月${pad(localD.getUTCDate())}日 ${pad(localD.getUTCHours())}:${pad(localD.getUTCMinutes())} (台北時間)`;
+    }
+
+    function calcAgeAt(d) {
+      if (!d) return '0.0';
+      const diffYears = (d.getTime() - birthTs) / (365.25 * 86400000);
+      return Math.max(0, diffYears).toFixed(1);
+    }
+
+    // 1. Saturn Return (Age ~28-30)
+    const satLon = natalPlanets['Saturn'].longitude;
+    const estSat1 = new Date(birthTs + 29.5 * 365.25 * 86400000);
+    const dateSat1 = findPlanetLongitudeReturn('Saturn', satLon, estSat1);
+
+    // 2. Uranus Opposition (Age ~38-44)
+    const uraLon = natalPlanets['Uranus'].longitude;
+    const targetUraOpp = mod(uraLon + 180, 360);
+    const estUraOpp = new Date(birthTs + 43.5 * 365.25 * 86400000);
+    const dateUraOpp = findPlanetLongitudeReturn('Uranus', targetUraOpp, estUraOpp);
+
+    // 3. Chiron Return (Age ~49-51)
+    const dateChiron = findChironReturn(birthUtcDate);
+
+    // 4. Second Saturn Return (Age ~58-60)
+    const estSat2 = new Date(birthTs + 58.7 * 365.25 * 86400000);
+    const dateSat2 = findPlanetLongitudeReturn('Saturn', satLon, estSat2);
+
+    // 5. Solar Return
+    const currentYear = targetSolarYear || now.getFullYear();
+    const sunLon = natalPlanets['Sun'].longitude;
+    const dateSolar = findSunReturn(sunLon, currentYear, birthUtcDate.getUTCMonth() + 1, birthUtcDate.getUTCDate());
+
+    // 6. Lunar Return (closest upcoming/recent)
+    const moonLon = natalPlanets['Moon'].longitude;
+    const dateLunar = findMoonReturn(moonLon, now);
+
+    // 7. More Cycles (Jupiter & Mars)
+    const jupLon = natalPlanets['Jupiter'].longitude;
+    const estJupNext = new Date(now.getTime() + 6 * 30 * 86400000);
+    const dateJupiter = findPlanetLongitudeReturn('Jupiter', jupLon, estJupNext);
+
+    const marsLon = natalPlanets['Mars'].longitude;
+    const estMarsNext = new Date(now.getTime() + 6 * 30 * 86400000);
+    const dateMars = findPlanetLongitudeReturn('Mars', marsLon, estMarsNext);
+
+    return {
+      saturnReturn1: {
+        id: 'saturn_return_1',
+        titleEn: 'Saturn Return',
+        titleZh: '第一次土星回歸 (約 28~30 歲)',
+        dateUtcStr: formatReturnDateUtc(dateSat1),
+        dateLocalStr: formatReturnDateLocal(dateSat1),
+        date: dateSat1,
+        age: calcAgeAt(dateSat1),
+        isPassed: dateSat1 < now,
+        meaningZh: '成年的成年禮。脫離青年期的摸索與依賴，承擔起個人責任與使命。對於 6 爻人（Profile 6/2, 6/3, 4/6, 3/6）而言，正是「走上屋頂（On the Roof）」階段的正式開始，從摸爬滾打轉為客觀沉澱。'
+      },
+      uranusOpposition: {
+        id: 'uranus_opposition',
+        titleEn: 'Uranus Opposition',
+        titleZh: '天王星對衝 / 半迴歸 (約 38~44 歲)',
+        dateUtcStr: formatReturnDateUtc(dateUraOpp),
+        dateLocalStr: formatReturnDateLocal(dateUraOpp),
+        date: dateUraOpp,
+        age: calcAgeAt(dateUraOpp),
+        isPassed: dateUraOpp < now,
+        meaningZh: '人生中場轉向、從向南交點（前半生環境與制約）過渡轉向北交點（後半生核心主題與新視角）。打破常規與外界期待，活出真正本色。'
+      },
+      chironReturn: {
+        id: 'chiron_return',
+        titleEn: 'Chiron Return',
+        titleZh: '凱龍星回歸 (約 49~51 歲)',
+        dateUtcStr: formatReturnDateUtc(dateChiron),
+        dateLocalStr: formatReturnDateLocal(dateChiron),
+        date: dateChiron,
+        age: calcAgeAt(dateChiron),
+        isPassed: dateChiron < now,
+        meaningZh: '靈魂傷口療癒、開展智者智慧與綻放開花之年。對 6 爻人而言，正是「下屋頂（Off the Roof）」步入典範（Role Model）實踐期，將畢生領悟化為活體榜樣。'
+      },
+      saturnReturn2: {
+        id: 'saturn_return_2',
+        titleEn: 'Second Saturn Return',
+        titleZh: '第二次土星回歸 (約 58~60 歲)',
+        dateUtcStr: formatReturnDateUtc(dateSat2),
+        dateLocalStr: formatReturnDateLocal(dateSat2),
+        date: dateSat2,
+        age: calcAgeAt(dateSat2),
+        isPassed: dateSat2 < now,
+        meaningZh: '人生晚年的圓滿成熟期，盤點一生智慧，穩固晚年的靈性智慧與傳承架構。'
+      },
+      solarReturn: {
+        id: 'solar_return',
+        titleEn: 'Solar Return',
+        titleZh: '太陽回歸 (每年個人運勢主題)',
+        year: currentYear,
+        dateUtcStr: formatReturnDateUtc(dateSolar),
+        dateLocalStr: formatReturnDateLocal(dateSolar),
+        date: dateSolar,
+        age: calcAgeAt(dateSolar),
+        meaningZh: `每年的個人年度運勢主題盤（個人生日當刻太陽回到出生度數的能量盤），觀測 ${currentYear} 年的重點學習功課與機會。`
+      },
+      lunarReturn: {
+        id: 'lunar_return',
+        titleEn: 'Lunar Return',
+        titleZh: '月亮回歸 (每 27.3 天情緒潮汐)',
+        dateUtcStr: formatReturnDateUtc(dateLunar),
+        dateLocalStr: formatReturnDateLocal(dateLunar),
+        date: dateLunar,
+        meaningZh: '每個月亮回歸本命度數的週期，觀測月度情緒潮汐與日常節奏。'
+      },
+      moreCycles: {
+        id: 'more_cycles',
+        titleEn: 'More Cycles',
+        titleZh: '更多週期循環 (木星 / 火星回歸)',
+        jupiter: {
+          title: '木星回歸 (約 12 年一遇)',
+          dateUtcStr: formatReturnDateUtc(dateJupiter),
+          dateLocalStr: formatReturnDateLocal(dateJupiter),
+          meaning: '事業視野擴張、信念昇華與全新資源機遇之年。'
+        },
+        mars: {
+          title: '火星回歸 (約 2 年一遇)',
+          dateUtcStr: formatReturnDateUtc(dateMars),
+          dateLocalStr: formatReturnDateLocal(dateMars),
+          meaning: '行動爆發力、勇氣與全新熱情企劃啟動點。'
+        }
+      }
     };
   }
 
@@ -993,6 +1597,15 @@
     calculateHousesAndAxes,
     calculateAspects,
     calculateHumanDesignChart,
+    calculatePlanetaryReturns,
+    getHighLevelHumanDesignInfo,
+    HD_COGNITIONS,
+    HD_DETERMINATIONS,
+    HD_ENVIRONMENTS,
+    HD_SENSES,
+    HD_MOTIVATIONS,
+    HD_VIEWS,
+    HD_TRAJECTORIES,
     calculateGeneKeysProfile,
     INCARNATION_CROSSES,
     CROSS_NAME_ZH,

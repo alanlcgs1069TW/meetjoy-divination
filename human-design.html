@@ -19,6 +19,7 @@
   <!-- 本地純靜態天文引擎與 PDF 輸出引擎 -->
   <script src="./js/astronomy.browser.min.js"></script>
   <script src="./js/geo-cities.js"></script>
+  <script src="./js/chiron-ephem.js"></script>
   <script src="./js/astro-calc.js"></script>
   <script src="./js/meetjoy-pdf.js"></script>
   <script src="./js/meetjoy-universal-profiles.js"></script>
@@ -522,6 +523,63 @@
       <!-- 動態填入 5 大核心黃金指標卡 -->
     </div>
 
+    <!-- 🧬 人類圖高階原初健康系統與心智架構 (PHS & Advanced Substructure) -->
+    <!-- 依愛倫院長指示：置於專屬高階卡片中，收納 Cognition, Determination, Environment, Variables, Sense, Motivation, Transference, View, Distraction, Trajectory -->
+    <div id="hd_high_level_panel" class="mt-8 bg-gradient-to-br from-[#1E261D] via-[#283526] to-[#1A2219] border-2 border-[#C8A97E]/70 rounded-3xl p-5 sm:p-7 shadow-xl text-amber-50">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#C8A97E]/40 pb-3 mb-6">
+        <div>
+          <span class="text-[11px] font-bold text-amber-300/80 tracking-widest uppercase flex items-center gap-1.5">
+            <span>🧬 Primary Health System & Advanced Mind</span>
+          </span>
+          <h2 class="text-xl sm:text-2xl font-black text-[#F7E7CE] flex items-center gap-2 mt-0.5">
+            <span>🧬 人類圖高階原初健康系統與心智架構 (PHS)</span>
+          </h2>
+        </div>
+        <div id="hd_variables_badge" class="px-4 py-1.5 rounded-full bg-[#C8A97E] text-stone-950 font-black text-xs sm:text-sm shadow-md border border-amber-300">
+          四變數：PLLDLR
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm text-stone-300/90 leading-relaxed mb-6">
+        超越九大能量中心與閘門表象，直探人類圖深層「次結構（Substructure）」——由顏色（Color）與音調（Tone）構成的 PHS 原初健康系統與心智覺察透鏡。包含大腦消化模式、能量適應環境、內在認知感官、核心驅運動機、轉移陷阱、核心視角與演進軌跡。點擊各項卡片可展開愛倫院長的深度解讀。
+      </p>
+
+      <!-- 高階資訊卡片網格 (對標 Image 2 設計風格) -->
+      <div id="hd_high_level_cards" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+        <!-- 動態渲染 10 大高階卡片 -->
+      </div>
+    </div>
+
+    <!-- 🪐 重要星體回歸與生命週期歷程 (Planetary Returns & Life Cycles) -->
+    <!-- 依愛倫院長指示：對標 Image 1 人類圖生命週期觀察功能，精準呈現 Saturn Return, Uranus Opposition, Chiron Return, Second Saturn, Solar, Lunar, More Cycles -->
+    <div id="hd_returns_panel" class="mt-8 bg-[#181E24] border-2 border-[#C8A97E]/60 rounded-3xl p-5 sm:p-7 shadow-xl text-slate-100">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700/80 pb-3 mb-6">
+        <div>
+          <span class="text-[11px] font-bold text-amber-400 tracking-widest uppercase flex items-center gap-1.5">
+            <span>🪐 Planetary Returns & Life Cycles</span>
+          </span>
+          <h2 class="text-xl sm:text-2xl font-black text-amber-50 flex items-center gap-2 mt-0.5">
+            <span>🪐 重要天體回歸與生命週期歷程</span>
+          </h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400">太陽回歸年份：</span>
+          <select id="sel_solar_return_year" class="bg-[#242C35] text-amber-300 font-bold border border-[#C8A97E]/50 rounded-xl px-2.5 py-1 text-xs shadow-xs focus:outline-hidden">
+            <!-- 動態填充年份，預設今年 -->
+          </select>
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-300/90 leading-relaxed mb-6">
+        人類圖生命週期（Planetary Cycles）以本命天體回歸與對分相為里程碑，揭示靈魂在不同年齡段的能量大換軌與重大考驗。點擊下方各週期卡片可展開精確天文時間、對應人生年齡與愛倫院長的轉型指引（特別包含 6 爻人「走上屋頂」與「走下屋頂成為活典範」的關鍵轉折點）。
+      </p>
+
+      <!-- 星體回歸列表 (100% 精準對標 Image 1 排版風格) -->
+      <div id="hd_returns_list" class="space-y-3">
+        <!-- 動態渲染 Saturn Return, Uranus Opposition, Chiron Return, Second Saturn Return, Solar Return, Lunar Return, More Cycles -->
+      </div>
+    </div>
+
     <!-- 下方深度能量分析手冊區 (通道、輪迴交叉、策略、生活魔藥) -->
     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
       
@@ -919,16 +977,16 @@
       15: [180, 358], 2: [200, 370], 46: [220, 358],
       // 意志力心輪 (Heart) 標準正統倒三角微向左偏 (閘門26大空間清晰展現)
       21: [280, 328], 51: [258, 348], 26: [256, 368], 40: [298, 368],
-      // 脾臟直覺中心 (Spleen) 嚴格拉開 20px+ 安全間距
-      48: [78, 398], 57: [98, 415], 44: [118, 432], 50: [120, 458],
-      32: [104, 474], 28: [88, 490], 18: [72, 502],
-      // 情緒中心 (Solar Plexus) 嚴格拉開 20px+ 安全間距
-      36: [328, 392], 22: [302, 415], 37: [282, 432], 6: [280, 458],
-      49: [296, 474], 55: [312, 490], 30: [328, 502],
+      // 脾臟直覺中心 (Spleen) 50號閘門精確坐落於向內三角形頂點 [132, 445]
+      48: [78, 396], 57: [96, 412], 44: [114, 428], 50: [132, 445],
+      32: [114, 462], 28: [96, 478], 18: [78, 494],
+      // 情緒中心 (Solar Plexus) 6號閘門精確坐落於向內三角形頂點 [268, 445]
+      36: [322, 396], 22: [304, 412], 37: [286, 428], 6: [268, 445],
+      49: [286, 462], 55: [304, 478], 30: [322, 494],
       // 薦骨中心 (Sacral)
       5: [180, 425], 14: [200, 425], 29: [220, 425],
-      34: [174, 444], 27: [174, 464], 42: [180, 475],
-      3: [200, 475], 9: [220, 475], 59: [226, 452],
+      34: [174, 432], 27: [174, 448], 42: [180, 475],
+      3: [200, 475], 9: [220, 475], 59: [226, 448],
       // 根部中心 (Root)
       53: [180, 545], 60: [200, 545], 52: [220, 545],
       54: [174, 560], 38: [174, 575], 58: [180, 591],
@@ -946,15 +1004,15 @@
       { id: '43-23', g1: 43, g2: 23, p0: [200, 152], ctrl: null, p2: [200, 202] },
       { id: '11-56', g1: 11, g2: 56, p0: [224, 142], ctrl: null, p2: [216, 202] },
       // 喉嚨至脾臟最外圈 (Throat -> Spleen) 16-48
-      { id: '16-48', g1: 16, g2: 48, p0: [174, 218], ctrl: [65, 270], p2: [78, 398] },
+      { id: '16-48', g1: 16, g2: 48, p0: [174, 218], ctrl: [65, 270], p2: [78, 396] },
 
       // 四閘門六通道整合迴路 (Integration Circuit: 20, 10, 34, 57，匯流節點 J: [106, 360])
-      { id: '20-57', g1: 20, g2: 57, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [100, 390], p2: [98, 415], type: 'two-segment' },
+      { id: '20-57', g1: 20, g2: 57, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [100, 390], p2: [96, 412], type: 'two-segment' },
       { id: '20-10', g1: 20, g2: 10, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [135, 342], p2: [172, 335], type: 'two-segment' },
-      { id: '20-34', g1: 20, g2: 34, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [114, 422], p2: [174, 444], type: 'two-segment' },
-      { id: '10-34', g1: 10, g2: 34, p0: [172, 335], ctrl: [135, 342], pMid: [106, 360], ctrl2: [114, 422], p2: [174, 444], type: 'two-segment' },
-      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [135, 342], pMid: [106, 360], ctrl2: [100, 390], p2: [98, 415], type: 'two-segment' },
-      { id: '34-57', g1: 34, g2: 57, p0: [174, 444], ctrl: [114, 422], pMid: [106, 360], ctrl2: [100, 390], p2: [98, 415], type: 'two-segment' },
+      { id: '20-34', g1: 20, g2: 34, p0: [174, 236], ctrl: [115, 285], pMid: [106, 360], ctrl2: [114, 422], p2: [174, 432], type: 'two-segment' },
+      { id: '10-34', g1: 10, g2: 34, p0: [172, 335], ctrl: [135, 342], pMid: [106, 360], ctrl2: [114, 422], p2: [174, 432], type: 'two-segment' },
+      { id: '10-57', g1: 10, g2: 57, p0: [172, 335], ctrl: [135, 342], pMid: [106, 360], ctrl2: [100, 390], p2: [96, 412], type: 'two-segment' },
+      { id: '34-57', g1: 34, g2: 57, p0: [174, 432], ctrl: [114, 422], pMid: [106, 360], ctrl2: [100, 390], p2: [96, 412], type: 'two-segment' },
 
       // 喉嚨至G中心其他通道 (Throat -> G)
       { id: '31-7',  g1: 31, g2: 7,  p0: [178, 252], ctrl: null, p2: [182, 312] },
@@ -963,8 +1021,8 @@
       // 喉嚨至意志力心輪 (Throat -> Heart)
       { id: '45-21', g1: 45, g2: 21, p0: [226, 244], ctrl: [265, 275], p2: [280, 328] },
       // 喉嚨至情緒中心 (Throat -> Solar Plexus) 雙弧線平滑分軌 (35-36 弧線往外優雅展開，12-22 平滑貼合心輪，兩者保持寬闊安全間距)
-      { id: '35-36', g1: 35, g2: 36, p0: [226, 212], ctrl: [388, 300], p2: [330, 392] },
-      { id: '12-22', g1: 12, g2: 22, p0: [226, 228], ctrl: [316, 285], pMid: [318, 365], ctrl2: [310, 395], p2: [302, 415], type: 'two-segment' },
+      { id: '35-36', g1: 35, g2: 36, p0: [226, 212], ctrl: [388, 300], p2: [322, 396] },
+      { id: '12-22', g1: 12, g2: 22, p0: [226, 228], ctrl: [316, 285], pMid: [318, 365], ctrl2: [310, 395], p2: [304, 412], type: 'two-segment' },
       // G中心至心輪 (G -> Heart)
       { id: '25-51', g1: 25, g2: 51, p0: [234, 335], ctrl: null, p2: [258, 348] },
       // G中心至薦骨 (G -> Sacral，三條垂直平行通道，端點100%垂直對齊)
@@ -972,25 +1030,25 @@
       { id: '2-14',  g1: 2,  g2: 14, p0: [200, 370], ctrl: null, p2: [200, 425] },
       { id: '46-29', g1: 46, g2: 29, p0: [220, 358], ctrl: null, p2: [220, 425] },
       // 心輪至脾臟 (Heart -> Spleen) 走 G 與 薦骨間隙 (Y=400)，乾淨不纏繞
-      { id: '26-44', g1: 26, g2: 44, p0: [256, 368], ctrl: [186, 400], p2: [118, 432] },
+      { id: '26-44', g1: 26, g2: 44, p0: [256, 368], ctrl: [186, 400], p2: [114, 428] },
       // 心輪至情緒中心 (Heart -> Solar Plexus)
-      { id: '40-37', g1: 40, g2: 37, p0: [298, 368], ctrl: null, p2: [282, 432] },
-      // 薦骨至脾臟 (Sacral -> Spleen) 27-50
-      { id: '27-50', g1: 27, g2: 50, p0: [174, 464], ctrl: null, p2: [120, 458] },
-      // 薦骨至情緒中心 (Sacral -> Solar Plexus)
-      { id: '59-6',  g1: 59, g2: 6,  p0: [226, 452], ctrl: null, p2: [280, 458] },
+      { id: '40-37', g1: 40, g2: 37, p0: [298, 368], ctrl: null, p2: [286, 428] },
+      // 薦骨至脾臟 (Sacral -> Spleen) 27-50 頂點水平貫通
+      { id: '27-50', g1: 27, g2: 50, p0: [174, 448], ctrl: null, p2: [132, 445] },
+      // 薦骨至情緒中心 (Sacral -> Solar Plexus) 6-59 頂點水平貫通
+      { id: '59-6',  g1: 59, g2: 6,  p0: [226, 448], ctrl: null, p2: [268, 445] },
       // 薦骨至根部 (Sacral -> Root)
       { id: '42-53', g1: 42, g2: 53, p0: [180, 475], ctrl: null, p2: [180, 545] },
       { id: '3-60',  g1: 3,  g2: 60, p0: [200, 475], ctrl: null, p2: [200, 545] },
       { id: '9-52',  g1: 9,  g2: 52, p0: [220, 475], ctrl: null, p2: [220, 545] },
       // 脾臟至根部 (Spleen -> Root) 三重同心等距弧線，間距嚴格保證 >= 16px，絕對不交叉
-      { id: '32-54', g1: 32, g2: 54, p0: [104, 474], ctrl: [140, 508], p2: [174, 560] },
-      { id: '28-38', g1: 28, g2: 38, p0: [88, 490],  ctrl: [120, 540], p2: [174, 575] },
-      { id: '18-58', g1: 18, g2: 58, p0: [72, 502],  ctrl: [92, 580],  p2: [180, 591] },
+      { id: '32-54', g1: 32, g2: 54, p0: [114, 462], ctrl: [140, 508], p2: [174, 560] },
+      { id: '28-38', g1: 28, g2: 38, p0: [96, 478],  ctrl: [120, 540], p2: [174, 575] },
+      { id: '18-58', g1: 18, g2: 58, p0: [78, 494],  ctrl: [92, 580],  p2: [180, 591] },
       // 情緒中心至根部 (Solar Plexus -> Root) 三重同心等距弧線，絕對不交叉
-      { id: '49-19', g1: 49, g2: 19, p0: [296, 474], ctrl: [260, 508], p2: [226, 560] },
-      { id: '55-39', g1: 55, g2: 39, p0: [312, 490], ctrl: [280, 540], p2: [226, 575] },
-      { id: '30-41', g1: 30, g2: 41, p0: [328, 502], ctrl: [308, 580], p2: [220, 591] }
+      { id: '49-19', g1: 49, g2: 19, p0: [286, 462], ctrl: [260, 508], p2: [226, 560] },
+      { id: '55-39', g1: 55, g2: 39, p0: [304, 478], ctrl: [280, 540], p2: [226, 575] },
+      { id: '30-41', g1: 30, g2: 41, p0: [322, 494], ctrl: [308, 580], p2: [220, 591] }
     ];
 
     // 二次貝茲曲線/直線/兩段式平滑切分
@@ -1789,6 +1847,349 @@
           <p class="leading-relaxed">${circuitSummary}</p>
         `;
       }
+
+      // 12. 渲染高階資訊卡片 (PHS & Advanced Substructure)
+      renderHighLevelPanel(hd);
+
+      // 13. 渲染重要天體回歸與生命週期歷程 (Planetary Returns & Life Cycles)
+      renderPlanetaryReturnsPanel(utcDate);
+    }
+
+    // ==============================================================
+    // 🧬 高階原初健康系統與心智架構卡片渲染 (PHS & Substructure)
+    // ==============================================================
+    function renderHighLevelPanel(hd) {
+      const panel = document.getElementById('hd_high_level_panel');
+      if (!panel) return;
+      panel.classList.remove('hidden');
+
+      const hl = hd.highLevel;
+      if (!hl) return;
+
+      const badge = document.getElementById('hd_variables_badge');
+      if (badge) {
+        badge.innerHTML = `四變數：<span class="font-mono font-black">${hl.variables.code}</span>`;
+      }
+
+      const cardsContainer = document.getElementById('hd_high_level_cards');
+      if (!cardsContainer) return;
+
+      const items = [
+        {
+          id: 'hl_cognition',
+          titleEn: 'Cognition',
+          titleZh: '內在認知感官',
+          valueEn: hl.cognition.key,
+          valueZh: hl.cognition.nameZh,
+          badge: `Tone ${hl.cognition.tone}`,
+          desc: hl.cognition.desc,
+          sub: hl.cognition.sub,
+          icon: '👃'
+        },
+        {
+          id: 'hl_determination',
+          titleEn: 'Determination',
+          titleZh: '飲食體質 / 決定條件',
+          valueEn: hl.determination.combinedKey,
+          valueZh: hl.determination.combinedZh,
+          badge: `Color ${hl.determination.color} · ${hl.determination.isLeft ? 'Left ◀' : 'Right ▶'}`,
+          desc: hl.determination.desc,
+          sub: 'PHS 原初健康系統核心：大腦神經元與消化系統的最佳滋養模式。',
+          icon: '🍲'
+        },
+        {
+          id: 'hl_environment',
+          titleEn: 'Environment',
+          titleZh: '能量適應環境',
+          valueEn: hl.environment.combinedKey,
+          valueZh: hl.environment.combinedZh,
+          badge: `Color ${hl.environment.color} · ${hl.environment.isLeft ? 'Left ◀' : 'Right ▶'}`,
+          desc: hl.environment.desc,
+          sub: '外在物理場景與工作居住能量場，能減少身體阻力並提升免疫力。',
+          icon: '🏞️'
+        },
+        {
+          id: 'hl_variables',
+          titleEn: 'Variables',
+          titleZh: '四變數核心矩陣',
+          valueEn: hl.variables.code,
+          valueZh: `${hl.variables.code} (4箭頭心智身體方向)`,
+          badge: `P:${hl.variables.mind === 'left' ? 'L' : 'R'}${hl.variables.view === 'left' ? 'L' : 'R'} D:${hl.variables.brain === 'left' ? 'L' : 'R'}${hl.variables.environment === 'left' ? 'L' : 'R'}`,
+          desc: `大腦運作：${hl.variables.brain === 'left' ? '左向 (Active 主動聚焦)' : '右向 (Passive 被動吸收)'} ｜ 環境感知：${hl.variables.environment === 'left' ? '左向 (Observed 觀察場域)' : '右向 (Observer 體驗沉浸)'} ｜ 心智思維：${hl.variables.mind === 'left' ? '左向 (Strategic 策略佈局)' : '右向 (Receptive 開放接收)'} ｜ 觀察視角：${hl.variables.view === 'left' ? '左向 (Focused 聚焦目標)' : '右向 (Peripheral 全觀視野)'}`,
+          sub: '人類圖進化的高階意識代碼，揭示身體與心智的主動/被動架構。',
+          icon: '🧭'
+        },
+        {
+          id: 'hl_sense',
+          titleEn: 'Sense',
+          titleZh: '深層心理感知',
+          valueEn: hl.sense.key,
+          valueZh: hl.sense.nameZh,
+          badge: `Tone ${hl.sense.tone}`,
+          desc: hl.sense.desc,
+          sub: '個性南北交點的音調感知，是視角與心智運作的內在基調。',
+          icon: '🎯'
+        },
+        {
+          id: 'hl_motivation',
+          titleEn: 'Motivation',
+          titleZh: '核心驅運動機',
+          valueEn: hl.motivation.key,
+          valueZh: hl.motivation.nameZh,
+          badge: `Color ${hl.motivation.color}`,
+          desc: hl.motivation.desc,
+          sub: '個性太陽/地球的顏色，是靈魂在顯意識中清明決策時的真正動能。',
+          icon: '🔥'
+        },
+        {
+          id: 'hl_transference',
+          titleEn: 'Transference',
+          titleZh: '動機陰影轉移',
+          valueEn: hl.transference.key,
+          valueZh: hl.transference.nameZh,
+          badge: `Harmonic Color ${hl.transference.color}`,
+          desc: hl.transference.desc,
+          sub: '非自己（Not-Self）心智焦慮時的偽裝動機，需時刻覺察抽離。',
+          icon: '🎭'
+        },
+        {
+          id: 'hl_view',
+          titleEn: 'View / Perspective',
+          titleZh: '核心察覺視角',
+          valueEn: hl.view.key,
+          valueZh: hl.view.nameZh,
+          badge: `Color ${hl.view.color}`,
+          desc: hl.view.desc,
+          sub: '您觀看這個世界與人際互動時的天然透鏡，看清他人忽視的面向。',
+          icon: '👁️'
+        },
+        {
+          id: 'hl_distraction',
+          titleEn: 'Distraction',
+          titleZh: '注意力分心盲點',
+          valueEn: hl.distraction.key,
+          valueZh: hl.distraction.nameZh,
+          badge: `Harmonic Color ${hl.distraction.color}`,
+          desc: hl.distraction.desc,
+          sub: '當能量受阻時，注意力容易被分心拐跑的領域，看見即能釋懷。',
+          icon: '🌀'
+        },
+        {
+          id: 'hl_trajectory',
+          titleEn: 'Trajectory',
+          titleZh: '心智演進軌跡',
+          valueEn: hl.trajectory.key,
+          valueZh: hl.trajectory.nameZh,
+          badge: `Evolution Path`,
+          desc: hl.trajectory.desc,
+          sub: '靈魂從南交點走往北交點時，認知與視野演化的終極英雄之旅。',
+          icon: '🚀'
+        }
+      ];
+
+      cardsContainer.innerHTML = items.map(item => `
+        <div class="group bg-[#151C15]/90 hover:bg-[#1B241B] border border-[#C8A97E]/30 hover:border-[#C8A97E] rounded-2xl p-4 transition shadow-xs cursor-pointer" onclick="toggleHlDetail('${item.id}')">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs sm:text-sm text-amber-200/90 flex items-center gap-1.5">
+              <span>${item.icon}</span> ${item.titleEn}
+              <span class="text-[10px] text-stone-400 font-normal">(${item.titleZh})</span>
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/70 border border-[#C8A97E]/40 text-amber-300 font-bold">${item.badge}</span>
+              <span id="chevron_${item.id}" class="text-[#C8A97E] text-base font-bold transition-transform">›</span>
+            </div>
+          </div>
+          <div class="mt-1.5 flex items-baseline justify-between">
+            <p class="text-sm sm:text-base font-black text-amber-100">${item.valueEn}</p>
+            <p class="text-xs text-amber-300/80 font-medium">${item.valueZh.split('(')[0].trim()}</p>
+          </div>
+          <div id="detail_${item.id}" class="hidden mt-3 pt-3 border-t border-[#C8A97E]/20 text-xs text-stone-300 leading-relaxed space-y-1.5">
+            <p class="text-amber-200/90 font-medium">💡 <strong>核心解析</strong>：${item.desc}</p>
+            <p class="text-stone-400 text-[11px]">🌿 <strong>指引提醒</strong>：${item.sub}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleHlDetail(id) {
+      const detail = document.getElementById(`detail_${id}`);
+      const chevron = document.getElementById(`chevron_${id}`);
+      if (!detail) return;
+      if (detail.classList.contains('hidden')) {
+        detail.classList.remove('hidden');
+        if (chevron) chevron.style.transform = 'rotate(90deg)';
+      } else {
+        detail.classList.add('hidden');
+        if (chevron) chevron.style.transform = 'none';
+      }
+    }
+
+    // ==============================================================
+    // 🪐 重要天體回歸與生命週期歷程 (Planetary Returns & Life Cycles)
+    // ==============================================================
+    let currentReturnBirthUtc = null;
+
+    function renderPlanetaryReturnsPanel(utcDate, targetYear) {
+      const panel = document.getElementById('hd_returns_panel');
+      if (!panel) return;
+      panel.classList.remove('hidden');
+
+      currentReturnBirthUtc = utcDate;
+      const now = new Date();
+      const currentYear = targetYear || now.getFullYear();
+
+      // 年份下拉選單初始化
+      const yearSelect = document.getElementById('sel_solar_return_year');
+      if (yearSelect) {
+        if (yearSelect.options.length === 0 || yearSelect.dataset.birthYear !== String(utcDate.getUTCFullYear())) {
+          yearSelect.innerHTML = '';
+          yearSelect.dataset.birthYear = String(utcDate.getUTCFullYear());
+          const birthYear = utcDate.getUTCFullYear();
+          for (let y = birthYear; y <= birthYear + 85; y++) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = `${y} 年 ${y === now.getFullYear() ? '(今年)' : ''}`;
+            if (y === currentYear) opt.selected = true;
+            yearSelect.appendChild(opt);
+          }
+          yearSelect.onchange = (e) => {
+            renderPlanetaryReturnsPanel(currentReturnBirthUtc, parseInt(e.target.value, 10));
+          };
+        } else {
+          yearSelect.value = currentYear;
+        }
+      }
+
+      const ret = AstroCalc.calculatePlanetaryReturns(utcDate, currentYear);
+      if (!ret) return;
+
+      const container = document.getElementById('hd_returns_list');
+      if (!container) return;
+
+      const cycles = [
+        {
+          id: 'ret_saturn1',
+          titleEn: 'Saturn Return',
+          titleZh: '第一次土星回歸 (約 28~30 歲)',
+          utcStr: ret.saturnReturn1.dateUtcStr,
+          localStr: ret.saturnReturn1.dateLocalStr,
+          age: ret.saturnReturn1.age,
+          isPassed: ret.saturnReturn1.isPassed,
+          meaning: ret.saturnReturn1.meaningZh,
+          badge: '人生重大成人禮',
+          actionText: '展開週期解讀'
+        },
+        {
+          id: 'ret_uranus',
+          titleEn: 'Uranus Opposition',
+          titleZh: '天王星對衝 / 半迴歸 (約 38~44 歲)',
+          utcStr: ret.uranusOpposition.dateUtcStr,
+          localStr: ret.uranusOpposition.dateLocalStr,
+          age: ret.uranusOpposition.age,
+          isPassed: ret.uranusOpposition.isPassed,
+          meaning: ret.uranusOpposition.meaningZh,
+          badge: '南北交點交棒 · 人生中場大覺醒',
+          actionText: '展開週期解讀'
+        },
+        {
+          id: 'ret_chiron',
+          titleEn: 'Chiron Return',
+          titleZh: '凱龍星回歸 (約 49~51 歲)',
+          utcStr: ret.chironReturn.dateUtcStr,
+          localStr: ret.chironReturn.dateLocalStr,
+          age: ret.chironReturn.age,
+          isPassed: ret.chironReturn.isPassed,
+          meaning: ret.chironReturn.meaningZh,
+          badge: '知天命 · 6 爻人下屋頂成為活典範',
+          actionText: '展開週期解讀'
+        },
+        {
+          id: 'ret_saturn2',
+          titleEn: 'Second Saturn Return',
+          titleZh: '第二次土星回歸 (約 58~60 歲)',
+          utcStr: ret.saturnReturn2.dateUtcStr,
+          localStr: ret.saturnReturn2.dateLocalStr,
+          age: ret.saturnReturn2.age,
+          isPassed: ret.saturnReturn2.isPassed,
+          meaning: ret.saturnReturn2.meaningZh,
+          badge: '晚年圓滿 · 智慧大成傳承',
+          actionText: '展開週期解讀'
+        },
+        {
+          id: 'ret_solar',
+          titleEn: 'Solar Return',
+          titleZh: `太陽回歸 (${currentYear} 個人年度運勢主題盤)`,
+          utcStr: ret.solarReturn.dateUtcStr,
+          localStr: ret.solarReturn.dateLocalStr,
+          age: ret.solarReturn.age,
+          isPassed: false,
+          meaning: ret.solarReturn.meaningZh,
+          badge: `${currentYear} 年度盤`,
+          actionText: 'Tap to select year / 展開年度指引'
+        },
+        {
+          id: 'ret_lunar',
+          titleEn: 'Lunar Return',
+          titleZh: '月亮回歸 (每 27.3 天潛意識潮汐)',
+          utcStr: ret.lunarReturn.dateUtcStr,
+          localStr: ret.lunarReturn.dateLocalStr,
+          age: null,
+          isPassed: false,
+          meaning: ret.lunarReturn.meaningZh,
+          badge: '當月情緒週期',
+          actionText: 'Tap for more / 展開月度調頻'
+        },
+        {
+          id: 'ret_more',
+          titleEn: 'More Cycles',
+          titleZh: '更多週期循環 (木星 / 火星回歸歷程)',
+          utcStr: `${ret.moreCycles.jupiter.title} ｜ ${ret.moreCycles.mars.title}`,
+          localStr: '木星回歸 (12 年開展) · 火星回歸 (2 年動力)',
+          age: null,
+          isPassed: false,
+          meaning: `💫 <strong>木星回歸</strong>：${ret.moreCycles.jupiter.meaning}<br>🔥 <strong>火星回歸</strong>：${ret.moreCycles.mars.meaning}`,
+          badge: '擴展與行動',
+          actionText: 'Tap for more'
+        }
+      ];
+
+      container.innerHTML = cycles.map(c => `
+        <div class="group bg-[#242C35]/90 hover:bg-[#2B3540] border border-slate-700/80 hover:border-[#C8A97E]/80 rounded-2xl p-4 sm:p-5 transition shadow-sm cursor-pointer" onclick="toggleReturnDetail('${c.id}')">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-black text-sm sm:text-base text-amber-50 group-hover:text-amber-300 transition">${c.titleEn}</span>
+                <span class="text-xs text-slate-400 font-normal">(${c.titleZh.split('(')[0].trim()})</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${c.isPassed ? 'bg-slate-700 text-slate-300' : 'bg-amber-900/60 text-amber-300 border border-amber-600/40'}">${c.badge}</span>
+              </div>
+              <p class="text-xs sm:text-sm font-mono text-amber-300/90 font-bold mt-1 tracking-wide">${c.utcStr}</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">${c.localStr} ${c.age ? `· 歷程年齡：約 ${c.age} 歲` : ''}</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="hidden sm:inline-block text-[11px] text-slate-400 group-hover:text-amber-200 transition">${c.actionText}</span>
+              <span id="chevron_${c.id}" class="text-slate-400 group-hover:text-[#C8A97E] text-xl font-bold transition-transform">›</span>
+            </div>
+          </div>
+          <div id="detail_${c.id}" class="hidden mt-3 pt-3 border-t border-slate-700 text-xs text-slate-300 leading-relaxed">
+            <p class="bg-[#1A222A] p-3 rounded-xl border border-slate-700/60 text-amber-100/90">
+              ${c.meaning}
+            </p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleReturnDetail(id) {
+      const detail = document.getElementById(`detail_${id}`);
+      const chevron = document.getElementById(`chevron_${id}`);
+      if (!detail) return;
+      if (detail.classList.contains('hidden')) {
+        detail.classList.remove('hidden');
+        if (chevron) chevron.style.transform = 'rotate(90deg)';
+      } else {
+        detail.classList.add('hidden');
+        if (chevron) chevron.style.transform = 'none';
+      }
     }
 
     // 雙人合盤全局快取
@@ -1894,6 +2295,8 @@
       const singleInputs = document.getElementById('hd_single_inputs');
       const dualInputs = document.getElementById('hd_dual_inputs');
       const synastryPanel = document.getElementById('hd_synastry_panel');
+      const hlPanel = document.getElementById('hd_high_level_panel');
+      const retPanel = document.getElementById('hd_returns_panel');
 
       if (mode === 'single') {
         currentCompositeData = null;
@@ -1902,6 +2305,8 @@
         singleInputs.classList.remove('hidden');
         dualInputs.classList.add('hidden');
         synastryPanel.classList.add('hidden');
+        if (hlPanel) hlPanel.classList.remove('hidden');
+        if (retPanel) retPanel.classList.remove('hidden');
         renderHumanDesignChart();
       } else {
         tabSynastry.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-black transition bg-[#2E3829] text-amber-50 shadow-xs';
@@ -1909,6 +2314,8 @@
         singleInputs.classList.add('hidden');
         dualInputs.classList.remove('hidden');
         synastryPanel.classList.remove('hidden');
+        if (hlPanel) hlPanel.classList.add('hidden');
+        if (retPanel) retPanel.classList.add('hidden');
         populateHdQuickProfiles();
         renderHdDualChart();
       }
