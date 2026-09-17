@@ -813,6 +813,9 @@
             <button type="button" id="btn_flowing_flip_all" class="px-5 py-2 rounded-full bg-[#C8A97E] hover:bg-[#dfc298] text-[#182622] font-black text-xs transition shadow-xs cursor-pointer">
               ✨ 全部翻開
             </button>
+            <button type="button" id="btn_flowing_slideshow" class="px-4 py-2 rounded-full bg-amber-100/90 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-black transition flex items-center gap-1 cursor-pointer" title="全螢幕逐張放大幻燈片欣賞">
+              <span>🔍 放大幻燈片</span>
+            </button>
             <button type="button" id="btn_flowing_redraw" class="px-4 py-2 rounded-full bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 text-xs font-bold transition cursor-pointer">
               🔄 再抽一次
             </button>
@@ -849,13 +852,22 @@
       const stage = revealArea.querySelector('#flowing_cards_stage');
       stage.innerHTML = this.renderRevealLayoutHtml(layout);
 
-      // 綁定所有卡牌翻轉事件
+      // 綁定所有卡牌翻轉與點圖放大事件
       revealArea.querySelectorAll('.card-scene').forEach(sceneEl => {
         const innerEl = sceneEl.querySelector('.card-inner');
+        const cardIdx = parseInt(sceneEl.getAttribute('data-card-idx'), 10);
         sceneEl.addEventListener('click', () => {
-          window.MeetJoyAudio?.playFlip();
-          innerEl.classList.toggle('flipped');
-          this.checkAndRenderPotionSummary(revealArea);
+          if (innerEl && innerEl.classList.contains('flipped')) {
+            // 已翻開的卡牌，點擊直接打開全螢幕大圖幻燈片！
+            if (typeof window.openSlideshow === 'function') {
+              window.openSlideshow(isNaN(cardIdx) ? 0 : cardIdx);
+            }
+          } else if (innerEl) {
+            // 未翻開的卡牌，點擊翻開
+            window.MeetJoyAudio?.playFlip();
+            innerEl.classList.add('flipped');
+            this.checkAndRenderPotionSummary(revealArea);
+          }
         });
       });
 
@@ -864,6 +876,13 @@
         window.MeetJoyAudio?.playFlip();
         revealArea.querySelectorAll('.card-inner').forEach(el => el.classList.add('flipped'));
         this.checkAndRenderPotionSummary(revealArea);
+      });
+
+      // 放大幻燈片按鈕
+      revealArea.querySelector('#btn_flowing_slideshow')?.addEventListener('click', () => {
+        if (typeof window.openSlideshow === 'function') {
+          window.openSlideshow(0);
+        }
       });
 
       // 重新抽取

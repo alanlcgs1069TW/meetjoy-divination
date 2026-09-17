@@ -2366,6 +2366,18 @@
       let slideIsFlippedReversed = false;
 
       window.openSlideshow = function (startIdx = 0) {
+        // 心流禪意模式下，動態同步 flowingInstance.selectedCards
+        if (currentViewMode === 'flowing' && flowingInstance && flowingInstance.selectedCards && flowingInstance.selectedCards.length > 0) {
+          drawnCards = flowingInstance.selectedCards.map((item, i) => ({
+            card: item.card,
+            isReversed: !!item.isReversed,
+            isFlipped: true,
+            positionLabel: item.role || item.positionLabel || `第 ${i + 1} 張`,
+            palace: item.palace || '',
+            role: item.role || ''
+          }));
+        }
+
         if (!drawnCards || drawnCards.length === 0) return;
         currentSlideIdx = Math.max(0, Math.min(startIdx, drawnCards.length - 1));
         slideIsFlippedReversed = false;
@@ -2414,12 +2426,23 @@
       function applySlideRotation() {
         const item = drawnCards[currentSlideIdx];
         const img = document.getElementById('slideshow_img');
-        if (!item || !img) return;
+        const vectorWrap = document.getElementById('slideshow_vector_wrap');
+        if (!item) return;
+        const isLenormand = (currentSystem === 'lenormand') || (item.card && item.card.system === 'lenormand');
         const actuallyReversed = item.isReversed ^ slideIsFlippedReversed;
-        img.style.transform = actuallyReversed ? 'rotate(180deg)' : 'none';
+        const rotateTransform = actuallyReversed ? 'rotate(180deg)' : 'none';
+        if (img) img.style.transform = rotateTransform;
+        if (vectorWrap) vectorWrap.style.transform = rotateTransform;
+        
         const rotateBtn = document.getElementById('btn_toggle_rotation');
         if (rotateBtn) {
-          rotateBtn.textContent = actuallyReversed ? '🔄 轉為正向觀看' : '🔄 轉為倒牌視角';
+          // 雷諾曼正統無逆位，隱藏旋轉按鈕
+          if (isLenormand) {
+            rotateBtn.style.display = 'none';
+          } else {
+            rotateBtn.style.display = 'inline-flex';
+            rotateBtn.textContent = actuallyReversed ? '🔄 轉為正向觀看' : '🔄 轉為倒牌視角';
+          }
         }
       }
 
@@ -2428,6 +2451,9 @@
         if (!item) return;
         const c = item.card;
         const total = drawnCards.length;
+        const isLenormand = (currentSystem === 'lenormand') || (c && c.system === 'lenormand');
+        const isZiwei = (currentSystem === 'ziwei') || (c && c.system === 'ziwei');
+        const isTarot = (currentSystem === 'tarot') || (c && c.system === 'tarot');
 
         const badge = document.getElementById('slideshow_pos_badge');
         const title = document.getElementById('slideshow_title');
@@ -2439,11 +2465,11 @@
 
         const posText = item.positionLabel || (item.palace ? `${item.palace} · ${item.role}` : `第 ${currentSlideIdx + 1} 張`);
         if (badge) badge.textContent = posText;
-        if (title) title.textContent = `${c.name} ${item.isReversed ? '(倒牌 / 逆位)' : '(正牌 / 正位)'}`;
+        if (title) title.textContent = `${c.name} ${isLenormand ? '' : (item.isReversed ? '(倒牌 / 逆位)' : '(正牌 / 正位)')}`;
         if (counter) counter.textContent = `${currentSlideIdx + 1} / ${total}`;
-        if (role) role.textContent = c.groupLabel || (c.nature || (currentSystem === 'ziwei' ? '紫微星曜' : '占卜神諭'));
+        if (role) role.textContent = c.groupLabel || (c.nature || (isZiwei ? '紫微星曜' : (isLenormand ? '雷諾曼神諭' : '塔羅神諭')));
         if (desc) {
-          const detail = item.isReversed ? (c.reversed || c.description) : (c.upright || c.description);
+          const detail = item.isReversed ? (c.reversed || c.description || c.desc) : (c.upright || c.description || c.desc);
           desc.textContent = detail || '點擊左右箭頭或滑動以切換卡片。';
         }
 
@@ -2453,20 +2479,44 @@
             img.alt = c.name;
             img.classList.remove('hidden');
           }
-          if (vectorWrap) vectorWrap.classList.add('hidden');
+          if (vectorWrap) {
+            vectorWrap.innerHTML = '';
+            vectorWrap.classList.add('hidden');
+          }
           applySlideRotation();
         } else if (isLenormand && window.MeetJoyDivination?.renderLenormandCardFace) {
-          if (img) img.classList.add('hidden');
+          if (img) {
+            img.src = '';
+            img.classList.add('hidden');
+          }
           if (vectorWrap) {
             vectorWrap.innerHTML = window.MeetJoyDivination.renderLenormandCardFace(c);
+            vectorWrap.className = 'w-72 sm:w-84 md:w-96 aspect-[1/1.54] max-h-[72vh] rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center';
             vectorWrap.classList.remove('hidden');
           }
+          applySlideRotation();
+        } else if (window.MeetJoyDivination?.renderUkiyoeArt) {
+          if (img) {
+            img.src = '';
+            img.classList.add('hidden');
+          }
+          if (vectorWrap) {
+            vectorWrap.innerHTML = window.MeetJoyDivination.renderUkiyoeArt(c, currentSystem);
+            vectorWrap.className = 'w-72 sm:w-84 md:w-96 aspect-[1/1.54] max-h-[72vh] rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center';
+            vectorWrap.classList.remove('hidden');
+          }
+          applySlideRotation();
         } else {
-          if (img) img.classList.add('hidden');
+          if (img) {
+            img.src = '';
+            img.classList.add('hidden');
+          }
           if (vectorWrap) {
             vectorWrap.innerHTML = `<div class="p-8 text-center text-amber-200 text-lg font-bold">${c.name}</div>`;
+            vectorWrap.className = 'w-72 sm:w-84 md:w-96 aspect-[1/1.54] max-h-[72vh] rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center';
             vectorWrap.classList.remove('hidden');
           }
+          applySlideRotation();
         }
       }
 
