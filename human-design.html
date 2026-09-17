@@ -224,14 +224,16 @@
         <!-- 左側：紅色設計盤 (Design · 潛意識) -->
         <div class="lg:col-span-3 flex flex-col items-center lg:items-end order-2 lg:order-1">
           
-          <!-- 設計盤標題與兩顆紅色方向箭頭 -->
-          <div class="w-full max-w-[220px] mb-3 flex items-center justify-between border-b border-rose-300/80 pb-2">
-            <span class="text-xs font-black tracking-wider text-rose-800 uppercase flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 設計 (潛意識)
-            </span>
-            <div class="flex items-center gap-2">
-              <span id="arrow_brain" class="text-lg text-rose-600 transition" title="大腦運作方向">◀</span>
-              <span id="arrow_environment" class="text-lg text-rose-600 transition" title="環境/消化方向">◀</span>
+          <!-- 設計盤標題與兩顆紅色方向箭頭 (動態切換單人/合盤) -->
+          <div id="design_header_container" class="w-full max-w-[220px]">
+            <div class="w-full mb-3 flex items-center justify-between border-b border-rose-300/80 pb-2">
+              <span class="text-xs font-black tracking-wider text-rose-800 uppercase flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 設計 (潛意識)
+              </span>
+              <div class="flex items-center gap-2">
+                <span id="arrow_brain" class="text-lg text-rose-600 transition" title="大腦運作方向">◀</span>
+                <span id="arrow_environment" class="text-lg text-rose-600 transition" title="環境/消化方向">◀</span>
+              </div>
             </div>
           </div>
 
@@ -244,6 +246,13 @@
         <!-- 中央：立體水晶多面體人類圖 (3D Faceted BodyGraph) -->
         <div class="lg:col-span-6 flex flex-col items-center order-1 lg:order-2">
           
+          <!-- 圖例標籤 (Legend Bar · 動態呈現單人/合圖圖例) -->
+          <div id="hd_chart_legend" class="w-full max-w-[420px] mb-2.5 flex items-center justify-center gap-2 sm:gap-4 text-[11px] font-bold py-1.5 px-3 rounded-full bg-white/80 border border-slate-200/90 shadow-2xs">
+            <span class="inline-flex items-center gap-1 text-rose-800"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 潛意識 (設計)</span>
+            <span class="inline-flex items-center gap-1 text-slate-800"><span class="w-2.5 h-2.5 rounded-full bg-slate-900"></span> 顯意識 (個性)</span>
+            <span class="inline-flex items-center gap-1 text-stone-700"><span class="w-2.5 h-2.5 rounded-full bg-stone-500"></span> 雙重啟動</span>
+          </div>
+
           <div class="w-full max-w-[420px] relative drop-shadow-xl select-none">
             
             <svg id="bodygraph_svg" viewBox="0 0 380 620" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
@@ -252,6 +261,12 @@
                 <pattern id="zebra_both" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
                   <rect width="4" height="8" fill="#DC2626" />
                   <rect x="4" width="4" height="8" fill="#0F172A" />
+                </pattern>
+
+                <!-- 雙人合盤專屬斑馬紋 (甲方藍 #2563EB + 乙方洋紅 #E11D48) -->
+                <pattern id="zebra_composite" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="8" fill="#2563EB" />
+                  <rect x="4" width="4" height="8" fill="#E11D48" />
                 </pattern>
 
                 <!-- 水晶高光立體濾鏡 -->
@@ -402,15 +417,17 @@
         <!-- 右側：深藍/黑色意識盤 (Personality · 顯意識) -->
         <div class="lg:col-span-3 flex flex-col items-center lg:items-start order-3">
           
-          <!-- 意識盤標題與兩顆深藍色方向箭頭 -->
-          <div class="w-full max-w-[220px] mb-3 flex items-center justify-between border-b border-slate-400/80 pb-2">
-            <div class="flex items-center gap-2">
-              <span id="arrow_view" class="text-lg text-slate-800 transition" title="人生視角方向">▶</span>
-              <span id="arrow_motivation" class="text-lg text-slate-800 transition" title="動機心智方向">▶</span>
+          <!-- 意識盤標題與兩顆深藍色方向箭頭 (動態切換單人/合盤) -->
+          <div id="personality_header_container" class="w-full max-w-[220px]">
+            <div class="w-full mb-3 flex items-center justify-between border-b border-slate-400/80 pb-2">
+              <div class="flex items-center gap-2">
+                <span id="arrow_view" class="text-lg text-slate-800 transition" title="人生視角方向">▶</span>
+                <span id="arrow_motivation" class="text-lg text-slate-800 transition" title="動機心智方向">▶</span>
+              </div>
+              <span class="text-xs font-black tracking-wider text-slate-900 uppercase flex items-center gap-1.5">
+                個性 (顯意識) <span class="w-2.5 h-2.5 rounded-full bg-slate-900"></span>
+              </span>
             </div>
-            <span class="text-xs font-black tracking-wider text-slate-900 uppercase flex items-center gap-1.5">
-              個性 (顯意識) <span class="w-2.5 h-2.5 rounded-full bg-slate-900"></span>
-            </span>
           </div>
 
           <!-- 黑色星曜閘門清單 -->
@@ -1164,7 +1181,46 @@
         </div>
       `;
 
-      // 4. 更新左右兩側星曜列表
+      // 4. 恢復單人模式的標題與圖例 (Single View Legend & Headers)
+      const legendDiv = document.getElementById('hd_chart_legend');
+      if (legendDiv) {
+        legendDiv.innerHTML = `
+          <span class="inline-flex items-center gap-1 text-rose-800"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 潛意識 (設計)</span>
+          <span class="inline-flex items-center gap-1 text-slate-800"><span class="w-2.5 h-2.5 rounded-full bg-slate-900"></span> 顯意識 (個性)</span>
+          <span class="inline-flex items-center gap-1 text-stone-700"><span class="w-2.5 h-2.5 rounded-full bg-stone-500"></span> 雙重啟動</span>
+        `;
+      }
+
+      const designHeader = document.getElementById('design_header_container');
+      const personalityHeader = document.getElementById('personality_header_container');
+      if (designHeader) {
+        designHeader.innerHTML = `
+          <div class="w-full mb-3 flex items-center justify-between border-b border-rose-300/80 pb-2">
+            <span class="text-xs font-black tracking-wider text-rose-800 uppercase flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 設計 (潛意識)
+            </span>
+            <div class="flex items-center gap-2">
+              <span id="arrow_brain" class="text-lg text-rose-600 transition" title="大腦運作方向">${hd.variables.brain === 'left' ? '◀' : '▶'}</span>
+              <span id="arrow_environment" class="text-lg text-rose-600 transition" title="環境/消化方向">${hd.variables.environment === 'left' ? '◀' : '▶'}</span>
+            </div>
+          </div>
+        `;
+      }
+      if (personalityHeader) {
+        personalityHeader.innerHTML = `
+          <div class="w-full mb-3 flex items-center justify-between border-b border-slate-400/80 pb-2">
+            <div class="flex items-center gap-2">
+              <span id="arrow_view" class="text-lg text-slate-800 transition" title="人生視角方向">${hd.variables.view === 'left' ? '◀' : '▶'}</span>
+              <span id="arrow_motivation" class="text-lg text-slate-800 transition" title="動機心智方向">${hd.variables.motivation === 'left' ? '◀' : '▶'}</span>
+            </div>
+            <span class="text-xs font-black tracking-wider text-slate-900 uppercase flex items-center gap-1.5">
+              個性 (顯意識) <span class="w-2.5 h-2.5 rounded-full bg-slate-900"></span>
+            </span>
+          </div>
+        `;
+      }
+
+      // 5. 更新左右兩側星曜列表
       const designDiv = document.getElementById('design_planet_list');
       const personDiv = document.getElementById('personality_planet_list');
       designDiv.innerHTML = '';
@@ -1735,6 +1791,9 @@
       }
     }
 
+    // 雙人合盤全局快取
+    let currentCompositeData = null;
+
     // 點擊能量中心互動事件 (生活魔藥與當下定義調頻)
     document.querySelectorAll('.crystal-center').forEach(el => {
       el.addEventListener('click', () => {
@@ -1743,7 +1802,65 @@
         const centerTitle = CENTER_NAMES[normKey] || CENTER_NAMES[rawKey] || '能量中心';
         const centerAdvice = CENTER_RX[normKey] || CENTER_RX[rawKey] || '請聆聽身體內在當下的沉靜與呼吸，安住於自身中心。';
 
-        // 判斷當前排盤中此中心是否已定義 (Defined vs Open)
+        // 雙人合盤合體中心點擊邏輯
+        if (currentHdMode === 'synastry' && currentCompositeData) {
+          const compData = currentCompositeData;
+          const isCompDefined = compData.combinedCenters.has(normKey) || compData.combinedCenters.has(rawKey);
+          const isADefined = compData.hdA.definedCenters.includes(normKey) || compData.hdA.definedCenters.includes(rawKey);
+          const isBDefined = compData.hdB.definedCenters.includes(normKey) || compData.hdB.definedCenters.includes(rawKey);
+
+          // 檢查此中心是否有電磁通道
+          const electroInCenter = compData.electro.filter(c => {
+            const gates = (AstroCalc.HD_CENTERS && (AstroCalc.HD_CENTERS[normKey] || AstroCalc.HD_CENTERS[rawKey])) || [];
+            return gates.includes(c.g1) || gates.includes(c.g2);
+          });
+
+          let dynamicType = '';
+          let dynamicDesc = '';
+          if (electroInCenter.length > 0) {
+            dynamicType = '⚡ 電磁合體引爆 (Electromagnetic Sparks)';
+            dynamicDesc = `兩人在<strong>${centerTitle}</strong>因電磁通道（${electroInCenter.map(e => e.name).join('、')}）而合體啟動！平時可能有一方或雙方在此中心處於休眠或開放，但只要兩人同處一個場域，便會激發出源源不絕的強大能量與心靈火花。`;
+          } else if (isADefined && isBDefined) {
+            dynamicType = '🤝 雙方各自定義 (Companion Stability)';
+            dynamicDesc = `甲方與乙方在<strong>${centerTitle}</strong>皆各自具備固定的運作頻率。這帶來極高的穩定感與相互理解，但因為彼此都有強烈的自我習慣，請記得尊重彼此原有的能量步調。`;
+          } else if (isADefined && !isBDefined) {
+            dynamicType = '🌱 甲方引導滋養 (Person A Guides Person B)';
+            dynamicDesc = `<strong>${centerTitle}</strong>由甲方持續提供固定的能量場，乙方則在此處保持開放。乙方能敏銳感受到甲方的能量狀態，甲方請給予乙方自在喘息的空間，而乙方也能透過甲方體驗到專注的滋養。`;
+          } else if (!isADefined && isBDefined) {
+            dynamicType = '🌱 乙方引導滋養 (Person B Guides Person A)';
+            dynamicDesc = `<strong>${centerTitle}</strong>由乙方持續提供固定的能量場，甲方在此處保持開放。甲方能透過乙方獲得該領域的穩定引導，同時乙方也需包容甲方的多樣與彈性。`;
+          } else {
+            dynamicType = '🌌 共有開放視窗 (Shared Open Window)';
+            dynamicDesc = `兩人在<strong>${centerTitle}</strong>皆為開放狀態！這是你們關係中極為純淨、沒有預設期望的自由呼吸窗口。你們能一起以全然開放的視角體驗外界的人事物，毫無包袱。`;
+          }
+
+          const centerColor = isCompDefined ? (CENTER_COLORS[normKey] || '#C8A97E') : '#94A3B8';
+          const drawer = document.getElementById('center_drawer');
+          drawer.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full shadow-xs inline-block" style="background-color: ${centerColor}"></span>
+                <strong class="text-sm font-bold text-slate-900">${centerTitle} · 雙人合體能量場</strong>
+              </div>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold ${isCompDefined ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+                ${isCompDefined ? '● 合體定義中心' : '○ 雙方開放呼吸窗口'}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs mb-2.5 bg-slate-50 p-2 rounded-xl border border-slate-200/80">
+              <div><strong>👤 甲方狀態：</strong><span class="${isADefined ? 'text-blue-700 font-bold' : 'text-slate-500'}">${isADefined ? '● 有定義' : '○ 開放'}</span></div>
+              <div><strong>👥 乙方狀態：</strong><span class="${isBDefined ? 'text-rose-700 font-bold' : 'text-slate-500'}">${isBDefined ? '● 有定義' : '○ 開放'}</span></div>
+            </div>
+            <div class="mb-2 p-2.5 rounded-xl bg-amber-50/60 border border-amber-200/70 text-xs sm:text-sm text-amber-950 leading-relaxed">
+              <div class="font-black text-amber-900 mb-1">${dynamicType}</div>
+              <p>${dynamicDesc}</p>
+            </div>
+            <p class="leading-relaxed text-slate-600 text-xs mt-1"><strong>🌿 愛倫院長調頻魔藥：</strong>${centerAdvice}</p>
+          `;
+          drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+
+        // 單人模式判斷當前排盤中此中心是否已定義 (Defined vs Open)
         let isDefined = false;
         if (currentHdChart && currentHdChart.definedCenters) {
           isDefined = currentHdChart.definedCenters.includes(normKey) || currentHdChart.definedCenters.includes(rawKey);
@@ -1779,6 +1896,7 @@
       const synastryPanel = document.getElementById('hd_synastry_panel');
 
       if (mode === 'single') {
+        currentCompositeData = null;
         tabSingle.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-black transition bg-[#2E3829] text-amber-50 shadow-xs';
         tabSynastry.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-black transition hover:bg-white/60 text-slate-700';
         singleInputs.classList.remove('hidden');
@@ -2016,12 +2134,502 @@
         themeDesc.innerHTML = `<strong>✨ ${totalDef}-${openCount} 關係動力：</strong>保留了較多的空白能量中心。這是一段極為自由、少有束縛感的獨立型夥伴關係。你們不會將自我價值過度捆綁在對方身上，彼此能自在做自己，像兩顆並肩閃爍的星曜，相映成趣。`;
       }
 
-      // 以甲方為視角渲染人體圖主畫面
-      document.getElementById('birth_date').value = dateA;
-      document.getElementById('birth_time').value = timeA;
-      document.getElementById('birth_city').value = document.getElementById('birth_city_a').value || 'tw_taipei';
-      updateGeoInfo();
-      renderHumanDesignChart();
+      // 儲存當前雙人合體合盤資料
+      currentCompositeData = {
+        hdA,
+        hdB,
+        gatesA,
+        gatesB,
+        electro,
+        compro,
+        domA,
+        domB,
+        comp,
+        allDom,
+        combinedCenters,
+        totalDef,
+        openCount,
+        themeTitle: themeBadge.textContent
+      };
+
+      // 渲染雙人人體圖合體複合圖 (Composite Connection Bodygraph)
+      renderCompositeBodygraph(hdA, hdB, currentCompositeData);
+    }
+
+    // 渲染雙人人體圖合體複合圖 (Composite Connection Bodygraph)
+    function renderCompositeBodygraph(hdA, hdB, compData) {
+      if (!hdA || !hdB || !compData) return;
+
+      const { gatesA, gatesB, electro, compro, domA, domB, comp, allDom, combinedCenters, totalDef, openCount, themeTitle } = compData;
+
+      // 1. 更新頂部指標卡 (合體關係動力指標卡)
+      const summaryDiv = document.getElementById('chart_summary_cards');
+      if (summaryDiv) {
+        summaryDiv.innerHTML = `
+          <div class="bg-white border border-amber-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">合體關係動力 Theme</p>
+              <p class="text-base sm:text-lg font-black text-amber-950 leading-tight">${(themeTitle || '').split('(')[0].trim()}</p>
+            </div>
+            <p class="text-[11px] text-amber-700 mt-2 leading-relaxed">定義 ${totalDef} 中心 ｜ 空白 ${openCount} 中心</p>
+          </div>
+
+          <div class="bg-white border border-rose-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] font-bold text-rose-800 uppercase tracking-wider mb-1">電磁接通通道 Electromagnetic</p>
+              <p class="text-base sm:text-lg font-black text-rose-900 leading-tight">⚡ ${electro.length} 條合體接通</p>
+            </div>
+            <p class="text-[11px] text-rose-600 mt-2 leading-relaxed">彼此碰撞激發之化學反應</p>
+          </div>
+
+          <div class="bg-white border border-blue-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] font-bold text-blue-800 uppercase tracking-wider mb-1">能量類型對照 Types</p>
+              <p class="text-sm sm:text-base font-black text-slate-900 leading-tight">👤 甲：${hdA.type}</p>
+              <p class="text-sm sm:text-base font-black text-rose-900 leading-tight mt-0.5">👥 乙：${hdB.type}</p>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">角色：${hdA.profile} ⇄ ${hdB.profile}</p>
+          </div>
+
+          <div class="bg-white border border-purple-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] font-bold text-purple-800 uppercase tracking-wider mb-1">四類互動通道 Channels</p>
+              <p class="text-xs sm:text-sm font-black text-purple-950 leading-tight">🤝 陪伴 ${comp.length} ｜ ⚡ 電磁 ${electro.length}</p>
+              <p class="text-xs sm:text-sm font-black text-purple-950 leading-tight mt-0.5">👑 支配 ${allDom.length} ｜ ⚖️ 妥協 ${compro.length}</p>
+            </div>
+            <p class="text-[11px] text-purple-700 mt-2 leading-relaxed">36 條通道全息互動幾何</p>
+          </div>
+
+          <div class="col-span-2 sm:col-span-2 lg:col-span-1 bg-white border border-emerald-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-1">決策權威指南 Authority</p>
+              <p class="text-xs sm:text-sm font-black text-slate-900 leading-tight">甲：${hdA.authority.split('——')[0].trim()}</p>
+              <p class="text-xs sm:text-sm font-black text-rose-900 leading-tight mt-0.5">乙：${hdB.authority.split('——')[0].trim()}</p>
+            </div>
+            <p class="text-[11px] text-emerald-700 mt-2 leading-relaxed">尊重彼此截然不同的決定節奏</p>
+          </div>
+        `;
+      }
+
+      // 2. 更新合圖圖例標籤
+      const legendDiv = document.getElementById('hd_chart_legend');
+      if (legendDiv) {
+        legendDiv.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 text-blue-700 font-bold"><span class="w-3 h-3 rounded-full bg-[#2563EB] shadow-2xs"></span> 👤 甲方獨有</span>
+          <span class="inline-flex items-center gap-1.5 text-rose-700 font-bold"><span class="w-3 h-3 rounded-full bg-[#E11D48] shadow-2xs"></span> 👥 乙方獨有</span>
+          <span class="inline-flex items-center gap-1.5 text-purple-700 font-bold"><span class="w-3 h-3 rounded-full bg-[#7C3AED] shadow-2xs"></span> 🤝 雙方共有</span>
+          <span class="inline-flex items-center gap-1.5 text-amber-900 font-bold bg-amber-100/90 px-2 py-0.5 rounded-full border border-amber-300 shadow-2xs"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span> ⚡ 電磁合體</span>
+        `;
+      }
+
+      // 3. 更新左右兩側標題與星曜列表
+      const designHeader = document.getElementById('design_header_container');
+      if (designHeader) {
+        designHeader.innerHTML = `
+          <div class="w-full mb-3 flex items-center justify-between border-b border-blue-300 pb-2">
+            <span class="text-xs font-black tracking-wider text-blue-800 uppercase flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span> 👤 甲方星曜 (Person A)
+            </span>
+            <span class="text-[10px] font-bold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded-full border border-blue-300">${hdA.type.slice(0, 3)} · ${hdA.profile}</span>
+          </div>
+        `;
+      }
+
+      const personalityHeader = document.getElementById('personality_header_container');
+      if (personalityHeader) {
+        personalityHeader.innerHTML = `
+          <div class="w-full mb-3 flex items-center justify-between border-b border-rose-300 pb-2">
+            <span class="text-[10px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full border border-rose-300">${hdB.type.slice(0, 3)} · ${hdB.profile}</span>
+            <span class="text-xs font-black tracking-wider text-rose-800 uppercase flex items-center gap-1.5">
+              👥 乙方星曜 (Person B) <span class="w-2.5 h-2.5 rounded-full bg-[#E11D48]"></span>
+            </span>
+          </div>
+        `;
+      }
+
+      const designDiv = document.getElementById('design_planet_list');
+      const personDiv = document.getElementById('personality_planet_list');
+      designDiv.innerHTML = '';
+      personDiv.innerHTML = '';
+
+      const planetOrder = ['Sun', 'Earth', 'NorthNode', 'SouthNode', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'];
+
+      planetOrder.forEach(k => {
+        const dA = hdA.design[k];
+        const pA = hdA.personality[k];
+
+        // 甲方星曜 (左側，紅潛意識 + 黑顯意識)
+        const rowA = document.createElement('div');
+        rowA.className = 'flex items-center justify-between p-1.5 rounded-lg bg-blue-50/80 border border-blue-200/70';
+        rowA.innerHTML = `
+          <span class="font-bold text-blue-900">${PLANET_SYMBOLS[k]}</span>
+          <div class="flex items-center gap-1">
+            <span class="font-bold text-rose-700 bg-rose-100/90 px-1.5 py-0.5 rounded text-[10px]" title="甲方潛意識">${dA.gate}.${dA.line}</span>
+            <span class="font-black text-blue-900 bg-blue-100 px-1.5 py-0.5 rounded text-[10px]" title="甲方顯意識">${pA.gate}.${pA.line}</span>
+          </div>
+        `;
+        designDiv.appendChild(rowA);
+
+        const dB = hdB.design[k];
+        const pB = hdB.personality[k];
+
+        // 乙方星曜 (右側，黑顯意識 + 紅潛意識)
+        const rowB = document.createElement('div');
+        rowB.className = 'flex items-center justify-between p-1.5 rounded-lg bg-rose-50/80 border border-rose-200/70';
+        rowB.innerHTML = `
+          <div class="flex items-center gap-1">
+            <span class="font-black text-rose-900 bg-rose-100 px-1.5 py-0.5 rounded text-[10px]" title="乙方顯意識">${pB.gate}.${pB.line}</span>
+            <span class="font-bold text-rose-600 bg-rose-100/90 px-1.5 py-0.5 rounded text-[10px]" title="乙方潛意識">${dB.gate}.${dB.line}</span>
+          </div>
+          <span class="font-bold text-rose-900">${PLANET_SYMBOLS[k]}</span>
+        `;
+        personDiv.appendChild(rowB);
+      });
+
+      // 4. 更新九大中心正統色彩 (合體定義則點亮水晶色彩，否則純白)
+      const allCenters = AstroCalc.HD_CENTERS ? Object.keys(AstroCalc.HD_CENTERS) : ['Head', 'Ajna', 'Throat', 'G', 'Heart', 'Sacral', 'Root', 'Spleen', 'Solar Plexus'];
+      allCenters.forEach(cKey => {
+        const gEl = document.getElementById(`center_${cKey.replace(' ', '_')}`);
+        if (!gEl) return;
+        const basePoly = gEl.querySelector('.crystal-base');
+        if (combinedCenters.has(cKey)) {
+          basePoly.setAttribute('fill', CENTER_COLORS[cKey] || '#845B45');
+          basePoly.setAttribute('stroke', CENTER_STROKES[cKey] || '#63402E');
+          basePoly.setAttribute('stroke-width', '2');
+        } else {
+          basePoly.setAttribute('fill', '#FFFFFF');
+          basePoly.setAttribute('stroke', '#94A3B8');
+          basePoly.setAttribute('stroke-width', '1.5');
+        }
+      });
+
+      // 5. 繪製通道管道骨架與雙人分色著色層
+      const chLayer = document.getElementById('svg_channels_layer');
+      chLayer.innerHTML = '';
+
+      const PHYSICAL_BASE_TRACKS = [
+        'M 174,236 Q 115,285 106,360',  // 20 -> J
+        'M 172,335 Q 135,342 106,360',  // 10 -> J
+        'M 106,360 Q 100,390 98,415',   // J -> 57
+        'M 106,360 Q 114,422 174,444'   // J -> 34
+      ];
+
+      HD_CHANNEL_PATHS.forEach(ch => {
+        if (!['20-57', '20-10', '20-34', '10-34', '10-57', '34-57'].includes(ch.id)) {
+          PHYSICAL_BASE_TRACKS.push(splitChannelPath(ch).full);
+        }
+      });
+
+      PHYSICAL_BASE_TRACKS.forEach(d => {
+        const bgCasing = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        bgCasing.setAttribute('d', d);
+        bgCasing.setAttribute('stroke', '#CBD5E1');
+        bgCasing.setAttribute('stroke-width', '7.2');
+        bgCasing.setAttribute('stroke-linecap', 'round');
+        bgCasing.setAttribute('stroke-linejoin', 'round');
+        bgCasing.setAttribute('fill', 'none');
+        chLayer.appendChild(bgCasing);
+      });
+
+      PHYSICAL_BASE_TRACKS.forEach(d => {
+        const bgGroove = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        bgGroove.setAttribute('d', d);
+        bgGroove.setAttribute('stroke', '#FFFFFF');
+        bgGroove.setAttribute('stroke-width', '4.8');
+        bgGroove.setAttribute('stroke-linecap', 'round');
+        bgGroove.setAttribute('stroke-linejoin', 'round');
+        bgGroove.setAttribute('fill', 'none');
+        chLayer.appendChild(bgGroove);
+      });
+
+      const renderedPaths = new Set();
+      const addPath = (d, color) => {
+        if (!d || !color) return;
+        const key = `${d}__${color}`;
+        if (renderedPaths.has(key)) return;
+        renderedPaths.add(key);
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('stroke', color);
+        p.setAttribute('stroke-width', '4.8');
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        p.setAttribute('fill', 'none');
+        chLayer.appendChild(p);
+      };
+
+      const electroFullPaths = [];
+
+      HD_CHANNEL_PATHS.forEach(ch => {
+        const pathData = splitChannelPath(ch);
+        const hasA1 = gatesA.has(ch.g1);
+        const hasA2 = gatesA.has(ch.g2);
+        const hasB1 = gatesB.has(ch.g1);
+        const hasB2 = gatesB.has(ch.g2);
+
+        const fullA = hasA1 && hasA2;
+        const fullB = hasB1 && hasB2;
+
+        if (fullA && fullB) {
+          // 🤝 陪伴通道：整條雙人斑馬紋
+          addPath(pathData.full, 'url(#zebra_composite)');
+        } else if (fullA && !hasB1 && !hasB2) {
+          // 👤 甲方支配：整條甲方藍
+          addPath(pathData.full, '#2563EB');
+        } else if (fullB && !hasA1 && !hasA2) {
+          // 👥 乙方支配：整條乙方洋紅
+          addPath(pathData.full, '#E11D48');
+        } else if (fullA && (hasB1 || hasB2)) {
+          // 妥協通道 (甲方全，乙方半)：底色甲方藍，乙方端疊加斑馬紋
+          addPath(pathData.full, '#2563EB');
+          if (hasB1) addPath(pathData.defHalf1, 'url(#zebra_composite)');
+          if (hasB2) addPath(pathData.defHalf2, 'url(#zebra_composite)');
+        } else if (fullB && (hasA1 || hasA2)) {
+          // 妥協通道 (乙方全，甲方半)：底色乙方洋紅，甲方端疊加斑馬紋
+          addPath(pathData.full, '#E11D48');
+          if (hasA1) addPath(pathData.defHalf1, 'url(#zebra_composite)');
+          if (hasA2) addPath(pathData.defHalf2, 'url(#zebra_composite)');
+        } else if ((hasA1 && hasB2) || (hasA2 && hasB1)) {
+          // ⚡ 電磁通道！合體接通，A端藍，B端洋紅
+          if (hasA1) addPath(pathData.defHalf1, '#2563EB');
+          else if (hasB1) addPath(pathData.defHalf1, '#E11D48');
+
+          if (hasA2) addPath(pathData.defHalf2, '#2563EB');
+          else if (hasB2) addPath(pathData.defHalf2, '#E11D48');
+
+          electroFullPaths.push(pathData.full);
+        } else {
+          // 懸掛閘門 (未連通成通道)
+          // 端點 1
+          if (hasA1 && hasB1) {
+            addPath(pathData.hangHalf1, 'url(#zebra_composite)');
+          } else if (hasA1) {
+            addPath(pathData.hangHalf1, '#2563EB');
+          } else if (hasB1) {
+            addPath(pathData.hangHalf1, '#E11D48');
+          }
+          // 端點 2
+          if (hasA2 && hasB2) {
+            addPath(pathData.hangHalf2, 'url(#zebra_composite)');
+          } else if (hasA2) {
+            addPath(pathData.hangHalf2, '#2563EB');
+          } else if (hasB2) {
+            addPath(pathData.hangHalf2, '#E11D48');
+          }
+        }
+      });
+
+      // 繪製電磁通道金色脈衝光輝！
+      electroFullPaths.forEach(d => {
+        const pGlow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pGlow.setAttribute('d', d);
+        pGlow.setAttribute('stroke', '#F59E0B');
+        pGlow.setAttribute('stroke-width', '2.2');
+        pGlow.setAttribute('stroke-linecap', 'round');
+        pGlow.setAttribute('stroke-linejoin', 'round');
+        pGlow.setAttribute('stroke-dasharray', '5,3');
+        pGlow.setAttribute('fill', 'none');
+        chLayer.appendChild(pGlow);
+      });
+
+      // 6. 繪製 64 閘門標籤與雙人合盤專屬徽章
+      const gatesLayer = document.getElementById('svg_gates_layer');
+      gatesLayer.innerHTML = '';
+
+      const GATE_TO_CENTER = {};
+      if (AstroCalc.HD_CENTERS) {
+        Object.entries(AstroCalc.HD_CENTERS).forEach(([cName, gList]) => {
+          gList.forEach(gNum => { GATE_TO_CENTER[gNum] = cName; });
+        });
+      }
+
+      for (let g = 1; g <= 64; g++) {
+        const pt = GATE_COORDS[g];
+        if (!pt) continue;
+        const [x, y] = pt;
+
+        const hasA = gatesA.has(g);
+        const hasB = gatesB.has(g);
+        const parentCenter = GATE_TO_CENTER[g];
+        const isCenterDefined = parentCenter ? combinedCenters.has(parentCenter) : false;
+
+        const gGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        gGroup.setAttribute('class', 'gate-node cursor-pointer transition');
+        gGroup.setAttribute('data-gate', g);
+
+        if (hasA && hasB) {
+          // 雙方共有啟動：深紫底金邊徽章
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', x);
+          circle.setAttribute('cy', y);
+          circle.setAttribute('r', '7.5');
+          circle.setAttribute('fill', '#7C3AED');
+          circle.setAttribute('stroke', '#F59E0B');
+          circle.setAttribute('stroke-width', '1.6');
+          gGroup.appendChild(circle);
+
+          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          txt.setAttribute('x', x);
+          txt.setAttribute('y', y + 2.7);
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('fill', '#FFFFFF');
+          txt.setAttribute('font-size', '7.5');
+          txt.setAttribute('font-weight', '900');
+          txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+          txt.textContent = g;
+          gGroup.appendChild(txt);
+        } else if (hasA) {
+          // 甲方啟動：藍色徽章
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', x);
+          circle.setAttribute('cy', y);
+          circle.setAttribute('r', '7.5');
+          circle.setAttribute('fill', '#2563EB');
+          circle.setAttribute('stroke', '#FFFFFF');
+          circle.setAttribute('stroke-width', '1.2');
+          gGroup.appendChild(circle);
+
+          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          txt.setAttribute('x', x);
+          txt.setAttribute('y', y + 2.7);
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('fill', '#FFFFFF');
+          txt.setAttribute('font-size', '7.5');
+          txt.setAttribute('font-weight', '900');
+          txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+          txt.textContent = g;
+          gGroup.appendChild(txt);
+        } else if (hasB) {
+          // 乙方啟動：洋紅色徽章
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', x);
+          circle.setAttribute('cy', y);
+          circle.setAttribute('r', '7.5');
+          circle.setAttribute('fill', '#E11D48');
+          circle.setAttribute('stroke', '#FFFFFF');
+          circle.setAttribute('stroke-width', '1.2');
+          gGroup.appendChild(circle);
+
+          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          txt.setAttribute('x', x);
+          txt.setAttribute('y', y + 2.7);
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('fill', '#FFFFFF');
+          txt.setAttribute('font-size', '7.5');
+          txt.setAttribute('font-weight', '900');
+          txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+          txt.textContent = g;
+          gGroup.appendChild(txt);
+        } else {
+          // 未啟動：清晰圓形襯底
+          const bgBadge = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          bgBadge.setAttribute('cx', x);
+          bgBadge.setAttribute('cy', y);
+          bgBadge.setAttribute('r', '6.5');
+
+          if (isCenterDefined) {
+            bgBadge.setAttribute('fill', '#FFFFFF');
+            bgBadge.setAttribute('opacity', '0.92');
+            bgBadge.setAttribute('stroke', '#94A3B8');
+            bgBadge.setAttribute('stroke-width', '0.7');
+            gGroup.appendChild(bgBadge);
+
+            const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            txt.setAttribute('x', x);
+            txt.setAttribute('y', y + 2.4);
+            txt.setAttribute('text-anchor', 'middle');
+            txt.setAttribute('fill', '#0F172A');
+            txt.setAttribute('font-size', '7');
+            txt.setAttribute('font-weight', '800');
+            txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+            txt.textContent = g;
+            gGroup.appendChild(txt);
+          } else {
+            bgBadge.setAttribute('fill', '#F8FAFC');
+            bgBadge.setAttribute('opacity', '0.85');
+            bgBadge.setAttribute('stroke', '#CBD5E1');
+            bgBadge.setAttribute('stroke-width', '0.6');
+            gGroup.appendChild(bgBadge);
+
+            const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            txt.setAttribute('x', x);
+            txt.setAttribute('y', y + 2.4);
+            txt.setAttribute('text-anchor', 'middle');
+            txt.setAttribute('fill', '#475569');
+            txt.setAttribute('font-size', '7');
+            txt.setAttribute('font-weight', '700');
+            txt.setAttribute('font-family', 'ui-sans-serif, system-ui, -apple-system, sans-serif');
+            txt.textContent = g;
+            gGroup.appendChild(txt);
+          }
+        }
+
+        // 點擊閘門事件 (合盤雙人閘門抽屜)
+        gGroup.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const drawer = document.getElementById('center_drawer');
+          const gateInfo = HD_GATE_DATA[g] || {
+            hexagram: `易經第 ${g} 卦`,
+            name: `閘門 ${g}`,
+            keywords: '靈魂能量原型',
+            circuit: '能量迴路',
+            groupName: '迴路群',
+            center: '能量中心'
+          };
+          const centerTitle = CENTER_NAMES[gateInfo.center] || gateInfo.center;
+
+          let badgeHtml = '';
+          if (hasA && hasB) {
+            badgeHtml = '<span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-purple-100 text-purple-900 border border-purple-300">🤝 雙方共有閘門 (深紫金邊)</span>';
+          } else if (hasA) {
+            badgeHtml = '<span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-blue-100 text-blue-900 border border-blue-300">👤 甲方持有 (藍色)</span>';
+          } else if (hasB) {
+            badgeHtml = '<span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-rose-100 text-rose-900 border border-rose-300">👥 乙方持有 (洋紅色)</span>';
+          } else {
+            badgeHtml = '<span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-500 border border-slate-200">⚪ 雙方皆未啟動 (休眠開放)</span>';
+          }
+
+          const relElectro = electro.filter(c => c.g1 === g || c.g2 === g);
+          const relComp = comp.filter(c => c.g1 === g || c.g2 === g);
+          const relCompro = compro.filter(c => c.g1 === g || c.g2 === g);
+
+          let channelImpactHtml = '';
+          if (relElectro.length > 0) {
+            channelImpactHtml = `<div class="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 text-xs mb-2">⚡ <strong>電磁接通通道：</strong>此閘門與對方的 ${relElectro.map(e => e.name).join('、')} 接通，激發強烈合體火花！</div>`;
+          } else if (relComp.length > 0) {
+            channelImpactHtml = `<div class="p-2 rounded-lg bg-purple-50 border border-purple-200 text-purple-950 text-xs mb-2">🤝 <strong>共有陪伴通道：</strong>雙方在此 ${relComp.map(c => c.name).join('、')} 都有完整通道，默契自然流暢。</div>`;
+          } else if (relCompro.length > 0) {
+            channelImpactHtml = `<div class="p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-950 text-xs mb-2">⚖️ <strong>妥協通道：</strong>涉及 ${relCompro.map(c => c.name).join('、')}，請尊重全通方的節奏。</div>`;
+          }
+
+          drawer.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full ${hasA && hasB ? 'bg-purple-600' : (hasA ? 'bg-blue-600' : (hasB ? 'bg-rose-600' : 'bg-slate-300'))} shadow-xs inline-block"></span>
+                <strong class="text-sm font-bold text-slate-900">閘門 Gate ${g} · 【${gateInfo.hexagram}】</strong>
+                <span class="text-xs font-bold text-slate-700">（${gateInfo.name}）</span>
+              </div>
+              ${badgeHtml}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 mb-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+              <div><strong>🔑 核心天賦關鍵字：</strong>${gateInfo.keywords}</div>
+              <div><strong>🌀 所屬迴路與中心：</strong>${gateInfo.circuit} · ${centerTitle}</div>
+            </div>
+
+            ${channelImpactHtml}
+
+            <p class="leading-relaxed text-xs sm:text-sm text-slate-700">
+              ${(hasA || hasB) 
+                ? `易經<strong>【${gateInfo.hexagram}】</strong>在雙人合盤中發揮作用。${hasA && hasB ? '你們雙方都具備此閘門的天賦特質，彼此心照不宣。' : (hasA ? '由甲方主動帶來此特質，豐富了兩人的共同場域。' : '由乙方主動帶來此特質，豐富了兩人的共同場域。')}` 
+                : `易經<strong>【${gateInfo.hexagram}】</strong>在兩人合盤中處於開放休眠狀態，是你們共同向外探索的智慧天線。`}
+            </p>
+          `;
+          drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        gatesLayer.appendChild(gGroup);
+      }
     }
 
     // 表單事件監聽
