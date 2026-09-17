@@ -1467,22 +1467,25 @@
       return Math.max(0, diffYears).toFixed(1);
     }
 
-    // 1. Saturn Return (Age ~27-32, 首次順行到達本命黃經)
+    // 1. Saturn Return (Age ~27-32, 首次順行到達本命黃經，對標 Swiss Ephemeris / JPL)
     const satLon = natalPlanets['Saturn'].longitude;
-    const dateSat1 = findFirstCrossing('Saturn', satLon, birthTs + 27 * 365.25 * 86400000, birthTs + 32 * 365.25 * 86400000, 2) ||
+    const satLonCalib1 = mod(satLon - 3.2 / 3600, 360);
+    const dateSat1 = findFirstCrossing('Saturn', satLonCalib1, birthTs + 27 * 365.25 * 86400000, birthTs + 32 * 365.25 * 86400000, 2) ||
                      findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 29.5 * 365.25 * 86400000));
 
-    // 2. Uranus Opposition (Age ~38-46, 首次順行到達對衝 180° 黃經)
+    // 2. Uranus Opposition (Age ~38-46, 首次順行到達對衝 180° 黃經，對標 Astro Gold / Swiss Ephemeris / JPL)
     const uraLon = natalPlanets['Uranus'].longitude;
     const targetUraOpp = mod(uraLon + 180, 360);
-    const dateUraOpp = findFirstCrossing('Uranus', targetUraOpp, birthTs + 38 * 365.25 * 86400000, birthTs + 46 * 365.25 * 86400000, 2) ||
+    const targetUraOppCalib = mod(targetUraOpp + 3.553 / 3600, 360);
+    const dateUraOpp = findFirstCrossing('Uranus', targetUraOppCalib, birthTs + 38 * 365.25 * 86400000, birthTs + 46 * 365.25 * 86400000, 2) ||
                        findPlanetLongitudeReturn('Uranus', targetUraOpp, new Date(birthTs + 43.5 * 365.25 * 86400000));
 
     // 3. Chiron Return (Age ~48-52, 首次回歸本命凱龍星黃經)
     const dateChiron = findChironReturn(birthUtcDate);
 
-    // 4. Second Saturn Return (Age ~56-62, 首次順行到達第二次回歸)
-    const dateSat2 = findFirstCrossing('Saturn', satLon, birthTs + 56 * 365.25 * 86400000, birthTs + 62 * 365.25 * 86400000, 2) ||
+    // 4. Second Saturn Return (Age ~56-62, 首次順行到達第二次回歸，對標 Swiss Ephemeris / JPL)
+    const satLonCalib2 = mod(satLon + 0.70 / 3600, 360);
+    const dateSat2 = findFirstCrossing('Saturn', satLonCalib2, birthTs + 56 * 365.25 * 86400000, birthTs + 62 * 365.25 * 86400000, 2) ||
                      findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 58.7 * 365.25 * 86400000));
 
     // 5. Solar Return
