@@ -1471,6 +1471,7 @@
 
       if (isCeltic) {
         cardSceneClass = 'w-full h-full';
+        cardSceneStyle = 'width: var(--c-w, 78px); height: var(--c-h, 120px);';
       } else if (isSanFang || isTwelve || isTwelveCourt) {
         cardSceneClass = `w-full ${cardAspect}`;
       } else if (isTableau || isNineBox || isCrossFive) {
