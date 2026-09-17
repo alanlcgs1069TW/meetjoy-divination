@@ -355,80 +355,188 @@
 
       const stage = shuffleArea.querySelector('#flowing_shuffle_stage');
       let isInteracting = false;
-      let lastX = 0, lastY = 0;
+      let pressStartTime = 0;
+      let pressStartX = 0, pressStartY = 0;
+      let currentPointerX = 0, currentPointerY = 0;
+      let lastMoveX = 0, lastMoveY = 0;
+      let dragDeltaX = 0, dragDeltaY = 0;
+      let shuffleRafId = null;
       let lastSlideAudioTime = 0;
+      const cards = cardWrap.children;
 
-      // 流體物理洗牌互動：手勢滑動時擾動周圍卡牌
-      const applyFluidDistortion = (clientX, clientY) => {
-        const rect = stage.getBoundingClientRect();
-        const stageCenterX = rect.left + rect.width / 2;
-        const stageCenterY = rect.top + rect.height / 2;
-        const pointerRelX = clientX - stageCenterX;
-        const pointerRelY = clientY - stageCenterY;
+      // 持續渦流洗牌循環（長按按住不動或拖曳時每影格持續計算）
+      const continuousShuffleLoop = () => {
+        if (!isInteracting) return;
+        const now = performance.now();
+        const elapsed = now - pressStartTime;
 
-        const deltaX = clientX - lastX;
-        const deltaY = clientY - lastY;
-        lastX = clientX;
-        lastY = clientY;
-
-        const now = Date.now();
-        if (now - lastSlideAudioTime > 120 && (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2)) {
+        // 連續滑牌洗牌聲：長按時每 135ms 自動觸發一次，營造真實沙沙洗牌聲浪
+        if (now - lastSlideAudioTime > 135) {
           lastSlideAudioTime = now;
           window.MeetJoyAudio?.playSlide();
         }
 
-        const cards = cardWrap.children;
+        const rect = stage.getBoundingClientRect();
+        const stageCenterX = rect.left + rect.width / 2;
+        const stageCenterY = rect.top + rect.height / 2;
+        const ptrX = currentPointerX - stageCenterX;
+        const ptrY = currentPointerY - stageCenterY;
+
+        // 隨時間推移的旋轉渦流角速度與波動相位
+        const timePhase = elapsed * 0.0035;
+
         for (let i = 0; i < cards.length; i++) {
           const cardEl = cards[i];
           const bx = parseFloat(cardEl.getAttribute('data-base-x'));
           const by = parseFloat(cardEl.getAttribute('data-base-y'));
           const brot = parseFloat(cardEl.getAttribute('data-base-rot'));
 
-          // 計算卡牌相對於手指的距離
-          const dx = bx - pointerRelX;
-          const dy = by - pointerRelY;
+          // 卡牌相對於手指/游標的距離
+          const dx = bx - ptrX;
+          const dy = by - ptrY;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 130) {
-            // 距離越近，擾動力越強
-            const force = (1 - dist / 130) * 28;
-            const angleFromPointer = Math.atan2(dy, dx);
-            const pushX = Math.cos(angleFromPointer) * force + deltaX * 0.4;
-            const pushY = Math.sin(angleFromPointer) * force + deltaY * 0.4;
-            const swirlRot = brot + (deltaX - deltaY) * 0.5;
+          // 基礎動態波動位移
+          const wave = Math.sin(timePhase * 3.5 + i * 0.5) * 8;
+          const orbitAngle = timePhase * 2 + (i / cards.length) * Math.PI * 2;
+          const orbitR = 7 + (i % 3) * 3;
+          const orbitX = Math.cos(orbitAngle) * orbitR;
+          const orbitY = Math.sin(orbitAngle) * orbitR;
 
-            cardEl.style.transform = `translate(${pushX}px, ${pushY}px) rotate(${swirlRot}deg) scale(1.05)`;
+          // 手勢拖動的即時加成 (dragDeltaX/Y)
+          const dragX = dragDeltaX * 0.35;
+          const dragY = dragDeltaY * 0.35;
+
+          // 距離手指越近，渦流擾動力越強
+          if (dist < 140) {
+            const touchForce = (1 - dist / 140) * 25;
+            const touchAngle = Math.atan2(dy, dx);
+            const pushX = Math.cos(touchAngle) * touchForce;
+            const pushY = Math.sin(touchAngle) * touchForce;
+            const swirl = brot + Math.sin(timePhase * 4 + i) * 22;
+
+            cardEl.style.transform = `translate(${orbitX + pushX + dragX}px, ${orbitY + pushY + dragY + wave}px) rotate(${swirl}deg) scale(1.08)`;
           } else {
-            // 輕微渦流擾動
-            cardEl.style.transform = `translate(${deltaX * 0.1}px, ${deltaY * 0.1}px) rotate(${brot}deg)`;
+            const swirl = brot + Math.sin(timePhase * 2 + i) * 7;
+            cardEl.style.transform = `translate(${orbitX + dragX * 0.08}px, ${orbitY + dragY * 0.08 + wave * 0.4}px) rotate(${swirl}deg) scale(1.02)`;
           }
+        }
+
+        // 拖動速度平滑衰減
+        dragDeltaX *= 0.82;
+        dragDeltaY *= 0.82;
+
+        shuffleRafId = requestAnimationFrame(continuousShuffleLoop);
+      };
+
+      // 水波擴散脈衝（短按 Tap 牌桌觸發）
+      const triggerRipplePulse = (clientX, clientY) => {
+        window.MeetJoyAudio?.playSlide();
+        const rect = stage.getBoundingClientRect();
+        const stageCenterX = rect.left + rect.width / 2;
+        const stageCenterY = rect.top + rect.height / 2;
+        const ptrX = clientX - stageCenterX;
+        const ptrY = clientY - stageCenterY;
+
+        for (let i = 0; i < cards.length; i++) {
+          const cardEl = cards[i];
+          const bx = parseFloat(cardEl.getAttribute('data-base-x'));
+          const by = parseFloat(cardEl.getAttribute('data-base-y'));
+          const brot = parseFloat(cardEl.getAttribute('data-base-rot'));
+
+          const dx = bx - ptrX;
+          const dy = by - ptrY;
+          const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
+          const pushDistance = Math.max(0, 180 - dist) * 0.3;
+          const angle = Math.atan2(dy, dx);
+
+          const pushX = Math.cos(angle) * pushDistance;
+          const pushY = Math.sin(angle) * pushDistance;
+
+          cardEl.style.transition = 'transform 0.22s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
+          cardEl.style.transform = `translate(${pushX}px, ${pushY}px) rotate(${brot + (Math.random() - 0.5) * 20}deg) scale(1.07)`;
+
+          // 彈性質感恢復
+          setTimeout(() => {
+            cardEl.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            cardEl.style.transform = `translate(0px, 0px) rotate(${brot}deg) scale(1)`;
+          }, 230);
         }
       };
 
-      // Pointer / Mouse 事件
-      stage.addEventListener('pointerdown', (e) => {
+      const startInteraction = (clientX, clientY) => {
+        if (this.isAutoShuffling) return;
         isInteracting = true;
-        lastX = e.clientX;
-        lastY = e.clientY;
+        pressStartTime = performance.now();
+        pressStartX = clientX;
+        pressStartY = clientY;
+        currentPointerX = clientX;
+        currentPointerY = clientY;
+        lastMoveX = clientX;
+        lastMoveY = clientY;
+        dragDeltaX = 0;
+        dragDeltaY = 0;
+
+        // 移除卡牌的 CSS transition 避免拖動與持續動畫卡頓
+        for (let i = 0; i < cards.length; i++) {
+          cards[i].style.transition = 'none';
+        }
+
+        if (shuffleRafId) cancelAnimationFrame(shuffleRafId);
+        shuffleRafId = requestAnimationFrame(continuousShuffleLoop);
+      };
+
+      const moveInteraction = (clientX, clientY) => {
+        if (!isInteracting) return;
+        dragDeltaX = clientX - lastMoveX;
+        dragDeltaY = clientY - lastMoveY;
+        lastMoveX = clientX;
+        lastMoveY = clientY;
+        currentPointerX = clientX;
+        currentPointerY = clientY;
+      };
+
+      const endInteraction = (clientX, clientY) => {
+        if (!isInteracting) return;
+        isInteracting = false;
+        if (shuffleRafId) {
+          cancelAnimationFrame(shuffleRafId);
+          shuffleRafId = null;
+        }
+
+        const pressDuration = performance.now() - pressStartTime;
+        const totalDist = Math.sqrt(Math.pow(clientX - pressStartX, 2) + Math.pow(clientY - pressStartY, 2));
+
+        if (pressDuration < 250 && totalDist < 14) {
+          // 判定為短按 Tap 牌桌！觸發水波震盪
+          triggerRipplePulse(clientX, clientY);
+          return;
+        }
+
+        // 長按或滑動結束：所有卡牌平滑回彈至基底位置，並賦予微小隨機洗牌角度
+        for (let i = 0; i < cards.length; i++) {
+          const cardEl = cards[i];
+          const newRot = (Math.random() - 0.5) * 60;
+          cardEl.setAttribute('data-base-rot', newRot);
+          cardEl.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+          cardEl.style.transform = `translate(0px, 0px) rotate(${newRot}deg) scale(1)`;
+        }
+      };
+
+      // Pointer / Mouse 事件監聽
+      stage.addEventListener('pointerdown', (e) => {
+        startInteraction(e.clientX, e.clientY);
         if (stage.setPointerCapture) {
           try { stage.setPointerCapture(e.pointerId); } catch (err) {}
         }
       });
 
       const onPointerMove = (e) => {
-        if (!isInteracting) return;
-        applyFluidDistortion(e.clientX, e.clientY);
+        moveInteraction(e.clientX, e.clientY);
       };
 
-      const onPointerUp = () => {
-        if (!isInteracting) return;
-        isInteracting = false;
-        // 平滑回彈至基底位置
-        const cards = cardWrap.children;
-        for (let i = 0; i < cards.length; i++) {
-          const brot = cards[i].getAttribute('data-base-rot');
-          cards[i].style.transform = `translate(0px, 0px) rotate(${brot}deg) scale(1)`;
-        }
+      const onPointerUp = (e) => {
+        endInteraction(e.clientX, e.clientY);
       };
 
       window.addEventListener('pointermove', onPointerMove);
@@ -437,19 +545,21 @@
       // 行動端 Touch 事件相容強化
       stage.addEventListener('touchstart', (e) => {
         if (e.touches && e.touches[0]) {
-          isInteracting = true;
-          lastX = e.touches[0].clientX;
-          lastY = e.touches[0].clientY;
+          startInteraction(e.touches[0].clientX, e.touches[0].clientY);
         }
       }, { passive: true });
 
       stage.addEventListener('touchmove', (e) => {
         if (!isInteracting || !e.touches || !e.touches[0]) return;
         if (e.cancelable) e.preventDefault();
-        applyFluidDistortion(e.touches[0].clientX, e.touches[0].clientY);
+        moveInteraction(e.touches[0].clientX, e.touches[0].clientY);
       }, { passive: false });
 
-      stage.addEventListener('touchend', onPointerUp);
+      stage.addEventListener('touchend', (e) => {
+        const clientX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : lastMoveX;
+        const clientY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : lastMoveY;
+        endInteraction(clientX, clientY);
+      });
 
       // 自動旋轉洗牌按鈕
       const autoShuffleBtn = shuffleArea.querySelector('#btn_flowing_auto_shuffle');
@@ -550,7 +660,7 @@
 
         if (cardDrawn) {
           return `
-            <div class="flowing-slot filled flex flex-col items-center gap-1.5 shrink-0" data-slot-idx="${idx}">
+            <div id="flowing_slot_${idx}" class="flowing-slot filled flex flex-col items-center gap-1.5 shrink-0" data-slot-idx="${idx}">
               <div style="width: 56px; height: 86px; min-height: 86px;" class="rounded-xl border-2 border-[#C8A97E] shadow-md ${cardDrawn.card.cardBackClass} relative overflow-hidden transition-all scale-105 shrink-0 sm:!w-[70px] sm:!h-[105px] sm:!min-h-[105px]">
                 <div class="absolute inset-0 bg-amber-400/10 animate-pulse"></div>
               </div>
@@ -559,7 +669,7 @@
           `;
         } else {
           return `
-            <div class="flowing-slot empty flex flex-col items-center gap-1.5 opacity-80 shrink-0" data-slot-idx="${idx}">
+            <div id="flowing_slot_${idx}" class="flowing-slot empty flex flex-col items-center gap-1.5 opacity-80 shrink-0" data-slot-idx="${idx}">
               <div style="width: 56px; height: 86px; min-height: 86px;" class="rounded-xl border-2 border-dashed border-stone-300 bg-stone-100/80 flex items-center justify-center text-stone-400 text-xs font-mono shrink-0 shadow-xs sm:!w-[70px] sm:!h-[105px] sm:!min-h-[105px]">
                 <span>${idx + 1}</span>
               </div>
@@ -572,9 +682,10 @@
       fanArea.innerHTML = `
         <div class="text-center mb-2">
           <span class="text-xs font-serif text-[#C8A97E] font-black tracking-widest uppercase">${this.spread.name.split('(')[0]}</span>
-          <h3 class="text-xl sm:text-2xl font-serif font-black text-[#1F261C] mt-1">
-            憑直覺抽出 ${targetCount} 張（已選 ${currentSelectedCount} / ${targetCount}）
+          <h3 id="flowing_fan_title" class="text-xl sm:text-2xl font-serif font-black text-[#1F261C] mt-1">
+            憑直覺抽出 ${targetCount} 張（已選 <span id="flowing_selected_num">${currentSelectedCount}</span> / ${targetCount}）
           </h3>
+          <p class="text-xs text-stone-500 mt-1">點選扇面任一張卡牌抽牌，或點擊「自動選牌」由宇宙直覺引導。</p>
           <div class="mt-2 flex items-center justify-center gap-2">
             <button type="button" id="btn_flowing_auto_pick" class="px-3.5 py-1.5 rounded-full bg-stone-100 hover:bg-[#C8A97E] hover:text-[#182622] text-stone-700 text-xs font-black border border-stone-300 transition flex items-center gap-1 cursor-pointer">
               <span>✨ ${isGrandTableau ? '一鍵全開 36 張大盤' : '自動選牌'}</span>
@@ -590,9 +701,9 @@
           ${slotsHtml}
         </div>
 
-        <!-- 底部拱弧扇形展牌舞台 -->
-        <div class="relative w-full max-w-[820px] h-[260px] sm:h-[320px] mt-4 flex items-end justify-center overflow-hidden">
-          <div id="flowing_arc_fan" class="absolute bottom-[-180px] sm:bottom-[-220px] w-[500px] h-[500px] sm:w-[640px] sm:h-[640px] rounded-full pointer-events-none">
+        <!-- 底部拱弧扇形展牌舞台 (採用極座標法向展開，卡牌向外推展，徹底杜絕圓心重疊遮蔽) -->
+        <div class="relative w-full max-w-[840px] h-[320px] sm:h-[370px] mt-2 flex items-end justify-center overflow-hidden">
+          <div id="flowing_arc_fan" class="absolute bottom-[-30px] sm:bottom-[-20px] left-1/2 -translate-x-1/2 w-[580px] h-[340px] sm:w-[720px] sm:h-[390px] pointer-events-none">
             <!-- 扇形卡牌動態插入於此 -->
           </div>
         </div>
@@ -603,36 +714,154 @@
       // 動態生成孔雀開屏極座標扇形卡牌
       const fanContainer = fanArea.querySelector('#flowing_arc_fan');
       const totalDisplay = Math.min(this.deck.length, 36);
-      const startDeg = -52;
-      const endDeg = 52;
-      const stepDeg = (endDeg - startDeg) / (totalDisplay - 1);
+      const startDeg = -55;
+      const endDeg = 55;
+      const stepDeg = totalDisplay > 1 ? (endDeg - startDeg) / (totalDisplay - 1) : 0;
+      const isMobile = window.innerWidth < 640;
+      const fanRadius = isMobile ? 155 : 200;
+
+      // 檢查某張牌是否已經在已選清單中（重新渲染時保持狀態）
+      const alreadyPickedIndices = new Set(this.selectedCards.map(s => s.indexInFan));
+
+      // 抽牌處理函數（原地視覺飛升，無需整頁重繪）
+      const handleCardPick = (fanIndex, card, cardBtn) => {
+        if (this.selectedCards.length >= this.spread.count) return;
+        if (cardBtn.getAttribute('data-picked') === 'true') return;
+
+        // 標記抽牌
+        cardBtn.setAttribute('data-picked', 'true');
+        cardBtn.style.pointerEvents = 'none';
+
+        window.MeetJoyAudio?.playDeal();
+
+        // 飛離動效：卡牌向上縮小淡出，營造飛入上方卡槽的感覺
+        const currentAngle = parseFloat(cardBtn.getAttribute('data-angle')) || 0;
+        cardBtn.style.transition = 'transform 0.4s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.35s ease';
+        cardBtn.style.transform = `translateX(-50%) rotate(${currentAngle}deg) translateY(-${fanRadius + 85}px) scale(0.55)`;
+        cardBtn.style.opacity = '0.15';
+        cardBtn.style.filter = 'grayscale(0.6)';
+
+        const slotIdx = this.selectedCards.length;
+        const role = this.spread.labels[slotIdx] || `第 ${slotIdx + 1} 張`;
+
+        this.selectedCards.push({
+          card,
+          isReversed: card.isReversed,
+          role,
+          indexInFan: fanIndex
+        });
+
+        // 原地更新頂部 Slot 卡槽
+        const slotEl = fanArea.querySelector(`#flowing_slot_${slotIdx}`);
+        if (slotEl) {
+          slotEl.className = 'flowing-slot filled flex flex-col items-center gap-1.5 shrink-0 transition-transform scale-110';
+          slotEl.innerHTML = `
+            <div style="width: 56px; height: 86px; min-height: 86px;" class="rounded-xl border-2 border-[#C8A97E] shadow-lg ${card.cardBackClass} relative overflow-hidden transition-all shrink-0 sm:!w-[70px] sm:!h-[105px] sm:!min-h-[105px]">
+              <div class="absolute inset-0 bg-amber-400/20 animate-pulse"></div>
+            </div>
+            <span class="text-[9px] sm:text-xs font-bold text-[#182622] bg-[#EADFC7] px-2 py-0.5 rounded-full whitespace-nowrap">${role}</span>
+          `;
+          setTimeout(() => {
+            if (slotEl) slotEl.classList.remove('scale-110');
+          }, 250);
+        }
+
+        // 更新頂部已選數量
+        const countEl = fanArea.querySelector('#flowing_selected_num');
+        if (countEl) countEl.textContent = this.selectedCards.length;
+
+        // 若已抽滿，封鎖點擊並在 450ms 後平滑進入翻牌階段
+        if (this.selectedCards.length >= this.spread.count) {
+          fanContainer.querySelectorAll('[data-fan-index]').forEach(el => {
+            el.style.pointerEvents = 'none';
+          });
+          this.finalizeCardsForSystem();
+          setTimeout(() => {
+            this.step = 'reveal';
+            this.allFlipped = false;
+            this.render();
+          }, 450);
+        }
+      };
 
       for (let i = 0; i < totalDisplay; i++) {
         const card = this.deck[i];
         const angle = startDeg + i * stepDeg;
+        const isPicked = alreadyPickedIndices.has(i);
 
         const cardBtn = document.createElement('div');
-        cardBtn.className = `absolute left-1/2 bottom-1/2 w-14 h-24 sm:w-16 sm:h-28 rounded-xl shadow-lg border border-[#C8A97E] ${card.cardBackClass} cursor-pointer pointer-events-auto transition-all duration-200 origin-bottom`;
-        cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+        cardBtn.className = `absolute left-1/2 bottom-0 w-13 h-22 sm:w-16 sm:h-28 rounded-xl shadow-md border border-[#C8A97E] ${card.cardBackClass} cursor-pointer pointer-events-auto transition-transform duration-200 select-none`;
+        cardBtn.style.transformOrigin = 'center bottom';
         cardBtn.setAttribute('data-fan-index', i);
         cardBtn.setAttribute('data-card-id', card.id);
+        cardBtn.setAttribute('data-angle', angle);
 
-        // Hover / Active 向上浮起效果
+        if (isPicked) {
+          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-${fanRadius + 85}px) scale(0.55)`;
+          cardBtn.style.opacity = '0.15';
+          cardBtn.style.pointerEvents = 'none';
+          cardBtn.setAttribute('data-picked', 'true');
+        } else {
+          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-${fanRadius}px)`;
+          cardBtn.style.zIndex = `${i + 1}`;
+        }
+
+        // 行動端與桌面端雙模相容：Zero-Latency Tap 偵測
+        let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+        let isTapTriggered = false;
+
+        cardBtn.addEventListener('pointerdown', (e) => {
+          if (cardBtn.getAttribute('data-picked') === 'true') return;
+          isTapTriggered = false;
+          touchStartX = e.clientX;
+          touchStartY = e.clientY;
+          touchStartTime = performance.now();
+          // 即刻視覺反饋：卡牌沿法向向外躍出並拔高層級
+          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-${fanRadius + 24}px) scale(1.08)`;
+          cardBtn.style.zIndex = '100';
+          cardBtn.style.boxShadow = '0 14px 28px rgba(200, 169, 126, 0.7)';
+        });
+
+        cardBtn.addEventListener('pointerup', (e) => {
+          if (cardBtn.getAttribute('data-picked') === 'true') return;
+          const dx = Math.abs(e.clientX - touchStartX);
+          const dy = Math.abs(e.clientY - touchStartY);
+          const dt = performance.now() - touchStartTime;
+
+          // 若手指位移小於 14px 且時間小於 500ms，判定為精準點選抽牌！
+          if (dx < 14 && dy < 14 && dt < 500) {
+            isTapTriggered = true;
+            e.preventDefault();
+            e.stopPropagation();
+            handleCardPick(i, card, cardBtn);
+          } else {
+            // 滑動手勢結束，恢復原位
+            cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-${fanRadius}px)`;
+            cardBtn.style.zIndex = `${i + 1}`;
+            cardBtn.style.boxShadow = '';
+          }
+        });
+
+        // 原生 Click 作為次級防禦
+        cardBtn.addEventListener('click', (e) => {
+          if (isTapTriggered) return;
+          e.preventDefault();
+          handleCardPick(i, card, cardBtn);
+        });
+
+        // 桌面 Hover 效果（僅非觸控滑鼠浮起）
         cardBtn.addEventListener('mouseenter', () => {
-          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-24px) scale(1.08)`;
-          cardBtn.style.zIndex = '50';
+          if (cardBtn.getAttribute('data-picked') === 'true') return;
+          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-${fanRadius + 20}px) scale(1.06)`;
+          cardBtn.style.zIndex = '90';
           cardBtn.style.boxShadow = '0 12px 24px rgba(200, 169, 126, 0.6)';
         });
-        cardBtn.addEventListener('mouseleave', () => {
-          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-          cardBtn.style.zIndex = `${i}`;
-          cardBtn.style.boxShadow = '';
-        });
 
-        // 點擊抽牌
-        cardBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          this.pickCard(i, card);
+        cardBtn.addEventListener('mouseleave', () => {
+          if (cardBtn.getAttribute('data-picked') === 'true') return;
+          cardBtn.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(-${fanRadius}px)`;
+          cardBtn.style.zIndex = `${i + 1}`;
+          cardBtn.style.boxShadow = '';
         });
 
         fanContainer.appendChild(cardBtn);
@@ -650,7 +879,7 @@
       });
     }
 
-    // 抽出一張牌
+    // 抽出一張牌（供外部調用）
     pickCard(fanIndex, card) {
       if (this.selectedCards.length >= this.spread.count) return;
 
@@ -673,7 +902,7 @@
           this.step = 'reveal';
           this.allFlipped = false;
           this.render();
-        }, 400);
+        }, 450);
       } else {
         this.render();
       }
@@ -852,20 +1081,27 @@
       const stage = revealArea.querySelector('#flowing_cards_stage');
       stage.innerHTML = this.renderRevealLayoutHtml(layout);
 
-      // 綁定所有卡牌翻轉與點圖放大事件
-      revealArea.querySelectorAll('.card-scene').forEach(sceneEl => {
-        const innerEl = sceneEl.querySelector('.card-inner');
-        const cardIdx = parseInt(sceneEl.getAttribute('data-card-idx'), 10);
-        sceneEl.addEventListener('click', () => {
+      // 綁定所有卡牌單元翻轉與點圖放大事件（覆蓋卡面、標籤、卡名等整塊區域）
+      const cardUnits = revealArea.querySelectorAll('.flowing-card-unit, .card-scene');
+      const boundIndices = new Set();
+
+      cardUnits.forEach(targetEl => {
+        const cardIdx = parseInt(targetEl.getAttribute('data-card-idx'), 10);
+        if (isNaN(cardIdx) || boundIndices.has(cardIdx)) return;
+        boundIndices.add(cardIdx);
+
+        targetEl.addEventListener('click', (e) => {
+          const innerEl = targetEl.querySelector('.card-inner') || (targetEl.classList.contains('card-scene') ? targetEl.querySelector('.card-inner') : null);
           if (innerEl && innerEl.classList.contains('flipped')) {
             // 已翻開的卡牌，點擊直接打開全螢幕大圖幻燈片！
             if (typeof window.openSlideshow === 'function') {
-              window.openSlideshow(isNaN(cardIdx) ? 0 : cardIdx);
+              window.openSlideshow(cardIdx);
             }
           } else if (innerEl) {
             // 未翻開的卡牌，點擊翻開
             window.MeetJoyAudio?.playFlip();
             innerEl.classList.add('flipped');
+            targetEl.classList.add('is-flipped');
             this.checkAndRenderPotionSummary(revealArea);
           }
         });
@@ -1549,13 +1785,13 @@
       ` : '';
 
       return `
-        <div class="flex flex-col items-center gap-1.5 w-full ${specialGlow} relative">
+        <div class="flowing-card-unit flex flex-col items-center gap-1.5 w-full ${specialGlow} relative cursor-pointer select-none group" data-card-idx="${idx}" title="點擊翻牌，已翻開點擊可放大檢視">
           ${showRoleTag && role ? `<span class="text-[10px] sm:text-[11px] font-bold text-stone-700 bg-stone-100 px-2 sm:px-2.5 py-0.5 rounded-full border border-stone-200 whitespace-nowrap shadow-2xs">${role}</span>` : ''}
           ${celticBadge}
-          <div class="card-scene cursor-pointer ${cardSceneClass}" style="${cardSceneStyle}" data-card-idx="${idx}">
+          <div class="card-scene ${cardSceneClass}" style="${cardSceneStyle}" data-card-idx="${idx}">
             <div class="card-inner w-full h-full relative" style="transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);">
               <!-- 卡背 -->
-              <div class="card-face card-back absolute inset-0 rounded-xl border-2 border-[#C8A97E] ${card.cardBackClass} flex items-center justify-center shadow-md">
+              <div class="card-face card-back absolute inset-0 rounded-xl border-2 border-[#C8A97E] ${card.cardBackClass} flex items-center justify-center shadow-md group-hover:border-amber-400 transition">
                 ${isLenormand ? `
                   <div class="relative flex flex-col items-center justify-center p-2 text-center pointer-events-none select-none">
                     <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-amber-300/60 bg-black/40 flex items-center justify-center mb-0.5 shadow-md">
@@ -1569,13 +1805,17 @@
                 `}
               </div>
               <!-- 卡面 -->
-              <div class="card-face card-front absolute inset-0 rounded-xl shadow-lg ${isLenormand ? 'p-0 bg-[#FDFBF7] border border-[#C5A059]' : 'p-1 bg-stone-900 border-2 border-[#C8A97E]/80'}" style="transform: rotateY(180deg); backface-visibility: hidden;">
+              <div class="card-face card-front absolute inset-0 rounded-xl shadow-lg cursor-zoom-in ${isLenormand ? 'p-0 bg-[#FDFBF7] border border-[#C5A059]' : 'p-1 bg-stone-900 border-2 border-[#C8A97E]/80'}" style="transform: rotateY(180deg); backface-visibility: hidden;">
                 ${frontContentHtml}
+                <!-- 放大幻燈片提示徽章 -->
+                <div class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-black/60 backdrop-blur-xs border border-white/20 flex items-center justify-center text-[10px] text-amber-200 opacity-0 group-hover:opacity-100 transition shadow-xs pointer-events-none">
+                  🔍
+                </div>
               </div>
             </div>
           </div>
           ${showBottomText ? `
-            <span class="text-xs font-serif font-black ${isTwelveCourt ? 'text-amber-100' : 'text-[#1F261C]'} mt-0.5 text-center">${card.name} ${!isLenormand ? (isReversed ? '<span class=\"text-[10px] text-rose-700\">(逆)</span>' : '<span class=\"text-[10px] text-emerald-700\">(正)</span>') : ''}</span>
+            <span class="text-xs font-serif font-black ${isTwelveCourt ? 'text-amber-100' : 'text-[#1F261C]'} mt-0.5 text-center group-hover:text-amber-700 transition">${card.name} ${!isLenormand ? (isReversed ? '<span class=\"text-[10px] text-rose-700\">(逆)</span>' : '<span class=\"text-[10px] text-emerald-700\">(正)</span>') : ''}</span>
           ` : ''}
         </div>
       `;
