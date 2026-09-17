@@ -17,14 +17,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
   
   <!-- 本地純靜態天文引擎與 PDF 輸出引擎 -->
-  <script src="./js/astronomy.browser.min.js"></script>
-  <script src="./js/geo-cities.js"></script>
-  <script src="./js/chiron-ephem.js"></script>
-  <script src="./js/astro-calc.js"></script>
-  <script src="./js/meetjoy-pdf.js"></script>
-  <script src="./js/meetjoy-universal-profiles.js"></script>
-  <script src="./js/meetjoy-nav.js"></script>
-  <script src="./js/meetjoy-protect.js"></script>
+  <script src="./js/astronomy.browser.min.js?v=20260917-r3"></script>
+  <script src="./js/geo-cities.js?v=20260917-r3"></script>
+  <script src="./js/chiron-ephem.js?v=20260917-r3"></script>
+  <script src="./js/astro-calc.js?v=20260917-r3"></script>
+  <script src="./js/meetjoy-pdf.js?v=20260917-r3"></script>
+  <script src="./js/meetjoy-universal-profiles.js?v=20260917-r3"></script>
+  <script src="./js/meetjoy-nav.js?v=20260917-r3"></script>
+  <script src="./js/meetjoy-protect.js?v=20260917-r3"></script>
 
   <style>
     body { font-family: 'Noto Serif TC', serif; }
@@ -565,12 +565,49 @@
       </div>
 
       <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
-        人類圖生命週期以行星回歸（返照）與對分相為關鍵里程碑，精準揭示靈魂在不同年齡段的生命大換軌與重大考驗。卡片以台北時間大字標示，包含 6 爻人關鍵的「走上屋頂」與「走下屋頂成為活典範」轉折點。太陽回歸支援即時年份選單，點擊卡片可展開詳細生活指引。
+        人類圖生命週期以行星回歸與對分相為關鍵里程碑，精準揭示不同年齡段的生命換軌與成熟課題。選擇任一重要時點即可繪製獨立回歸能量圖；太陽回歸保留去年、今年、明年的年度觀測。
       </p>
 
       <!-- 星體回歸列表 (符合全站白底香檳金風格) -->
       <div id="hd_returns_list" class="space-y-3.5">
         <!-- 動態渲染 Saturn Return, Uranus Opposition, Chiron Return, Second Saturn Return, Solar Return, Lunar Return, More Cycles -->
+      </div>
+    </div>
+
+    <!-- 獨立回歸能量圖：僅在使用者選取重要回歸時顯示，絕不覆蓋本命圖 -->
+    <div id="hd_return_chart_container" class="hidden mt-8 bg-gradient-to-br from-[#FFFDF9] via-[#FAF6ED] to-[#F4EDE0] border-2 border-[#C8A97E]/70 rounded-3xl p-5 sm:p-7 shadow-lg">
+      <div class="flex flex-wrap items-start justify-between gap-4 border-b border-[#C8A97E]/30 pb-4">
+        <div>
+          <span class="text-[11px] font-bold text-[#987315] tracking-widest uppercase">🪐 獨立回歸能量圖</span>
+          <h2 id="return_chart_title" class="text-xl sm:text-2xl font-black text-slate-900 mt-1">重要回歸能量圖</h2>
+          <p id="return_chart_meta" class="text-[#987315] font-black text-base sm:text-xl mt-2">--</p>
+          <p id="return_chart_submeta" class="text-[11px] text-slate-500 font-mono mt-1">--</p>
+        </div>
+        <button type="button" onclick="closeReturnChart()" class="shrink-0 px-3.5 py-2 rounded-xl border border-[#C8A97E]/50 bg-white/80 hover:bg-[#1E261D] hover:text-[#F7E7CE] text-xs font-black text-[#765514] transition">✕ 收合回歸能量圖</button>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] gap-5 items-start">
+        <div class="rounded-2xl bg-white/80 border border-[#C8A97E]/35 p-3 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-center gap-3 text-[11px] font-bold mb-2 text-slate-600">
+            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-700"></span> 設計</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-900"></span> 個性</span>
+          </div>
+          <div id="return_bodygraph_mount" class="max-w-[380px] mx-auto"></div>
+        </div>
+        <div class="space-y-4 text-xs sm:text-sm">
+          <section class="rounded-2xl bg-white/90 border border-[#C8A97E]/35 p-4">
+            <h3 class="font-black text-slate-900">⚡ 本階段新增開啟天賦通道</h3>
+            <div id="return_new_channels" class="mt-3 flex flex-wrap gap-2 text-slate-600"></div>
+          </section>
+          <section class="rounded-2xl bg-white/90 border border-[#C8A97E]/35 p-4">
+            <h3 class="font-black text-slate-900">✦ 本階段新增被定義能量中心</h3>
+            <div id="return_new_centers" class="mt-3 flex flex-wrap gap-2 text-slate-600"></div>
+          </section>
+          <section class="rounded-2xl bg-[#1E261D] text-[#F7E7CE] border border-[#C8A97E]/50 p-4 shadow-sm">
+            <h3 class="font-black">🌿 愛倫院長的生活魔藥處方與調頻指引</h3>
+            <p id="return_rx" class="mt-2 leading-relaxed text-xs sm:text-sm text-amber-50/90"></p>
+          </section>
+        </div>
       </div>
     </div>
 
@@ -1631,11 +1668,11 @@
       `;
 
       // 11. 渲染能量結構全息統計大典 (1-6 爻線統計 & 三大迴路佔比矩陣)
-      renderStatisticsCards(hd);
+      renderStatisticsCards(hd, utcDate);
     }
 
     // 渲染 1-6 爻線統計與三大迴路群矩陣
-    function renderStatisticsCards(hd) {
+    function renderStatisticsCards(hd, utcDate) {
       if (!hd) return;
 
       // 1. 統計 1-6 爻爻數 (全盤 26 天體星位：顯意識 13 + 潛意識 13)
@@ -2042,9 +2079,10 @@
 
     // ==============================================================
     // 🪐 重要天體回歸與生命週期歷程 (Planetary Returns & Life Cycles)
-    // 依愛倫院長指示：符合全站暖白香檳金風格，繁體中文為主，台北時間大字標示，附完整年份選單與簡單說明
+    // 依愛倫院長指示：符合全站暖白香檳金風格，繁體中文為主，台北時間大字標示，太陽回歸僅保留去年／今年／明年切換
     // ==============================================================
     let currentReturnBirthUtc = null;
+    let currentReturnCycles = {};
 
     window.changeSolarReturnYear = function(y) {
       if (currentReturnBirthUtc) {
@@ -2052,30 +2090,34 @@
       }
     };
 
+    function renderReturnFallbackCards(container) {
+      const milestones = [
+        ['🪐', '第一次土星回歸', 'Saturn Return'],
+        ['⚡', '天王星對衝', 'Uranus Opposition'],
+        ['🗝️', '凱龍星回歸', 'Chiron Return'],
+        ['👑', '第二次土星回歸', 'Second Saturn Return'],
+        ['☀️', '今年年度運勢盤', 'Solar Return']
+      ];
+      container.innerHTML = milestones.map(([icon, title, en]) => `
+        <div class="bg-white/95 border border-[#C8A97E]/40 rounded-2xl p-4 sm:p-5 text-slate-800">
+          <div class="flex items-center gap-2"><span class="text-lg">${icon}</span><strong class="text-base text-slate-900">${title}</strong><span class="text-xs text-slate-400 font-mono">(${en})</span></div>
+          <p class="mt-2 text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-xl p-2.5">此里程碑時間暫時無法計算；請確認出生資料後重新排盤。本命圖與其餘功能不受影響。</p>
+        </div>
+      `).join('');
+    }
+
     function renderPlanetaryReturnsPanel(utcDate, targetYear) {
       const panel = document.getElementById('hd_returns_panel');
       if (!panel) return;
       panel.classList.remove('hidden');
-
-      currentReturnBirthUtc = utcDate;
-      const now = new Date();
-      const currentYear = targetYear || now.getFullYear();
-
-      const ret = AstroCalc.calculatePlanetaryReturns(utcDate, currentYear);
-      if (!ret) return;
-
       const container = document.getElementById('hd_returns_list');
       if (!container) return;
-
-      // 產生太陽回歸年份下拉選項
-      const birthYear = utcDate.getUTCFullYear();
-      let yearOptionsHtml = '';
-      for (let y = birthYear; y <= birthYear + 85; y++) {
-        const age = Math.round(y - birthYear);
-        const isSelected = (y === currentYear) ? 'selected' : '';
-        const tag = (y === now.getFullYear()) ? ' · 今年' : (y === now.getFullYear() - 1 ? ' · 去年' : (y === now.getFullYear() + 1 ? ' · 明年' : ''));
-        yearOptionsHtml += `<option value="${y}" ${isSelected}>${y} 年 (${age} 歲${tag})</option>`;
-      }
+      try {
+        currentReturnBirthUtc = utcDate;
+        const now = new Date();
+        const currentYear = targetYear || now.getFullYear();
+        const ret = AstroCalc.calculatePlanetaryReturns(utcDate, currentYear);
+        if (!ret) throw new Error('回歸時間計算未傳回結果');
 
       const cycles = [
         {
@@ -2089,7 +2131,7 @@
           subMeta: `國際標準時間：${ret.saturnReturn1.dateUtcStr} ｜ 歷程年齡：約 ${ret.saturnReturn1.age} 歲`,
           simpleExplanation: '脫離青年期的試錯摸索，承擔起個人責任與核心使命。對於 6 爻人而言，這是正式「走上屋頂」抽離沉澱、客觀觀測世界的 20 年黃金起點。',
           meaning: ret.saturnReturn1.meaningZh,
-          customWidget: ''
+          customWidget: '', cycleKey: 'saturnReturn1', returnDate: ret.saturnReturn1.date
         },
         {
           id: 'ret_uranus',
@@ -2102,7 +2144,7 @@
           subMeta: `國際標準時間：${ret.uranusOpposition.dateUtcStr} ｜ 歷程年齡：約 ${ret.uranusOpposition.age} 歲`,
           simpleExplanation: '俗稱的「人生中場換軌」。南交點（前半生環境與習慣制約）正式交棒給北交點（後半生核心願景），勇敢打破外界期待與常規，真正活出自我本色。',
           meaning: ret.uranusOpposition.meaningZh,
-          customWidget: ''
+          customWidget: '', cycleKey: 'uranusOpposition', returnDate: ret.uranusOpposition.date
         },
         {
           id: 'ret_chiron',
@@ -2115,7 +2157,7 @@
           subMeta: `國際標準時間：${ret.chironReturn.dateUtcStr} ｜ 歷程年齡：約 ${ret.chironReturn.age} 歲`,
           simpleExplanation: '前半生所經歷的創傷與苦痛，在此時沉澱淬鍊為深邃智慧。對 6 爻人而言，象徵「走下屋頂」步入典範實踐期，不再只是冷眼旁觀，而是以自身生命的真實活法成為激勵他人的活典範。',
           meaning: ret.chironReturn.meaningZh,
-          customWidget: ''
+          customWidget: '', cycleKey: 'chironReturn', returnDate: ret.chironReturn.date
         },
         {
           id: 'ret_saturn2',
@@ -2128,7 +2170,7 @@
           subMeta: `國際標準時間：${ret.saturnReturn2.dateUtcStr} ｜ 歷程年齡：約 ${ret.saturnReturn2.age} 歲`,
           simpleExplanation: '人生一甲子的大圓滿里程碑。盤點一生的累積，將物質追求昇華為純粹的精神引領與經驗傳承，步入澄澈自在的長老格局。',
           meaning: ret.saturnReturn2.meaningZh,
-          customWidget: ''
+          customWidget: '', cycleKey: 'saturnReturn2', returnDate: ret.saturnReturn2.date
         },
         {
           id: 'ret_solar',
@@ -2143,71 +2185,22 @@
           meaning: ret.solarReturn.meaningZh,
           customWidget: `
             <div class="mt-3.5 p-3.5 sm:p-4 rounded-2xl bg-amber-50/80 border border-[#C8A97E]/40">
-              <div class="flex flex-wrap items-center justify-between gap-2.5 mb-2.5">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <label class="text-xs font-black text-slate-800 flex items-center gap-1">
-                    <span>📅</span> <span>切換觀測年份選單：</span>
-                  </label>
-                  <select onchange="changeSolarReturnYear(this.value)" class="bg-white text-[#987315] font-black border-2 border-[#C8A97E] rounded-xl px-3 py-1 text-xs sm:text-sm shadow-xs cursor-pointer focus:outline-hidden">
-                    ${yearOptionsHtml}
-                  </select>
-                </div>
+              <div class="flex flex-wrap items-center justify-between gap-2.5">
+                <span class="text-xs font-black text-slate-800">📅 年度輕量切換</span>
                 <div class="flex items-center gap-1.5 shrink-0">
                   <button type="button" onclick="changeSolarReturnYear(${now.getFullYear() - 1})" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ${currentYear === now.getFullYear() - 1 ? 'bg-[#1E261D] text-[#F7E7CE]' : 'bg-white text-slate-700 hover:bg-amber-100 border border-slate-200'}">去年</button>
                   <button type="button" onclick="changeSolarReturnYear(${now.getFullYear()})" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ${currentYear === now.getFullYear() ? 'bg-[#1E261D] text-[#F7E7CE]' : 'bg-white text-slate-700 hover:bg-amber-100 border border-slate-200'}">今年 (${now.getFullYear()})</button>
                   <button type="button" onclick="changeSolarReturnYear(${now.getFullYear() + 1})" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ${currentYear === now.getFullYear() + 1 ? 'bg-[#1E261D] text-[#F7E7CE]' : 'bg-white text-slate-700 hover:bg-amber-100 border border-slate-200'}">明年</button>
                 </div>
               </div>
-              <p class="text-[11px] text-slate-500">提示：切換年份後，上方即時刷新該年度太陽精確返照時間與流年運勢課題。</p>
+              <p class="text-[11px] text-slate-500 mt-2.5">切換後會刷新該年度太陽回歸時間與年度運勢盤。</p>
             </div>
-          `
-        },
-        {
-          id: 'ret_lunar',
-          icon: '🌙',
-          titleZh: '月亮回歸（每月潛意識情緒潮汐盤）',
-          titleEn: 'Lunar Return',
-          badgeText: '每 27.3 天潮汐週期',
-          badgeClass: 'bg-indigo-50 text-indigo-900 border border-indigo-200',
-          localStr: ret.lunarReturn.dateLocalStr,
-          subMeta: `國際標準時間：${ret.lunarReturn.dateUtcStr} ｜ 週期循環：每 27.3 天返照一次`,
-          simpleExplanation: '月亮每 27.3 天回到本命月亮位置一次。這是一張微型的月度情緒能量盤，反映您當月的情緒敏感點、潛意識直覺高峰與適合充電靜心的日子。',
-          meaning: ret.lunarReturn.meaningZh,
-          customWidget: ''
-        },
-        {
-          id: 'ret_more',
-          icon: '🪐',
-          titleZh: '更多週期循環（木星與火星回歸歷程）',
-          titleEn: 'More Planetary Cycles',
-          badgeText: '擴展與行動',
-          badgeClass: 'bg-amber-100 text-amber-900 border border-amber-300',
-          localStr: '木星回歸（約 12 年開展） ｜ 火星回歸（約 2 年爆發動力）',
-          subMeta: `${ret.moreCycles.jupiter.title} ｜ ${ret.moreCycles.mars.title}`,
-          simpleExplanation: '除了土星與天王星，木星（大吉星，12 年一遇信念擴張）與火星（行動之星，2 年一遇熱情重啟）也是生命中關鍵的加速引擎。',
-          meaning: `
-            <div class="space-y-3 text-xs sm:text-sm">
-              <div class="p-3 bg-white rounded-xl border border-amber-200">
-                <div class="flex items-center justify-between mb-1">
-                  <strong class="text-slate-900 flex items-center gap-1.5"><span>🌟</span> ${ret.moreCycles.jupiter.title}</strong>
-                  <span class="text-xs font-mono text-[#987315]">${ret.moreCycles.jupiter.dateLocalStr}</span>
-                </div>
-                <p class="text-slate-600 leading-relaxed">${ret.moreCycles.jupiter.meaning}</p>
-                <p class="text-[11px] text-slate-400 font-mono mt-0.5">國際標準時間：${ret.moreCycles.jupiter.dateUtcStr}</p>
-              </div>
-              <div class="p-3 bg-white rounded-xl border border-rose-200">
-                <div class="flex items-center justify-between mb-1">
-                  <strong class="text-slate-900 flex items-center gap-1.5"><span>🔥</span> ${ret.moreCycles.mars.title}</strong>
-                  <span class="text-xs font-mono text-rose-800">${ret.moreCycles.mars.dateLocalStr}</span>
-                </div>
-                <p class="text-slate-600 leading-relaxed">${ret.moreCycles.mars.meaning}</p>
-                <p class="text-[11px] text-slate-400 font-mono mt-0.5">國際標準時間：${ret.moreCycles.mars.dateUtcStr}</p>
-              </div>
-            </div>
-          `,
-          customWidget: ''
+          `, cycleKey: 'solarReturn', returnDate: ret.solarReturn.date
         }
       ];
+
+      // 將每個重要節點的精準時刻暫存，供獨立回歸人體圖使用。
+      currentReturnCycles = Object.fromEntries(cycles.map(c => [c.cycleKey, c]));
 
       container.innerHTML = cycles.map(c => `
         <div class="bg-white/95 hover:bg-white border border-[#C8A97E]/40 hover:border-[#C8A97E] rounded-2xl p-4 sm:p-5 transition shadow-xs hover:shadow-md text-slate-800">
@@ -2235,6 +2228,10 @@
           <!-- 專屬組件 (如太陽回歸年份選單) -->
           ${c.customWidget}
 
+          <button type="button" onclick="loadReturnChart('${c.cycleKey}')" class="mt-3 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1E261D] hover:bg-[#4A5D40] text-[#F7E7CE] border border-[#C8A97E]/60 text-xs font-black shadow-sm transition">
+            <span>🪐</span> 繪製此回歸能量圖
+          </button>
+
           <!-- 展開愛倫院長深度指引按鈕 -->
           <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100 cursor-pointer text-xs text-[#987315] font-bold" onclick="toggleReturnDetail('${c.id}')">
             <span class="flex items-center gap-1"><span>📖</span> 展開愛倫院長生命週期指引與生活魔藥</span>
@@ -2247,6 +2244,10 @@
           </div>
         </div>
       `).join('');
+      } catch (error) {
+        console.error('renderPlanetaryReturnsPanel failed:', error);
+        renderReturnFallbackCards(container);
+      }
     }
 
     function toggleReturnDetail(id) {
@@ -2261,6 +2262,130 @@
         if (chevron) chevron.style.transform = 'none';
       }
     }
+
+    // ==============================================================
+    // 🪐 獨立回歸人體圖：只操作 #return_bodygraph_svg，完全不碰本命 #bodygraph_svg
+    // ==============================================================
+    function createReturnBodygraphSvg() {
+      const source = document.getElementById('bodygraph_svg');
+      if (!source) throw new Error('找不到本命人體圖樣板');
+
+      const svg = source.cloneNode(true);
+      svg.id = 'return_bodygraph_svg';
+      svg.setAttribute('aria-label', '回歸人類圖能量人體圖');
+      const idMap = new Map();
+      svg.querySelectorAll('[id]').forEach(el => {
+        if (el === svg) return;
+        const oldId = el.id;
+        const newId = `return_${oldId}`;
+        idMap.set(oldId, newId);
+        el.id = newId;
+      });
+      svg.querySelectorAll('*').forEach(el => {
+        ['fill', 'stroke', 'filter', 'clip-path', 'mask', 'href'].forEach(attr => {
+          const value = el.getAttribute(attr);
+          if (!value) return;
+          let next = value;
+          idMap.forEach((newId, oldId) => { next = next.replaceAll(`#${oldId}`, `#${newId}`); });
+          if (next !== value) el.setAttribute(attr, next);
+        });
+      });
+      svg.querySelector('#return_svg_channels_layer').innerHTML = '';
+      svg.querySelector('#return_svg_gates_layer').innerHTML = '';
+      return svg;
+    }
+
+    function renderReturnBodygraph(returnHd) {
+      const mount = document.getElementById('return_bodygraph_mount');
+      if (!mount) return;
+      mount.replaceChildren();
+      const svg = createReturnBodygraphSvg();
+      mount.appendChild(svg);
+
+      const defCenters = new Set(returnHd.definedCenters || []);
+      svg.querySelectorAll('[data-center]').forEach(center => {
+        const key = (center.dataset.center || '').replace('_', ' ');
+        const base = center.querySelector('.crystal-base');
+        if (!base) return;
+        base.setAttribute('fill', defCenters.has(key) ? (CENTER_COLORS[key] || '#845B45') : '#FFFFFF');
+        base.setAttribute('stroke', defCenters.has(key) ? (CENTER_STROKES[key] || '#63402E') : '#94A3B8');
+        base.setAttribute('stroke-width', defCenters.has(key) ? '2' : '1.5');
+      });
+
+      const channelLayer = svg.querySelector('#return_svg_channels_layer');
+      const gateLayer = svg.querySelector('#return_svg_gates_layer');
+      const ns = 'http://www.w3.org/2000/svg';
+      const addPath = (d, stroke, width) => {
+        const p = document.createElementNS(ns, 'path');
+        p.setAttribute('d', d); p.setAttribute('fill', 'none'); p.setAttribute('stroke', stroke);
+        p.setAttribute('stroke-width', width); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+        channelLayer.appendChild(p);
+      };
+      HD_CHANNEL_PATHS.forEach(ch => { const d = splitChannelPath(ch).full; addPath(d, '#CBD5E1', '7.2'); addPath(d, '#FFFFFF', '4.8'); });
+      const colorFor = (d, p) => d && p ? 'url(#return_zebra_both)' : (d ? '#BE123C' : (p ? '#0F172A' : null));
+      HD_CHANNEL_PATHS.forEach(ch => {
+        const parts = splitChannelPath(ch);
+        const c1 = colorFor(returnHd.activeGates.design.has(ch.g1), returnHd.activeGates.personality.has(ch.g1));
+        const c2 = colorFor(returnHd.activeGates.design.has(ch.g2), returnHd.activeGates.personality.has(ch.g2));
+        if (c1 && c2 && c1 === c2) addPath(parts.full, c1, '4.8');
+        else { if (c1) addPath(parts.defHalf1, c1, '4.8'); if (c2) addPath(parts.defHalf2, c2, '4.8'); }
+      });
+
+      const gateCenter = {};
+      Object.entries(AstroCalc.HD_CENTERS || {}).forEach(([center, gates]) => gates.forEach(g => { gateCenter[g] = center; }));
+      for (let g = 1; g <= 64; g++) {
+        const point = GATE_COORDS[g]; if (!point) continue;
+        const [x, y] = point; const active = returnHd.activeGates.all.has(g);
+        const group = document.createElementNS(ns, 'g');
+        const circle = document.createElementNS(ns, 'circle');
+        circle.setAttribute('cx', x); circle.setAttribute('cy', y); circle.setAttribute('r', active ? '7.5' : '6.5');
+        circle.setAttribute('fill', active ? '#1E261D' : (defCenters.has(gateCenter[g]) ? '#FFFFFF' : '#F8FAFC'));
+        circle.setAttribute('stroke', active ? '#C8A97E' : '#94A3B8'); circle.setAttribute('stroke-width', active ? '1.2' : '0.7'); group.appendChild(circle);
+        const text = document.createElementNS(ns, 'text');
+        text.setAttribute('x', x); text.setAttribute('y', y + (active ? 2.7 : 2.4)); text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', active ? '#FFFFFF' : '#475569'); text.setAttribute('font-size', active ? '7.5' : '7'); text.setAttribute('font-weight', active ? '900' : '700');
+        text.setAttribute('font-family', 'ui-sans-serif, system-ui, sans-serif'); text.textContent = g; group.appendChild(text); gateLayer.appendChild(group);
+      }
+    }
+
+    window.loadReturnChart = function(cycleKey) {
+      try {
+        if (!currentReturnBirthUtc) throw new Error('請先完成本命人類圖排盤');
+        const cycle = currentReturnCycles[cycleKey];
+        if (!cycle || !(cycle.returnDate instanceof Date) || Number.isNaN(cycle.returnDate.getTime())) throw new Error('此回歸時刻暫時無法計算');
+        const returnHd = AstroCalc.calculateHumanDesignChart(cycle.returnDate);
+        if (!returnHd) throw new Error('回歸人類圖計算未完成');
+        renderReturnBodygraph(returnHd);
+
+        const natal = currentHdChart || AstroCalc.calculateHumanDesignChart(currentReturnBirthUtc);
+        const natalChannels = new Set((natal.definedChannels || []).map(c => c.id));
+        const addedChannels = (returnHd.definedChannels || []).filter(c => !natalChannels.has(c.id));
+        const natalCenters = new Set(natal.definedCenters || []);
+        const addedCenters = (returnHd.definedCenters || []).filter(c => !natalCenters.has(c));
+        const channelEl = document.getElementById('return_new_channels');
+        const centerEl = document.getElementById('return_new_centers');
+        channelEl.innerHTML = addedChannels.length ? addedChannels.map(c => `<span class="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 font-bold text-amber-900">${c.name}（${c.id}）</span>`).join('') : '<span class="text-slate-500">此時點未新增完整通道；請觀察既有天賦如何被重新點亮。</span>';
+        centerEl.innerHTML = addedCenters.length ? addedCenters.map(c => `<span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 font-bold text-emerald-900">${CENTER_NAMES[c] || c}</span>`).join('') : '<span class="text-slate-500">此時點未新增定義中心；穩定回到本命節奏，就是最好的調頻。</span>';
+        document.getElementById('return_chart_title').textContent = `🪐 ${cycle.titleZh} 能量圖`;
+        document.getElementById('return_chart_meta').textContent = cycle.localStr;
+        const age = (cycle.subMeta.match(/約 ([\d.]+) 歲/) || [])[1] || '--';
+        document.getElementById('return_chart_submeta').textContent = `回歸年齡：約 ${age} 歲 ｜ 此圖為獨立回歸盤，不影響本命圖`;
+        document.getElementById('return_rx').textContent = addedChannels.length || addedCenters.length
+          ? '把新增啟動視為這一階段的練習場：每天留一段安靜時間，先感受身體是否放鬆、呼吸是否變深，再依循內在權威安排承諾。讓新能量先有穩定的容器，行動自然會長出方向。'
+          : '這個週期更適合把力量收回日常：在一件已經做得好的事上，刻意放慢三分鐘，感受身體真正願意投入的節奏。穩定重複的小選擇，會讓本命天賦在此刻更清楚發光。';
+        const container = document.getElementById('hd_return_chart_container');
+        container.classList.remove('hidden');
+        requestAnimationFrame(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      } catch (error) {
+        console.error('loadReturnChart failed:', error);
+        alert(`回歸能量圖暫時無法繪製：${error.message}`);
+      }
+    };
+
+    window.closeReturnChart = function() {
+      const container = document.getElementById('hd_return_chart_container');
+      if (container) container.classList.add('hidden');
+    };
 
 
     // 雙人合盤全局快取
