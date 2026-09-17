@@ -614,17 +614,25 @@
       let drawnCards = [];
       let isShuffling = false;
 
-      // 牌陣完整設定 (符合用戶所有要求)
+      // 牌陣完整設定 (包含時間之流、聖三角、二擇一、三擇一、四要素、大藍圖等)
       const SPREADS = {
         tarot: [
-          { key: 'timeline', name: '⏳ 時間之流牌陣 (過去 · 現在 · 未來)', count: 3, labels: ['1. 源頭過去', '2. 當前核心', '3. 潛在走向'], layout: 'grid' },
+          { key: 'timeline', name: '⏳ 時間之流牌陣 (過去 · 現在 · 未來 · ☀️🌙⭐)', count: 3, labels: ['1. 源頭過去', '2. 當前核心', '3. 潛在走向'], layout: 'time_stream' },
+          { key: 'triangle', name: '🔺 聖三角抉擇牌陣 (起因 · 核心 · 破局 · 正三角拱照)', count: 3, labels: ['1. 起因源頭', '2. 當前核心課題', '3. 破局建言'], layout: 'triangle' },
+          { key: 'two_choices', name: '⚖️ 二擇一抉擇牌陣 (現況 ➔ 途徑A vs 途徑B · V字雙翼)', count: 5, labels: ['1. 當事人現況', '2. 選擇A當前狀況', '3. 選擇A未來發展', '4. 選擇B當前狀況', '5. 選擇B未來發展'], layout: 'two_choices' },
+          { key: 'three_choices', name: '🔱 三擇一抉擇牌陣 (現況 · 阻礙 · 環境 ➔ A/B/C 三叉戟發展)', count: 9, labels: [
+            '1. 當前現況', '2. 潛在阻礙', '3. 外在環境',
+            '4. 選擇A狀況', '5. 選擇A之後發展',
+            '6. 選擇B狀況', '7. 選擇B之後發展',
+            '8. 選擇C狀況', '9. 選擇C之後發展'
+          ], layout: 'three_choices' },
+          { key: 'four_elements', name: '🔮 四要素平衡牌陣 (火 · 水 · 風 · 土 四方圓滿)', count: 4, labels: ['1. 行動意志 (火)', '2. 情緒感知 (水)', '3. 思維理智 (風)', '4. 物質落地 (土)'], layout: 'four_elements' },
           { key: 'celtic_cross', name: '✝️ 凱爾特十字牌陣 (十張全方位透視大牌陣)', count: 10, labels: [
             '1. 當前現狀核心', '2. 交叉挑戰阻礙', '3. 潛意識深層根基', '4. 近期過去源頭',
             '5. 顯意識目標理想', '6. 近期發展趨勢', '7. 自身態度力量', '8. 外在環境他人',
             '9. 內在希望恐懼', '10. 最終神諭結果'
           ], layout: 'celtic' },
-          { key: 'single', name: '🎯 單張指引 (今日靈感與即刻處方)', count: 1, labels: ['當前核心指引'], layout: 'grid' },
-          { key: 'triangle', name: '🔺 聖三角抉擇 (核心 · 障礙 · 破局)', count: 3, labels: ['核心實況', '阻礙挑戰', '破局建言'], layout: 'grid' }
+          { key: 'single', name: '🎯 單張指引 (今日靈感與即刻處方)', count: 1, labels: ['當前核心指引'], layout: 'single' }
         ],
         ziwei: [
           { key: 'three_decks', name: '🌟 三組牌各一張牌陣 (主星 + 輔星 + 長生星 · 講義正統)', count: 3, labels: ['1. 主星牌 (核心運勢)', '2. 輔星牌 (外部助力/催化)', '3. 長生牌 (氣數旺衰/時間預測)'], layout: 'three_decks' },
@@ -653,13 +661,22 @@
           ], layout: 'twelve' }
         ],
         lenormand: [
-          { key: 'three_cards', name: '🌿 三張牌牌陣 (起因 ➔ 現況 ➔ 走向)', count: 3, labels: ['1. 起因源頭', '2. 當前關鍵', '3. 發展走向'], layout: 'three_cards' },
-          { key: 'five_cards', name: '✨ 五張牌牌陣 (過去 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果)', count: 5, labels: ['1. 過去背景', '2. 外部影響', '3. 核心焦點', '4. 課題考驗', '5. 最終趨勢'], layout: 'five_cards' },
+          { key: 'timeline', name: '⏳ 時間之流牌陣 (起因 ➔ 當前 ➔ 走向 · ☀️🌙⭐)', count: 3, labels: ['1. 起因源頭 (☀️ 太陽)', '2. 當前關鍵 (🌙 月亮)', '3. 發展走向 (⭐ 星辰)'], layout: 'time_stream' },
+          { key: 'triangle', name: '🔺 聖三角抉擇牌陣 (起因 · 核心 · 破局 · 正三角拱照)', count: 3, labels: ['1. 起因源頭', '2. 當前核心課題', '3. 破局建言'], layout: 'triangle' },
+          { key: 'two_choices', name: '⚖️ 二擇一抉擇牌陣 (現況 ➔ 途徑A vs 途徑B · V字雙翼)', count: 5, labels: ['1. 當事人現況', '2. 選擇A當前狀況', '3. 選擇A未來發展', '4. 選擇B當前狀況', '5. 選擇B未來發展'], layout: 'two_choices' },
+          { key: 'three_choices', name: '🔱 三擇一抉擇牌陣 (現況 · 阻礙 · 環境 ➔ A/B/C 三叉戟發展)', count: 9, labels: [
+            '1. 當前現況', '2. 潛在阻礙', '3. 外在環境',
+            '4. 選擇A狀況', '5. 選擇A之後發展',
+            '6. 選擇B狀況', '7. 選擇B之後發展',
+            '8. 選擇C狀況', '9. 選擇C之後發展'
+          ], layout: 'three_choices' },
           { key: 'nine_box', name: '🎴 九張牌九宮格牌陣 (3x3 Box Spread · 大局透視)', count: 9, labels: [
             '1. 過去思維', '2. 當前環境', '3. 未來指引',
             '4. 過去感受', '5. 核心命門', '6. 未來走向',
             '7. 過去行動', '8. 外在考驗', '9. 最終啟示'
           ], layout: 'nine_box' },
+          { key: 'five_cards', name: '✨ 五張牌牌陣 (過去 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果)', count: 5, labels: ['1. 過去背景', '2. 外部影響', '3. 核心焦點', '4. 課題考驗', '5. 最終趨勢'], layout: 'five_cards' },
+          { key: 'grand_tableau', name: '🌟 大藍圖全覽大牌陣 (Grand Tableau · 36張全套 8x4+4 沙龍正統)', count: 36, labels: Array.from({length: 36}, (_, i) => `第 ${i + 1} 宮位`), layout: 'grand_tableau' },
           { key: 'single', name: '🌱 單張日運指引 (日常核心微事件)', count: 1, labels: ['今日核心象徵'], layout: 'single' }
         ]
       };
@@ -933,6 +950,24 @@
         } else if (layout === 'twelve') {
           // 十二宮專屬排版（4x4 迴廊環圈 + 天盤中庭）
           stage.innerHTML = renderTwelvePalacesLayout();
+        } else if (layout === 'time_stream') {
+          // 時間之流專屬排版 (日月星 3 張水平並列)
+          stage.innerHTML = renderTimeStreamLayout();
+        } else if (layout === 'triangle') {
+          // 聖三角專屬正三角形排版 (頂1 底2)
+          stage.innerHTML = renderTriangleLayout();
+        } else if (layout === 'two_choices') {
+          // 二擇一專屬 V 字雙翼排版 (左2 右2 底1)
+          stage.innerHTML = renderTwoChoicesLayout();
+        } else if (layout === 'three_choices') {
+          // 三擇一專屬三叉戟排版 (頂3 中3 中下2 底1)
+          stage.innerHTML = renderThreeChoicesLayout();
+        } else if (layout === 'grand_tableau') {
+          // 雷諾曼大藍圖專屬排版 (36張全開 8x4+4 沙龍正統)
+          stage.innerHTML = renderGrandTableauLayout();
+        } else if (layout === 'four_elements') {
+          // 四要素平衡排版 (火水風土)
+          stage.innerHTML = renderFourElementsLayout();
         } else if (layout === 'nine_box') {
           // 九宮格 3x3 排版
           stage.innerHTML = renderNineBoxLayout();
@@ -949,6 +984,366 @@
           // 標準網格排版 (1, 3, 4, 5 張)
           stage.innerHTML = renderStandardGridLayout();
         }
+      }
+
+      // ─── 時間之流牌陣 (過去 · 現在 · 未來 · ☀️ 🌙 ⭐ 意象) ───
+      function renderTimeStreamLayout() {
+        if (drawnCards.length < 3) return renderStandardGridLayout();
+        const emblems = [
+          { symbol: '☀️', title: '太陽 · 過去源起', desc: '已定錨之歷程與因由', bg: 'bg-amber-100 text-amber-900 border-amber-300' },
+          { symbol: '🌙', title: '月亮 · 當前核心', desc: '正在流動的心念潮汐', bg: 'bg-indigo-100 text-indigo-950 border-indigo-300' },
+          { symbol: '⭐', title: '星辰 · 未來走向', desc: '引領前行之潛在願景', bg: 'bg-purple-100 text-purple-950 border-purple-300' }
+        ];
+
+        return `
+          <div class="max-w-5xl mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 via-stone-100 to-amber-50 rounded-2xl border border-amber-200/70 text-xs font-black text-amber-950 shadow-2xs text-center">
+              <span>⏳ 時間之流牌陣 (Timeline Spread) · 日月星三相時間長河透視</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 p-4 sm:p-6 rounded-3xl bg-stone-900/5 border border-stone-300/70 shadow-inner items-start">
+              ${[0, 1, 2].map(idx => `
+                <div class="flex flex-col items-center">
+                  <!-- 日月星宇宙符號 -->
+                  <div class="flex items-center gap-2 mb-2 px-3 py-1 rounded-full border ${emblems[idx].bg} shadow-xs">
+                    <span class="text-base">${emblems[idx].symbol}</span>
+                    <span class="text-xs font-black font-serif">${emblems[idx].title}</span>
+                  </div>
+                  <span class="text-[10px] text-stone-500 mb-2 font-serif">${emblems[idx].desc}</span>
+                  <div class="w-full max-w-[210px]">
+                    ${renderCardHtml(drawnCards[idx], idx, 'three')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // ─── 聖三角抉擇牌陣 (正三角形佈局：頂1 · 底2) ───
+      function renderTriangleLayout() {
+        if (drawnCards.length < 3) return renderStandardGridLayout();
+        // 經典正三角形結構：
+        // 上方：第 2 張 (drawnCards[1]: 當前核心課題)
+        // 下方：左側 第 1 張 (drawnCards[0]: 起因源頭)，右側 第 3 張 (drawnCards[2]: 破局建言)
+        return `
+          <div class="max-w-4xl mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-200 text-xs font-black text-amber-950 shadow-2xs text-center">
+              <span>🔺 聖三角抉擇牌陣 (Holy Triangle Spread) · 上頂焦點神諭與基石雙翼</span>
+            </div>
+
+            <div class="relative p-4 sm:p-8 rounded-3xl bg-stone-900/5 border border-stone-300/70 shadow-inner flex flex-col items-center gap-6 sm:gap-8 overflow-hidden">
+              <!-- 神聖幾何三角形背景微光線 -->
+              <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="0 0 400 300" preserveAspectRatio="none">
+                <polygon points="200,30 60,260 340,260" fill="none" stroke="#C8A97E" stroke-width="1.8" stroke-dasharray="6 4" />
+              </svg>
+
+              <!-- 頂部中央：第 2 張 (當前核心課題 / 焦點命門) -->
+              <div class="relative flex flex-col items-center z-10">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500 text-stone-950 text-xs font-black mb-2 shadow-md">
+                  <span>★ 頂點核心課題 (焦點神諭)</span>
+                </div>
+                <div class="w-full max-w-[190px] sm:max-w-[210px] ring-2 ring-amber-400 rounded-2xl p-1 bg-amber-400/10 shadow-lg">
+                  ${renderCardHtml(drawnCards[1], 1, 'three')}
+                </div>
+              </div>
+
+              <!-- 下層左右基石：左第 1 張 (起因)，右第 3 張 (破局) -->
+              <div class="w-full max-w-2xl flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-12 z-10">
+                <!-- 左翼：第 1 張 -->
+                <div class="flex flex-col items-center">
+                  <div class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-stone-200 text-stone-800 text-xs font-black mb-2 border border-stone-300 shadow-2xs">
+                    <span>1. 起因源頭 (過去深層)</span>
+                  </div>
+                  <div class="w-full max-w-[180px] sm:max-w-[200px]">
+                    ${renderCardHtml(drawnCards[0], 0, 'three')}
+                  </div>
+                </div>
+
+                <!-- 右翼：第 3 張 -->
+                <div class="flex flex-col items-center">
+                  <div class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-stone-200 text-stone-800 text-xs font-black mb-2 border border-stone-300 shadow-2xs">
+                    <span>3. 破局建言 (未來走向)</span>
+                  </div>
+                  <div class="w-full max-w-[180px] sm:max-w-[200px]">
+                    ${renderCardHtml(drawnCards[2], 2, 'three')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ─── 二擇一抉擇牌陣 (V 字雙翼佈局：左2 · 右2 · 底1) ───
+      function renderTwoChoicesLayout() {
+        if (drawnCards.length < 5) return renderStandardGridLayout();
+        return `
+          <div class="max-w-5xl mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-200 text-xs font-black text-amber-950 shadow-2xs text-center">
+              <span>⚖️ 二擇一抉擇牌陣 (Two-Choice Spread) · 途徑 A 與途徑 B 雙翼因果對比</span>
+            </div>
+
+            <div class="relative p-4 sm:p-6 rounded-3xl bg-stone-900/5 border border-stone-300/70 shadow-inner flex flex-col items-center gap-4">
+              <!-- 上兩層雙翼 (選擇 A vs 選擇 B) -->
+              <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-12">
+                <!-- 左翼：選擇 A 途徑 -->
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-amber-500/5 border border-amber-300/60 shadow-xs">
+                  <div class="px-4 py-1 rounded-full bg-amber-600 text-amber-50 text-xs font-black mb-3 shadow-2xs tracking-wider">
+                    【途徑 A 抉擇分枝】
+                  </div>
+                  <div class="flex flex-col items-center gap-4 w-full">
+                    <!-- 選擇 A 之未來發展 (第 3 張) -->
+                    <div class="flex flex-col items-center w-full max-w-[170px]">
+                      <span class="text-[11px] font-black text-stone-600 mb-1">③ 選擇 A 之後的發展</span>
+                      ${renderCardHtml(drawnCards[2], 2, 'five')}
+                    </div>
+                    <!-- 選擇 A 之當前狀況 (第 2 張) -->
+                    <div class="flex flex-col items-center w-full max-w-[170px]">
+                      <span class="text-[11px] font-black text-stone-600 mb-1">② 選擇 A 的當前狀況</span>
+                      ${renderCardHtml(drawnCards[1], 1, 'five')}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 右翼：選擇 B 途徑 -->
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-blue-500/5 border border-blue-300/60 shadow-xs">
+                  <div class="px-4 py-1 rounded-full bg-slate-700 text-blue-100 text-xs font-black mb-3 shadow-2xs tracking-wider">
+                    【途徑 B 抉擇分枝】
+                  </div>
+                  <div class="flex flex-col items-center gap-4 w-full">
+                    <!-- 選擇 B 之未來發展 (第 5 張) -->
+                    <div class="flex flex-col items-center w-full max-w-[170px]">
+                      <span class="text-[11px] font-black text-stone-600 mb-1">⑤ 選擇 B 之後的發展</span>
+                      ${renderCardHtml(drawnCards[4], 4, 'five')}
+                    </div>
+                    <!-- 選擇 B 之當前狀況 (第 4 張) -->
+                    <div class="flex flex-col items-center w-full max-w-[170px]">
+                      <span class="text-[11px] font-black text-stone-600 mb-1">④ 選擇 B 的當前狀況</span>
+                      ${renderCardHtml(drawnCards[3], 3, 'five')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 底層居中：① 當事人主觀看法 / 目前狀況 -->
+              <div class="flex flex-col items-center mt-2 pt-4 border-t border-stone-300/80 w-full">
+                <div class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-[#182622] text-[#F7E7CE] text-xs font-black mb-2 shadow-md">
+                  <span>① 當事人當前本體現況 (核心立足點)</span>
+                </div>
+                <div class="w-full max-w-[180px] sm:max-w-[200px]">
+                  ${renderCardHtml(drawnCards[0], 0, 'three')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ─── 三擇一抉擇牌陣 (三叉戟佈局：頂3 · 中3 · 中下2 · 底1) ───
+      function renderThreeChoicesLayout() {
+        if (drawnCards.length < 9) return renderStandardGridLayout();
+        return `
+          <div class="max-w-6xl mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-200 text-xs font-black text-amber-950 shadow-2xs text-center">
+              <span>🔱 三擇一抉擇牌陣 (Three-Choice Spread) · A / B / C 三大路徑與環境基底</span>
+            </div>
+
+            <div class="p-4 sm:p-6 rounded-3xl bg-stone-900/5 border border-stone-300/70 shadow-inner flex flex-col items-center gap-6">
+              <!-- 頂層與中層：三路抉擇發展 -->
+              <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <!-- 途徑 A -->
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-amber-500/5 border border-amber-300/60">
+                  <div class="px-3 py-0.5 rounded-full bg-amber-600 text-white text-xs font-black mb-3">【選項 A】</div>
+                  <div class="flex flex-col items-center gap-3 w-full">
+                    <div class="w-full max-w-[145px] sm:max-w-[160px] flex flex-col items-center">
+                      <span class="text-[10px] font-black text-stone-600 mb-1">⑤ 選擇 A 之後發展</span>
+                      ${renderCardHtml(drawnCards[4], 4, 'nine_box')}
+                    </div>
+                    <div class="w-full max-w-[145px] sm:max-w-[160px] flex flex-col items-center">
+                      <span class="text-[10px] font-black text-stone-600 mb-1">④ 選擇 A 的狀況</span>
+                      ${renderCardHtml(drawnCards[3], 3, 'nine_box')}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 途徑 B -->
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-indigo-500/5 border border-indigo-300/60">
+                  <div class="px-3 py-0.5 rounded-full bg-indigo-600 text-white text-xs font-black mb-3">【選項 B】</div>
+                  <div class="flex flex-col items-center gap-3 w-full">
+                    <div class="w-full max-w-[145px] sm:max-w-[160px] flex flex-col items-center">
+                      <span class="text-[10px] font-black text-stone-600 mb-1">⑦ 選擇 B 之後發展</span>
+                      ${renderCardHtml(drawnCards[6], 6, 'nine_box')}
+                    </div>
+                    <div class="w-full max-w-[145px] sm:max-w-[160px] flex flex-col items-center">
+                      <span class="text-[10px] font-black text-stone-600 mb-1">⑥ 選擇 B 的狀況</span>
+                      ${renderCardHtml(drawnCards[5], 5, 'nine_box')}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 途徑 C -->
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-emerald-500/5 border border-emerald-300/60">
+                  <div class="px-3 py-0.5 rounded-full bg-emerald-700 text-white text-xs font-black mb-3">【選項 C】</div>
+                  <div class="flex flex-col items-center gap-3 w-full">
+                    <div class="w-full max-w-[145px] sm:max-w-[160px] flex flex-col items-center">
+                      <span class="text-[10px] font-black text-stone-600 mb-1">⑨ 選擇 C 之後發展</span>
+                      ${renderCardHtml(drawnCards[8], 8, 'nine_box')}
+                    </div>
+                    <div class="w-full max-w-[145px] sm:max-w-[160px] flex flex-col items-center">
+                      <span class="text-[10px] font-black text-stone-600 mb-1">⑧ 選擇 C 的狀況</span>
+                      ${renderCardHtml(drawnCards[7], 7, 'nine_box')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 中下層：現況與阻礙 -->
+              <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 pt-4 border-t border-stone-300/70 w-full">
+                <div class="w-full max-w-[160px] flex flex-col items-center">
+                  <span class="text-[11px] font-black text-stone-700 bg-stone-200 px-2 py-0.5 rounded-full mb-1">① 當前現況</span>
+                  ${renderCardHtml(drawnCards[0], 0, 'five')}
+                </div>
+                <div class="w-full max-w-[160px] flex flex-col items-center">
+                  <span class="text-[11px] font-black text-stone-700 bg-stone-200 px-2 py-0.5 rounded-full mb-1">② 潛在阻礙</span>
+                  ${renderCardHtml(drawnCards[1], 1, 'five')}
+                </div>
+              </div>
+
+              <!-- 最底層：外在環境總基底 -->
+              <div class="flex flex-col items-center pt-2">
+                <div class="w-full max-w-[160px] flex flex-col items-center">
+                  <span class="text-[11px] font-black text-amber-900 bg-amber-100 px-3 py-0.5 rounded-full mb-1 border border-amber-300">③ 外在環境基石</span>
+                  ${renderCardHtml(drawnCards[2], 2, 'five')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ─── 四要素平衡牌陣 (火 · 水 · 風 · 土 四象限) ───
+      function renderFourElementsLayout() {
+        if (drawnCards.length < 4) return renderStandardGridLayout();
+        const elementBadges = [
+          { name: '🔥 行動意志 (火要素)', color: 'border-rose-400 bg-rose-50 text-rose-800' },
+          { name: '💧 情緒感知 (水要素)', color: 'border-blue-400 bg-blue-50 text-blue-800' },
+          { name: '🌬️ 思維理智 (風要素)', color: 'border-amber-400 bg-amber-50 text-amber-800' },
+          { name: '🌱 物質落地 (土要素)', color: 'border-emerald-400 bg-emerald-50 text-emerald-800' }
+        ];
+
+        return `
+          <div class="max-w-4xl mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-200 text-xs font-black text-amber-950 shadow-2xs text-center">
+              <span>🔮 四要素平衡牌陣 · 火/水/風/土 四方能量場</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 sm:p-6 rounded-3xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
+              ${[0, 1, 2, 3].map(idx => `
+                <div class="flex flex-col items-center p-3 rounded-2xl border ${elementBadges[idx].color} bg-white/70 shadow-xs">
+                  <span class="text-xs font-black mb-2">${elementBadges[idx].name}</span>
+                  <div class="w-full max-w-[180px]">
+                    ${renderCardHtml(drawnCards[idx], idx, 'five')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // ─── 雷諾曼大藍圖牌陣 (Grand Tableau · 36張全套 8x4+4 沙龍正統) ───
+      function renderGrandTableauLayout() {
+        if (drawnCards.length < 36) return renderStandardGridLayout();
+        const rowThemes = [
+          { name: '火 · 精神意志', color: 'text-rose-600 bg-rose-50 border-rose-200' },
+          { name: '風 · 思維溝通', color: 'text-amber-600 bg-amber-50 border-amber-200' },
+          { name: '水 · 情感人際', color: 'text-blue-600 bg-blue-50 border-blue-200' },
+          { name: '土 · 物質現實', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' }
+        ];
+
+        return `
+          <div class="w-full max-w-[1300px] mx-auto space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-[#182622] rounded-2xl border border-[#C8A97E] text-[#F7E7CE] shadow-md">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-black font-serif">🌟 雷諾曼大藍圖全覽神殿 (Grand Tableau · 8×4 + 4)</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-blue-400 bg-blue-900/60 text-blue-200 font-bold">
+                  <span class="w-2 h-2 rounded-full bg-blue-400"></span> 男人 (28 號主角)
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-pink-400 bg-pink-900/60 text-pink-200 font-bold">
+                  <span class="w-2 h-2 rounded-full bg-pink-400"></span> 女人 (29 號主角)
+                </span>
+              </div>
+            </div>
+
+            <div class="p-2 sm:p-5 rounded-3xl bg-[#0F1715] border-2 border-[#C8A97E]/70 shadow-2xl overflow-x-auto">
+              <!-- 前 4 排：每排 8 張 -->
+              <div class="space-y-3 min-w-[760px]">
+                ${[0, 1, 2, 3].map(rowIdx => `
+                  <div class="flex items-center gap-2">
+                    <div class="w-12 sm:w-16 shrink-0 py-2 rounded-xl text-center border font-black text-[10px] sm:text-xs font-serif ${rowThemes[rowIdx].color}">
+                      ${rowThemes[rowIdx].name}
+                    </div>
+                    <div class="grid grid-cols-8 gap-1.5 sm:gap-2 flex-1">
+                      ${Array.from({ length: 8 }).map((_, colIdx) => {
+                        const cardIdx = rowIdx * 8 + colIdx;
+                        const item = drawnCards[cardIdx];
+                        const c = item.card;
+                        const isMan = c.id === 'l_28' || String(c.name).includes('男人') || String(c.name).includes('紳士');
+                        const isWoman = c.id === 'l_29' || String(c.name).includes('女人') || String(c.name).includes('淑女');
+                        const specialClass = isMan ? 'ring-3 ring-blue-500 rounded-xl shadow-[0_0_12px_rgba(59,130,246,0.8)]' : (isWoman ? 'ring-3 ring-pink-500 rounded-xl shadow-[0_0_12px_rgba(236,72,153,0.8)]' : '');
+                        return `
+                          <div class="relative flex flex-col items-center ${specialClass}">
+                            <div class="w-full aspect-[1/1.54]">
+                              ${renderCardHtml(item, cardIdx, 'tableau')}
+                            </div>
+                            <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 z-20">
+                              <span class="px-1 py-0.2 rounded-full bg-stone-900/90 border border-stone-600 text-stone-300 text-[8px] font-mono">
+                                H${cardIdx + 1}
+                              </span>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `).join('')}
+
+                <!-- 第 5 排：4 張命運總結卡，居中對齊 3, 4, 5, 6 欄 -->
+                <div class="flex items-center gap-2 pt-2">
+                  <div class="w-12 sm:w-16 shrink-0 py-2 rounded-xl text-center border font-black text-[10px] sm:text-xs font-serif text-amber-300 bg-amber-950/60 border-amber-500">
+                    命運走向
+                  </div>
+                  <div class="grid grid-cols-8 gap-1.5 sm:gap-2 flex-1">
+                    <div class="col-span-2"></div>
+                    ${[32, 33, 34, 35].map(cardIdx => {
+                      const item = drawnCards[cardIdx];
+                      const c = item.card;
+                      const isMan = c.id === 'l_28' || String(c.name).includes('男人') || String(c.name).includes('紳士');
+                      const isWoman = c.id === 'l_29' || String(c.name).includes('女人') || String(c.name).includes('淑女');
+                      const specialClass = isMan ? 'ring-3 ring-blue-500 rounded-xl shadow-[0_0_12px_rgba(59,130,246,0.8)]' : (isWoman ? 'ring-3 ring-pink-500 rounded-xl shadow-[0_0_12px_rgba(236,72,153,0.8)]' : '');
+                      return `
+                        <div class="relative flex flex-col items-center ${specialClass}">
+                          <div class="w-full aspect-[1/1.54]">
+                            ${renderCardHtml(item, cardIdx, 'tableau')}
+                          </div>
+                          <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 z-20">
+                            <span class="px-1 py-0.2 rounded-full bg-amber-500 text-stone-950 text-[8px] font-bold">
+                              ★ ${cardIdx + 1}
+                            </span>
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                    <div class="col-span-2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       // 標準網格
