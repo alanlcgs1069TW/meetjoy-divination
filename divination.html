@@ -16,7 +16,6 @@
   <!-- 卡牌資料庫與全站導航 -->
   <script src="./js/ziwei-cards-complete.js?v=2026"></script>
   <script src="./js/divination-cards.js?v=2026"></script>
-  <script src="./js/divination-flowing.js?v=2026"></script>
   <script src="./js/meetjoy-nav.js"></script>
   <script src="./js/meetjoy-protect.js"></script>
   <script src="./js/meetjoy-universal-profiles.js"></script>
@@ -658,26 +657,7 @@
       </p>
     </div>
 
-    <!-- 雙模式無縫切換器 (View Mode Switcher) -->
-    <div class="w-full max-w-4xl flex flex-wrap items-center justify-between gap-3 mb-6 p-2 sm:p-3 bg-stone-100/80 rounded-2xl border border-stone-200 shadow-xs">
-      <div class="flex items-center gap-2">
-        <span class="text-xs font-serif font-black text-[#1F261C] flex items-center gap-1.5">
-          <span>🔮 占卜體驗視圖：</span>
-        </span>
-        <span class="text-[11px] text-stone-500 hidden sm:inline">自由切換「傳統儀式排盤」或「極簡禪意流動抽卡」</span>
-      </div>
-      <div class="inline-flex p-1 bg-stone-200/90 rounded-xl border border-stone-300 shadow-inner text-xs font-black">
-        <button type="button" id="btn_mode_classic" class="px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer">
-          <span>🪄 經典工坊模式</span>
-        </button>
-        <button type="button" id="btn_mode_flowing" class="px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer">
-          <span>🌊 沉浸流動模式</span>
-          <span class="px-1.5 py-0.2 rounded-full bg-amber-400 text-stone-950 text-[9px] font-black">NEW</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- 經典工坊模式容器 (Classic Atelier View) -->
+    <!-- 占卜工坊容器 (Atelier View) -->
     <div id="classic_view_container" class="w-full flex flex-col items-center">
 
       <!-- 三大占卜系統主切換 Tabs -->
@@ -778,18 +758,13 @@
     </div>
 
     </div>
-    <!-- 經典工坊模式容器結束 (Classic View End) -->
-
-    <!-- 沉浸流動模式容器 (Flowing Zen Mode View) -->
-    <div id="flowing_view_container" class="w-full flex flex-col items-center hidden">
-      <!-- 由 FlowingDivination 動態注入完整流動抽卡體驗 -->
-    </div>
+    <!-- 占卜工坊容器結束 -->
 
   </main>
 
   <!-- 底部版權 -->
   <footer id="main_footer" class="w-full py-8 text-center text-xs text-stone-400 font-bold bg-transparent">
-    <p>© 2026 癒見幸福療身心靈推廣中心 · 魔法占星學院 · 愛倫院長精神導師</p>
+    <p>© 2026 癒見幸福療 · 魔法占星學院 · 愛倫院長精神導師</p>
   </footer>
 
   <!-- 全螢幕卡牌圖片放大幻燈片模式 (Card Lightbox Slideshow Modal) -->
@@ -1144,65 +1119,9 @@
         ]
       };
 
-      let currentViewMode = 'classic'; // 'classic' | 'flowing'
-      let flowingInstance = null;
-
-      function setupViewModeSwitcher() {
-        const btnClassic = document.getElementById('btn_mode_classic');
-        const btnFlowing = document.getElementById('btn_mode_flowing');
-        const classicContainer = document.getElementById('classic_view_container');
-        const flowingContainer = document.getElementById('flowing_view_container');
-
-        if (!btnClassic || !btnFlowing || !classicContainer || !flowingContainer) return;
-
-        // 初始化 FlowingDivination 實例
-        if (window.FlowingDivination && !flowingInstance) {
-          flowingInstance = new window.FlowingDivination('flowing_view_container');
-        }
-
-        function applyMode(mode, save = true) {
-          currentViewMode = mode;
-          if (save) {
-            try { localStorage.setItem('mj_divination_view_mode', mode); } catch (e) {}
-          }
-
-          if (mode === 'flowing') {
-            classicContainer.classList.add('hidden');
-            flowingContainer.classList.remove('hidden');
-
-            btnFlowing.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer';
-            btnClassic.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer';
-
-            if (flowingInstance) {
-              flowingInstance.init(currentSystem, currentSpreadKey);
-            }
-          } else {
-            flowingContainer.classList.add('hidden');
-            classicContainer.classList.remove('hidden');
-
-            btnClassic.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer';
-            btnFlowing.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer';
-
-            const mainFooter = document.getElementById('main_footer');
-            if (mainFooter) mainFooter.style.display = 'block';
-          }
-        }
-
-        btnClassic.addEventListener('click', () => applyMode('classic'));
-        btnFlowing.addEventListener('click', () => applyMode('flowing'));
-
-        // 讀取初始設定
-        const urlParams = new URLSearchParams(window.location.search);
-        const modeParam = urlParams.get('mode');
-        let savedMode = null;
-        try { savedMode = localStorage.getItem('mj_divination_view_mode'); } catch (e) {}
-
-        if (modeParam === 'flowing' || (!modeParam && savedMode === 'flowing')) {
-          applyMode('flowing', false);
-        } else {
-          applyMode('classic', false);
-        }
-      }
+      // 12 地支依順時針方位固定環繞 4x4 天盤外圈（從寅起順時針：寅卯辰巳午未申酉戌亥子丑）
+      const EARTHLY_BRANCHES = ['寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑'];
+      let ziweiMingBranchIdx = 9; // 預設 9 (亥)，每次抽牌時隨機 0~11
 
       // 初始化頁面
       function init() {
@@ -1216,7 +1135,6 @@
         setupActions();
         resetAndDraw();
         updateZiweiCopyrightCard();
-        setupViewModeSwitcher();
       }
 
       // 控制紫微智慧財產專屬卡片顯示
@@ -1261,9 +1179,6 @@
             updateZiweiCopyrightCard();
             setupSpreadOptions();
             resetAndDraw();
-            if (flowingInstance) {
-              flowingInstance.init(currentSystem, currentSpreadKey);
-            }
           });
         });
       }
@@ -1279,9 +1194,6 @@
         select.onchange = (e) => {
           currentSpreadKey = e.target.value;
           resetAndDraw();
-          if (flowingInstance) {
-            flowingInstance.setSpread(currentSpreadKey);
-          }
         };
       }
 
@@ -1312,29 +1224,38 @@
               { card: lifeList[0], positionLabel: spread.labels[2], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'life', badgeNum: '3' }
             ];
           } else if (spread.key === 'san_fang_si_zheng') {
-            // 三方四正：命宮、遷移、官祿、財帛 各一主星一輔星 (8張) + 十二長生 (1張) = 共 9 張
+            // 三方四正：命宮隨機安排進十二地支宮位 (0~11: 寅~丑)，遷移/官祿/財帛依三方四正地支對應
+            // 命宮、遷移、官祿、財帛 各一主星一輔星 (8張) + 十二長生 (1張) = 共 9 張
+            ziweiMingBranchIdx = Math.floor(Math.random() * 12);
+            const bMing = EARTHLY_BRANCHES[ziweiMingBranchIdx];
+            const bQian = EARTHLY_BRANCHES[(ziweiMingBranchIdx - 6 + 12) % 12];
+            const bGuan = EARTHLY_BRANCHES[(ziweiMingBranchIdx - 8 + 12) % 12];
+            const bCai = EARTHLY_BRANCHES[(ziweiMingBranchIdx - 4 + 12) % 12];
+
             const majorList = [...zwDb.getGroup('major')].sort(() => Math.random() - 0.5);
             const assistList = [...zwDb.getGroup('assistant')].sort(() => Math.random() - 0.5);
             const lifeList = [...zwDb.getGroup('life')].sort(() => Math.random() - 0.5);
 
             drawnCards = [
               // 命宮
-              { card: majorList[0], positionLabel: spread.labels[0], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: '命宮', role: '主星' },
-              { card: assistList[0], positionLabel: spread.labels[1], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: '命宮', role: '輔星' },
+              { card: majorList[0], positionLabel: `命宮 (${bMing}位) · 主星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: `命宮 (${bMing}位)`, role: '主星' },
+              { card: assistList[0], positionLabel: `命宮 (${bMing}位) · 輔星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: `命宮 (${bMing}位)`, role: '輔星' },
               // 遷移宮
-              { card: majorList[1], positionLabel: spread.labels[2], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: '遷移宮', role: '主星' },
-              { card: assistList[1], positionLabel: spread.labels[3], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: '遷移宮', role: '輔星' },
+              { card: majorList[1], positionLabel: `遷移宮 (${bQian}位) · 主星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: `遷移宮 (${bQian}位)`, role: '主星' },
+              { card: assistList[1], positionLabel: `遷移宮 (${bQian}位) · 輔星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: `遷移宮 (${bQian}位)`, role: '輔星' },
               // 官祿宮
-              { card: majorList[2], positionLabel: spread.labels[4], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: '官祿宮', role: '主星' },
-              { card: assistList[2], positionLabel: spread.labels[5], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: '官祿宮', role: '輔星' },
+              { card: majorList[2], positionLabel: `官祿宮 (${bGuan}位) · 主星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: `官祿宮 (${bGuan}位)`, role: '主星' },
+              { card: assistList[2], positionLabel: `官祿宮 (${bGuan}位) · 輔星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: `官祿宮 (${bGuan}位)`, role: '輔星' },
               // 財帛宮
-              { card: majorList[3], positionLabel: spread.labels[6], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: '財帛宮', role: '主星' },
-              { card: assistList[3], positionLabel: spread.labels[7], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: '財帛宮', role: '輔星' },
+              { card: majorList[3], positionLabel: `財帛宮 (${bCai}位) · 主星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'major', palace: `財帛宮 (${bCai}位)`, role: '主星' },
+              { card: assistList[3], positionLabel: `財帛宮 (${bCai}位) · 輔星`, isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'assistant', palace: `財帛宮 (${bCai}位)`, role: '輔星' },
               // 十二長生
               { card: lifeList[0], positionLabel: spread.labels[8], isReversed: Math.random() > 0.5, isFlipped: false, cardType: 'life', palace: '時輪', role: '十二長生' }
             ];
           } else if (spread.key === 'twelve_palaces') {
-            // 十二宮大牌陣：12宮各抽一主星一輔星 (24張) + 天盤中庭身宮主星+長生星 (2張) = 共 26 張
+            // 十二宮大牌陣：命宮隨機安排進十二地支宮位 (0~11: 寅~丑)，其餘宮位依傳統斗數逆時針排盤
+            // 12宮各抽一主星一輔星 (24張) + 天盤中庭身宮主星+長生星 (2張) = 共 26 張
+            ziweiMingBranchIdx = Math.floor(Math.random() * 12);
             const majorList = [...zwDb.getGroup('major')].sort(() => Math.random() - 0.5);
             const assistList = [...zwDb.getGroup('assistant')].sort(() => Math.random() - 0.5);
             const lifeList = [...zwDb.getGroup('life')].sort(() => Math.random() - 0.5);
@@ -1342,22 +1263,25 @@
             drawnCards = [];
             const palaceNames = ['命宮', '兄弟宮', '夫妻宮', '子女宮', '財帛宮', '疾厄宮', '遷移宮', '僕役宮', '官祿宮', '田宅宮', '福德宮', '父母宮'];
             for (let i = 0; i < 12; i++) {
+              // 宮位 i 對應的地支：從命宮地支開始，逆時針排十二宮
+              const branchIdx = (ziweiMingBranchIdx - i + 12) % 12;
+              const branchName = EARTHLY_BRANCHES[branchIdx];
               drawnCards.push({
                 card: majorList[i],
-                positionLabel: `${palaceNames[i]} · 主星`,
+                positionLabel: `${palaceNames[i]} (${branchName}位) · 主星`,
                 isReversed: Math.random() > 0.5,
                 isFlipped: false,
                 cardType: 'major',
-                palace: palaceNames[i],
+                palace: `${palaceNames[i]} (${branchName}位)`,
                 role: '主星'
               });
               drawnCards.push({
                 card: assistList[i],
-                positionLabel: `${palaceNames[i]} · 輔星`,
+                positionLabel: `${palaceNames[i]} (${branchName}位) · 輔星`,
                 isReversed: Math.random() > 0.5,
                 isFlipped: false,
                 cardType: 'assistant',
-                palace: palaceNames[i],
+                palace: `${palaceNames[i]} (${branchName}位)`,
                 role: '輔星'
               });
             }
@@ -2148,31 +2072,32 @@
       function renderTwelvePalacesLayout() {
         if (drawnCards.length < 26) return '';
         // 4x4 天盤佈局映射：
-        // 第 1 列 (頂部)：巳(6)、午(5)、未(4)、申(3)
-        // 第 2 列：辰(7)、[中宮 2x2]、酉(2)
-        // 第 3 列：卯(8)、[中宮 2x2]、戌(1)
-        // 第 4 列 (底部)：寅(9)、丑(10)、子(11)、亥(0 命宮)
-        // palaceMap 定義每個地支格子對應的宮位 index (0 ~ 11)
+        // 12 地支固定在 4x4 外圈 12 個格子（順時針環繞：寅卯辰巳午未申酉戌亥子丑）
+        // 巳(3)、午(4)、未(5)、申(6)
+        // 辰(2)、[中宮 2x2]、酉(7)
+        // 卯(1)、[中宮 2x2]、戌(8)
+        // 寅(0)、丑(11)、子(10)、亥(9)
         const gridCells = [
-          { branch: '巳', palaceIdx: 6, row: 1, col: 1 },
-          { branch: '午', palaceIdx: 5, row: 1, col: 2 },
-          { branch: '未', palaceIdx: 4, row: 1, col: 3 },
-          { branch: '申', palaceIdx: 3, row: 1, col: 4 },
+          { branch: '巳', bIdx: 3, row: 1, col: 1 },
+          { branch: '午', bIdx: 4, row: 1, col: 2 },
+          { branch: '未', bIdx: 5, row: 1, col: 3 },
+          { branch: '申', bIdx: 6, row: 1, col: 4 },
 
-          { branch: '辰', palaceIdx: 7, row: 2, col: 1 },
+          { branch: '辰', bIdx: 2, row: 2, col: 1 },
           // 中宮由單獨 container 佔據 row: 2/span 2, col: 2/span 2
-          { branch: '酉', palaceIdx: 2, row: 2, col: 4 },
+          { branch: '酉', bIdx: 7, row: 2, col: 4 },
 
-          { branch: '卯', palaceIdx: 8, row: 3, col: 1 },
-          { branch: '戌', palaceIdx: 1, row: 3, col: 4 },
+          { branch: '卯', bIdx: 1, row: 3, col: 1 },
+          { branch: '戌', bIdx: 8, row: 3, col: 4 },
 
-          { branch: '寅', palaceIdx: 9, row: 4, col: 1 },
-          { branch: '丑', palaceIdx: 10, row: 4, col: 2 },
-          { branch: '子', palaceIdx: 11, row: 4, col: 3 },
-          { branch: '亥', palaceIdx: 0, row: 4, col: 4 } // 命宮在亥
+          { branch: '寅', bIdx: 0, row: 4, col: 1 },
+          { branch: '丑', bIdx: 11, row: 4, col: 2 },
+          { branch: '子', bIdx: 10, row: 4, col: 3 },
+          { branch: '亥', bIdx: 9, row: 4, col: 4 }
         ];
 
         const palaceNames = ['命宮', '兄弟宮', '夫妻宮', '子女宮', '財帛宮', '疾厄宮', '遷移宮', '僕役宮', '官祿宮', '田宅宮', '福德宮', '父母宮'];
+        const currentMingBranchName = EARTHLY_BRANCHES[ziweiMingBranchIdx] || '亥';
 
         return `
           <div class="w-full max-w-[1360px] mx-auto space-y-3">
@@ -2192,16 +2117,18 @@
               <div class="ziwei-twelve-board min-w-[680px] lg:min-w-0">
                 <!-- 周邊 12 宮位格 (巳午未申、辰酉、卯戌、寅丑子亥) -->
                 ${gridCells.map(c => {
-                  const pIdx = c.palaceIdx;
+                  // 根據命宮地支 ziweiMingBranchIdx，計算當前地支 c.bIdx 所屬的宮位
+                  // 斗數宮位從命宮起逆時針排盤：pIdx = (ziweiMingBranchIdx - c.bIdx + 12) % 12
+                  const pIdx = (ziweiMingBranchIdx - c.bIdx + 12) % 12;
                   const pName = palaceNames[pIdx];
                   const isMingGong = (pIdx === 0);
                   const mCardIdx = pIdx * 2;
                   const aCardIdx = pIdx * 2 + 1;
 
                   return `
-                    <div class="ziwei-palace-cell ${isMingGong ? 'ring-2 ring-amber-400 bg-[#2b3a2f]' : ''}" style="grid-row: ${c.row}; grid-column: ${c.col};">
+                    <div class="ziwei-palace-cell ${isMingGong ? 'ring-2 ring-amber-400 bg-[#2b3a2f] shadow-lg' : ''}" style="grid-row: ${c.row}; grid-column: ${c.col};">
                       <div class="w-full flex items-center justify-between pb-1 mb-1 border-b border-[#C8A97E]/40 px-1">
-                        <span class="text-xs font-black ${isMingGong ? 'text-amber-300' : 'text-amber-100'}">${pName}</span>
+                        <span class="text-xs font-black ${isMingGong ? 'text-amber-300 font-extrabold flex items-center gap-1' : 'text-amber-100'}">${pName}${isMingGong ? '<span class="text-[9px] bg-amber-400 text-stone-950 px-1 py-0.2 rounded font-black">命主</span>' : ''}</span>
                         <span class="text-[10px] text-amber-300/80 font-bold">${c.branch}位</span>
                       </div>
 
@@ -2243,10 +2170,10 @@
                     </div>
                   </div>
 
-                  <!-- 命宮標記 (對齊桌面紫微十二宮牌陣02.png) -->
+                  <!-- 命宮標記 -->
                   <div class="absolute bottom-2 right-3">
                     <span class="px-3 py-1 rounded-full bg-stone-900/90 border border-amber-300 text-amber-200 text-[11px] font-black shadow-md">
-                      命宮方位 ➔ 亥宮
+                      命宮方位 ➔ ${currentMingBranchName}宮
                     </span>
                   </div>
                 </div>
@@ -2447,18 +2374,6 @@
       let slideIsFlippedReversed = false;
 
       window.openSlideshow = function (startIdx = 0) {
-        // 心流禪意模式下，動態同步 flowingInstance.selectedCards
-        if (currentViewMode === 'flowing' && flowingInstance && flowingInstance.selectedCards && flowingInstance.selectedCards.length > 0) {
-          drawnCards = flowingInstance.selectedCards.map((item, i) => ({
-            card: item.card,
-            isReversed: !!item.isReversed,
-            isFlipped: true,
-            positionLabel: item.role || item.positionLabel || `第 ${i + 1} 張`,
-            palace: item.palace || '',
-            role: item.role || ''
-          }));
-        }
-
         if (!drawnCards || drawnCards.length === 0) return;
         currentSlideIdx = Math.max(0, Math.min(startIdx, drawnCards.length - 1));
         slideIsFlippedReversed = false;
