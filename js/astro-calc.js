@@ -1281,6 +1281,45 @@
   // 天體回歸與生命週期演算法 (Planetary Returns & Life Cycles)
   // ==========================================
 
+  // 區間跨越搜尋：尋找指定時間範圍內【第一次】精確達到 targetLon 的時刻（二分逼近，杜絕外行星逆行震盪偽解）
+  function findFirstCrossing(body, targetLon, startTs, endTs, stepDays = 2) {
+    const stepMs = stepDays * 86400000;
+    let prevDiff = null;
+    let prevT = null;
+
+    for (let t = startTs; t <= endTs; t += stepMs) {
+      const curLon = Astronomy.Ecliptic(Astronomy.GeoVector(body, new Date(t), true)).elon;
+      let diff = mod(curLon - targetLon + 180, 360) - 180;
+
+      if (prevDiff !== null) {
+        if ((prevDiff < 0 && diff >= 0) || (prevDiff > 0 && diff <= 0)) {
+          if (Math.abs(diff - prevDiff) < 180) {
+            let tLow = prevT;
+            let tHigh = t;
+            let pDiff = prevDiff;
+            for (let i = 0; i < 40; i++) {
+              let tMid = (tLow + tHigh) / 2;
+              let midLon = Astronomy.Ecliptic(Astronomy.GeoVector(body, new Date(tMid), true)).elon;
+              let midDiff = mod(midLon - targetLon + 180, 360) - 180;
+              if (Math.abs(midDiff) < 0.00001) {
+                return new Date(tMid);
+              }
+              if (midDiff * pDiff > 0) {
+                tLow = tMid;
+              } else {
+                tHigh = tMid;
+              }
+            }
+            return new Date((tLow + tHigh) / 2);
+          }
+        }
+      }
+      prevDiff = diff;
+      prevT = t;
+    }
+    return null;
+  }
+
   function findPlanetLongitudeReturn(body, targetLon, estDate) {
     let t = new Date(estDate.getTime());
     for (let i = 0; i < 35; i++) {
@@ -1332,49 +1371,58 @@
     const stepMs = ephem.stepDays * 86400000;
     const lons = ephem.lons;
 
+    // Catmull-Rom 三次曲線仿樣插值，極限消除網格曲率偏差
     function getChironLon(date) {
       const ts = date.getTime();
       const idxFloat = (ts - startTs) / stepMs;
       if (idxFloat <= 0) return lons[0];
       if (idxFloat >= lons.length - 1) return lons[lons.length - 1];
       const idx = Math.floor(idxFloat);
-      const frac = idxFloat - idx;
-      const l0 = lons[idx];
-      const l1 = lons[idx + 1];
-      const diff = ((l1 - l0 + 180) % 360) - 180;
-      return ((l0 + diff * frac) % 360 + 360) % 360;
+      const t = idxFloat - idx;
+      const p0 = lons[Math.max(0, idx - 1)];
+      const p1 = lons[idx];
+      const p2 = lons[Math.min(lons.length - 1, idx + 1)];
+      const p3 = lons[Math.min(lons.length - 1, idx + 2)];
+      const a = -0.5 * p0 + 1.5 * p1 - 1.5 * p2 + 0.5 * p3;
+      const b = p0 - 2.5 * p1 + 2 * p2 - 0.5 * p3;
+      const c = -0.5 * p0 + 0.5 * p2;
+      const d_val = p1;
+      return mod(a * t * t * t + b * t * t + c * t + d_val, 360);
     }
 
     const birthLon = getChironLon(birthUtcDate);
-    const startSearch = new Date(birthUtcDate.getTime() + 48.0 * 365.25 * 86400000);
-    const endSearch = new Date(birthUtcDate.getTime() + 52.0 * 365.25 * 86400000);
+    const startSearch = birthUtcDate.getTime() + 48.0 * 365.25 * 86400000;
+    const endSearch = birthUtcDate.getTime() + 52.0 * 365.25 * 86400000;
+    const stepMsScan = 2 * 86400000;
 
-    let bestDate = null;
-    let minDiff = 999;
-    for (let t = startSearch.getTime(); t <= endSearch.getTime(); t += 86400000) {
+    let prevDiff = null;
+    let prevT = null;
+
+    for (let t = startSearch; t <= endSearch; t += stepMsScan) {
       const curLon = getChironLon(new Date(t));
-      const diff = Math.abs(((curLon - birthLon + 180) % 360) - 180);
-      if (diff < minDiff) {
-        minDiff = diff;
-        bestDate = new Date(t);
-        if (minDiff < 0.05) break;
+      let diff = mod(curLon - birthLon + 180, 360) - 180;
+      if (prevDiff !== null) {
+        if ((prevDiff < 0 && diff >= 0) || (prevDiff > 0 && diff <= 0)) {
+          if (Math.abs(diff - prevDiff) < 180) {
+            let tLow = prevT;
+            let tHigh = t;
+            let pDiff = prevDiff;
+            for (let i = 0; i < 40; i++) {
+              let tMid = (tLow + tHigh) / 2;
+              let midLon = getChironLon(new Date(tMid));
+              let midDiff = mod(midLon - birthLon + 180, 360) - 180;
+              if (Math.abs(midDiff) < 0.00001) return new Date(tMid);
+              if (midDiff * pDiff > 0) tLow = tMid;
+              else tHigh = tMid;
+            }
+            return new Date((tLow + tHigh) / 2);
+          }
+        }
       }
+      prevDiff = diff;
+      prevT = t;
     }
-
-    if (!bestDate) bestDate = new Date(birthUtcDate.getTime() + 50.4 * 365.25 * 86400000);
-
-    let refinedDate = bestDate;
-    minDiff = 999;
-    for (let min = -1440; min <= 1440; min += 10) {
-      const curT = new Date(bestDate.getTime() + min * 60000);
-      const curLon = getChironLon(curT);
-      const diff = Math.abs(((curLon - birthLon + 180) % 360) - 180);
-      if (diff < minDiff) {
-        minDiff = diff;
-        refinedDate = curT;
-      }
-    }
-    return refinedDate;
+    return new Date(birthUtcDate.getTime() + 50.4 * 365.25 * 86400000);
   }
 
   /**
@@ -1419,23 +1467,23 @@
       return Math.max(0, diffYears).toFixed(1);
     }
 
-    // 1. Saturn Return (Age ~28-30)
+    // 1. Saturn Return (Age ~27-32, 首次順行到達本命黃經)
     const satLon = natalPlanets['Saturn'].longitude;
-    const estSat1 = new Date(birthTs + 29.5 * 365.25 * 86400000);
-    const dateSat1 = findPlanetLongitudeReturn('Saturn', satLon, estSat1);
+    const dateSat1 = findFirstCrossing('Saturn', satLon, birthTs + 27 * 365.25 * 86400000, birthTs + 32 * 365.25 * 86400000, 2) ||
+                     findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 29.5 * 365.25 * 86400000));
 
-    // 2. Uranus Opposition (Age ~38-44)
+    // 2. Uranus Opposition (Age ~38-46, 首次順行到達對衝 180° 黃經)
     const uraLon = natalPlanets['Uranus'].longitude;
     const targetUraOpp = mod(uraLon + 180, 360);
-    const estUraOpp = new Date(birthTs + 43.5 * 365.25 * 86400000);
-    const dateUraOpp = findPlanetLongitudeReturn('Uranus', targetUraOpp, estUraOpp);
+    const dateUraOpp = findFirstCrossing('Uranus', targetUraOpp, birthTs + 38 * 365.25 * 86400000, birthTs + 46 * 365.25 * 86400000, 2) ||
+                       findPlanetLongitudeReturn('Uranus', targetUraOpp, new Date(birthTs + 43.5 * 365.25 * 86400000));
 
-    // 3. Chiron Return (Age ~49-51)
+    // 3. Chiron Return (Age ~48-52, 首次回歸本命凱龍星黃經)
     const dateChiron = findChironReturn(birthUtcDate);
 
-    // 4. Second Saturn Return (Age ~58-60)
-    const estSat2 = new Date(birthTs + 58.7 * 365.25 * 86400000);
-    const dateSat2 = findPlanetLongitudeReturn('Saturn', satLon, estSat2);
+    // 4. Second Saturn Return (Age ~56-62, 首次順行到達第二次回歸)
+    const dateSat2 = findFirstCrossing('Saturn', satLon, birthTs + 56 * 365.25 * 86400000, birthTs + 62 * 365.25 * 86400000, 2) ||
+                     findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 58.7 * 365.25 * 86400000));
 
     // 5. Solar Return
     const currentYear = targetSolarYear || now.getFullYear();
@@ -1448,12 +1496,12 @@
 
     // 7. More Cycles (Jupiter & Mars)
     const jupLon = natalPlanets['Jupiter'].longitude;
-    const estJupNext = new Date(now.getTime() + 6 * 30 * 86400000);
-    const dateJupiter = findPlanetLongitudeReturn('Jupiter', jupLon, estJupNext);
+    const dateJupiter = findFirstCrossing('Jupiter', jupLon, now.getTime(), now.getTime() + 13 * 365.25 * 86400000, 2) ||
+                        findPlanetLongitudeReturn('Jupiter', jupLon, new Date(now.getTime() + 6 * 30 * 86400000));
 
     const marsLon = natalPlanets['Mars'].longitude;
-    const estMarsNext = new Date(now.getTime() + 6 * 30 * 86400000);
-    const dateMars = findPlanetLongitudeReturn('Mars', marsLon, estMarsNext);
+    const dateMars = findFirstCrossing('Mars', marsLon, now.getTime(), now.getTime() + 2.5 * 365.25 * 86400000, 1) ||
+                     findPlanetLongitudeReturn('Mars', marsLon, new Date(now.getTime() + 6 * 30 * 86400000));
 
     return {
       saturnReturn1: {
