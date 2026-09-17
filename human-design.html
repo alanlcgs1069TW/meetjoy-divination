@@ -17,14 +17,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
   
   <!-- 本地純靜態天文引擎與 PDF 輸出引擎 -->
-  <script src="./js/astronomy.browser.min.js?v=20260917-r3"></script>
-  <script src="./js/geo-cities.js?v=20260917-r3"></script>
-  <script src="./js/chiron-ephem.js?v=20260917-r3"></script>
-  <script src="./js/astro-calc.js?v=20260917-r3"></script>
-  <script src="./js/meetjoy-pdf.js?v=20260917-r3"></script>
-  <script src="./js/meetjoy-universal-profiles.js?v=20260917-r3"></script>
-  <script src="./js/meetjoy-nav.js?v=20260917-r3"></script>
-  <script src="./js/meetjoy-protect.js?v=20260917-r3"></script>
+  <script src="./js/astronomy.browser.min.js?v=20260917-r4"></script>
+  <script src="./js/geo-cities.js?v=20260917-r4"></script>
+  <script src="./js/chiron-ephem.js?v=20260917-r4"></script>
+  <script src="./js/astro-calc.js?v=20260917-r4"></script>
+  <script src="./js/meetjoy-pdf.js?v=20260917-r4"></script>
+  <script src="./js/meetjoy-universal-profiles.js?v=20260917-r4"></script>
+  <script src="./js/meetjoy-nav.js?v=20260917-r4"></script>
+  <script src="./js/meetjoy-protect.js?v=20260917-r4"></script>
 
   <style>
     body { font-family: 'Noto Serif TC', serif; }
@@ -578,8 +578,8 @@
     <div id="hd_return_chart_container" class="hidden mt-8 bg-gradient-to-br from-[#FFFDF9] via-[#FAF6ED] to-[#F4EDE0] border-2 border-[#C8A97E]/70 rounded-3xl p-5 sm:p-7 shadow-lg">
       <div class="flex flex-wrap items-start justify-between gap-4 border-b border-[#C8A97E]/30 pb-4">
         <div>
-          <span class="text-[11px] font-bold text-[#987315] tracking-widest uppercase">🪐 獨立回歸能量圖</span>
-          <h2 id="return_chart_title" class="text-xl sm:text-2xl font-black text-slate-900 mt-1">重要回歸能量圖</h2>
+          <span class="text-[11px] font-bold text-[#987315] tracking-widest uppercase">🪐 本命 ＋ 回歸流日合體圖</span>
+          <h2 id="return_chart_title" class="text-xl sm:text-2xl font-black text-slate-900 mt-1">重要回歸合體能量圖</h2>
           <p id="return_chart_meta" class="text-[#987315] font-black text-base sm:text-xl mt-2">--</p>
           <p id="return_chart_submeta" class="text-[11px] text-slate-500 font-mono mt-1">--</p>
         </div>
@@ -588,20 +588,29 @@
 
       <div class="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] gap-5 items-start">
         <div class="rounded-2xl bg-white/80 border border-[#C8A97E]/35 p-3 sm:p-5 shadow-sm">
-          <div class="flex items-center justify-center gap-3 text-[11px] font-bold mb-2 text-slate-600">
-            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-700"></span> 設計</span>
-            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-900"></span> 個性</span>
+          <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-bold mb-3 text-slate-600">
+            <span class="inline-flex items-center gap-1">👤 本命天賦（黑／紅）</span>
+            <span class="inline-flex items-center gap-1">🪐 回歸流日（金色）</span>
+            <span class="inline-flex items-center gap-1">⚡ 電磁合體（金黑斑馬紋）</span>
+            <span class="inline-flex items-center gap-1 text-amber-800">✦ 回歸新開能量中心</span>
           </div>
           <div id="return_bodygraph_mount" class="max-w-[380px] mx-auto"></div>
         </div>
         <div class="space-y-4 text-xs sm:text-sm">
-          <section class="rounded-2xl bg-white/90 border border-[#C8A97E]/35 p-4">
-            <h3 class="font-black text-slate-900">⚡ 本階段新增開啟天賦通道</h3>
-            <div id="return_new_channels" class="mt-3 flex flex-wrap gap-2 text-slate-600"></div>
+          <section class="rounded-2xl bg-amber-50/70 border border-amber-300/70 p-4 shadow-sm">
+            <h3 class="font-black text-amber-950">⚡ 回歸合體電磁通道</h3>
+            <p class="mt-1 text-[11px] text-amber-800">宇宙激發的生命火花與核心功課</p>
+            <div id="return_electro_channels" class="mt-3 space-y-2 text-slate-700"></div>
           </section>
           <section class="rounded-2xl bg-white/90 border border-[#C8A97E]/35 p-4">
-            <h3 class="font-black text-slate-900">✦ 本階段新增被定義能量中心</h3>
-            <div id="return_new_centers" class="mt-3 flex flex-wrap gap-2 text-slate-600"></div>
+            <h3 class="font-black text-slate-900">✦ 本階段新啟動能量中心</h3>
+            <p class="mt-1 text-[11px] text-slate-500">原本開放、此時期被定義</p>
+            <div id="return_new_centers" class="mt-3 space-y-2 text-slate-600"></div>
+          </section>
+          <section class="rounded-2xl bg-white/90 border border-[#C8A97E]/35 p-4">
+            <h3 class="font-black text-slate-900">🪐 流日背景天象通道</h3>
+            <p class="mt-1 text-[11px] text-slate-500">集體大環境氛圍</p>
+            <div id="return_transit_channels" class="mt-3 flex flex-wrap gap-2 text-slate-600"></div>
           </section>
           <section class="rounded-2xl bg-[#1E261D] text-[#F7E7CE] border border-[#C8A97E]/50 p-4 shadow-sm">
             <h3 class="font-black">🌿 愛倫院長的生活魔藥處方與調頻指引</h3>
@@ -2295,21 +2304,58 @@
       return svg;
     }
 
-    function renderReturnBodygraph(returnHd) {
+    function getReturnChannelName(ch) {
+      const data = HD_CHANNEL_CIRCUITS[ch.id] || HD_CHANNEL_CIRCUITS[`${ch.g2}-${ch.g1}`];
+      return data ? data.name : `${ch.g1}-${ch.g2} 通道`;
+    }
+
+    function buildReturnComposite(natalHd, transitHd) {
+      const natalGates = new Set([...(natalHd.activeGates?.design || []), ...(natalHd.activeGates?.personality || [])]);
+      const transitGates = new Set([...(transitHd.activeGates?.design || []), ...(transitHd.activeGates?.personality || [])]);
+      const bothGates = new Set([...natalGates].filter(g => transitGates.has(g)));
+      const electro = [], natalOnly = [], transitOnly = [], companion = [], compromise = [];
+      HD_CHANNEL_PATHS.forEach(ch => {
+        const n1 = natalGates.has(ch.g1), n2 = natalGates.has(ch.g2), t1 = transitGates.has(ch.g1), t2 = transitGates.has(ch.g2);
+        const fullNatal = n1 && n2, fullTransit = t1 && t2;
+        const item = { id: ch.id, name: getReturnChannelName(ch), g1: ch.g1, g2: ch.g2 };
+        if (fullNatal && fullTransit) companion.push(item);
+        else if (fullNatal && (t1 || t2)) compromise.push({ ...item, owner: '本命', gate: t1 ? ch.g1 : ch.g2 });
+        else if (fullTransit && (n1 || n2)) compromise.push({ ...item, owner: '流日', gate: n1 ? ch.g1 : ch.g2 });
+        else if (fullNatal) natalOnly.push(item);
+        else if (fullTransit) transitOnly.push(item);
+        else if ((n1 && t2) || (n2 && t1)) electro.push({ ...item, natalGate: n1 ? ch.g1 : ch.g2, transitGate: t1 ? ch.g1 : ch.g2 });
+      });
+      const gateToCenter = {};
+      Object.entries(AstroCalc.HD_CENTERS || {}).forEach(([center, gates]) => gates.forEach(g => { gateToCenter[g] = center; }));
+      const combinedCenters = new Set([...(natalHd.definedCenters || []), ...(transitHd.definedCenters || [])]);
+      electro.forEach(ch => { combinedCenters.add(gateToCenter[ch.g1]); combinedCenters.add(gateToCenter[ch.g2]); });
+      combinedCenters.delete(undefined);
+      const natalCenters = new Set(natalHd.definedCenters || []);
+      return { natalHd, transitHd, natalGates, transitGates, bothGates, electro, natalOnly, transitOnly, companion, compromise, combinedCenters, newCenters: [...combinedCenters].filter(c => !natalCenters.has(c)), gateToCenter };
+    }
+
+    function renderReturnBodygraph(compData) {
       const mount = document.getElementById('return_bodygraph_mount');
       if (!mount) return;
       mount.replaceChildren();
       const svg = createReturnBodygraphSvg();
       mount.appendChild(svg);
 
-      const defCenters = new Set(returnHd.definedCenters || []);
+      const { natalHd, natalGates, transitGates, bothGates, electro, combinedCenters, newCenters, gateToCenter } = compData;
+      const defCenters = combinedCenters;
+      const defs = svg.querySelector('defs') || svg.insertBefore(document.createElementNS('http://www.w3.org/2000/svg', 'defs'), svg.firstChild);
+      const zebra = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+      zebra.setAttribute('id', 'return_zebra_electro'); zebra.setAttribute('width', '8'); zebra.setAttribute('height', '8'); zebra.setAttribute('patternTransform', 'rotate(45 0 0)'); zebra.setAttribute('patternUnits', 'userSpaceOnUse');
+      zebra.innerHTML = '<rect width="4" height="8" fill="#D97706" /><rect x="4" width="4" height="8" fill="#0F172A" />'; defs.appendChild(zebra);
       svg.querySelectorAll('[data-center]').forEach(center => {
         const key = (center.dataset.center || '').replace('_', ' ');
         const base = center.querySelector('.crystal-base');
         if (!base) return;
         base.setAttribute('fill', defCenters.has(key) ? (CENTER_COLORS[key] || '#845B45') : '#FFFFFF');
-        base.setAttribute('stroke', defCenters.has(key) ? (CENTER_STROKES[key] || '#63402E') : '#94A3B8');
-        base.setAttribute('stroke-width', defCenters.has(key) ? '2' : '1.5');
+        const isNew = newCenters.includes(key);
+        base.setAttribute('stroke', isNew ? '#D97706' : (defCenters.has(key) ? (CENTER_STROKES[key] || '#63402E') : '#94A3B8'));
+        base.setAttribute('stroke-width', isNew ? '2.5' : (defCenters.has(key) ? '2' : '1.5'));
+        if (isNew) center.style.filter = 'drop-shadow(0 0 5px rgba(217,119,6,.72))';
       });
 
       const channelLayer = svg.querySelector('#return_svg_channels_layer');
@@ -2322,25 +2368,28 @@
         channelLayer.appendChild(p);
       };
       HD_CHANNEL_PATHS.forEach(ch => { const d = splitChannelPath(ch).full; addPath(d, '#CBD5E1', '7.2'); addPath(d, '#FFFFFF', '4.8'); });
-      const colorFor = (d, p) => d && p ? 'url(#return_zebra_both)' : (d ? '#BE123C' : (p ? '#0F172A' : null));
+      const natalColor = gate => natalHd.activeGates.design.has(gate) && !natalHd.activeGates.personality.has(gate) ? '#991B1B' : '#0F172A';
+      const electroIds = new Set(electro.map(ch => ch.id));
       HD_CHANNEL_PATHS.forEach(ch => {
         const parts = splitChannelPath(ch);
-        const c1 = colorFor(returnHd.activeGates.design.has(ch.g1), returnHd.activeGates.personality.has(ch.g1));
-        const c2 = colorFor(returnHd.activeGates.design.has(ch.g2), returnHd.activeGates.personality.has(ch.g2));
-        if (c1 && c2 && c1 === c2) addPath(parts.full, c1, '4.8');
-        else { if (c1) addPath(parts.defHalf1, c1, '4.8'); if (c2) addPath(parts.defHalf2, c2, '4.8'); }
+        const n1 = natalGates.has(ch.g1), n2 = natalGates.has(ch.g2), t1 = transitGates.has(ch.g1), t2 = transitGates.has(ch.g2);
+        if (electroIds.has(ch.id)) {
+          if (n1) addPath(parts.defHalf1, natalColor(ch.g1), '4.8'); else if (t1) addPath(parts.defHalf1, '#D97706', '4.8');
+          if (n2) addPath(parts.defHalf2, natalColor(ch.g2), '4.8'); else if (t2) addPath(parts.defHalf2, '#D97706', '4.8');
+          addPath(parts.full, 'url(#return_zebra_electro)', '2.2');
+        } else if (n1 && n2) addPath(parts.full, natalColor(ch.g1), '4.8');
+        else if (t1 && t2) addPath(parts.full, '#D97706', '4.8');
+        else { if (n1) addPath(parts.hangHalf1, natalColor(ch.g1), '4.8'); else if (t1) addPath(parts.hangHalf1, '#D97706', '4.8'); if (n2) addPath(parts.hangHalf2, natalColor(ch.g2), '4.8'); else if (t2) addPath(parts.hangHalf2, '#D97706', '4.8'); }
       });
 
-      const gateCenter = {};
-      Object.entries(AstroCalc.HD_CENTERS || {}).forEach(([center, gates]) => gates.forEach(g => { gateCenter[g] = center; }));
       for (let g = 1; g <= 64; g++) {
         const point = GATE_COORDS[g]; if (!point) continue;
-        const [x, y] = point; const active = returnHd.activeGates.all.has(g);
+        const [x, y] = point; const natal = natalGates.has(g), transit = transitGates.has(g), active = natal || transit;
         const group = document.createElementNS(ns, 'g');
         const circle = document.createElementNS(ns, 'circle');
         circle.setAttribute('cx', x); circle.setAttribute('cy', y); circle.setAttribute('r', active ? '7.5' : '6.5');
-        circle.setAttribute('fill', active ? '#1E261D' : (defCenters.has(gateCenter[g]) ? '#FFFFFF' : '#F8FAFC'));
-        circle.setAttribute('stroke', active ? '#C8A97E' : '#94A3B8'); circle.setAttribute('stroke-width', active ? '1.2' : '0.7'); group.appendChild(circle);
+        circle.setAttribute('fill', bothGates.has(g) ? '#7C3AED' : (transit ? '#D97706' : (natal ? natalColor(g) : (defCenters.has(gateToCenter[g]) ? '#FFFFFF' : '#F8FAFC'))));
+        circle.setAttribute('stroke', active ? '#FFFFFF' : '#94A3B8'); circle.setAttribute('stroke-width', active ? '1.2' : '0.7'); group.appendChild(circle);
         const text = document.createElementNS(ns, 'text');
         text.setAttribute('x', x); text.setAttribute('y', y + (active ? 2.7 : 2.4)); text.setAttribute('text-anchor', 'middle');
         text.setAttribute('fill', active ? '#FFFFFF' : '#475569'); text.setAttribute('font-size', active ? '7.5' : '7'); text.setAttribute('font-weight', active ? '900' : '700');
@@ -2353,26 +2402,26 @@
         if (!currentReturnBirthUtc) throw new Error('請先完成本命人類圖排盤');
         const cycle = currentReturnCycles[cycleKey];
         if (!cycle || !(cycle.returnDate instanceof Date) || Number.isNaN(cycle.returnDate.getTime())) throw new Error('此回歸時刻暫時無法計算');
-        const returnHd = AstroCalc.calculateHumanDesignChart(cycle.returnDate);
-        if (!returnHd) throw new Error('回歸人類圖計算未完成');
-        renderReturnBodygraph(returnHd);
+        const transitHd = AstroCalc.calculateHumanDesignChart(cycle.returnDate);
+        if (!transitHd) throw new Error('回歸流日人類圖計算未完成');
+        const natalHd = currentHdChart || AstroCalc.calculateHumanDesignChart(currentReturnBirthUtc);
+        if (!natalHd) throw new Error('本命人類圖資料未完成');
+        const compData = buildReturnComposite(natalHd, transitHd);
+        renderReturnBodygraph(compData);
 
-        const natal = currentHdChart || AstroCalc.calculateHumanDesignChart(currentReturnBirthUtc);
-        const natalChannels = new Set((natal.definedChannels || []).map(c => c.id));
-        const addedChannels = (returnHd.definedChannels || []).filter(c => !natalChannels.has(c.id));
-        const natalCenters = new Set(natal.definedCenters || []);
-        const addedCenters = (returnHd.definedCenters || []).filter(c => !natalCenters.has(c));
-        const channelEl = document.getElementById('return_new_channels');
+        const channelEl = document.getElementById('return_electro_channels');
         const centerEl = document.getElementById('return_new_centers');
-        channelEl.innerHTML = addedChannels.length ? addedChannels.map(c => `<span class="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 font-bold text-amber-900">${c.name}（${c.id}）</span>`).join('') : '<span class="text-slate-500">此時點未新增完整通道；請觀察既有天賦如何被重新點亮。</span>';
-        centerEl.innerHTML = addedCenters.length ? addedCenters.map(c => `<span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 font-bold text-emerald-900">${CENTER_NAMES[c] || c}</span>`).join('') : '<span class="text-slate-500">此時點未新增定義中心；穩定回到本命節奏，就是最好的調頻。</span>';
-        document.getElementById('return_chart_title').textContent = `🪐 ${cycle.titleZh} 能量圖`;
+        channelEl.innerHTML = compData.electro.length ? compData.electro.map(c => `<div class="rounded-xl bg-white/85 border border-amber-300 p-2.5"><strong class="text-amber-950">⚡ ${c.id} ${c.name}</strong><p class="mt-1 text-[11px] leading-relaxed">本命 ${c.natalGate} 號 ＋ 流日 ${c.transitGate} 號合體接通。這段週期適合在「${(HD_GATE_DATA[c.natalGate] || {}).keywords || '自身天賦'}」上採取一個具體行動，讓覺察落到日常選擇。</p></div>`).join('') : '<p class="text-slate-600 leading-relaxed">此時點沒有新的電磁接通；把注意力放回本命完整通道，穩穩使用已經成熟的天賦，便是這個週期的力量。</p>';
+        centerEl.innerHTML = compData.newCenters.length ? compData.newCenters.map(c => `<div class="rounded-xl bg-amber-50 border border-amber-300 px-3 py-2"><strong class="text-amber-950">✦ ${CENTER_NAMES[c] || c}</strong><p class="mt-0.5 text-[11px] leading-relaxed">此週期有穩定運作能量；留意把外界期待誤當成自己的責任，回到內在權威再決定。</p></div>`).join('') : '<p class="text-slate-500">本命開放中心在此週期保有呼吸空間；以觀察取代急著承接，能更清楚分辨哪些感受真正屬於自己。</p>';
+        const transitEl = document.getElementById('return_transit_channels');
+        transitEl.innerHTML = compData.transitOnly.length ? compData.transitOnly.map(c => `<span class="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-300 font-bold text-amber-950">${c.id} ${c.name}</span>`).join('') : '<span class="text-slate-500">流日沒有單獨完整通道；集體背景更透過懸掛閘門與你的本命圖互動。</span>';
+        document.getElementById('return_chart_title').textContent = `🪐 ${cycle.titleZh} 本命＋流日合體圖`;
         document.getElementById('return_chart_meta').textContent = cycle.localStr;
         const age = (cycle.subMeta.match(/約 ([\d.]+) 歲/) || [])[1] || '--';
-        document.getElementById('return_chart_submeta').textContent = `回歸年齡：約 ${age} 歲 ｜ 此圖為獨立回歸盤，不影響本命圖`;
-        document.getElementById('return_rx').textContent = addedChannels.length || addedCenters.length
-          ? '把新增啟動視為這一階段的練習場：每天留一段安靜時間，先感受身體是否放鬆、呼吸是否變深，再依循內在權威安排承諾。讓新能量先有穩定的容器，行動自然會長出方向。'
-          : '這個週期更適合把力量收回日常：在一件已經做得好的事上，刻意放慢三分鐘，感受身體真正願意投入的節奏。穩定重複的小選擇，會讓本命天賦在此刻更清楚發光。';
+        document.getElementById('return_chart_submeta').textContent = `回歸年齡：約 ${age} 歲 ｜ 本命閘門 ${compData.natalGates.size} ｜ 流日閘門 ${compData.transitGates.size} ｜ 電磁接通 ${compData.electro.length} 條`;
+        document.getElementById('return_rx').textContent = compData.electro.length || compData.newCenters.length
+          ? '把合體啟動當成一週期的實驗室：每天選一件小事，先停下來感覺身體的鬆緊與呼吸深度，再依內在權威決定是否答應。肯定句：我允許當下的能量提醒我，用自己的節奏走向下一步。'
+          : '這個週期適合把力量收回日常：為一件熟悉的事留出十分鐘不受打擾的專注，讓本命天賦在安穩節奏中展開。肯定句：我信任自己已有的能量，也珍惜每一個自在呼吸的空間。';
         const container = document.getElementById('hd_return_chart_container');
         container.classList.remove('hidden');
         requestAnimationFrame(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }));
