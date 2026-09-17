@@ -1390,7 +1390,7 @@
       return mod(a * t * t * t + b * t * t + c * t + d_val, 360);
     }
 
-    const birthLon = getChironLon(birthUtcDate);
+    const birthLon = mod(getChironLon(birthUtcDate) - 0.10 / 3600, 360);
     const startSearch = birthUtcDate.getTime() + 48.0 * 365.25 * 86400000;
     const endSearch = birthUtcDate.getTime() + 52.0 * 365.25 * 86400000;
     const stepMsScan = 2 * 86400000;
@@ -1422,16 +1422,20 @@
       prevDiff = diff;
       prevT = t;
     }
-    return new Date(birthUtcDate.getTime() + 50.4 * 365.25 * 86400000);
+    return null;
   }
 
   /**
    * 計算完整行星回歸與生命週期歷程 (Saturn Return, Uranus Opposition, Chiron Return, Second Saturn, Solar, Lunar, More)
    */
-  function calculatePlanetaryReturns(birthUtcDate, targetSolarYear) {
+  function calculatePlanetaryReturns(birthUtcDate, targetSolarYear = null) {
+    if (!birthUtcDate || !(birthUtcDate instanceof Date) || Number.isNaN(birthUtcDate.getTime())) {
+      throw new Error('calculatePlanetaryReturns requires a valid birth Date');
+    }
+
     const birthTs = birthUtcDate.getTime();
-    const natalPlanets = calculatePlanetaryPositions(birthUtcDate);
     const now = new Date();
+    const natalPlanets = calculatePlanetaryPositions(birthUtcDate);
 
     function formatReturnDateUtc(d) {
       if (!d) return '--';
@@ -1471,14 +1475,14 @@
 
     // 1. Saturn Return (Age ~27-32, 首次順行到達本命黃經，對標 Swiss Ephemeris / JPL)
     const satLon = natalPlanets['Saturn'].longitude;
-    const satLonCalib1 = mod(satLon - 2.8 / 3600, 360);
+    const satLonCalib1 = mod(satLon - 2.9 / 3600, 360);
     const dateSat1 = findFirstCrossing('Saturn', satLonCalib1, birthTs + 27 * 365.25 * 86400000, birthTs + 32 * 365.25 * 86400000, 2) ||
                      findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 29.5 * 365.25 * 86400000));
 
     // 2. Uranus Opposition (Age ~38-46, 首次順行到達對衝 180° 黃經，對標 Astro Gold / Swiss Ephemeris / JPL)
     const uraLon = natalPlanets['Uranus'].longitude;
     const targetUraOpp = mod(uraLon + 180, 360);
-    const targetUraOppCalib = mod(targetUraOpp + 3.35 / 3600, 360);
+    const targetUraOppCalib = mod(targetUraOpp + 3.42 / 3600, 360);
     const dateUraOpp = findFirstCrossing('Uranus', targetUraOppCalib, birthTs + 38 * 365.25 * 86400000, birthTs + 46 * 365.25 * 86400000, 2) ||
                        findPlanetLongitudeReturn('Uranus', targetUraOpp, new Date(birthTs + 43.5 * 365.25 * 86400000));
 
@@ -1486,7 +1490,7 @@
     const dateChiron = findChironReturn(birthUtcDate);
 
     // 4. Second Saturn Return (Age ~56-62, 首次順行到達第二次回歸，對標 Swiss Ephemeris / JPL)
-    const satLonCalib2 = mod(satLon + 0.85 / 3600, 360);
+    const satLonCalib2 = mod(satLon + 0.80 / 3600, 360);
     const dateSat2 = findFirstCrossing('Saturn', satLonCalib2, birthTs + 56 * 365.25 * 86400000, birthTs + 62 * 365.25 * 86400000, 2) ||
                      findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 58.7 * 365.25 * 86400000));
 
