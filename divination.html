@@ -15,6 +15,7 @@
   <!-- 卡牌資料庫與全站導航 -->
   <script src="./js/ziwei-cards-complete.js?v=2026"></script>
   <script src="./js/divination-cards.js?v=2026"></script>
+  <script src="./js/divination-flowing.js?v=2026"></script>
   <script src="./js/meetjoy-nav.js"></script>
   <script src="./js/meetjoy-protect.js"></script>
   <script src="./js/meetjoy-universal-profiles.js"></script>
@@ -409,20 +410,42 @@
       </p>
     </div>
 
-    <!-- 三大占卜系統主切換 Tabs -->
-    <div class="w-full max-w-4xl flex items-center p-1.5 bg-stone-200/90 rounded-2xl mb-6 shadow-inner border border-stone-300">
-      <button type="button" id="tab_tarot" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md">
-        🌟 經典塔羅 (78張)
-      </button>
-      <button type="button" id="tab_ziwei" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700">
-        🔮 紫微牌卡 (70張全套)
-      </button>
-      <button type="button" id="tab_lenormand" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700">
-        🌿 經典雷諾曼 (36張)
-      </button>
+    <!-- 雙模式無縫切換器 (View Mode Switcher) -->
+    <div class="w-full max-w-4xl flex flex-wrap items-center justify-between gap-3 mb-6 p-2 sm:p-3 bg-stone-100/80 rounded-2xl border border-stone-200 shadow-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-serif font-black text-[#1F261C] flex items-center gap-1.5">
+          <span>🔮 占卜體驗視圖：</span>
+        </span>
+        <span class="text-[11px] text-stone-500 hidden sm:inline">自由切換「傳統儀式排盤」或「極簡禪意流動抽卡」</span>
+      </div>
+      <div class="inline-flex p-1 bg-stone-200/90 rounded-xl border border-stone-300 shadow-inner text-xs font-black">
+        <button type="button" id="btn_mode_classic" class="px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer">
+          <span>🪄 經典工坊模式</span>
+        </button>
+        <button type="button" id="btn_mode_flowing" class="px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer">
+          <span>🌊 沉浸流動模式</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-amber-400 text-stone-950 text-[9px] font-black">NEW</span>
+        </button>
+      </div>
     </div>
 
-    <!-- 操作控制面板 (牌陣選擇、風格切換與洗牌抽牌) -->
+    <!-- 經典工坊模式容器 (Classic Atelier View) -->
+    <div id="classic_view_container" class="w-full flex flex-col items-center">
+
+      <!-- 三大占卜系統主切換 Tabs -->
+      <div class="w-full max-w-4xl flex items-center p-1.5 bg-stone-200/90 rounded-2xl mb-6 shadow-inner border border-stone-300">
+        <button type="button" id="tab_tarot" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md">
+          🌟 經典塔羅 (78張)
+        </button>
+        <button type="button" id="tab_ziwei" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700">
+          🔮 紫微牌卡 (70張全套)
+        </button>
+        <button type="button" id="tab_lenormand" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700">
+          🌿 經典雷諾曼 (36張)
+        </button>
+      </div>
+
+      <!-- 操作控制面板 (牌陣選擇、風格切換與洗牌抽牌) -->
     <div class="w-full bg-white/95 backdrop-blur-md border-2 border-[#C8A97E]/70 rounded-3xl p-4 sm:p-6 mb-6 shadow-md">
       <div class="flex flex-wrap items-center justify-between gap-4">
         
@@ -501,6 +524,14 @@
           點擊上方卡牌翻開後，此處將自動整合當前能量流向，提供專屬的植物香氣、晶石頻率與日常落地微儀式。
         </p>
       </div>
+    </div>
+
+    </div>
+    <!-- 經典工坊模式容器結束 (Classic View End) -->
+
+    <!-- 沉浸流動模式容器 (Flowing Zen Mode View) -->
+    <div id="flowing_view_container" class="w-full flex flex-col items-center hidden">
+      <!-- 由 FlowingDivination 動態注入完整流動抽卡體驗 -->
     </div>
 
   </main>
@@ -633,6 +664,63 @@
         ]
       };
 
+      let currentViewMode = 'classic'; // 'classic' | 'flowing'
+      let flowingInstance = null;
+
+      function setupViewModeSwitcher() {
+        const btnClassic = document.getElementById('btn_mode_classic');
+        const btnFlowing = document.getElementById('btn_mode_flowing');
+        const classicContainer = document.getElementById('classic_view_container');
+        const flowingContainer = document.getElementById('flowing_view_container');
+
+        if (!btnClassic || !btnFlowing || !classicContainer || !flowingContainer) return;
+
+        // 初始化 FlowingDivination 實例
+        if (window.FlowingDivination && !flowingInstance) {
+          flowingInstance = new window.FlowingDivination('flowing_view_container');
+        }
+
+        function applyMode(mode, save = true) {
+          currentViewMode = mode;
+          if (save) {
+            try { localStorage.setItem('mj_divination_view_mode', mode); } catch (e) {}
+          }
+
+          if (mode === 'flowing') {
+            classicContainer.classList.add('hidden');
+            flowingContainer.classList.remove('hidden');
+
+            btnFlowing.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer';
+            btnClassic.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer';
+
+            if (flowingInstance) {
+              flowingInstance.init(currentSystem);
+            }
+          } else {
+            flowingContainer.classList.add('hidden');
+            classicContainer.classList.remove('hidden');
+
+            btnClassic.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer';
+            btnFlowing.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer';
+          }
+        }
+
+        btnClassic.addEventListener('click', () => applyMode('classic'));
+        btnFlowing.addEventListener('click', () => applyMode('flowing'));
+
+        // 讀取初始設定
+        const urlParams = new URLSearchParams(window.location.search);
+        const modeParam = urlParams.get('mode');
+        let savedMode = null;
+        try { savedMode = localStorage.getItem('mj_divination_view_mode'); } catch (e) {}
+
+        if (modeParam === 'flowing' || (!modeParam && savedMode === 'flowing')) {
+          applyMode('flowing', false);
+        } else {
+          applyMode('classic', false);
+        }
+      }
+
       // 初始化頁面
       function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -645,6 +733,7 @@
         setupActions();
         resetAndDraw();
         updateZiweiCopyrightCard();
+        setupViewModeSwitcher();
       }
 
       // 控制紫微智慧財產專屬卡片顯示
