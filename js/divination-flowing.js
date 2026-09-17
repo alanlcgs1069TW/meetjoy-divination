@@ -572,27 +572,29 @@
 
           const cards = cardWrap.children;
 
-          // 階段 1：向中心旋聚 (0 ~ 400ms)
+          // 階段 1：向中心旋聚 (0 ~ 380ms)
           for (let i = 0; i < cards.length; i++) {
-            cards[i].style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-            cards[i].style.transform = `translate(0px, 0px) rotate(${i * 10}deg) scale(0.85)`;
+            cards[i].style.transition = 'all 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
+            cards[i].style.transform = `translate(0px, 0px) rotate(${i * 20}deg) scale(0.85)`;
             cards[i].style.left = 'calc(50% - 26px)';
             cards[i].style.top = 'calc(50% - 41px)';
           }
 
-          // 階段 2：高速旋風渦流 (400 ~ 900ms)
+          // 階段 2：高速旋風雙環渦流 (380 ~ 920ms · 內外圈反向 720° 自轉公轉)
           setTimeout(() => {
             for (let i = 0; i < cards.length; i++) {
-              cards[i].style.transition = 'all 0.5s ease-in-out';
-              const a = (i / cards.length) * Math.PI * 2;
-              const r = 80;
+              cards[i].style.transition = 'all 0.52s cubic-bezier(0.25, 1, 0.5, 1)';
+              const isOuter = i % 2 === 0;
+              const a = (i / cards.length) * Math.PI * 2 * (isOuter ? 1 : -1);
+              const r = isOuter ? 110 : 55;
               const tx = Math.cos(a) * r;
               const ty = Math.sin(a) * r;
-              cards[i].style.transform = `translate(${tx}px, ${ty}px) rotate(${360 + i * 20}deg) scale(1)`;
+              const spinDeg = isOuter ? (720 + i * 30) : (-720 - i * 30);
+              cards[i].style.transform = `translate(${tx}px, ${ty}px) rotate(${spinDeg}deg) scale(${isOuter ? 1.05 : 0.95})`;
             }
-          }, 420);
+          }, 400);
 
-          // 階段 3：散開到全新隨機位置 (950 ~ 1400ms)
+          // 階段 3：散開到全新隨機位置 (940 ~ 1400ms)
           setTimeout(() => {
             for (let i = 0; i < cards.length; i++) {
               cards[i].style.transition = 'all 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
@@ -611,7 +613,7 @@
             }
             this.isAutoShuffling = false;
             autoShuffleBtn.classList.remove('opacity-50');
-          }, 950);
+          }, 940);
         });
       }
 
