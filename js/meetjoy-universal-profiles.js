@@ -1050,17 +1050,17 @@
 
         container.innerHTML = `
           <div class="w-full bg-gradient-to-r from-[#FBF8F2] via-white to-[#F8F5EE] border border-[#D9CDB8] rounded-2xl p-3 sm:p-4 mb-4 shadow-xs text-xs">
-            <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
               
               <!-- 快速帶入下拉選單 -->
-              <div class="flex-1 min-w-[260px] flex items-center gap-2">
+              <div class="flex-1 min-w-0 flex items-center gap-2">
                 <span class="font-bold text-[#2E3829] shrink-0 flex items-center gap-1">
                   <span>📂 命盤庫：</span>
                 </span>
-                <select id="mj_profile_dropdown" class="flex-1 bg-white border border-[#C8A97E]/70 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E] shadow-2xs">
+                <select id="mj_profile_dropdown" class="flex-1 min-w-0 bg-white border border-[#C8A97E]/70 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#C8A97E] shadow-2xs truncate">
                   ${optionsHtml}
                 </select>
-                <button id="mj_btn_del_profile" type="button" class="text-slate-400 hover:text-rose-600 px-2 py-1.5 rounded-lg border border-transparent hover:border-rose-200 transition" title="刪除選中的命盤紀錄">
+                <button id="mj_btn_del_profile" type="button" class="shrink-0 text-slate-400 hover:text-rose-600 px-2 py-1.5 rounded-lg border border-transparent hover:border-rose-200 transition" title="刪除選中的命盤紀錄">
                   🗑️
                 </button>
               </div>
