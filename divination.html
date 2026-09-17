@@ -38,6 +38,17 @@
     .card-inner.flipped {
       transform: rotateY(180deg);
     }
+    /* 徹底防禦 iOS/WebKit 穿透：翻開後卡背 100% 隱藏，未翻開時卡面 100% 隱藏 */
+    .card-inner.flipped .card-back {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .card-inner:not(.flipped) .card-front {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
     .card-face {
       position: absolute;
       top: 0;
@@ -425,11 +436,14 @@
 
         <!-- 動作按鈕組 -->
         <div class="flex flex-wrap items-center gap-2.5">
-          <button type="button" id="btn_shuffle" class="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-black border border-stone-300 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+          <button type="button" id="btn_shuffle" class="px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-black border border-stone-300 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
             <span>🌀 靜心洗牌</span>
           </button>
-          <button type="button" id="btn_draw_all" data-action="draw_all" class="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md cursor-pointer">
+          <button type="button" id="btn_draw_all" data-action="draw_all" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md cursor-pointer">
             <span>✨ 一鍵抽牌</span>
+          </button>
+          <button type="button" id="btn_slideshow" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-black border border-amber-300/80 transition flex items-center gap-1.5 shadow-xs cursor-pointer" title="全螢幕逐張放大幻燈片欣賞">
+            <span>🔍 放大幻燈片</span>
           </button>
         </div>
 
@@ -437,8 +451,8 @@
 
       <!-- 提示說明 -->
       <div class="mt-3 pt-3 border-t border-stone-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-500 font-bold">
-        <span id="spread_hint">💡 心中默念你的問題或想洞悉的領域，點擊下方卡牌進行翻牌。</span>
-        <span class="text-amber-800" id="spread_badge_tip">支援逐張點擊翻牌 ➔</span>
+        <span id="spread_hint">💡 點擊下方卡牌進行翻牌；翻開後再點一下圖片即可「全螢幕放大幻燈片」細緻觀賞。</span>
+        <span class="text-amber-800" id="spread_badge_tip">支援點圖放大幻燈片 ➔</span>
       </div>
     </div>
 
@@ -495,6 +509,68 @@
   <footer class="w-full py-6 text-center text-xs text-stone-500 font-bold border-t border-stone-200 bg-white/50">
     <p>© 2026 癒見幸福療身心靈推廣中心 · 魔法占星學院 · 愛倫院長精神導師</p>
   </footer>
+
+  <!-- 全螢幕卡牌圖片放大幻燈片模式 (Card Lightbox Slideshow Modal) -->
+  <div id="card_slideshow_modal" style="z-index: 9999999;" class="fixed inset-0 bg-stone-950/98 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 hidden select-none">
+    
+    <!-- 頂部工具列 -->
+    <div class="w-full max-w-4xl flex items-center justify-between text-amber-100 pb-2.5 border-b border-white/15">
+      <div class="flex items-center gap-2">
+        <span id="slideshow_pos_badge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-black">
+          命宮 · 主星
+        </span>
+        <h3 id="slideshow_title" class="text-sm sm:text-base font-black text-amber-100 tracking-wide">
+          紫微星 (正位)
+        </h3>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="slideshow_counter" class="text-xs font-mono font-bold text-amber-300/90 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+          1 / 9
+        </span>
+        <button type="button" onclick="closeSlideshow()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-base font-bold transition cursor-pointer" title="關閉 (Esc)">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- 中央圖片主舞台與左右切換箭頭 -->
+    <div class="w-full flex-1 flex items-center justify-center relative my-2 min-h-0">
+      
+      <!-- 上一張按鈕 -->
+      <button type="button" onclick="prevSlide()" class="absolute left-1 sm:left-4 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/60 hover:bg-black/85 border border-amber-400/40 text-amber-200 flex items-center justify-center text-2xl font-black transition shadow-2xl cursor-pointer backdrop-blur-xs" title="上一張 (← 或向右滑動)">
+        ‹
+      </button>
+
+      <!-- 大圖容器 -->
+      <div id="slideshow_img_container" class="h-full max-h-[66vh] sm:max-h-[72vh] flex items-center justify-center p-2">
+        <img id="slideshow_img" src="" alt="" class="max-h-full max-w-full object-contain rounded-2xl shadow-2xl border-2 border-[#C8A97E]/70 transition-transform duration-300">
+        <div id="slideshow_vector_wrap" class="w-56 sm:w-64 max-h-full rounded-2xl overflow-hidden shadow-2xl hidden"></div>
+      </div>
+
+      <!-- 下一張按鈕 -->
+      <button type="button" onclick="nextSlide()" class="absolute right-1 sm:right-4 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/60 hover:bg-black/85 border border-amber-400/40 text-amber-200 flex items-center justify-center text-2xl font-black transition shadow-2xl cursor-pointer backdrop-blur-xs" title="下一張 (→ 或向左滑動)">
+        ›
+      </button>
+    </div>
+
+    <!-- 底部說明面板與切換工具 -->
+    <div class="w-full max-w-2xl bg-stone-900/90 border border-amber-400/30 rounded-2xl p-3 sm:p-4 text-center shadow-xl backdrop-blur-md">
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <span id="slideshow_role" class="text-[10px] sm:text-xs text-amber-300/90 font-black"></span>
+        <button type="button" id="btn_toggle_rotation" onclick="toggleSlideRotation()" class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-400/30 hover:bg-amber-400/30 transition cursor-pointer">
+          🔄 轉為正向觀看
+        </button>
+      </div>
+      <p id="slideshow_desc" class="text-xs sm:text-sm text-stone-200 font-bold leading-relaxed line-clamp-2">
+      </p>
+      <div class="mt-1 flex items-center justify-center gap-3 text-[10px] text-stone-400">
+        <span>鍵盤 ← → 或手機左右滑動切換</span>
+        <span>·</span>
+        <span>Esc 或點擊 ✕ 關閉</span>
+      </div>
+    </div>
+
+  </div>
 
   <!-- 占卜主控制器程式 -->
   <script>
@@ -1252,18 +1328,9 @@
                 <div class="card-face card-front ${isLenormand ? 'p-0 bg-[#FDFBF7] border border-[#C5A059] shadow-md overflow-hidden' : 'p-1 sm:p-1.5 bg-stone-900 border-2 border-[#C8A97E]/80'}">
                   
                   ${hasImg ? `
-                    <!-- 實體牌卡圖案展示：塔羅與紫微均使用卡庫指定高解析牌面 -->
+                    <!-- 實體牌卡圖案展示：塔羅與紫微均使用卡庫指定高解析牌面，100% 無字遮擋純淨畫作 -->
                     <div class="w-full h-full rounded-xl overflow-hidden relative flex flex-col justify-between bg-stone-950">
-                      <img src="${c.image ? (c.image.includes('?') ? c.image : c.image + '?v=2026') : ''}" alt="${c.name}" class="${isTarot ? 'tarot-card-image' : 'ziwei-card-image'} ${item.isReversed ? 'card-art-reversed' : ''} w-full h-full object-cover rounded-lg" onerror="this.style.display='none'">
-                      
-                      <!-- 卡面右上角正逆位柔光標籤 -->
-                      <div class="absolute top-1 right-1 z-10">
-                        <span class="px-1.5 py-0.5 rounded-full text-[8px] font-black backdrop-blur-md shadow-md ${item.isReversed ? 'bg-rose-900/85 text-rose-200 border border-rose-400/30' : 'bg-emerald-900/85 text-emerald-200 border border-emerald-400/30'}">
-                          ${item.isReversed ? '逆' : '正'}
-                        </span>
-                      </div>
-
-                      ${timeLabel ? `<span class="absolute top-1.5 left-1 right-1 rounded-md bg-amber-300/95 px-1 py-0.5 text-center text-[8px] font-black text-stone-900 shadow-sm truncate">${timeLabel}</span>` : ''}
+                      <img src="${c.image ? (c.image.includes('?') ? c.image : c.image + '?v=2026') : ''}" alt="${c.name}" class="${isTarot ? 'tarot-card-image' : 'ziwei-card-image'} ${item.isReversed ? 'card-art-reversed' : ''} w-full h-full object-cover rounded-lg cursor-zoom-in hover:scale-102 transition duration-300" onerror="this.style.display='none'">
                     </div>
                   ` : (isLenormand ? `
                     <!-- 雷諾曼：100% 正向典雅歐式沙龍卡面 (無任何倒牌、無不協調印章與反白標籤) -->
@@ -1318,9 +1385,14 @@
         }
       }
 
-      // 翻牌
+      // 翻牌或點圖放大幻燈片
       window.flipCard = function (idx) {
         if (!drawnCards[idx]) return;
+        if (drawnCards[idx].isFlipped) {
+          // 已翻開的卡牌，點擊直接進入全螢幕幻燈片放大模式！
+          openSlideshow(idx);
+          return;
+        }
         drawnCards[idx].isFlipped = true;
         const inner = document.getElementById(`card_inner_${idx}`);
         if (inner) inner.classList.add('flipped');
@@ -1333,8 +1405,142 @@
         }
       };
 
+      // ─── 全螢幕卡牌圖片放大幻燈片模式 (Card Lightbox Slideshow) ───
+      let currentSlideIdx = 0;
+      let slideIsFlippedReversed = false;
+
+      window.openSlideshow = function (startIdx = 0) {
+        if (!drawnCards || drawnCards.length === 0) return;
+        currentSlideIdx = Math.max(0, Math.min(startIdx, drawnCards.length - 1));
+        slideIsFlippedReversed = false;
+        
+        const modal = document.getElementById('card_slideshow_modal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        renderCurrentSlide();
+      };
+
+      window.closeSlideshow = function () {
+        const modal = document.getElementById('card_slideshow_modal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      };
+
+      window.nextSlide = function () {
+        if (!drawnCards || drawnCards.length === 0) return;
+        currentSlideIdx = (currentSlideIdx + 1) % drawnCards.length;
+        slideIsFlippedReversed = false;
+        renderCurrentSlide();
+      };
+
+      window.prevSlide = function () {
+        if (!drawnCards || drawnCards.length === 0) return;
+        currentSlideIdx = (currentSlideIdx - 1 + drawnCards.length) % drawnCards.length;
+        slideIsFlippedReversed = false;
+        renderCurrentSlide();
+      };
+
+      window.toggleSlideRotation = function () {
+        slideIsFlippedReversed = !slideIsFlippedReversed;
+        applySlideRotation();
+      };
+
+      function applySlideRotation() {
+        const item = drawnCards[currentSlideIdx];
+        const img = document.getElementById('slideshow_img');
+        if (!item || !img) return;
+        const actuallyReversed = item.isReversed ^ slideIsFlippedReversed;
+        img.style.transform = actuallyReversed ? 'rotate(180deg)' : 'none';
+        const rotateBtn = document.getElementById('btn_toggle_rotation');
+        if (rotateBtn) {
+          rotateBtn.textContent = actuallyReversed ? '🔄 轉為正向觀看' : '🔄 轉為倒牌視角';
+        }
+      }
+
+      function renderCurrentSlide() {
+        const item = drawnCards[currentSlideIdx];
+        if (!item) return;
+        const c = item.card;
+        const total = drawnCards.length;
+
+        const badge = document.getElementById('slideshow_pos_badge');
+        const title = document.getElementById('slideshow_title');
+        const counter = document.getElementById('slideshow_counter');
+        const role = document.getElementById('slideshow_role');
+        const desc = document.getElementById('slideshow_desc');
+        const img = document.getElementById('slideshow_img');
+        const vectorWrap = document.getElementById('slideshow_vector_wrap');
+
+        const posText = item.positionLabel || (item.palace ? `${item.palace} · ${item.role}` : `第 ${currentSlideIdx + 1} 張`);
+        if (badge) badge.textContent = posText;
+        if (title) title.textContent = `${c.name} ${item.isReversed ? '(倒牌 / 逆位)' : '(正牌 / 正位)'}`;
+        if (counter) counter.textContent = `${currentSlideIdx + 1} / ${total}`;
+        if (role) role.textContent = c.groupLabel || (c.nature || (currentSystem === 'ziwei' ? '紫微星曜' : '占卜神諭'));
+        if (desc) {
+          const detail = item.isReversed ? (c.reversed || c.description) : (c.upright || c.description);
+          desc.textContent = detail || '點擊左右箭頭或滑動以切換卡片。';
+        }
+
+        if (c.image) {
+          if (img) {
+            img.src = c.image.includes('?') ? c.image : c.image + '?v=2026';
+            img.alt = c.name;
+            img.classList.remove('hidden');
+          }
+          if (vectorWrap) vectorWrap.classList.add('hidden');
+          applySlideRotation();
+        } else if (isLenormand && window.MeetJoyDivination?.renderLenormandCardFace) {
+          if (img) img.classList.add('hidden');
+          if (vectorWrap) {
+            vectorWrap.innerHTML = window.MeetJoyDivination.renderLenormandCardFace(c);
+            vectorWrap.classList.remove('hidden');
+          }
+        } else {
+          if (img) img.classList.add('hidden');
+          if (vectorWrap) {
+            vectorWrap.innerHTML = `<div class="p-8 text-center text-amber-200 text-lg font-bold">${c.name}</div>`;
+            vectorWrap.classList.remove('hidden');
+          }
+        }
+      }
+
       // 設置動作監聽
       function setupActions() {
+        document.getElementById('btn_slideshow')?.addEventListener('click', () => {
+          openSlideshow(0);
+        });
+
+        // 幻燈片鍵盤導航
+        window.addEventListener('keydown', (e) => {
+          const modal = document.getElementById('card_slideshow_modal');
+          if (!modal || modal.classList.contains('hidden')) return;
+          if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+          if (e.key === 'ArrowLeft') prevSlide();
+          if (e.key === 'Escape') closeSlideshow();
+        });
+
+        // 幻燈片手機左右滑動手勢
+        const modal = document.getElementById('card_slideshow_modal');
+        if (modal) {
+          let touchStartX = 0;
+          modal.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+          }, { passive: true });
+          modal.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 40) nextSlide();
+            if (touchEndX > touchStartX + 40) prevSlide();
+          }, { passive: true });
+
+          // 點擊黑色背景空白處關閉
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target.id === 'slideshow_img_container') {
+              closeSlideshow();
+            }
+          });
+        }
         document.getElementById('btn_draw_all')?.addEventListener('click', function () {
           const action = this.getAttribute('data-action') || 'draw_all';
           if (action === 'redraw') {
