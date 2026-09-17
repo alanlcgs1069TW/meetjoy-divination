@@ -40,6 +40,9 @@
     }
     .card-face {
       position: absolute;
+      top: 0;
+      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
@@ -444,6 +447,19 @@
       <!-- 動態排開卡牌網格 -->
     </div>
 
+    <!-- 紫微牌卡智慧財產專屬卡片 (抽牌舞台最下方展示) -->
+    <div id="ziwei_copyright_card" class="w-full mb-8 hidden">
+      <div class="mx-auto max-w-xl rounded-2xl border border-[#C8A97E] bg-gradient-to-r from-[#FDFBF7] via-white to-[#FDFBF7] p-4 sm:p-5 text-center shadow-md relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-300 via-amber-600 to-amber-300"></div>
+        <div class="flex items-center justify-center gap-2.5 sm:gap-3">
+          <span class="text-xl sm:text-2xl text-amber-800">📜</span>
+          <div class="text-xs sm:text-sm md:text-base font-black text-stone-900 tracking-wider">
+            紫微牌卡智慧財產屬於ＩＳＺＮ國際紫微學會
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 解讀展示面板 (Interpretation Result Panel) -->
     <div id="result_panel" class="w-full bg-white rounded-3xl border-2 border-stone-800 shadow-xl p-5 sm:p-8 hidden">
       <div class="flex items-center justify-between pb-3 mb-5 border-b-2 border-stone-800">
@@ -552,6 +568,18 @@
         setupSpreadOptions();
         setupActions();
         resetAndDraw();
+        updateZiweiCopyrightCard();
+      }
+
+      // 控制紫微智慧財產專屬卡片顯示
+      function updateZiweiCopyrightCard() {
+        const card = document.getElementById('ziwei_copyright_card');
+        if (!card) return;
+        if (currentSystem === 'ziwei') {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
       }
 
       // 切換系統 Tabs
@@ -582,6 +610,7 @@
           btn.addEventListener('click', () => {
             currentSystem = t.key;
             updateTabUI();
+            updateZiweiCopyrightCard();
             setupSpreadOptions();
             resetAndDraw();
           });
