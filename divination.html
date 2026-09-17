@@ -28,7 +28,6 @@
       background-color: #F6F2EA !important;
       color: #2E3829;
       overflow-x: hidden;
-      overscroll-behavior-y: none;
       -webkit-overflow-scrolling: touch;
     }
     body {
@@ -187,84 +186,114 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
-      padding: 18px 24px;
-      background: radial-gradient(circle at center, rgba(255,255,255,0.92) 0%, rgba(246,242,234,0.85) 100%);
+      gap: 36px;
+      padding: 24px 28px;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.95) 0%, rgba(246,242,234,0.9) 100%);
       border: 1.5px solid #dcd3c1;
       border-radius: 24px;
       box-shadow: 0 10px 30px -8px rgba(0,0,0,0.07);
     }
     @media (min-width: 1280px) {
       .celtic-spread-stage {
-        --c-w: 88px;
-        --c-h: 136px;
-        gap: 40px;
-        padding: 22px 30px;
+        --c-w: 86px;
+        --c-h: 132px;
+        gap: 44px;
+        padding: 28px 36px;
       }
     }
     @media (max-width: 768px) {
       .celtic-spread-stage {
         --c-w: 60px;
         --c-h: 92px;
-        gap: 16px;
-        padding: 12px 10px;
+        gap: 20px;
+        padding: 14px 10px;
       }
     }
     @media (max-width: 480px) {
       .celtic-spread-stage {
-        --c-w: 48px;
-        --c-h: 74px;
-        gap: 10px;
+        --c-w: 46px;
+        --c-h: 70px;
+        gap: 14px;
         padding: 10px 6px;
       }
     }
     .celtic-cross-grid {
       display: grid;
-      grid-template-columns: repeat(3, var(--c-w));
+      grid-template-columns: var(--c-w) var(--c-h) var(--c-w);
       grid-template-rows: repeat(3, var(--c-h));
-      gap: 14px;
+      gap: 16px;
       align-items: center;
       justify-items: center;
     }
+    @media (max-width: 768px) {
+      .celtic-cross-grid {
+        gap: 12px;
+      }
+    }
+    @media (max-width: 480px) {
+      .celtic-cross-grid {
+        gap: 10px;
+      }
+    }
     .celtic-cell {
-      width: var(--c-w);
+      width: 100%;
       height: var(--c-h);
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .celtic-center-cell {
+    .celtic-cell > div {
       width: var(--c-w);
       height: var(--c-h);
+    }
+    .celtic-center-cell {
+      width: var(--c-h);
+      height: var(--c-h);
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .celtic-slot-base {
       position: absolute;
-      inset: 0;
       width: var(--c-w);
       height: var(--c-h);
       z-index: 2;
     }
     .celtic-slot-crossing {
       position: absolute;
-      inset: 0;
       width: var(--c-w);
       height: var(--c-h);
       transform: rotate(90deg);
       z-index: 6;
       transition: transform 0.3s ease;
     }
+    .celtic-slot-crossing .celtic-pos-badge {
+      transform: translateX(-50%) rotate(-90deg);
+    }
     .celtic-staff-column {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      height: calc(var(--c-h) * 3 + 28px);
+      justify-content: center;
+      gap: 16px;
       width: var(--c-w);
+    }
+    @media (max-width: 768px) {
+      .celtic-staff-column {
+        gap: 12px;
+      }
+    }
+    @media (max-width: 480px) {
+      .celtic-staff-column {
+        gap: 10px;
+      }
     }
     .celtic-staff-cell {
       width: var(--c-w);
       height: var(--c-h);
+      flex-shrink: 0;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -304,6 +333,12 @@
       box-shadow: 0 16px 36px -10px rgba(0,0,0,0.4);
       position: relative;
       overflow: hidden;
+    }
+    @media (max-width: 640px) {
+      .sanfang-board {
+        padding: 14px 8px;
+        border-radius: 20px;
+      }
     }
     .sanfang-banner {
       display: inline-flex;
@@ -1527,55 +1562,56 @@
         if (drawnCards.length < 9) return '';
         return `
           <div class="sanfang-board">
-            <!-- 右上角：十二長生時輪 -->
-            <div class="absolute top-4 right-4 sm:top-6 sm:right-6 flex flex-col items-center bg-black/40 p-2 sm:p-2.5 rounded-2xl border border-amber-400/50 backdrop-blur-xs shadow-md z-20">
-              <div class="flex items-center gap-1.5 mb-1.5">
+            <!-- 十二長生時輪（手機版置頂通欄 · 桌面版右上角神諭角） -->
+            <div class="relative sm:absolute sm:top-6 sm:right-6 w-full sm:w-auto flex sm:flex-col items-center justify-between sm:justify-center bg-black/50 p-2 sm:p-2.5 mb-3 sm:mb-0 rounded-2xl border border-amber-400/50 backdrop-blur-xs shadow-md z-20">
+              <div class="flex items-center gap-1.5 sm:mb-1.5">
                 <span class="sanfang-life-badge text-xs">十二長生</span>
                 <span class="px-2 py-0.5 rounded-full bg-amber-400 text-stone-900 text-[10px] font-black">時輪</span>
+                <span class="sm:hidden text-[10px] text-amber-200/80 font-bold ml-1">氣數時序</span>
               </div>
-              <div class="w-16 sm:w-20">
+              <div class="w-14 sm:w-20">
                 ${renderCardHtml(drawnCards[8], 8, 'sanfang')}
               </div>
             </div>
 
             <!-- 主佈局：菱形四正神殿 -->
-            <div class="flex flex-col items-center justify-between min-h-[580px] sm:min-h-[640px] relative py-2">
+            <div class="flex flex-col items-center justify-between min-h-[560px] sm:min-h-[640px] relative py-2">
               
               <!-- 上方：遷移宮 (主星 + 輔星) -->
               <div class="flex flex-col items-center z-10">
                 <div class="flex items-center gap-2 mb-2">
-                  <span class="sanfang-banner">遷移宮</span>
-                  <span class="text-amber-200/90 text-xs font-bold">外在人際 · 機遇格局</span>
+                  <span class="sanfang-banner text-xs sm:text-sm">遷移宮</span>
+                  <span class="text-amber-200/90 text-[11px] sm:text-xs font-bold">外在人際 · 機遇格局</span>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3">
                   <div class="flex flex-col items-center">
                     <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
-                    <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[2], 2, 'sanfang')}</div>
+                    <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[2], 2, 'sanfang')}</div>
                   </div>
                   <div class="flex flex-col items-center">
                     <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
-                    <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[3], 3, 'sanfang')}</div>
+                    <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[3], 3, 'sanfang')}</div>
                   </div>
                 </div>
               </div>
 
               <!-- 中排：左側官祿宮 ⟷ 中央交會紋章 ⟷ 右側財帛宮 -->
-              <div class="w-full flex items-center justify-between px-2 sm:px-8 my-3 sm:my-4 z-10">
+              <div class="w-full flex items-center justify-between px-1 sm:px-8 my-3 sm:my-4 z-10">
                 
                 <!-- 左側：官祿宮 (事業工作) -->
                 <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-2">
-                    <span class="sanfang-banner">官祿宮</span>
+                  <div class="flex items-center gap-1.5 mb-1.5">
+                    <span class="sanfang-banner text-xs sm:text-sm">官祿宮</span>
                   </div>
-                  <span class="text-[10px] text-amber-200/80 font-bold mb-1">事業功名 · 職場動能</span>
-                  <div class="flex items-center gap-2.5">
+                  <span class="text-[9px] sm:text-[10px] text-amber-200/80 font-bold mb-1">事業功名 · 職場動能</span>
+                  <div class="flex items-center gap-1.5 sm:gap-2.5">
                     <div class="flex flex-col items-center">
                       <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
-                      <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[4], 4, 'sanfang')}</div>
+                      <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[4], 4, 'sanfang')}</div>
                     </div>
                     <div class="flex flex-col items-center">
                       <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
-                      <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[5], 5, 'sanfang')}</div>
+                      <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[5], 5, 'sanfang')}</div>
                     </div>
                   </div>
                 </div>
@@ -1589,18 +1625,18 @@
 
                 <!-- 右側：財帛宮 (資產金流) -->
                 <div class="flex flex-col items-center">
-                  <div class="flex items-center gap-1.5 mb-2">
-                    <span class="sanfang-banner">財帛宮</span>
+                  <div class="flex items-center gap-1.5 mb-1.5">
+                    <span class="sanfang-banner text-xs sm:text-sm">財帛宮</span>
                   </div>
-                  <span class="text-[10px] text-amber-200/80 font-bold mb-1">資產金流 · 進財能量</span>
-                  <div class="flex items-center gap-2.5">
+                  <span class="text-[9px] sm:text-[10px] text-amber-200/80 font-bold mb-1">資產金流 · 進財能量</span>
+                  <div class="flex items-center gap-1.5 sm:gap-2.5">
                     <div class="flex flex-col items-center">
                       <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
-                      <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[6], 6, 'sanfang')}</div>
+                      <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[6], 6, 'sanfang')}</div>
                     </div>
                     <div class="flex flex-col items-center">
                       <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
-                      <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[7], 7, 'sanfang')}</div>
+                      <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[7], 7, 'sanfang')}</div>
                     </div>
                   </div>
                 </div>
@@ -1609,19 +1645,19 @@
 
               <!-- 下方：命宮 (主星 + 輔星) -->
               <div class="flex flex-col items-center z-10">
-                <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center gap-2 sm:gap-3 mb-1.5">
                   <div class="flex flex-col items-center">
                     <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
-                    <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[0], 0, 'sanfang')}</div>
+                    <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[0], 0, 'sanfang')}</div>
                   </div>
                   <div class="flex flex-col items-center">
                     <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
-                    <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[1], 1, 'sanfang')}</div>
+                    <div class="w-14 sm:w-20">${renderCardHtml(drawnCards[1], 1, 'sanfang')}</div>
                   </div>
                 </div>
                 <div class="flex items-center gap-2 mt-1">
-                  <span class="sanfang-banner border-amber-300 text-amber-200">命宮</span>
-                  <span class="text-amber-200/90 text-xs font-bold">核心本質 · 自我基調</span>
+                  <span class="sanfang-banner text-xs sm:text-sm border-amber-300 text-amber-200">命宮</span>
+                  <span class="text-amber-200/90 text-[11px] sm:text-xs font-bold">核心本質 · 自我基調</span>
                 </div>
               </div>
 
@@ -1665,76 +1701,79 @@
             <div class="flex flex-wrap items-center justify-between px-3 text-xs font-bold text-stone-600 gap-2">
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-0.5 rounded-full bg-[#2E3829] text-amber-200 font-black text-xs">🌌 正統紫微斗數全景大天盤</span>
-                <span class="text-stone-700">4x4 迴廊十二宮雙星合參（各宮主星+輔星共 24 張）＋ 天盤中庭身宮與長生時序（2張）</span>
+                <span class="text-stone-700 hidden sm:inline">4x4 迴廊十二宮雙星合參（各宮主星+輔星共 24 張）＋ 天盤中庭身宮與長生時序（2張）</span>
               </div>
               <div class="flex items-center gap-2">
+                <span class="sm:hidden text-[10px] text-amber-300 font-bold bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-400/40">👉 可左右滑動</span>
                 <span class="court-pill-shen">身宮</span>
                 <span class="court-pill-life">十二長生</span>
               </div>
             </div>
 
-            <div class="ziwei-twelve-board">
-              <!-- 周邊 12 宮位格 (巳午未申、辰酉、卯戌、寅丑子亥) -->
-              ${gridCells.map(c => {
-                const pIdx = c.palaceIdx;
-                const pName = palaceNames[pIdx];
-                const isMingGong = (pIdx === 0);
-                const mCardIdx = pIdx * 2;
-                const aCardIdx = pIdx * 2 + 1;
+            <div class="w-full overflow-x-auto pb-2 -mx-1 px-1">
+              <div class="ziwei-twelve-board min-w-[680px] lg:min-w-0">
+                <!-- 周邊 12 宮位格 (巳午未申、辰酉、卯戌、寅丑子亥) -->
+                ${gridCells.map(c => {
+                  const pIdx = c.palaceIdx;
+                  const pName = palaceNames[pIdx];
+                  const isMingGong = (pIdx === 0);
+                  const mCardIdx = pIdx * 2;
+                  const aCardIdx = pIdx * 2 + 1;
 
-                return `
-                  <div class="ziwei-palace-cell ${isMingGong ? 'ring-2 ring-amber-400 bg-[#2b3a2f]' : ''}" style="grid-row: ${c.row}; grid-column: ${c.col};">
-                    <div class="w-full flex items-center justify-between pb-1 mb-1 border-b border-[#C8A97E]/40 px-1">
-                      <span class="text-xs font-black ${isMingGong ? 'text-amber-300' : 'text-amber-100'}">${pName}</span>
-                      <span class="text-[10px] text-amber-300/80 font-bold">${c.branch}位</span>
+                  return `
+                    <div class="ziwei-palace-cell ${isMingGong ? 'ring-2 ring-amber-400 bg-[#2b3a2f]' : ''}" style="grid-row: ${c.row}; grid-column: ${c.col};">
+                      <div class="w-full flex items-center justify-between pb-1 mb-1 border-b border-[#C8A97E]/40 px-1">
+                        <span class="text-xs font-black ${isMingGong ? 'text-amber-300' : 'text-amber-100'}">${pName}</span>
+                        <span class="text-[10px] text-amber-300/80 font-bold">${c.branch}位</span>
+                      </div>
+
+                      <!-- 宮內雙星：左主星 (藍) · 右輔星 (黃) -->
+                      <div class="w-full grid grid-cols-2 gap-1.5">
+                        <div class="flex flex-col items-center">
+                          <span class="text-[9px] font-black text-blue-300">主星</span>
+                          <div class="w-full">${renderCardHtml(drawnCards[mCardIdx], mCardIdx, 'twelve')}</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                          <span class="text-[9px] font-black text-amber-300">輔星</span>
+                          <div class="w-full">${renderCardHtml(drawnCards[aCardIdx], aCardIdx, 'twelve')}</div>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+
+                <!-- 天盤中庭 (佔據中宮 2x2) · 容納【身宮】與【十二長生】兩張關鍵核心大牌 -->
+                <div class="ziwei-center-court">
+                  <div class="text-center mb-3">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#1F261C] border border-amber-400/60 text-amber-200 text-xs font-black shadow-md">
+                      <span>✨ 天盤中庭 · 靈魂命身交會樞紐</span>
+                    </div>
+                    <p class="text-[10px] text-amber-200/80 mt-1 font-bold">身宮主宰後天行動修煉 ｜ 長生時輪定調氣數興衰週期</p>
+                  </div>
+
+                  <div class="flex items-center justify-center gap-4 sm:gap-6 w-full">
+                    <!-- 身宮卡牌 (第 13 張主星牌) -->
+                    <div class="flex flex-col items-center">
+                      <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[24], 24, 'twelve-court')}</div>
+                      <span class="court-pill-shen mt-2">身宮</span>
                     </div>
 
-                    <!-- 宮內雙星：左主星 (藍) · 右輔星 (黃) -->
-                    <div class="w-full grid grid-cols-2 gap-1.5">
-                      <div class="flex flex-col items-center">
-                        <span class="text-[9px] font-black text-blue-300">主星</span>
-                        <div class="w-full">${renderCardHtml(drawnCards[mCardIdx], mCardIdx, 'twelve')}</div>
-                      </div>
-                      <div class="flex flex-col items-center">
-                        <span class="text-[9px] font-black text-amber-300">輔星</span>
-                        <div class="w-full">${renderCardHtml(drawnCards[aCardIdx], aCardIdx, 'twelve')}</div>
-                      </div>
+                    <!-- 十二長生卡牌 -->
+                    <div class="flex flex-col items-center">
+                      <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[25], 25, 'twelve-court')}</div>
+                      <span class="court-pill-life mt-2">十二長生</span>
                     </div>
                   </div>
-                `;
-              }).join('')}
 
-              <!-- 天盤中庭 (佔據中宮 2x2) · 容納【身宮】與【十二長生】兩張關鍵核心大牌 -->
-              <div class="ziwei-center-court">
-                <div class="text-center mb-3">
-                  <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#1F261C] border border-amber-400/60 text-amber-200 text-xs font-black shadow-md">
-                    <span>✨ 天盤中庭 · 靈魂命身交會樞紐</span>
-                  </div>
-                  <p class="text-[10px] text-amber-200/80 mt-1 font-bold">身宮主宰後天行動修煉 ｜ 長生時輪定調氣數興衰週期</p>
-                </div>
-
-                <div class="flex items-center justify-center gap-4 sm:gap-6 w-full">
-                  <!-- 身宮卡牌 (第 13 張主星牌) -->
-                  <div class="flex flex-col items-center">
-                    <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[24], 24, 'twelve-court')}</div>
-                    <span class="court-pill-shen mt-2">身宮</span>
-                  </div>
-
-                  <!-- 十二長生卡牌 -->
-                  <div class="flex flex-col items-center">
-                    <div class="w-16 sm:w-20">${renderCardHtml(drawnCards[25], 25, 'twelve-court')}</div>
-                    <span class="court-pill-life mt-2">十二長生</span>
+                  <!-- 命宮標記 (對齊桌面紫微十二宮牌陣02.png) -->
+                  <div class="absolute bottom-2 right-3">
+                    <span class="px-3 py-1 rounded-full bg-stone-900/90 border border-amber-300 text-amber-200 text-[11px] font-black shadow-md">
+                      命宮方位 ➔ 亥宮
+                    </span>
                   </div>
                 </div>
 
-                <!-- 命宮標記 (對齊桌面紫微十二宮牌陣02.png) -->
-                <div class="absolute bottom-2 right-3">
-                  <span class="px-3 py-1 rounded-full bg-stone-900/90 border border-amber-300 text-amber-200 text-[11px] font-black shadow-md">
-                    命宮方位 ➔ 亥宮
-                  </span>
-                </div>
               </div>
-
             </div>
           </div>
         `;
@@ -1753,11 +1792,12 @@
         
         let wCls = `w-44 sm:w-48 ${cardAspect}`;
         let isCeltic = (size === 'celtic');
+        let isTableau = (size === 'tableau');
         let isSanFang = (size === 'sanfang');
         let isTwelve = (size === 'twelve');
         let isTwelveCourt = (size === 'twelve-court');
 
-        if (isCeltic) wCls = 'w-full h-full';
+        if (isCeltic || isTableau) wCls = 'w-full h-full';
         else if (isSanFang) wCls = `w-full ${cardAspect}`;
         else if (isTwelve) wCls = `w-full ${cardAspect}`;
         else if (isTwelveCourt) wCls = `w-full ${cardAspect}`;
@@ -1787,7 +1827,7 @@
 
         return `
           <div class="flex flex-col items-center w-full h-full relative group">
-            ${!isCeltic && !isTwelve && !isSanFang ? `
+            ${!isCeltic && !isTwelve && !isSanFang && !isTableau ? `
               <span class="text-[11px] font-black text-stone-700 mb-1.5 px-2.5 py-0.5 rounded-full bg-stone-200/90 whitespace-nowrap shadow-2xs">
                 ${item.positionLabel}
               </span>
