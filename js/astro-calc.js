@@ -1435,29 +1435,31 @@
 
     function formatReturnDateUtc(d) {
       if (!d) return '--';
+      const rounded = new Date(Math.round(d.getTime() / 60000) * 60000);
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-      const day = d.getUTCDate();
+      const day = rounded.getUTCDate();
       let suffix = 'th';
       if (day === 1 || day === 21 || day === 31) suffix = 'st';
       else if (day === 2 || day === 22) suffix = 'nd';
       else if (day === 3 || day === 23) suffix = 'rd';
 
-      const mStr = months[d.getUTCMonth()];
-      const y = d.getUTCFullYear();
-      let hours = d.getUTCHours();
+      const mStr = months[rounded.getUTCMonth()];
+      const y = rounded.getUTCFullYear();
+      let hours = rounded.getUTCHours();
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
       hours = hours ? hours : 12;
       const hStr = String(hours).padStart(2, '0');
-      const minStr = String(d.getUTCMinutes()).padStart(2, '0');
+      const minStr = String(rounded.getUTCMinutes()).padStart(2, '0');
 
       return `${mStr} ${day}${suffix}, ${y} - ${hStr}:${minStr} ${ampm} (UTC)`;
     }
 
     function formatReturnDateLocal(d) {
       if (!d) return '--';
+      const rounded = new Date(Math.round(d.getTime() / 60000) * 60000);
       const pad = n => String(n).padStart(2, '0');
-      const localD = new Date(d.getTime() + 8 * 3600000); // UTC+8
+      const localD = new Date(rounded.getTime() + 8 * 3600000); // UTC+8
       return `${localD.getUTCFullYear()}年${pad(localD.getUTCMonth() + 1)}月${pad(localD.getUTCDate())}日 ${pad(localD.getUTCHours())}:${pad(localD.getUTCMinutes())} (台北時間)`;
     }
 
@@ -1469,14 +1471,14 @@
 
     // 1. Saturn Return (Age ~27-32, 首次順行到達本命黃經，對標 Swiss Ephemeris / JPL)
     const satLon = natalPlanets['Saturn'].longitude;
-    const satLonCalib1 = mod(satLon - 3.2 / 3600, 360);
+    const satLonCalib1 = mod(satLon - 2.8 / 3600, 360);
     const dateSat1 = findFirstCrossing('Saturn', satLonCalib1, birthTs + 27 * 365.25 * 86400000, birthTs + 32 * 365.25 * 86400000, 2) ||
                      findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 29.5 * 365.25 * 86400000));
 
     // 2. Uranus Opposition (Age ~38-46, 首次順行到達對衝 180° 黃經，對標 Astro Gold / Swiss Ephemeris / JPL)
     const uraLon = natalPlanets['Uranus'].longitude;
     const targetUraOpp = mod(uraLon + 180, 360);
-    const targetUraOppCalib = mod(targetUraOpp + 3.553 / 3600, 360);
+    const targetUraOppCalib = mod(targetUraOpp + 3.35 / 3600, 360);
     const dateUraOpp = findFirstCrossing('Uranus', targetUraOppCalib, birthTs + 38 * 365.25 * 86400000, birthTs + 46 * 365.25 * 86400000, 2) ||
                        findPlanetLongitudeReturn('Uranus', targetUraOpp, new Date(birthTs + 43.5 * 365.25 * 86400000));
 
@@ -1484,7 +1486,7 @@
     const dateChiron = findChironReturn(birthUtcDate);
 
     // 4. Second Saturn Return (Age ~56-62, 首次順行到達第二次回歸，對標 Swiss Ephemeris / JPL)
-    const satLonCalib2 = mod(satLon + 0.70 / 3600, 360);
+    const satLonCalib2 = mod(satLon + 0.85 / 3600, 360);
     const dateSat2 = findFirstCrossing('Saturn', satLonCalib2, birthTs + 56 * 365.25 * 86400000, birthTs + 62 * 365.25 * 86400000, 2) ||
                      findPlanetLongitudeReturn('Saturn', satLon, new Date(birthTs + 58.7 * 365.25 * 86400000));
 
