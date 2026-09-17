@@ -61,35 +61,35 @@
 <body class="bg-[#F4EFE6] min-h-screen flex flex-col items-center p-0 m-0 text-[#2E3829]">
 
   <!-- 全域導覽條 -->
-  <nav class="w-full text-amber-50 py-3 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b-2 border-[#C8A97E]/70 shadow-lg sticky top-0 z-50 backdrop-blur-md" style="background-image: linear-gradient(90deg, rgba(16, 23, 16, 0.92) 0%, rgba(22, 30, 21, 0.80) 45%, rgba(22, 30, 21, 0.35) 100%), url('/images/meetjoy-banner-geometry-washi.jpg'); background-size: cover; background-position: right center;">
-    <div class="flex items-center gap-3">
+  <nav class="w-full text-amber-50 py-2.5 px-3 sm:px-8 flex items-center justify-between border-b-2 border-[#C8A97E]/70 shadow-lg sticky top-0 z-50 backdrop-blur-md gap-2" style="background-image: linear-gradient(90deg, rgba(16, 23, 16, 0.92) 0%, rgba(22, 30, 21, 0.80) 45%, rgba(22, 30, 21, 0.35) 100%), url('/images/meetjoy-banner-geometry-washi.jpg'); background-size: cover; background-position: right center;">
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
       <!-- 官方圓形 Logo：點擊返回官方首頁 https://meetjoy.net/ -->
       <a href="https://meetjoy.net/" id="logo_official_home" title="返回癒見幸福官方網站首頁" class="block shrink-0 group cursor-pointer">
-        <img src="https://meetjoy.net/wp-content/uploads/2026/09/meetjoy-official-logo.png" alt="癒見幸福官方 Logo" class="w-10 h-10 rounded-full border-2 border-[#C8A97E]/80 shadow-md bg-white object-cover group-hover:scale-105 group-hover:border-amber-300 transition-all">
+        <img src="https://meetjoy.net/wp-content/uploads/2026/09/meetjoy-official-logo.png" alt="癒見幸福官方 Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#C8A97E]/80 shadow-md bg-white object-cover group-hover:scale-105 group-hover:border-amber-300 transition-all">
       </a>
       <div>
         <!-- 標題文字：點擊回到排盤大典首頁 https://app.meetjoy.net/ -->
-        <a href="https://app.meetjoy.net/" title="回到魔法神算排盤大典首頁" class="font-serif font-black text-lg sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2">
+        <a href="https://app.meetjoy.net/" title="回到魔法神算排盤大典首頁" class="font-serif font-black text-base sm:text-xl text-[#F7E7CE] hover:text-white transition flex items-center gap-2 whitespace-nowrap">
           <span>🔮 癒見幸福 · 魔法神算</span>
         </a>
-        <span class="text-[11px] text-amber-200/70 hidden sm:inline">魔法占星學院 · 生活魔藥排盤大典</span>
+        <span class="text-[11px] text-amber-200/70 hidden md:inline">魔法占星學院 · 生活魔藥排盤大典</span>
       </div>
     </div>
-    <div class="flex items-center gap-2 text-xs sm:text-sm font-medium">
-      <a href="https://meetjoy.net/" class="px-3 py-1.5 bg-[#C8A97E] text-stone-900 font-bold rounded-lg hover:bg-amber-300 transition flex items-center gap-1 shadow-xs">
-        <span>🏠 回到官網首頁</span>
+    <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium overflow-x-auto no-scrollbar shrink min-w-0 py-1">
+      <a href="https://meetjoy.net/" class="px-2.5 sm:px-3 py-1.5 bg-[#C8A97E] text-stone-900 font-bold rounded-lg hover:bg-amber-300 transition flex items-center gap-1 shadow-xs whitespace-nowrap shrink-0">
+        <span>🏠 官網</span>
       </a>
-      <button id="btn_copy_link" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-amber-100 font-bold rounded-lg transition flex items-center gap-1 border border-white/20">
-        <span>📋 複製排盤連結</span>
+      <button id="btn_copy_link" class="px-2.5 sm:px-3 py-1.5 bg-white/15 hover:bg-white/25 text-amber-100 font-bold rounded-lg transition flex items-center gap-1 border border-white/20 whitespace-nowrap shrink-0">
+        <span>📋 複製連結</span>
       </button>
-      <a href="https://meetjoy.net/calendar/" target="_blank" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-amber-100 transition font-bold border border-white/20">
-        📅 月行事曆 ↗
+      <a href="https://meetjoy.net/calendar/" target="_blank" class="px-2.5 sm:px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-amber-100 transition font-bold border border-white/20 whitespace-nowrap shrink-0">
+        📅 行事曆 ↗
       </a>
-      <a href="https://meetjoy.net/booking/" target="_blank" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-amber-100 transition font-bold border border-white/20">
-        預約諮詢中心 ↗
+      <a href="https://meetjoy.net/booking/" target="_blank" class="px-2.5 sm:px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-amber-100 transition font-bold border border-white/20 whitespace-nowrap shrink-0">
+        預約諮詢 ↗
       </a>
-      <a href="https://line.me/R/ti/p/@548valkv" target="_blank" class="px-3 py-1.5 bg-[#06C755] hover:bg-[#05b04c] rounded-lg text-white transition font-bold shadow-xs">
-        LINE 諮詢
+      <a href="https://line.me/R/ti/p/@548valkv" target="_blank" class="px-2.5 sm:px-3 py-1.5 bg-[#06C755] hover:bg-[#05b04c] rounded-lg text-white transition font-bold shadow-xs whitespace-nowrap shrink-0">
+        LINE
       </a>
     </div>
   </nav>
@@ -242,12 +242,18 @@
         </div>
       </a>
 
-      <!-- 4. 八字命理星盤大典 (系所三) -->
+      <!-- 4. 線上占卜大典 (系所四 · 神聖卜筮) -->
       <a href="/divination.html" data-category="dept-4" class="system-card card-hover flex flex-col justify-between bg-[#fffdf8] border-2 border-[#76533c] rounded-3xl p-5 sm:p-6 relative overflow-hidden group shadow-md transition">
         <div>
-          <div class="w-full aspect-square rounded-2xl overflow-hidden mb-4 border border-[#76533c]/30 shadow-inner relative bg-[#17251f] grid place-items-center">
-            <span class="text-7xl group-hover:scale-110 transition duration-500">🃏</span>
-            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-[#1E261D]/85 text-[#F7E7CE] text-[11px] font-bold border border-[#C8A97E]/40">🔮 神聖卜筮 · 抽牌大典</span>
+          <!-- 標準 1:1 方形大圖 -->
+          <div class="w-full aspect-square rounded-2xl overflow-hidden mb-4 border border-[#76533c]/30 shadow-inner relative group-hover:shadow-md transition bg-stone-100">
+            <img src="/images/systems/divination.jpg?v=20260917" alt="線上占卜大典" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-[#1E261D]/85 text-[#F7E7CE] backdrop-blur-md text-[11px] font-bold border border-[#C8A97E]/40">
+              🔮 神聖卜筮 · 抽牌大典
+            </span>
+            <span class="absolute bottom-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-900 text-[10px] font-black shadow-xs">
+              ✨ 三合一排盤
+            </span>
           </div>
           <div class="flex items-center justify-between gap-2 mb-2"><span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-black border border-amber-300">塔羅 · 紫微 · 雷諾曼</span><span class="text-xs font-bold text-stone-400 group-hover:text-[#76533c] transition">立即抽牌 ➔</span></div>
           <h2 class="text-xl sm:text-2xl font-black text-[#1F261C] mb-2 group-hover:text-[#76533c] transition">線上占卜大典</h2>
@@ -357,7 +363,7 @@
         <div>
           <!-- 標準 1:1 方形大圖 -->
           <div class="w-full aspect-square rounded-2xl overflow-hidden mb-4 border border-[#10B981]/30 shadow-inner relative group-hover:shadow-md transition bg-stone-100">
-            <img src="/images/systems/xiao-liu-ren.jpg" alt="四盤小六壬神數排盤" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <img src="/images/systems/xiao-liu-ren.jpg?v=20260917" alt="四盤小六壬神數排盤" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-[#1E261D]/85 text-[#F7E7CE] backdrop-blur-md text-[11px] font-bold border border-[#C8A97E]/40">
               ⛩️ 系所三 · 東方時空
             </span>
@@ -421,7 +427,7 @@
         <div>
           <!-- 標準 1:1 方形大圖 -->
           <div class="w-full aspect-square rounded-2xl overflow-hidden mb-4 border border-[#C8A97E]/30 shadow-inner relative group-hover:shadow-md transition bg-stone-100">
-            <img src="/images/systems/geomancy.jpg" alt="西洋地占神聖排盤" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <img src="/images/systems/geomancy.jpg?v=20260917" alt="西洋地占神聖排盤" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-[#1E261D]/85 text-[#F7E7CE] backdrop-blur-md text-[11px] font-bold border border-[#C8A97E]/40">
               🔮 系所四 · 神秘卜筮
             </span>

@@ -115,6 +115,65 @@
         align-items: center;
         justify-content: space-between;
         box-sizing: border-box;
+        gap: 8px;
+      }
+      .mj-topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .mj-topbar-sub {
+        font-size: 11px;
+        color: rgba(254, 243, 199, 0.5);
+        display: inline-block;
+        white-space: nowrap;
+      }
+      .mj-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: bold;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-shrink: 1;
+        min-width: 0;
+      }
+      .mj-topbar-actions::-webkit-scrollbar {
+        display: none;
+      }
+      .mj-topbar-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        color: #F7E7CE;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.08);
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+      }
+      .mj-topbar-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+      .mj-topbar-btn-gold {
+        background: #C8A97E !important;
+        color: #182622 !important;
+      }
+      .mj-topbar-btn-gold:hover {
+        background: #dfc298 !important;
+      }
+      .mj-topbar-btn-line {
+        background: #06C755 !important;
+        color: #ffffff !important;
+      }
+      .mj-topbar-btn-line:hover {
+        background: #05b34c !important;
       }
 
       /* Tier 1: 第一層 · 主學系分類列 */
@@ -286,7 +345,21 @@
         background: rgba(24, 38, 34, 0.2);
       }
 
-      @media (max-width: 640px) {
+      @media (max-width: 768px) {
+        #mj_unified_top_bar {
+          padding: 6px 10px;
+          gap: 8px;
+        }
+        .mj-topbar-sub {
+          display: none !important;
+        }
+        .mj-topbar-actions {
+          gap: 5px;
+        }
+        .mj-topbar-btn {
+          padding: 4px 8px;
+          font-size: 11px;
+        }
         .mj-tier1-bar {
           padding: 5px 8px;
         }
@@ -330,36 +403,36 @@
     // 第 0 層：官方 Logo、大典標題、外部捷徑（若在 iframe 內則自動隱藏，避免與外層導覽列重複）
     const topBarHtml = isInIframe ? '' : `
       <div id="mj_unified_top_bar">
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="mj-topbar-brand">
           <!-- 官方 Logo (回官網 meetjoy.net) -->
-          <a href="https://meetjoy.net/" title="返回癒見幸福官方首頁" style="display: block; text-decoration: none;">
+          <a href="https://meetjoy.net/" title="返回癒見幸福官方首頁" style="display: block; text-decoration: none; flex-shrink: 0;">
             <img src="https://meetjoy.net/wp-content/uploads/2026/09/meetjoy-official-logo.png" alt="癒見幸福官方 Logo" style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C8A97E; background: #ffffff; object-fit: cover; display: block;">
           </a>
           <!-- 大典標題 (回排盤首頁 app.meetjoy.net) -->
-          <a href="https://app.meetjoy.net/" title="返回排盤大典首頁" style="font-weight: 900; font-size: 15px; color: #F7E7CE; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+          <a href="https://app.meetjoy.net/" title="返回排盤大典首頁" style="font-weight: 900; font-size: 14.5px; color: #F7E7CE; text-decoration: none; display: flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0;">
             <span>🔮 癒見幸福 · 魔法神算</span>
           </a>
-          <span style="font-size: 11px; color: rgba(254, 243, 199, 0.5); display: inline-block;">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
+          <span class="mj-topbar-sub">| 魔法占星學院 · 愛倫院長排盤實驗室</span>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: bold;">
-          <a href="https://app.meetjoy.net/" style="padding: 5px 10px; border-radius: 8px; color: #F7E7CE; text-decoration: none; background: rgba(255,255,255,0.08);">
-            🌟 排盤總覽
+        <div class="mj-topbar-actions">
+          <a href="https://app.meetjoy.net/" class="mj-topbar-btn" title="排盤總覽">
+            <span>🌟 排盤總覽</span>
           </a>
-          <a href="https://meetjoy.net/calendar/" target="_blank" style="padding: 5px 10px; border-radius: 8px; color: #F7E7CE; text-decoration: none; background: rgba(255,255,255,0.08);">
-            📅 月行事曆 ↗
+          <a href="https://meetjoy.net/calendar/" target="_blank" class="mj-topbar-btn" title="月行事曆">
+            <span>📅 月行事曆 ↗</span>
           </a>
-          <a href="https://meetjoy.net/" target="_blank" style="padding: 5px 10px; border-radius: 8px; color: #F7E7CE; text-decoration: none; background: rgba(255,255,255,0.08);">
-            🏠 官網 ↗
+          <a href="https://meetjoy.net/" target="_blank" class="mj-topbar-btn" title="官方網站">
+            <span>🏠 官網 ↗</span>
           </a>
-          <a href="https://meetjoy.net/booking/" target="_blank" style="padding: 5px 12px; border-radius: 8px; background: #C8A97E; color: #182622 !important; text-decoration: none;">
-            🗓️ 預約諮詢 ↗
+          <a href="https://meetjoy.net/booking/" target="_blank" class="mj-topbar-btn mj-topbar-btn-gold" title="預約諮詢">
+            <span>🗓️ 預約諮詢 ↗</span>
           </a>
-          <a href="https://line.me/R/ti/p/@548valkv" target="_blank" style="padding: 5px 12px; border-radius: 8px; background: #06C755; color: #ffffff; text-decoration: none;">
-            LINE
+          <a href="https://line.me/R/ti/p/@548valkv" target="_blank" class="mj-topbar-btn mj-topbar-btn-line" title="LINE 官方帳號">
+            <span>LINE</span>
           </a>
           <!-- 全站頁頭常駐會員身分與登入/登出插槽 -->
-          <div id="mj_nav_auth_container" style="display: flex; align-items: center; margin-left: 4px;"></div>
+          <div id="mj_nav_auth_container" style="display: flex; align-items: center; margin-left: 2px; flex-shrink: 0;"></div>
         </div>
       </div>
     `;
