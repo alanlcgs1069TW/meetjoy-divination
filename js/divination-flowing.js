@@ -143,8 +143,18 @@
       if (!this.container) return;
       this.container.innerHTML = '';
 
+      // 沉浸模式下，在抽牌完成 (reveal) 之前隱藏底部版權列，保持視覺極致純淨無白條無邊框
+      const mainFooter = document.getElementById('main_footer');
+      if (mainFooter) {
+        if (this.step === 'reveal') {
+          mainFooter.style.display = 'block';
+        } else {
+          mainFooter.style.display = 'none';
+        }
+      }
+
       const wrapper = document.createElement('div');
-      wrapper.className = 'flowing-zen-wrapper w-full max-w-5xl mx-auto flex flex-col items-center select-none';
+      wrapper.className = 'flowing-zen-wrapper w-full max-w-5xl mx-auto flex flex-col items-center select-none pb-16 min-h-[calc(100dvh-180px)]';
 
       if (this.step === 'focus') {
         this.renderFocusStep(wrapper);
@@ -260,7 +270,7 @@
     // ─── 階段 2：散牌混洗 (Fluid Shuffle · 桌面散牌物理長按/滑動 + 自動混洗) ───
     renderShuffleStep(wrapper) {
       const shuffleArea = document.createElement('div');
-      shuffleArea.className = 'w-full flex flex-col items-center relative py-4';
+      shuffleArea.className = 'w-full flex flex-col items-center relative py-4 pb-12';
 
       shuffleArea.innerHTML = `
         <div class="text-center mb-3">
@@ -506,7 +516,7 @@
     // ─── 階段 3：拱弧展牌 (Card Fan Arc) 與直覺抽牌 ───
     renderFanStep(wrapper) {
       const fanArea = document.createElement('div');
-      fanArea.className = 'w-full flex flex-col items-center relative py-4 min-h-[580px] sm:min-h-[640px] justify-between';
+      fanArea.className = 'w-full flex flex-col items-center relative py-4 pb-12 min-h-[580px] sm:min-h-[640px] justify-between';
 
       const targetCount = this.spread.count;
       const currentSelectedCount = this.selectedCards.length;

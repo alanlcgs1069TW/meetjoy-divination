@@ -21,8 +21,20 @@
   <script src="./js/meetjoy-universal-profiles.js"></script>
 
   <style>
-    html, body { min-width: 0; min-height: 100%; background: #F6F2EA; overflow-x: hidden; }
-    body { font-family: 'Noto Serif TC', serif; }
+    html, body {
+      min-width: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #F6F2EA !important;
+      color: #2E3829;
+      overflow-x: hidden;
+      overscroll-behavior-y: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    body {
+      font-family: 'Noto Serif TC', serif;
+      background-color: #F6F2EA !important;
+    }
     .font-cinzel { font-family: 'Cinzel', serif; }
     
     /* 3D 卡牌翻轉容器 */
@@ -537,7 +549,7 @@
   </main>
 
   <!-- 底部版權 -->
-  <footer class="w-full py-6 text-center text-xs text-stone-500 font-bold border-t border-stone-200 bg-white/50">
+  <footer id="main_footer" class="w-full py-8 text-center text-xs text-stone-400 font-bold bg-transparent">
     <p>© 2026 癒見幸福療身心靈推廣中心 · 魔法占星學院 · 愛倫院長精神導師</p>
   </footer>
 
@@ -719,6 +731,9 @@
 
             btnClassic.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm bg-[#182622] text-[#F7E7CE] cursor-pointer';
             btnFlowing.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer';
+
+            const mainFooter = document.getElementById('main_footer');
+            if (mainFooter) mainFooter.style.display = 'block';
           }
         }
 
