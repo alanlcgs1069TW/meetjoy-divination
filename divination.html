@@ -9,6 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
   <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" id="meta_theme_color" content="#F6F2EA">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
   
@@ -29,10 +30,23 @@
       color: #2E3829;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+      transition: background-color 0.3s ease;
     }
     body {
       font-family: 'Noto Serif TC', serif;
       background-color: #F6F2EA !important;
+    }
+
+    /* ─── 幻燈片全螢幕沉浸深色調模式（當開啟幻燈片時切換為深黑沈浸背景，取消時回到原本米雅和風色）─── */
+    html.slideshow-active,
+    body.slideshow-active {
+      background-color: #0c0a09 !important;
+      overflow: hidden !important;
+    }
+    #card_slideshow_modal {
+      background: radial-gradient(circle at 50% 40%, rgba(28, 25, 23, 0.98) 0%, rgba(10, 9, 8, 1) 100%) !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
     .font-cinzel { font-family: 'Cinzel', serif; }
     
@@ -159,16 +173,132 @@
       box-shadow: 0 1px 2px rgba(185, 28, 28, 0.2);
     }
 
-    /* 洗牌動畫 */
-    @keyframes shuffleDeck {
-      0% { transform: translateY(0) rotate(0deg); }
-      25% { transform: translateY(-15px) rotate(-4deg) translateX(-10px); }
-      50% { transform: translateY(10px) rotate(4deg) translateX(10px); }
-      75% { transform: translateY(-5px) rotate(-2deg); }
-      100% { transform: translateY(0) rotate(0deg); }
+    /* 3D 沉浸式實體飛梭洗牌舞台 */
+    .shuffle-stage-arena {
+      position: relative;
+      width: 100%;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: radial-gradient(circle at center, #1C2B25 0%, #0D1614 100%);
+      border: 2px solid rgba(200, 169, 126, 0.75);
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.7), 0 15px 35px rgba(0,0,0,0.25);
+      padding: 30px 16px;
     }
-    .shuffling {
-      animation: shuffleDeck 0.6s ease-in-out infinite;
+    .animate-spin-slow {
+      animation: spinSlow 20s linear infinite;
+    }
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .shuffle-deck-wrap {
+      position: relative;
+      width: 300px;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shuffle-base-stack {
+      position: absolute;
+      width: 78px;
+      height: 120px;
+      border-radius: 12px;
+      border: 2px solid #C8A97E;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.5);
+      transition: transform 0.4s ease;
+    }
+    .shuffle-stack-l {
+      left: 15px;
+      transform: rotate(-16deg) translateY(0);
+      animation: stackBounceL 1.1s ease-in-out infinite alternate;
+    }
+    .shuffle-stack-r {
+      right: 15px;
+      transform: rotate(16deg) translateY(0);
+      animation: stackBounceR 1.1s ease-in-out infinite alternate;
+    }
+    @keyframes stackBounceL {
+      0% { transform: rotate(-16deg) translateY(0); }
+      50% { transform: rotate(-10deg) translateY(-8px) translateX(8px); }
+      100% { transform: rotate(-16deg) translateY(0); }
+    }
+    @keyframes stackBounceR {
+      0% { transform: rotate(16deg) translateY(0); }
+      50% { transform: rotate(10deg) translateY(-8px) translateX(-8px); }
+      100% { transform: rotate(16deg) translateY(0); }
+    }
+    .card-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      border: 1px dashed rgba(200, 169, 126, 0.4);
+      pointer-events: none;
+    }
+    .shuffle-riffle-center {
+      position: relative;
+      width: 82px;
+      height: 126px;
+    }
+    .shuffle-fly-card {
+      position: absolute;
+      width: 78px;
+      height: 120px;
+      border-radius: 12px;
+      border: 2px solid #C8A97E;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      top: 0;
+      left: 2px;
+      opacity: 0;
+      animation-duration: 0.75s;
+      animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+      animation-fill-mode: forwards;
+    }
+    .anim-riffle-left {
+      animation-name: riffleFlyL;
+    }
+    .anim-riffle-right {
+      animation-name: riffleFlyR;
+    }
+    @keyframes riffleFlyL {
+      0% { transform: translate(-80px, 15px) rotate(-22deg) scale(0.95); opacity: 0; }
+      20% { opacity: 1; }
+      50% { transform: translate(0px, -28px) rotate(6deg) scale(1.06); }
+      85% { transform: translate(4px, 0px) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.95; }
+    }
+    @keyframes riffleFlyR {
+      0% { transform: translate(80px, 15px) rotate(22deg) scale(0.95); opacity: 0; }
+      20% { opacity: 1; }
+      50% { transform: translate(0px, -24px) rotate(-6deg) scale(1.06); }
+      85% { transform: translate(-4px, 0px) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.95; }
+    }
+    .shuffle-bridge-glow {
+      position: absolute;
+      inset: -20px;
+      border-radius: 24px;
+      background: radial-gradient(circle, rgba(200, 169, 126, 0.45) 0%, transparent 70%);
+      pointer-events: none;
+      animation: bridgePulse 0.4s ease-out forwards;
+    }
+    @keyframes bridgePulse {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+    .card-deal-in {
+      animation: cardDealIn 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28) backwards;
+    }
+    @keyframes cardDealIn {
+      from { transform: translateY(-24px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
     }
 
     /* ─── 凱爾特十字專屬牌陣（十張牌尺寸絕對均一 · 畫面一次完整呈現無縫契合）─── */
@@ -512,6 +642,9 @@
           <button type="button" id="btn_draw_all" data-action="draw_all" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md cursor-pointer">
             <span>✨ 一鍵抽牌</span>
           </button>
+          <button type="button" id="btn_reveal_all" class="px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl text-xs font-black border border-amber-300 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+            <span>✨ 全部翻開</span>
+          </button>
           <button type="button" id="btn_slideshow" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-black border border-amber-300/80 transition flex items-center gap-1.5 shadow-xs cursor-pointer" title="全螢幕逐張放大幻燈片欣賞">
             <span>🔍 放大幻燈片</span>
           </button>
@@ -589,7 +722,7 @@
   </footer>
 
   <!-- 全螢幕卡牌圖片放大幻燈片模式 (Card Lightbox Slideshow Modal) -->
-  <div id="card_slideshow_modal" style="z-index: 9999999;" class="fixed inset-0 bg-stone-950/98 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 hidden select-none">
+  <div id="card_slideshow_modal" style="z-index: 9999999; background: radial-gradient(circle at 50% 40%, rgba(28, 25, 23, 0.98) 0%, rgba(10, 9, 8, 1) 100%) !important;" class="fixed inset-0 flex flex-col items-center justify-between p-3 sm:p-6 hidden select-none">
     
     <!-- 頂部工具列 -->
     <div class="w-full max-w-4xl flex items-center justify-between text-amber-100 pb-2.5 border-b border-white/15">
@@ -601,12 +734,13 @@
           紫微星 (正位)
         </h3>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
         <span id="slideshow_counter" class="text-xs font-mono font-bold text-amber-300/90 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
           1 / 9
         </span>
-        <button type="button" onclick="closeSlideshow()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-base font-bold transition cursor-pointer" title="關閉 (Esc)">
-          ✕
+        <button type="button" onclick="closeSlideshow()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs font-bold transition border border-white/20 shadow-sm cursor-pointer" title="取消並返回 (Esc)">
+          <span class="text-sm leading-none">✕</span>
+          <span>取消 / 返回</span>
         </button>
       </div>
     </div>
@@ -632,7 +766,7 @@
     </div>
 
     <!-- 底部說明面板與切換工具 -->
-    <div class="w-full max-w-2xl bg-stone-900/90 border border-amber-400/30 rounded-2xl p-3 sm:p-4 text-center shadow-xl backdrop-blur-md">
+    <div class="w-full max-w-2xl bg-stone-900/95 border border-amber-400/30 rounded-2xl p-3 sm:p-4 text-center shadow-xl backdrop-blur-md">
       <div class="flex items-center justify-center gap-2 mb-1">
         <span id="slideshow_role" class="text-[10px] sm:text-xs text-amber-300/90 font-black"></span>
         <button type="button" id="btn_toggle_rotation" onclick="toggleSlideRotation()" class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-400/30 hover:bg-amber-400/30 transition cursor-pointer">
@@ -641,10 +775,15 @@
       </div>
       <p id="slideshow_desc" class="text-xs sm:text-sm text-stone-200 font-bold leading-relaxed line-clamp-2">
       </p>
-      <div class="mt-1 flex items-center justify-center gap-3 text-[10px] text-stone-400">
-        <span>鍵盤 ← → 或手機左右滑動切換</span>
-        <span>·</span>
-        <span>Esc 或點擊 ✕ 關閉</span>
+      <div class="mt-2 pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-400">
+        <div class="flex items-center gap-2">
+          <span>鍵盤 ← → 或手機左右滑動切換</span>
+          <span>·</span>
+          <span>點空白處關閉</span>
+        </div>
+        <button type="button" onclick="closeSlideshow()" class="px-3 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 hover:text-amber-100 border border-amber-500/30 text-xs font-bold transition cursor-pointer flex items-center gap-1">
+          <span>✕ 取消回到牌陣</span>
+        </button>
       </div>
     </div>
 
@@ -654,6 +793,212 @@
   <script>
     (function () {
       'use strict';
+
+      // ─── 占卜聲學引擎 (Web Audio API · 真實紙牌飛梭洗牌/發牌/翻牌音效 · 零外部資源 0 延遲) ───
+      const MeetJoyAudio = (function () {
+        let ctx = null;
+        function getCtx() {
+          try {
+            if (!ctx) {
+              const AudioCtx = window.AudioContext || window.webkitAudioContext;
+              if (AudioCtx) ctx = new AudioCtx();
+            }
+            if (ctx && ctx.state === 'suspended') {
+              ctx.resume();
+            }
+            return ctx;
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function playShuffle() {
+          const c = getCtx();
+          if (!c) return;
+          const now = c.currentTime;
+          const count = 18;
+          for (let i = 0; i < count; i++) {
+            const t = now + (i * 0.03) + (Math.random() * 0.008);
+            const bufferSize = Math.floor(c.sampleRate * 0.022);
+            const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let j = 0; j < bufferSize; j++) {
+              data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.28));
+            }
+            const noise = c.createBufferSource();
+            noise.buffer = buffer;
+            const filter = c.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 1400 + Math.random() * 800;
+            filter.Q.value = 3.2;
+            const gain = c.createGain();
+            gain.gain.value = 0.18 + Math.random() * 0.08;
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(c.destination);
+            noise.start(t);
+          }
+          // 結尾收疊對齊之輕脆扣擊 (Square up snap)
+          setTimeout(() => {
+            if (!c) return;
+            const tEnd = c.currentTime;
+            const osc = c.createOscillator();
+            const oscGain = c.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(170, tEnd);
+            osc.frequency.exponentialRampToValueAtTime(35, tEnd + 0.08);
+            oscGain.gain.setValueAtTime(0.2, tEnd);
+            oscGain.gain.exponentialRampToValueAtTime(0.01, tEnd + 0.08);
+            osc.connect(oscGain);
+            oscGain.connect(c.destination);
+            osc.start(tEnd);
+            osc.stop(tEnd + 0.08);
+          }, 580);
+        }
+
+        function playDeal() {
+          const c = getCtx();
+          if (!c) return;
+          const now = c.currentTime;
+          const bufferSize = Math.floor(c.sampleRate * 0.035);
+          const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let j = 0; j < bufferSize; j++) {
+            data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.35));
+          }
+          const noise = c.createBufferSource();
+          noise.buffer = buffer;
+          const filter = c.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 2100;
+          filter.Q.value = 2.2;
+          const gain = c.createGain();
+          gain.gain.value = 0.14;
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(c.destination);
+          noise.start(now);
+        }
+
+        function playFlip() {
+          const c = getCtx();
+          if (!c) return;
+          const now = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.06);
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+          osc.connect(gain);
+          gain.connect(c.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        }
+
+        function playSlide() {
+          const c = getCtx();
+          if (!c) return;
+          const now = c.currentTime;
+          const bufferSize = Math.floor(c.sampleRate * 0.018);
+          const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let j = 0; j < bufferSize; j++) {
+            data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.3));
+          }
+          const noise = c.createBufferSource();
+          noise.buffer = buffer;
+          const filter = c.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 1600;
+          filter.Q.value = 1.8;
+          const gain = c.createGain();
+          gain.gain.value = 0.08;
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(c.destination);
+          noise.start(now);
+        }
+
+        return { playShuffle, playDeal, playFlip, playSlide };
+      })();
+      window.MeetJoyAudio = MeetJoyAudio;
+
+      // ─── 3D 沉浸式實體飛梭洗牌舞台動效 ───
+      function runShuffleAnimation(stage, onComplete) {
+        if (!stage) { onComplete(); return; }
+
+        const isTarot = currentSystem === 'tarot';
+        const isZiwei = currentSystem === 'ziwei';
+        const backCls = isTarot ? 'tarot-back' : (isZiwei ? 'ziwei-card-back' : 'lenormand-back');
+        const emblem = isTarot ? '✦' : (isZiwei ? '鶴' : '⚜️');
+
+        const riffleCardsHtml = Array.from({ length: 12 }).map((_, i) => {
+          const isLeft = i % 2 === 0;
+          const delay = (i * 0.045).toFixed(3);
+          const animCls = isLeft ? 'anim-riffle-left' : 'anim-riffle-right';
+          const zIndex = i + 1;
+          return `
+            <div class="shuffle-fly-card ${backCls} ${animCls}" style="animation-delay: ${delay}s; z-index: ${zIndex};">
+              <div class="w-full h-full rounded-lg border border-amber-300/40 flex items-center justify-center">
+                <span class="text-xs text-amber-200 opacity-60">${emblem}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        stage.innerHTML = `
+          <div class="shuffle-stage-arena animate-in fade-in zoom-in duration-300">
+            <!-- 背景神聖光環符號 -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+              <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-full border-2 border-dashed border-amber-300 animate-spin-slow"></div>
+              <div class="absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-amber-400"></div>
+            </div>
+
+            <!-- 標題提示 -->
+            <div class="relative z-10 text-center mb-6">
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-900/90 border border-amber-400/60 text-amber-200 text-xs font-black shadow-lg">
+                <span class="animate-spin inline-block">🌀</span>
+                <span>天地氣數歸元 · 牌序隨機洗滌中</span>
+              </div>
+              <p class="text-[11px] text-amber-200/80 font-bold mt-2 font-serif tracking-wider">
+                心念沈澱，連結宇宙神聖直覺 · 雙疊切牌交錯飛梭對洗
+              </p>
+            </div>
+
+            <!-- 3D 牌疊交錯飛梭對洗核心區 -->
+            <div class="shuffle-deck-wrap relative z-10">
+              <!-- 左底疊 (Left Deck Base) -->
+              <div class="shuffle-base-stack shuffle-stack-l ${backCls}">
+                <div class="card-layer"></div>
+              </div>
+
+              <!-- 右底疊 (Right Deck Base) -->
+              <div class="shuffle-base-stack shuffle-stack-r ${backCls}">
+                <div class="card-layer"></div>
+              </div>
+
+              <!-- 動態交錯飛梭牌 (Riffle Flying Cards) -->
+              <div class="shuffle-riffle-center">
+                ${riffleCardsHtml}
+              </div>
+
+              <!-- 拱橋收牌光暈 (Bridge Burst) -->
+              <div id="shuffle_bridge_burst" class="shuffle-bridge-glow hidden"></div>
+            </div>
+          </div>
+        `;
+
+        setTimeout(() => {
+          const glow = document.getElementById('shuffle_bridge_burst');
+          if (glow) glow.classList.remove('hidden');
+        }, 750);
+
+        setTimeout(() => {
+          onComplete();
+        }, 1150);
+      }
 
       let currentSystem = 'tarot'; // 'tarot' | 'ziwei' | 'lenormand'
       let currentSpreadKey = 'timeline';
@@ -708,23 +1053,17 @@
           ], layout: 'twelve' }
         ],
         lenormand: [
-          { key: 'timeline', name: '⏳ 時間之流牌陣 (起因 ➔ 當前 ➔ 走向 · ☀️🌙⭐)', count: 3, labels: ['1. 起因源頭 (☀️ 太陽)', '2. 當前關鍵 (🌙 月亮)', '3. 發展走向 (⭐ 星辰)'], layout: 'time_stream' },
-          { key: 'triangle', name: '🔺 聖三角抉擇牌陣 (起因 · 核心 · 破局 · 正三角拱照)', count: 3, labels: ['1. 起因源頭', '2. 當前核心課題', '3. 破局建言'], layout: 'triangle' },
-          { key: 'two_choices', name: '⚖️ 二擇一抉擇牌陣 (現況 ➔ 途徑A vs 途徑B · V字雙翼)', count: 5, labels: ['1. 當事人現況', '2. 選擇A當前狀況', '3. 選擇A未來發展', '4. 選擇B當前狀況', '5. 選擇B未來發展'], layout: 'two_choices' },
-          { key: 'three_choices', name: '🔱 三擇一抉擇牌陣 (現況 · 阻礙 · 環境 ➔ A/B/C 三叉戟發展)', count: 9, labels: [
-            '1. 當前現況', '2. 潛在阻礙', '3. 外在環境',
-            '4. 選擇A狀況', '5. 選擇A之後發展',
-            '6. 選擇B狀況', '7. 選擇B之後發展',
-            '8. 選擇C狀況', '9. 選擇C之後發展'
-          ], layout: 'three_choices' },
-          { key: 'nine_box', name: '🎴 九張牌九宮格牌陣 (3x3 Box Spread · 大局透視)', count: 9, labels: [
+          { key: 'three_cards', name: '📜 三張牌敘事牌陣 (過去 ➔ 當前 ➔ 未來 · 三張橫向)', count: 3, labels: ['1. 過去源起 (Past)', '2. 當前核心 (Present)', '3. 未來走向 (Future)'], layout: 'three_cards' },
+          { key: 'five_cards', name: '✨ 五張牌線性牌陣 (背景 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果 · 五張橫向)', count: 5, labels: ['1. 過去背景', '2. 外部影響', '3. 核心焦點', '4. 課題考驗', '5. 最終趨勢'], layout: 'five_cards' },
+          { key: 'nine_box', name: '🎴 九張牌九宮格牌陣 (3x3 Box Spread · 九張3*3大局透視)', count: 9, labels: [
             '1. 過去思維', '2. 當前環境', '3. 未來指引',
             '4. 過去感受', '5. 核心命門', '6. 未來走向',
             '7. 過去行動', '8. 外在考驗', '9. 最終啟示'
           ], layout: 'nine_box' },
-          { key: 'five_cards', name: '✨ 五張牌牌陣 (過去 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果)', count: 5, labels: ['1. 過去背景', '2. 外部影響', '3. 核心焦點', '4. 課題考驗', '5. 最終趨勢'], layout: 'five_cards' },
-          { key: 'grand_tableau', name: '🌟 大藍圖全覽大牌陣 (Grand Tableau · 36張全套 8x4+4 沙龍正統)', count: 36, labels: Array.from({length: 36}, (_, i) => `第 ${i + 1} 宮位`), layout: 'grand_tableau' },
-          { key: 'single', name: '🌱 單張日運指引 (日常核心微事件)', count: 1, labels: ['今日核心象徵'], layout: 'single' }
+          { key: 'cross_five', name: '✝️ 十字牌陣 (核心 · 上下左右五方位 · 十字形五張)', count: 5, labels: [
+            '1. 當前核心 (中心)', '2. 過去源頭 (左翼)', '3. 未來發展 (右翼)', '4. 顯意識助力 (上方)', '5. 潛在根基考驗 (下方)'
+          ], layout: 'cross_five' },
+          { key: 'grand_tableau', name: '🌟 大藍圖全覽大牌陣 (Grand Tableau · 36張全套 8x4+4 沙龍正統)', count: 36, labels: Array.from({length: 36}, (_, i) => `第 ${i + 1} 宮位`), layout: 'grand_tableau' }
         ]
       };
 
@@ -1021,6 +1360,9 @@
         } else if (layout === 'nine_box') {
           // 九宮格 3x3 排版
           stage.innerHTML = renderNineBoxLayout();
+        } else if (layout === 'cross_five') {
+          // 十字形五張排版
+          stage.innerHTML = renderCrossFiveLayout();
         } else if (layout === 'five_cards') {
           // 五張牌線性大陣
           stage.innerHTML = renderFiveCardsLayout();
@@ -1414,7 +1756,7 @@
       // ─── 雷諾曼專屬九宮格 (3x3 Box Spread · 大局透視) ───
       function renderNineBoxLayout() {
         return `
-          <div class="max-w-4xl mx-auto space-y-3">
+          <div class="max-w-xl sm:max-w-2xl mx-auto space-y-3">
             <div class="grid grid-cols-3 text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-3 rounded-xl border border-amber-200/80 shadow-2xs">
               <div class="flex items-center justify-center gap-1"><span>⏳</span><span>過去源起 (Past)</span></div>
               <div class="flex items-center justify-center gap-1 text-amber-950 font-black"><span>🌟</span><span>當前核心 (Present)</span></div>
@@ -1441,39 +1783,92 @@
         `;
       }
 
-      // ─── 雷諾曼五張牌線性牌陣 (1x5 過去 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果) ───
+      // ─── 雷諾曼五張牌線性牌陣 (五張橫向 · 1x5) ───
       function renderFiveCardsLayout() {
         return `
           <div class="max-w-5xl mx-auto space-y-3">
             <div class="text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-4 rounded-xl border border-amber-200/80 shadow-2xs">
-              ✨ 雷諾曼五張牌陣 · 核心軸心透視 (左側背景與外力 ➔ 中央核心議題 ➔ 右側挑戰與前景)
+              ✨ 雷諾曼五張牌陣 · 橫向線性透視 (過去背景 ➔ 外部影響 ➔ 核心焦點 ➔ 課題考驗 ➔ 最終趨勢)
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-stone-900/5 border border-stone-300/70">
-              ${drawnCards.map((item, idx) => {
-                const isCenter = (idx === 2);
-                return `
-                  <div class="relative flex flex-col items-center ${isCenter ? 'col-span-2 sm:col-span-1 ring-2 ring-amber-400 rounded-2xl bg-amber-400/10 p-1 shadow-md' : ''}">
-                    ${isCenter ? '<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20"><span class="px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 text-[9px] font-black shadow-md">★ 核心焦點</span></div>' : ''}
-                    ${renderCardHtml(item, idx, 'five')}
-                  </div>
-                `;
-              }).join('')}
+            <div class="w-full overflow-x-auto pb-2">
+              <div class="grid grid-cols-5 gap-2 sm:gap-4 p-3 sm:p-5 rounded-2xl bg-stone-900/5 border border-stone-300/70 min-w-[540px] sm:min-w-0">
+                ${drawnCards.map((item, idx) => {
+                  const isCenter = (idx === 2);
+                  return `
+                    <div class="relative flex flex-col items-center ${isCenter ? 'ring-2 ring-amber-400 rounded-2xl bg-amber-400/10 p-1 shadow-md' : ''}">
+                      ${isCenter ? '<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20"><span class="px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 text-[9px] font-black shadow-md">★ 核心焦點</span></div>' : ''}
+                      ${renderCardHtml(item, idx, 'five')}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
             </div>
           </div>
         `;
       }
 
-      // ─── 雷諾曼三張牌牌陣 (起因 ➔ 現況 ➔ 走向) ───
+      // ─── 雷諾曼三張牌牌陣 (三張橫向 · 1x3) ───
       function renderThreeCardsLayout() {
         return `
           <div class="max-w-4xl mx-auto space-y-3">
-            <div class="text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-4 rounded-xl border border-amber-200/80 shadow-2xs">
-              🌿 三張牌敘事牌陣：起因源頭 (Cause) ➔ 當前關鍵 (Present) ➔ 發展走向 (Outcome)
+            <div class="grid grid-cols-3 text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-3 rounded-xl border border-amber-200/80 shadow-2xs">
+              <div class="flex items-center justify-center gap-1"><span>⏳</span><span>過去源起 (Past)</span></div>
+              <div class="flex items-center justify-center gap-1 text-amber-950 font-black"><span>🌟</span><span>當前核心 (Present)</span></div>
+              <div class="flex items-center justify-center gap-1"><span>🚀</span><span>未來走向 (Future)</span></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 p-4 rounded-2xl bg-stone-900/5 border border-stone-300/70">
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
               ${drawnCards.map((item, idx) => renderCardHtml(item, idx, 'three')).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // ─── 雷諾曼十字牌陣 (十字形五張 · 核心、上下左右五方位) ───
+      function renderCrossFiveLayout() {
+        if (drawnCards.length < 5) return renderStandardGridLayout();
+        return `
+          <div class="max-w-xl sm:max-w-2xl mx-auto space-y-3">
+            <div class="text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-4 rounded-xl border border-amber-200/80 shadow-2xs">
+              ✝️ 雷諾曼十字牌陣 · 五方位全息透視 (中央核心 · 左因右果 · 上天啟下根基)
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-4 p-3 sm:p-5 rounded-2xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
+              <!-- Row 1: Top (Card 4, idx 3) -->
+              <div class="flex flex-col items-center justify-center"></div>
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[10px] font-black border border-blue-200">↑ 顯意識 · 助力</span></div>
+                ${renderCardHtml(drawnCards[3], 3, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center"></div>
+
+              <!-- Row 2: Left (Card 2, idx 1), Center (Card 1, idx 0), Right (Card 3, idx 2) -->
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-stone-200 text-stone-800 text-[10px] font-black">← 過去因由</span></div>
+                ${renderCardHtml(drawnCards[1], 1, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center ring-2 ring-amber-400 rounded-2xl bg-amber-400/10 p-1 sm:p-1.5 shadow-md">
+                <div class="mb-1 text-center"><span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-stone-950 text-[10px] font-black shadow-md tracking-wider">★ 當前核心</span></div>
+                ${renderCardHtml(drawnCards[0], 0, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-black border border-purple-200">→ 未來趨勢</span></div>
+                ${renderCardHtml(drawnCards[2], 2, 'nine_box')}
+              </div>
+
+              <!-- Row 3: Bottom (Card 5, idx 4) -->
+              <div class="flex flex-col items-center justify-center"></div>
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black border border-amber-200">↓ 潛在根基</span></div>
+                ${renderCardHtml(drawnCards[4], 4, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center"></div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-[11px] font-bold text-stone-500 px-2 gap-1">
+              <span>💡 橫軸透視：左側起因源起 ➔ 中央核心現況 ➔ 右側走向趨勢</span>
+              <span>縱軸透視：上方顯意識目標與外部助力 ⟷ 下方潛意識深層與阻礙課題</span>
             </div>
           </div>
         `;
@@ -1801,7 +2196,7 @@
         else if (isSanFang) wCls = `w-full ${cardAspect}`;
         else if (isTwelve) wCls = `w-full ${cardAspect}`;
         else if (isTwelveCourt) wCls = `w-full ${cardAspect}`;
-        else if (size === 'nine_box') wCls = `w-full max-w-[125px] sm:max-w-[165px] ${cardAspect}`;
+        else if (size === 'nine_box') wCls = `w-full max-w-[115px] sm:max-w-[145px] ${cardAspect}`;
         else if (size === 'five') wCls = `w-full max-w-[130px] sm:max-w-[170px] ${cardAspect}`;
         else if (size === 'three') wCls = `w-full max-w-[175px] sm:max-w-[210px] ${cardAspect}`;
         else if (size === 'single') wCls = `w-52 sm:w-60 ${cardAspect}`;
@@ -1825,8 +2220,10 @@
           </div>
         ` : '';
 
+        const dealDelay = ((idx % 12) * 0.04).toFixed(2);
+
         return `
-          <div class="flex flex-col items-center w-full h-full relative group">
+          <div class="card-deal-in flex flex-col items-center w-full h-full relative group" style="animation-delay: ${dealDelay}s">
             ${!isCeltic && !isTwelve && !isSanFang && !isTableau ? `
               <span class="text-[11px] font-black text-stone-700 mb-1.5 px-2.5 py-0.5 rounded-full bg-stone-200/90 whitespace-nowrap shadow-2xs">
                 ${item.positionLabel}
@@ -1932,6 +2329,7 @@
           openSlideshow(idx);
           return;
         }
+        window.MeetJoyAudio?.playFlip();
         drawnCards[idx].isFlipped = true;
         const inner = document.getElementById(`card_inner_${idx}`);
         if (inner) inner.classList.add('flipped');
@@ -1942,6 +2340,18 @@
           updateDrawButtonState(true);
           setTimeout(renderInterpretation, 400);
         }
+      };
+
+      window.flipAllCards = function () {
+        if (!drawnCards || drawnCards.length === 0) return;
+        window.MeetJoyAudio?.playFlip();
+        drawnCards.forEach((c, idx) => {
+          c.isFlipped = true;
+          const inner = document.getElementById(`card_inner_${idx}`);
+          if (inner) inner.classList.add('flipped');
+        });
+        updateDrawButtonState(true);
+        setTimeout(renderInterpretation, 400);
       };
 
       // ─── 全螢幕卡牌圖片放大幻燈片模式 (Card Lightbox Slideshow) ───
@@ -1956,7 +2366,10 @@
         const modal = document.getElementById('card_slideshow_modal');
         if (!modal) return;
         modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('slideshow-active');
+        document.documentElement.classList.add('slideshow-active');
+        const metaTheme = document.getElementById('meta_theme_color');
+        if (metaTheme) metaTheme.setAttribute('content', '#0c0a09');
         renderCurrentSlide();
       };
 
@@ -1964,7 +2377,12 @@
         const modal = document.getElementById('card_slideshow_modal');
         if (!modal) return;
         modal.classList.add('hidden');
+        document.body.classList.remove('slideshow-active');
+        document.documentElement.classList.remove('slideshow-active');
         document.body.style.overflow = '';
+        slideIsFlippedReversed = false;
+        const metaTheme = document.getElementById('meta_theme_color');
+        if (metaTheme) metaTheme.setAttribute('content', '#F6F2EA');
       };
 
       window.nextSlide = function () {
@@ -2084,9 +2502,18 @@
           const action = this.getAttribute('data-action') || 'draw_all';
           if (action === 'redraw') {
             // 重新隨機抽牌
-            resetAndDraw();
+            if (isShuffling) return;
+            isShuffling = true;
+            const stage = document.getElementById('card_stage');
+            window.MeetJoyAudio?.playShuffle();
+            runShuffleAnimation(stage, () => {
+              resetAndDraw();
+              window.MeetJoyAudio?.playDeal();
+              isShuffling = false;
+            });
           } else {
             // 一鍵翻開所有牌
+            window.MeetJoyAudio?.playFlip();
             drawnCards.forEach((c, idx) => {
               c.isFlipped = true;
               const inner = document.getElementById(`card_inner_${idx}`);
@@ -2097,17 +2524,29 @@
           }
         });
 
+        document.getElementById('btn_reveal_all')?.addEventListener('click', function () {
+          window.flipAllCards();
+        });
+
         document.getElementById('btn_shuffle')?.addEventListener('click', () => {
           if (isShuffling) return;
           isShuffling = true;
           const stage = document.getElementById('card_stage');
-          if (stage) stage.classList.add('shuffling');
-
-          setTimeout(() => {
-            if (stage) stage.classList.remove('shuffling');
-            isShuffling = false;
+          const btn = document.getElementById('btn_shuffle');
+          if (btn) {
+            btn.innerHTML = '<span class="animate-spin inline-block">🌀</span><span> 洗牌中...</span>';
+            btn.classList.add('opacity-75');
+          }
+          window.MeetJoyAudio?.playShuffle();
+          runShuffleAnimation(stage, () => {
             resetAndDraw();
-          }, 600);
+            window.MeetJoyAudio?.playDeal();
+            isShuffling = false;
+            if (btn) {
+              btn.innerHTML = '<span>🌀 靜心洗牌</span>';
+              btn.classList.remove('opacity-75');
+            }
+          });
         });
       }
 

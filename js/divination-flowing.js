@@ -26,33 +26,51 @@
         '8. 選擇C狀況', '9. 選擇C之後發展'
       ], layout: 'three_choices' },
       { key: 'four_elements', name: '🔮 四要素平衡牌陣 (火 · 水 · 風 · 土 四方圓滿)', count: 4, labels: ['1. 行動意志 (火)', '2. 情緒感知 (水)', '3. 思維理智 (風)', '4. 物質落地 (土)'], layout: 'four_elements' },
-      { key: 'single', name: '🎯 單張神諭 (今日指引與即刻處方)', count: 1, labels: ['當前核心指引'], layout: 'single' },
-      { key: 'two', name: '⚖️ 兩張牌 (日常問卜 · 核心與建議)', count: 2, labels: ['1. 當前核心狀況', '2. 破局行動建言'], layout: 'grid' }
+      { key: 'celtic_cross', name: '✝️ 凱爾特十字牌陣 (十張全方位透視大牌陣)', count: 10, labels: [
+        '1. 當前現狀核心', '2. 交叉挑戰阻礙', '3. 潛意識深層根基', '4. 近期過去源頭',
+        '5. 顯意識目標理想', '6. 近期發展趨勢', '7. 自身態度力量', '8. 外在環境他人',
+        '9. 內在希望恐懼', '10. 最終神諭結果'
+      ], layout: 'celtic' },
+      { key: 'single', name: '🎯 單張指引 (今日靈感與即刻處方)', count: 1, labels: ['當前核心指引'], layout: 'single' }
     ],
     ziwei: [
-      { key: 'three_decks', name: '🌟 三組牌各一張牌陣 (主星 + 輔星 + 長生星)', count: 3, labels: ['1. 主星牌 (核心運勢)', '2. 輔星牌 (環境催化)', '3. 長生牌 (時序旺衰)'], layout: 'time_stream' },
-      { key: 'two', name: '☯️ 主輔雙星 (本質與助力雙盤催化)', count: 2, labels: ['1. 本命主星 (內在心態)', '2. 催化輔星 (外部助力)'], layout: 'grid' },
-      { key: 'single', name: '🎯 單星神諭 (今日主導星宿能量)', count: 1, labels: ['今日星宿指引'], layout: 'single' }
+      { key: 'three_decks', name: '🌟 三組牌各一張牌陣 (主星 + 輔星 + 長生星 · 講義正統)', count: 3, labels: ['1. 主星牌 (核心運勢)', '2. 輔星牌 (外部助力/催化)', '3. 長生牌 (氣數旺衰/時間預測)'], layout: 'three_decks' },
+      { key: 'san_fang_si_zheng', name: '🏛️ 三方四正牌陣 (命宮 · 遷移 · 官祿 · 財帛 雙星 + 十二長生)', count: 9, labels: [
+        '命宮 · 主星 (自處心態)', '命宮 · 輔星 (自我催化)',
+        '遷移宮 · 主星 (外在格局)', '遷移宮 · 輔星 (人際機遇)',
+        '官祿宮 · 主星 (事業工作)', '官祿宮 · 輔星 (職場助力)',
+        '財帛宮 · 主星 (金流資產)', '財帛宮 · 輔星 (進財管道)',
+        '十二長生 · 氣數時輪'
+      ], layout: 'san_fang' },
+      { key: 'twelve_palaces', name: '🌌 十二宮全方位大牌陣 (十二宮各主輔雙星 + 天盤中庭身宮與長生)', count: 26, labels: [
+        '命宮 · 主星', '命宮 · 輔星',
+        '兄弟宮 · 主星', '兄弟宮 · 輔星',
+        '夫妻宮 · 主星', '夫妻宮 · 輔星',
+        '子女宮 · 主星', '子女宮 · 輔星',
+        '財帛宮 · 主星', '財帛宮 · 輔星',
+        '疾厄宮 · 主星', '疾厄宮 · 輔星',
+        '遷移宮 · 主星', '遷移宮 · 輔星',
+        '僕役宮 · 主星', '僕役宮 · 輔星',
+        '官祿宮 · 主星', '官祿宮 · 輔星',
+        '田宅宮 · 主星', '田宅宮 · 輔星',
+        '福德宮 · 主星', '福德宮 · 輔星',
+        '父母宮 · 主星', '父母宮 · 輔星',
+        '天盤中庭 · 身宮 (行動意志)',
+        '天盤中庭 · 十二長生 (氣數時序)'
+      ], layout: 'twelve' }
     ],
     lenormand: [
-      { key: 'timeline', name: '⏳ 時間之流牌陣 (起因 ➔ 當前 ➔ 走向 · ☀️🌙⭐)', count: 3, labels: ['1. 起因源頭', '2. 當前關鍵', '3. 發展走向'], layout: 'time_stream' },
-      { key: 'triangle', name: '🔺 聖三角抉擇牌陣 (起因 · 核心 · 破局 · 正三角拱照)', count: 3, labels: ['1. 起因源頭', '2. 當前核心課題', '3. 破局建言'], layout: 'triangle' },
-      { key: 'two_choices', name: '⚖️ 二擇一抉擇牌陣 (現況 ➔ 途徑A vs 途徑B · V字雙翼)', count: 5, labels: ['1. 當事人現況', '2. 選擇A當前狀況', '3. 選擇A未來發展', '4. 選擇B當前狀況', '5. 選擇B未來發展'], layout: 'two_choices' },
-      { key: 'three_choices', name: '🔱 三擇一抉擇牌陣 (現況 · 阻礙 · 環境 ➔ A/B/C 三叉戟發展)', count: 9, labels: [
-        '1. 當前現況', '2. 潛在阻礙', '3. 外在環境',
-        '4. 選擇A狀況', '5. 選擇A之後發展',
-        '6. 選擇B狀況', '7. 選擇B之後發展',
-        '8. 選擇C狀況', '9. 選擇C之後發展'
-      ], layout: 'three_choices' },
-      { key: 'nine_box', name: '🎴 九張牌九宮格牌陣 (3x3 Box Spread · 大局透視)', count: 9, labels: [
+      { key: 'three_cards', name: '📜 三張牌敘事牌陣 (過去 ➔ 當前 ➔ 未來 · 三張橫向)', count: 3, labels: ['1. 過去源起 (Past)', '2. 當前核心 (Present)', '3. 未來走向 (Future)'], layout: 'three_cards' },
+      { key: 'five_cards', name: '✨ 五張牌線性牌陣 (背景 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果 · 五張橫向)', count: 5, labels: ['1. 過去背景', '2. 外部影響', '3. 核心焦點', '4. 課題考驗', '5. 最終趨勢'], layout: 'five_cards' },
+      { key: 'nine_box', name: '🎴 九張牌九宮格牌陣 (3x3 Box Spread · 九張3*3大局透視)', count: 9, labels: [
         '1. 過去思維', '2. 當前環境', '3. 未來指引',
         '4. 過去感受', '5. 核心命門', '6. 未來走向',
         '7. 過去行動', '8. 外在考驗', '9. 最終啟示'
       ], layout: 'nine_box' },
-      { key: 'five_cards', name: '✨ 五張牌牌陣 (過去 ➔ 影響 ➔ 核心 ➔ 考驗 ➔ 結果)', count: 5, labels: ['1. 過去背景', '2. 外部影響', '3. 核心焦點', '4. 課題考驗', '5. 最終趨勢'], layout: 'five_cards' },
-      { key: 'grand_tableau', name: '🌟 大藍圖全覽大牌陣 (Grand Tableau · 36張全套 8x4+4 沙龍正統)', count: 36, labels: Array.from({length: 36}, (_, i) => `第 ${i + 1} 宮位`), layout: 'grand_tableau' },
-      { key: 'single', name: '🌱 單張微運 (今日生活核心象徵)', count: 1, labels: ['今日核心象徵'], layout: 'single' },
-      { key: 'two', name: '🌿 兩張牌 (日常問卜 · 鏡像串連)', count: 2, labels: ['1. 起因關鍵', '2. 走向建議'], layout: 'grid' }
+      { key: 'cross_five', name: '✝️ 十字牌陣 (核心 · 上下左右五方位 · 十字形五張)', count: 5, labels: [
+        '1. 當前核心 (中心)', '2. 過去源頭 (左翼)', '3. 未來發展 (右翼)', '4. 顯意識助力 (上方)', '5. 潛在根基考驗 (下方)'
+      ], layout: 'cross_five' },
+      { key: 'grand_tableau', name: '🌟 大藍圖全覽大牌陣 (Grand Tableau · 36張全套 8x4+4 沙龍正統)', count: 36, labels: Array.from({length: 36}, (_, i) => `第 ${i + 1} 宮位`), layout: 'grand_tableau' }
     ]
   };
 
@@ -112,18 +130,12 @@
           cardBackClass: 'tarot-back'
         }));
       } else if (this.system === 'ziwei') {
-        let list = [];
-        if (window.ZIWEI_CARDS_COMPLETE) {
-          list = [
-            ...(window.ZIWEI_CARDS_COMPLETE.main || []),
-            ...(window.ZIWEI_CARDS_COMPLETE.aux || []),
-            ...(window.ZIWEI_CARDS_COMPLETE.life || [])
-          ];
-        }
+        const zwDb = window.MeetJoyZiweiCards;
+        const list = (zwDb && zwDb.cards && zwDb.cards.length) ? [...zwDb.cards] : [];
         return list.map(c => ({
           ...c,
           system: 'ziwei',
-          isReversed: c.group === 'aux' ? false : (Math.random() > 0.7),
+          isReversed: c.group === 'assistant' ? false : (Math.random() > 0.7),
           cardBackClass: 'ziwei-card-back'
         }));
       } else {
@@ -344,6 +356,7 @@
       const stage = shuffleArea.querySelector('#flowing_shuffle_stage');
       let isInteracting = false;
       let lastX = 0, lastY = 0;
+      let lastSlideAudioTime = 0;
 
       // 流體物理洗牌互動：手勢滑動時擾動周圍卡牌
       const applyFluidDistortion = (clientX, clientY) => {
@@ -357,6 +370,12 @@
         const deltaY = clientY - lastY;
         lastX = clientX;
         lastY = clientY;
+
+        const now = Date.now();
+        if (now - lastSlideAudioTime > 120 && (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2)) {
+          lastSlideAudioTime = now;
+          window.MeetJoyAudio?.playSlide();
+        }
 
         const cards = cardWrap.children;
         for (let i = 0; i < cards.length; i++) {
@@ -439,6 +458,7 @@
           if (this.isAutoShuffling) return;
           this.isAutoShuffling = true;
           autoShuffleBtn.classList.add('opacity-50');
+          window.MeetJoyAudio?.playShuffle();
 
           const cards = cardWrap.children;
 
@@ -489,6 +509,7 @@
       shuffleArea.querySelector('#btn_flowing_collect').addEventListener('click', () => {
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerup', onPointerUp);
+        window.MeetJoyAudio?.playSlide();
 
         // 播放聚攏收牌動畫
         const cards = cardWrap.children;
@@ -619,10 +640,12 @@
 
       // 自動選牌按鈕
       fanArea.querySelector('#btn_flowing_auto_pick').addEventListener('click', () => {
+        window.MeetJoyAudio?.playShuffle();
         this.autoPickRemaining();
       });
 
       fanArea.querySelector('#btn_flowing_reshuffle').addEventListener('click', () => {
+        window.MeetJoyAudio?.playShuffle();
         this.startShuffleStage();
       });
     }
@@ -630,6 +653,8 @@
     // 抽出一張牌
     pickCard(fanIndex, card) {
       if (this.selectedCards.length >= this.spread.count) return;
+
+      window.MeetJoyAudio?.playDeal();
 
       const slotIdx = this.selectedCards.length;
       const role = this.spread.labels[slotIdx] || `第 ${slotIdx + 1} 張`;
@@ -643,6 +668,7 @@
 
       // 如果已抽滿，自動進入翻牌階段
       if (this.selectedCards.length >= this.spread.count) {
+        this.finalizeCardsForSystem();
         setTimeout(() => {
           this.step = 'reveal';
           this.allFlipped = false;
@@ -667,11 +693,23 @@
       }
 
       // 隨機選取
-      for (let i = 0; i < needed; i++) {
-        if (availableIndices.length === 0) break;
-        const rIdx = Math.floor(Math.random() * availableIndices.length);
-        const fanIndex = availableIndices.splice(rIdx, 1)[0];
-        const card = this.deck[fanIndex];
+      while (this.selectedCards.length < this.spread.count) {
+        let card = null;
+        let fanIndex = -1;
+        if (availableIndices.length > 0) {
+          const rIdx = Math.floor(Math.random() * availableIndices.length);
+          fanIndex = availableIndices.splice(rIdx, 1)[0];
+          card = this.deck[fanIndex];
+        } else {
+          // 若超過扇形展示數量 (如 26 張全景大天盤)，直接從卡庫選取未使用的卡
+          const usedCardIds = new Set(this.selectedCards.map(s => s.card.id));
+          const unusedDeckCards = this.deck.filter(c => !usedCardIds.has(c.id));
+          if (unusedDeckCards.length > 0) {
+            card = unusedDeckCards[Math.floor(Math.random() * unusedDeckCards.length)];
+          } else {
+            card = this.deck[Math.floor(Math.random() * this.deck.length)];
+          }
+        }
         const slotIdx = this.selectedCards.length;
         const role = this.spread.labels[slotIdx] || `第 ${slotIdx + 1} 張`;
 
@@ -683,11 +721,78 @@
         });
       }
 
+      this.finalizeCardsForSystem();
       setTimeout(() => {
         this.step = 'reveal';
         this.allFlipped = false;
         this.render();
       }, 350);
+    }
+
+    // 紫微斗數專屬宮位與主輔星映射校準 (與經典工坊模式 100% 同步)
+    finalizeCardsForSystem() {
+      if (this.system === 'ziwei') {
+        const zwDb = window.MeetJoyZiweiCards;
+        if (zwDb) {
+          const majorList = [...zwDb.getGroup('major')].sort(() => Math.random() - 0.5);
+          const assistList = [...zwDb.getGroup('assistant')].sort(() => Math.random() - 0.5);
+          const lifeList = [...zwDb.getGroup('life')].sort(() => Math.random() - 0.5);
+
+          if (this.spread.key === 'three_decks') {
+            this.selectedCards = [
+              { card: { ...majorList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[0], palace: '命運核心', cardType: 'major' },
+              { card: { ...assistList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[1], palace: '外部助力', cardType: 'assistant' },
+              { card: { ...lifeList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[2], palace: '長生時序', cardType: 'life' }
+            ];
+          } else if (this.spread.key === 'san_fang_si_zheng') {
+            this.selectedCards = [
+              { card: { ...majorList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[0], palace: '命宮', cardType: 'major' },
+              { card: { ...assistList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[1], palace: '命宮', cardType: 'assistant' },
+              { card: { ...majorList[1], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[2], palace: '遷移宮', cardType: 'major' },
+              { card: { ...assistList[1], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[3], palace: '遷移宮', cardType: 'assistant' },
+              { card: { ...majorList[2], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[4], palace: '官祿宮', cardType: 'major' },
+              { card: { ...assistList[2], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[5], palace: '官祿宮', cardType: 'assistant' },
+              { card: { ...majorList[3], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[6], palace: '財帛宮', cardType: 'major' },
+              { card: { ...assistList[3], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[7], palace: '財帛宮', cardType: 'assistant' },
+              { card: { ...lifeList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' }, isReversed: Math.random() > 0.5, role: this.spread.labels[8], palace: '時輪', cardType: 'life' }
+            ];
+          } else if (this.spread.key === 'twelve_palaces') {
+            const palaceNames = ['命宮', '兄弟宮', '夫妻宮', '子女宮', '財帛宮', '疾厄宮', '遷移宮', '僕役宮', '官祿宮', '田宅宮', '福德宮', '父母宮'];
+            const res = [];
+            for (let i = 0; i < 12; i++) {
+              res.push({
+                card: { ...majorList[i], system: 'ziwei', cardBackClass: 'ziwei-card-back' },
+                isReversed: Math.random() > 0.5,
+                role: `${palaceNames[i]} · 主星`,
+                palace: palaceNames[i],
+                cardType: 'major'
+              });
+              res.push({
+                card: { ...assistList[i], system: 'ziwei', cardBackClass: 'ziwei-card-back' },
+                isReversed: Math.random() > 0.5,
+                role: `${palaceNames[i]} · 輔星`,
+                palace: palaceNames[i],
+                cardType: 'assistant'
+              });
+            }
+            res.push({
+              card: { ...majorList[12], system: 'ziwei', cardBackClass: 'ziwei-card-back' },
+              isReversed: Math.random() > 0.5,
+              role: '天盤中庭 · 身宮 (行動意志)',
+              palace: '身宮',
+              cardType: 'major'
+            });
+            res.push({
+              card: { ...lifeList[0], system: 'ziwei', cardBackClass: 'ziwei-card-back' },
+              isReversed: Math.random() > 0.5,
+              role: '天盤中庭 · 十二長生 (氣數時序)',
+              palace: '時輪',
+              cardType: 'life'
+            });
+            this.selectedCards = res;
+          }
+        }
+      }
     }
 
     // ─── 階段 4：3D 翻牌與生活魔藥解讀 (支援各牌陣專屬佈局) ───
@@ -710,6 +815,9 @@
             </button>
             <button type="button" id="btn_flowing_redraw" class="px-4 py-2 rounded-full bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 text-xs font-bold transition cursor-pointer">
               🔄 再抽一次
+            </button>
+            <button type="button" id="btn_flowing_reset_focus" class="px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200 text-xs font-bold transition cursor-pointer">
+              ⚙️ 更換牌陣
             </button>
           </div>
         </div>
@@ -745,6 +853,7 @@
       revealArea.querySelectorAll('.card-scene').forEach(sceneEl => {
         const innerEl = sceneEl.querySelector('.card-inner');
         sceneEl.addEventListener('click', () => {
+          window.MeetJoyAudio?.playFlip();
           innerEl.classList.toggle('flipped');
           this.checkAndRenderPotionSummary(revealArea);
         });
@@ -752,19 +861,391 @@
 
       // 全部翻開按鈕
       revealArea.querySelector('#btn_flowing_flip_all').addEventListener('click', () => {
+        window.MeetJoyAudio?.playFlip();
         revealArea.querySelectorAll('.card-inner').forEach(el => el.classList.add('flipped'));
         this.checkAndRenderPotionSummary(revealArea);
       });
 
       // 重新抽取
       revealArea.querySelector('#btn_flowing_redraw').addEventListener('click', () => {
+        window.MeetJoyAudio?.playShuffle();
         this.startShuffleStage();
+      });
+
+      // 更換牌陣或系統
+      revealArea.querySelector('#btn_flowing_reset_focus')?.addEventListener('click', () => {
+        this.step = 'focus';
+        this.selectedCards = [];
+        this.render();
       });
     }
 
-    // 依牌陣佈局產出翻牌區結構 HTML
+    // 依牌陣佈局產出翻牌區結構 HTML (與經典工坊模式 100% 同步)
     renderRevealLayoutHtml(layout) {
-      if (layout === 'triangle' && this.selectedCards.length >= 3) {
+      if (layout === 'celtic' && this.selectedCards.length >= 10) {
+        // 經典凱爾特十字牌陣 (左側六卡十字顯象 · 右階四階靈魂之杖)
+        return `
+          <div class="celtic-cross-wrapper">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-800 text-amber-200 text-xs font-bold mb-3 shadow-2xs">
+              <span>✝️ 經典凱爾特十字牌陣 · 萬物全相透視神殿</span>
+              <span class="opacity-50">|</span>
+              <span class="text-[11px] text-stone-300">左側六卡十字顯象 · 右階四階靈魂之杖</span>
+            </div>
+
+            <div class="celtic-spread-stage">
+              <!-- 左側神聖十字 (3 列 x 3 欄) -->
+              <div class="celtic-cross-grid">
+                <!-- Row 1: Top (Card 5: 顯意識目標) -->
+                <div class="celtic-cell"></div>
+                <div class="celtic-cell">
+                  ${this.renderFlipCardSingleHtml(4, 'celtic')}
+                </div>
+                <div class="celtic-cell"></div>
+
+                <!-- Row 2: Card 4 (過去源頭), Center (Card 1 現狀 + Card 2 挑戰橫跨), Card 6 (近期未來) -->
+                <div class="celtic-cell">
+                  ${this.renderFlipCardSingleHtml(3, 'celtic')}
+                </div>
+                <div class="celtic-center-cell">
+                  <!-- 核心立牌 (位置 1) -->
+                  <div class="celtic-slot-base">
+                    ${this.renderFlipCardSingleHtml(0, 'celtic')}
+                  </div>
+                  <!-- 交叉橫牌 (位置 2 · 尺寸絕對相同 · 90度正向疊加) -->
+                  <div class="celtic-slot-crossing">
+                    ${this.renderFlipCardSingleHtml(1, 'celtic')}
+                  </div>
+                </div>
+                <div class="celtic-cell">
+                  ${this.renderFlipCardSingleHtml(5, 'celtic')}
+                </div>
+
+                <!-- Row 3: Bottom (Card 3: 潛意識根基) -->
+                <div class="celtic-cell"></div>
+                <div class="celtic-cell">
+                  ${this.renderFlipCardSingleHtml(2, 'celtic')}
+                </div>
+                <div class="celtic-cell"></div>
+              </div>
+
+              <!-- 右側權杖之柱 (位置 10, 9, 8, 7 由上至下四階縱向) -->
+              <div class="celtic-staff-column">
+                <div class="celtic-staff-cell">${this.renderFlipCardSingleHtml(9, 'celtic')}</div>
+                <div class="celtic-staff-cell">${this.renderFlipCardSingleHtml(8, 'celtic')}</div>
+                <div class="celtic-staff-cell">${this.renderFlipCardSingleHtml(7, 'celtic')}</div>
+                <div class="celtic-staff-cell">${this.renderFlipCardSingleHtml(6, 'celtic')}</div>
+              </div>
+            </div>
+            
+            <p class="text-[11px] text-stone-500 font-bold mt-2.5">
+              💡 提示：點選卡牌逐張翻開（中央卡 1 與交叉卡 2 皆可點擊），或點上方「全部翻開」查閱完整解讀
+            </p>
+          </div>
+        `;
+      } else if (layout === 'san_fang' && this.selectedCards.length >= 9) {
+        // 紫微三方四正專屬牌陣 (翡翠深綠底 × 金邊標籤 × 十二長生時輪角)
+        return `
+          <div class="sanfang-board">
+            <!-- 十二長生時輪（手機版置頂通欄 · 桌面版右上角神諭角） -->
+            <div class="relative sm:absolute sm:top-6 sm:right-6 w-full sm:w-auto flex sm:flex-col items-center justify-between sm:justify-center bg-black/50 p-2 sm:p-2.5 mb-3 sm:mb-0 rounded-2xl border border-amber-400/50 backdrop-blur-xs shadow-md z-20">
+              <div class="flex items-center gap-1.5 sm:mb-1.5">
+                <span class="sanfang-life-badge text-xs">十二長生</span>
+                <span class="px-2 py-0.5 rounded-full bg-amber-400 text-stone-900 text-[10px] font-black">時輪</span>
+                <span class="sm:hidden text-[10px] text-amber-200/80 font-bold ml-1">氣數時序</span>
+              </div>
+              <div class="w-14 sm:w-20">
+                ${this.renderFlipCardSingleHtml(8, 'sanfang')}
+              </div>
+            </div>
+
+            <!-- 主佈局：菱形四正神殿 -->
+            <div class="flex flex-col items-center justify-between min-h-[560px] sm:min-h-[640px] relative py-2">
+              
+              <!-- 上方：遷移宮 (主星 + 輔星) -->
+              <div class="flex flex-col items-center z-10">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="sanfang-banner text-xs sm:text-sm">遷移宮</span>
+                  <span class="text-amber-200/90 text-[11px] sm:text-xs font-bold">外在人際 · 機遇格局</span>
+                </div>
+                <div class="flex items-center gap-2 sm:gap-3">
+                  <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
+                    <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(2, 'sanfang')}</div>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
+                    <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(3, 'sanfang')}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 中排：左側官祿宮 ⟷ 中央交會紋章 ⟷ 右側財帛宮 -->
+              <div class="w-full flex items-center justify-between px-2 sm:px-6 my-4 z-10">
+                
+                <!-- 左：官祿宮 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5">
+                    <span class="sanfang-banner text-[11px] sm:text-xs">官祿宮</span>
+                    <span class="text-amber-200/80 text-[10px] hidden sm:inline font-bold">事業基石</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 sm:gap-2">
+                    <div class="flex flex-col items-center">
+                      <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
+                      <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(4, 'sanfang')}</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                      <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
+                      <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(5, 'sanfang')}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 中央四正交匯神聖幾何星盤光環 -->
+                <div class="hidden sm:flex flex-col items-center justify-center pointer-events-none opacity-80">
+                  <div class="relative w-28 h-28 rounded-full border border-amber-300/40 flex items-center justify-center">
+                    <div class="absolute inset-0 rounded-full border-2 border-dashed border-amber-400/30 animate-spin-slow"></div>
+                    <div class="w-20 h-20 rounded-full bg-amber-400/10 border border-amber-400/60 flex items-center justify-center text-center p-1 shadow-inner">
+                      <span class="text-xs font-black text-amber-200 font-cinzel tracking-widest leading-tight">三方<br>四正</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 右：財帛宮 -->
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center gap-1.5 mb-1.5">
+                    <span class="sanfang-banner text-[11px] sm:text-xs">財帛宮</span>
+                    <span class="text-amber-200/80 text-[10px] hidden sm:inline font-bold">金流資產</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 sm:gap-2">
+                    <div class="flex flex-col items-center">
+                      <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
+                      <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(6, 'sanfang')}</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                      <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
+                      <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(7, 'sanfang')}</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- 下方：命宮 (主星 + 輔星) -->
+              <div class="flex flex-col items-center z-10">
+                <div class="flex items-center gap-2 sm:gap-3 mb-1.5">
+                  <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-bold text-amber-200 mb-0.5">主星</span>
+                    <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(0, 'sanfang')}</div>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-bold text-amber-200 mb-0.5">輔星</span>
+                    <div class="w-14 sm:w-20">${this.renderFlipCardSingleHtml(1, 'sanfang')}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="sanfang-banner text-xs sm:text-sm border-amber-300 text-amber-200">命宮</span>
+                  <span class="text-amber-200/90 text-[11px] sm:text-xs font-bold">核心本質 · 自我基調</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+      } else if (layout === 'twelve' && this.selectedCards.length >= 26) {
+        // 紫微十二宮全景大天盤 (4x4 迴廊十二宮雙星 + 中庭身宮與長生)
+        const gridCells = [
+          { branch: '巳', palaceIdx: 6, row: 1, col: 1 },
+          { branch: '午', palaceIdx: 5, row: 1, col: 2 },
+          { branch: '未', palaceIdx: 4, row: 1, col: 3 },
+          { branch: '申', palaceIdx: 3, row: 1, col: 4 },
+          { branch: '辰', palaceIdx: 7, row: 2, col: 1 },
+          { branch: '酉', palaceIdx: 2, row: 2, col: 4 },
+          { branch: '卯', palaceIdx: 8, row: 3, col: 1 },
+          { branch: '戌', palaceIdx: 1, row: 3, col: 4 },
+          { branch: '寅', palaceIdx: 9, row: 4, col: 1 },
+          { branch: '丑', palaceIdx: 10, row: 4, col: 2 },
+          { branch: '子', palaceIdx: 11, row: 4, col: 3 },
+          { branch: '亥', palaceIdx: 0, row: 4, col: 4 }
+        ];
+        const palaceNames = ['命宮', '兄弟宮', '夫妻宮', '子女宮', '財帛宮', '疾厄宮', '遷移宮', '僕役宮', '官祿宮', '田宅宮', '福德宮', '父母宮'];
+
+        return `
+          <div class="w-full max-w-[1360px] mx-auto space-y-3">
+            <div class="flex flex-wrap items-center justify-between px-3 text-xs font-bold text-stone-600 gap-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-[#2E3829] text-amber-200 font-black text-xs">🌌 正統紫微斗數全景大天盤</span>
+                <span class="text-stone-700 hidden sm:inline">4x4 迴廊十二宮雙星合參（各宮主星+輔星共 24 張）＋ 天盤中庭身宮與長生時序（2張）</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="sm:hidden text-[10px] text-amber-300 font-bold bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-400/40">👉 可左右滑動</span>
+                <span class="court-pill-shen">身宮</span>
+                <span class="court-pill-life">十二長生</span>
+              </div>
+            </div>
+
+            <div class="w-full overflow-x-auto pb-2 -mx-1 px-1">
+              <div class="ziwei-twelve-board min-w-[680px] lg:min-w-0">
+                <!-- 周邊 12 宮位格 -->
+                ${gridCells.map(c => {
+                  const pIdx = c.palaceIdx;
+                  const pName = palaceNames[pIdx];
+                  const isMingGong = (pIdx === 0);
+                  const mCardIdx = pIdx * 2;
+                  const aCardIdx = pIdx * 2 + 1;
+
+                  return `
+                    <div class="ziwei-palace-cell ${isMingGong ? 'ring-2 ring-amber-400 bg-[#2b3a2f]' : ''}" style="grid-row: ${c.row}; grid-column: ${c.col};">
+                      <div class="w-full flex items-center justify-between pb-1 mb-1 border-b border-[#C8A97E]/40 px-1">
+                        <span class="text-xs font-black ${isMingGong ? 'text-amber-300' : 'text-amber-100'}">${pName}</span>
+                        <span class="text-[10px] text-amber-300/80 font-bold">${c.branch}位</span>
+                      </div>
+                      <div class="w-full grid grid-cols-2 gap-1 my-auto">
+                        <div class="flex flex-col items-center">
+                          <span class="text-[9px] font-bold text-amber-200/90 mb-0.5">主星</span>
+                          <div class="w-full">${this.renderFlipCardSingleHtml(mCardIdx, 'twelve')}</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                          <span class="text-[9px] font-bold text-amber-200/90 mb-0.5">輔星</span>
+                          <div class="w-full">${this.renderFlipCardSingleHtml(aCardIdx, 'twelve')}</div>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+
+                <!-- 天盤中庭 (身宮主宰 + 十二長生時輪) -->
+                <div class="ziwei-center-court">
+                  <div class="text-center mb-2">
+                    <span class="text-xs font-black text-amber-300 tracking-wider font-cinzel">CELESTIAL COURT</span>
+                    <h4 class="text-sm font-black text-amber-100">天盤中庭 · 命盤太極樞紐</h4>
+                  </div>
+                  <div class="w-full max-w-[280px] grid grid-cols-2 gap-3 items-center justify-center">
+                    <div class="flex flex-col items-center p-2 rounded-xl bg-black/40 border border-orange-500/50">
+                      <span class="court-pill-shen mb-1">身宮 (行動主宰)</span>
+                      <div class="w-14 sm:w-16">${this.renderFlipCardSingleHtml(24, 'twelve-court')}</div>
+                    </div>
+                    <div class="flex flex-col items-center p-2 rounded-xl bg-black/40 border border-amber-500/50">
+                      <span class="court-pill-life mb-1">十二長生時輪</span>
+                      <div class="w-14 sm:w-16">${this.renderFlipCardSingleHtml(25, 'twelve-court')}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (layout === 'four_elements' && this.selectedCards.length >= 4) {
+        // 四要素平衡牌陣 (火 · 水 · 風 · 土 四象限)
+        const elementBadges = [
+          { name: '🔥 行動意志 (火要素)', color: 'border-rose-400 bg-rose-50 text-rose-800' },
+          { name: '💧 情緒感知 (水要素)', color: 'border-blue-400 bg-blue-50 text-blue-800' },
+          { name: '🌬️ 思維理智 (風要素)', color: 'border-amber-400 bg-amber-50 text-amber-800' },
+          { name: '🌱 物質落地 (土要素)', color: 'border-emerald-400 bg-emerald-50 text-emerald-800' }
+        ];
+        return `
+          <div class="max-w-4xl mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-200 text-xs font-black text-amber-950 shadow-2xs text-center">
+              <span>🔮 四要素平衡牌陣 · 火/水/風/土 四方能量場</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 sm:p-6 rounded-3xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
+              ${[0, 1, 2, 3].map(idx => `
+                <div class="flex flex-col items-center p-3 rounded-2xl border ${elementBadges[idx].color} bg-white/70 shadow-xs">
+                  <span class="text-xs font-black mb-2">${elementBadges[idx].name}</span>
+                  <div class="w-full max-w-[180px]">
+                    ${this.renderFlipCardSingleHtml(idx)}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (layout === 'cross_five' && this.selectedCards.length >= 5) {
+        // 雷諾曼十字牌陣 (十字形五張 · 核心、上下左右五方位)
+        return `
+          <div class="max-w-xl sm:max-w-2xl mx-auto space-y-3">
+            <div class="text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-4 rounded-xl border border-amber-200/80 shadow-2xs">
+              ✝️ 雷諾曼十字牌陣 · 五方位全息透視 (中央核心 · 左因右果 · 上天啟下根基)
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-4 p-3 sm:p-5 rounded-2xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
+              <!-- Row 1: Top (Card 4, idx 3) -->
+              <div class="flex flex-col items-center justify-center"></div>
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[10px] font-black border border-blue-200">↑ 顯意識 · 助力</span></div>
+                ${this.renderFlipCardSingleHtml(3, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center"></div>
+
+              <!-- Row 2: Left (Card 2, idx 1), Center (Card 1, idx 0), Right (Card 3, idx 2) -->
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-stone-200 text-stone-800 text-[10px] font-black">← 過去因由</span></div>
+                ${this.renderFlipCardSingleHtml(1, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center ring-2 ring-amber-400 rounded-2xl bg-amber-400/10 p-1 sm:p-1.5 shadow-md">
+                <div class="mb-1 text-center"><span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-stone-950 text-[10px] font-black shadow-md tracking-wider">★ 當前核心</span></div>
+                ${this.renderFlipCardSingleHtml(0, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-black border border-purple-200">→ 未來趨勢</span></div>
+                ${this.renderFlipCardSingleHtml(2, 'nine_box')}
+              </div>
+
+              <!-- Row 3: Bottom (Card 5, idx 4) -->
+              <div class="flex flex-col items-center justify-center"></div>
+              <div class="flex flex-col items-center justify-center">
+                <div class="mb-1 text-center"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black border border-amber-200">↓ 潛在根基</span></div>
+                ${this.renderFlipCardSingleHtml(4, 'nine_box')}
+              </div>
+              <div class="flex flex-col items-center justify-center"></div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-[11px] font-bold text-stone-500 px-2 gap-1">
+              <span>💡 橫軸透視：左側起因源起 ➔ 中央核心現況 ➔ 右側走向趨勢</span>
+              <span>縱軸透視：上方顯意識目標與外部助力 ⟷ 下方潛意識深層與阻礙課題</span>
+            </div>
+          </div>
+        `;
+      } else if (layout === 'five_cards' && this.selectedCards.length >= 5) {
+        // 雷諾曼五張牌線性牌陣 (五張橫向 · 1x5)
+        return `
+          <div class="max-w-5xl mx-auto space-y-3">
+            <div class="text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-4 rounded-xl border border-amber-200/80 shadow-2xs">
+              ✨ 雷諾曼五張牌陣 · 橫向線性透視 (過去背景 ➔ 外部影響 ➔ 核心焦點 ➔ 課題考驗 ➔ 最終趨勢)
+            </div>
+
+            <div class="w-full overflow-x-auto pb-2">
+              <div class="grid grid-cols-5 gap-2 sm:gap-4 p-3 sm:p-5 rounded-2xl bg-stone-900/5 border border-stone-300/70 min-w-[540px] sm:min-w-0">
+                ${[0, 1, 2, 3, 4].map(idx => {
+                  const isCenter = (idx === 2);
+                  return `
+                    <div class="relative flex flex-col items-center ${isCenter ? 'ring-2 ring-amber-400 rounded-2xl bg-amber-400/10 p-1 shadow-md' : ''}">
+                      ${isCenter ? '<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20"><span class="px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 text-[9px] font-black shadow-md">★ 核心焦點</span></div>' : ''}
+                      ${this.renderFlipCardSingleHtml(idx, 'five')}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      } else if ((layout === 'three_cards' || layout === 'three_decks') && this.selectedCards.length >= 3) {
+        // 三張橫向牌陣 (雷諾曼三張橫向 或 紫微三組牌各一張)
+        const isZiwei = this.system === 'ziwei';
+        return `
+          <div class="max-w-4xl mx-auto space-y-3">
+            <div class="grid grid-cols-3 text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-3 rounded-xl border border-amber-200/80 shadow-2xs">
+              <div class="flex items-center justify-center gap-1"><span>${isZiwei ? '👑' : '⏳'}</span><span>${isZiwei ? '主星牌 (核心運勢)' : '過去源起 (Past)'}</span></div>
+              <div class="flex items-center justify-center gap-1 text-amber-950 font-black"><span>${isZiwei ? '⚡' : '🌟'}</span><span>${isZiwei ? '輔星牌 (外部助力)' : '當前核心 (Present)'}</span></div>
+              <div class="flex items-center justify-center gap-1"><span>${isZiwei ? '⏳' : '🚀'}</span><span>${isZiwei ? '長生星 (時序旺衰)' : '未來走向 (Future)'}</span></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
+              ${[0, 1, 2].map(idx => this.renderFlipCardSingleHtml(idx, 'three')).join('')}
+            </div>
+          </div>
+        `;
+      } else if (layout === 'triangle' && this.selectedCards.length >= 3) {
         // 聖三角牌陣 (頂1 底2)
         return `
           <div class="max-w-4xl mx-auto space-y-4">
@@ -886,6 +1367,34 @@
             </div>
           </div>
         `;
+      } else if (layout === 'nine_box' && this.selectedCards.length >= 9) {
+        // 雷諾曼專屬九宮格 (3x3 Box Spread · 九張3*3大局透視)
+        return `
+          <div class="w-full max-w-xl sm:max-w-2xl mx-auto space-y-3">
+            <div class="grid grid-cols-3 text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-3 rounded-xl border border-amber-200/80 shadow-2xs">
+              <div class="flex items-center justify-center gap-1"><span>⏳</span><span>過去源起 (Past)</span></div>
+              <div class="flex items-center justify-center gap-1 text-amber-950 font-black"><span>🌟</span><span>當前核心 (Present)</span></div>
+              <div class="flex items-center justify-center gap-1"><span>🚀</span><span>未來走向 (Future)</span></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-3.5 p-2.5 sm:p-4 rounded-2xl bg-stone-900/5 border border-stone-300/70 shadow-inner">
+              ${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => {
+                const isCenter = (idx === 4);
+                return `
+                  <div class="relative flex flex-col items-center justify-center ${isCenter ? 'ring-2 ring-amber-400 rounded-2xl bg-amber-400/10 p-1 sm:p-1.5 shadow-md' : ''}">
+                    ${isCenter ? '<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20"><span class="px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 text-[9px] font-black shadow-md tracking-wider">★ 核心命門</span></div>' : ''}
+                    ${this.renderFlipCardSingleHtml(idx, 'nine_box')}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-[11px] font-bold text-stone-500 px-2 gap-1">
+              <span>💡 橫向透視：上層思維意向 ｜ 中層核心現實 ｜ 下層物質行動</span>
+              <span>縱向脈絡：左欄過去因由 ➔ 中欄核心焦點 ➔ 右欄未來趨勢</span>
+            </div>
+          </div>
+        `;
       } else if (layout === 'grand_tableau' && this.selectedCards.length >= 36) {
         // 雷諾曼大藍圖 (8x4 + 4)
         return `
@@ -907,6 +1416,18 @@
             </div>
           </div>
         `;
+      } else if (layout === 'single' && this.selectedCards.length >= 1) {
+        // 單張神諭指引
+        return `
+          <div class="max-w-md mx-auto flex flex-col items-center p-2">
+            <div class="text-center text-xs font-black text-amber-900 bg-amber-50/90 py-2 px-6 rounded-xl border border-amber-200/80 shadow-2xs mb-4">
+              🎯 今日核心神諭指引 (Core Oracle Focus)
+            </div>
+            <div class="w-52 sm:w-60">
+              ${this.renderFlipCardSingleHtml(0, 'single')}
+            </div>
+          </div>
+        `;
       } else {
         // 預設靈活網格
         return `
@@ -917,7 +1438,7 @@
       }
     }
 
-    // 渲染單個翻牌卡片的 3D Flip DOM
+    // 渲染單個翻牌卡片的 3D Flip DOM (支援凱爾特十字、紫微三方四正、十二宮天盤、九宮格等尺寸)
     renderFlipCardSingleHtml(idx, size = 'default') {
       const item = this.selectedCards[idx];
       if (!item) return '';
@@ -926,19 +1447,43 @@
       const db = window.MeetJoyDivination || {};
       const isLenormand = card.system === 'lenormand';
       const isTarot = card.system === 'tarot';
+      const isZiwei = card.system === 'ziwei';
       const hasImg = !!card.image;
 
       const isTableau = size === 'tableau';
+      const isNineBox = size === 'nine_box';
+      const isCrossFive = size === 'cross_five';
+      const isCeltic = size === 'celtic';
+      const isSanFang = size === 'sanfang';
+      const isTwelve = size === 'twelve';
+      const isTwelveCourt = size === 'twelve-court';
+      const isThree = size === 'three';
+      const isFive = size === 'five';
+      const isSingle = size === 'single';
+
       const isMan = card.id === 'l_28' || String(card.name).includes('男人') || String(card.name).includes('紳士');
       const isWoman = card.id === 'l_29' || String(card.name).includes('女人') || String(card.name).includes('淑女');
 
-      const isMobile = window.innerWidth < 640;
-      let cardWidth = isMobile ? '100px' : '136px';
-      let cardHeight = isMobile ? '160px' : '216px';
+      const cardAspect = isTarot ? 'aspect-[1/1.52]' : (isZiwei ? 'aspect-[1/1.83]' : 'aspect-[1/1.54]');
 
-      if (isTableau) {
-        cardWidth = '100%';
-        cardHeight = 'auto';
+      let cardSceneClass = '';
+      let cardSceneStyle = '';
+
+      if (isCeltic) {
+        cardSceneClass = 'w-full h-full';
+      } else if (isSanFang || isTwelve || isTwelveCourt) {
+        cardSceneClass = `w-full ${cardAspect}`;
+      } else if (isTableau || isNineBox || isCrossFive) {
+        cardSceneClass = `w-full ${cardAspect}`;
+      } else if (isFive) {
+        cardSceneClass = `w-full max-w-[130px] sm:max-w-[170px] ${cardAspect}`;
+      } else if (isThree) {
+        cardSceneClass = `w-full max-w-[175px] sm:max-w-[210px] ${cardAspect}`;
+      } else if (isSingle) {
+        cardSceneClass = `w-52 sm:w-60 ${cardAspect}`;
+      } else {
+        const isMobile = window.innerWidth < 640;
+        cardSceneStyle = `width: ${isMobile ? '100px' : '136px'}; height: ${isMobile ? '160px' : '216px'};`;
       }
 
       let frontContentHtml = '';
@@ -975,15 +1520,33 @@
 
       const specialGlow = isMan ? 'ring-3 ring-blue-500 rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.8)]' : (isWoman ? 'ring-3 ring-pink-500 rounded-xl shadow-[0_0_15px_rgba(236,72,153,0.8)]' : '');
 
+      const showRoleTag = !isTableau && !isCeltic && !isTwelve && !isSanFang;
+      const showBottomText = !isCeltic && !isTwelve;
+      const celticBadge = isCeltic ? `
+        <div class="celtic-pos-badge" title="${role || ''}">
+          ${idx + 1}
+        </div>
+      ` : '';
+
       return `
-        <div class="flex flex-col items-center gap-1.5 ${specialGlow}">
-          ${!isTableau ? `<span class="text-[11px] font-bold text-stone-700 bg-stone-100 px-2.5 py-0.5 rounded-full border border-stone-200 whitespace-nowrap shadow-2xs">${role}</span>` : ''}
-          <div class="card-scene cursor-pointer ${isTableau ? 'w-full aspect-[1/1.54]' : ''}" style="${!isTableau ? `width: ${cardWidth}; height: ${cardHeight};` : ''}" data-card-idx="${idx}">
+        <div class="flex flex-col items-center gap-1.5 w-full ${specialGlow} relative">
+          ${showRoleTag && role ? `<span class="text-[10px] sm:text-[11px] font-bold text-stone-700 bg-stone-100 px-2 sm:px-2.5 py-0.5 rounded-full border border-stone-200 whitespace-nowrap shadow-2xs">${role}</span>` : ''}
+          ${celticBadge}
+          <div class="card-scene cursor-pointer ${cardSceneClass}" style="${cardSceneStyle}" data-card-idx="${idx}">
             <div class="card-inner w-full h-full relative" style="transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);">
               <!-- 卡背 -->
               <div class="card-face card-back absolute inset-0 rounded-xl border-2 border-[#C8A97E] ${card.cardBackClass} flex items-center justify-center shadow-md">
-                ${card.backImage ? `<img src="${card.backImage.includes('?') ? card.backImage : card.backImage + '?v=2026'}" alt="牌背" class="card-back-image" onerror="this.remove()">` : ''}
-                <div class="w-8 h-8 rounded-full border border-[#C8A97E]/40 flex items-center justify-center text-amber-200/60 text-xs relative z-10">✦</div>
+                ${isLenormand ? `
+                  <div class="relative flex flex-col items-center justify-center p-2 text-center pointer-events-none select-none">
+                    <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-amber-300/60 bg-black/40 flex items-center justify-center mb-0.5 shadow-md">
+                      <span class="text-xs sm:text-base text-amber-200">⚜️</span>
+                    </div>
+                    <span class="text-[8px] sm:text-[9px] font-black text-amber-100 font-cinzel tracking-wider">LENORMAND</span>
+                  </div>
+                ` : `
+                  ${card.backImage ? `<img src="${card.backImage.includes('?') ? card.backImage : card.backImage + '?v=2026'}" alt="牌背" class="card-back-image" onerror="this.remove()">` : ''}
+                  <div class="w-8 h-8 rounded-full border border-[#C8A97E]/40 flex items-center justify-center text-amber-200/60 text-xs relative z-10">${isTarot ? '✦' : '鶴'}</div>
+                `}
               </div>
               <!-- 卡面 -->
               <div class="card-face card-front absolute inset-0 rounded-xl shadow-lg ${isLenormand ? 'p-0 bg-[#FDFBF7] border border-[#C5A059]' : 'p-1 bg-stone-900 border-2 border-[#C8A97E]/80'}" style="transform: rotateY(180deg); backface-visibility: hidden;">
@@ -991,7 +1554,9 @@
               </div>
             </div>
           </div>
-          <span class="text-xs font-serif font-black text-[#1F261C] mt-0.5 text-center">${card.name} ${!isLenormand ? (isReversed ? '<span class=\"text-[10px] text-rose-700\">(逆)</span>' : '<span class=\"text-[10px] text-emerald-700\">(正)</span>') : ''}</span>
+          ${showBottomText ? `
+            <span class="text-xs font-serif font-black ${isTwelveCourt ? 'text-amber-100' : 'text-[#1F261C]'} mt-0.5 text-center">${card.name} ${!isLenormand ? (isReversed ? '<span class=\"text-[10px] text-rose-700\">(逆)</span>' : '<span class=\"text-[10px] text-emerald-700\">(正)</span>') : ''}</span>
+          ` : ''}
         </div>
       `;
     }
