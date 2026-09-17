@@ -48,13 +48,36 @@
     return false;
   }
 
-  // 判定是否為可互動之表單元素（豁免區域）
+  // 判定是否為可互動之元件（豁免區域：表單、按鈕、卡牌、牌桌、手勢舞台）
   function isInteractiveElement(el) {
     if (!el) return false;
     const tag = el.tagName ? el.tagName.toLowerCase() : '';
-    if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+    if (['input', 'textarea', 'select', 'button', 'a', 'svg', 'path', 'img', 'canvas'].includes(tag)) return true;
     if (el.isContentEditable) return true;
-    if (el.closest && (el.closest('input') || el.closest('textarea') || el.closest('select') || el.closest('[contenteditable="true"]'))) {
+
+    // 豁免占卜核心互動節點（卡牌、牌桌、扇形展牌舞台、幻燈片彈窗等）
+    if (el.closest && el.closest([
+      'input',
+      'textarea',
+      'select',
+      'button',
+      'a',
+      '[role="button"]',
+      '.card-scene',
+      '.card-deal-in',
+      '.flowing-card-unit',
+      '.flowing-slot',
+      '.card-inner',
+      '.card-face',
+      '#flowing_shuffle_stage',
+      '#flowing_arc_fan',
+      '#flowing_cards_stage',
+      '#card_stage',
+      '#card_slideshow_modal',
+      '.ziwei-twelve-board',
+      '.celtic-cross-wrapper',
+      '[contenteditable="true"]'
+    ].join(','))) {
       return true;
     }
     return false;
@@ -97,6 +120,8 @@
   function handleContextMenu(e) {
     if (isAdministrator()) return;
     if (isInteractiveElement(e.target)) return;
+    // 觸控長按手勢 (Touch) 絕對不予阻斷，防止 WebKit/Safari 強制派發 touchcancel 扼殺長按
+    if (e.pointerType === 'touch') return;
     e.preventDefault();
   }
 

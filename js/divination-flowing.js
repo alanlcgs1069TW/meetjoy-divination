@@ -1654,6 +1654,20 @@
         // 雷諾曼大藍圖 (8x4 + 4)
         return `
           <div class="w-full max-w-[1300px] mx-auto p-2 sm:p-5 rounded-3xl bg-[#0F1715] border-2 border-[#C8A97E]/70 shadow-2xl overflow-x-auto">
+            <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-[#182622] rounded-2xl border border-[#C8A97E]/60 text-[#F7E7CE] shadow-md mb-3 min-w-[760px]">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-black font-serif">🌟 雷諾曼大藍圖全覽神殿 (Grand Tableau · 8×4 + 4)</span>
+                <span class="text-[11px] text-amber-200/70 hidden sm:inline">36 宮位全相投影 · 命運全方位綜觀</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-blue-400 bg-blue-900/60 text-blue-200 font-bold">
+                  <span class="w-2 h-2 rounded-full bg-blue-400"></span> 男人 (28 號主角)
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-pink-400 bg-pink-900/60 text-pink-200 font-bold">
+                  <span class="w-2 h-2 rounded-full bg-pink-400"></span> 女人 (29 號主角)
+                </span>
+              </div>
+            </div>
             <div class="space-y-3 min-w-[760px]">
               ${[0, 1, 2, 3].map(rowIdx => `
                 <div class="grid grid-cols-8 gap-1.5 sm:gap-2">
@@ -1777,10 +1791,17 @@
       const specialGlow = isMan ? 'ring-3 ring-blue-500 rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.8)]' : (isWoman ? 'ring-3 ring-pink-500 rounded-xl shadow-[0_0_15px_rgba(236,72,153,0.8)]' : '');
 
       const showRoleTag = !isTableau && !isCeltic && !isTwelve && !isSanFang;
-      const showBottomText = !isCeltic && !isTwelve;
+      const showBottomText = !isCeltic && !isTwelve && !isTableau;
       const celticBadge = isCeltic ? `
         <div class="celtic-pos-badge" title="${role || ''}">
           ${idx + 1}
+        </div>
+      ` : '';
+      const tableauBadge = isTableau ? `
+        <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+          <span class="px-1.5 py-0.2 rounded-full ${idx >= 32 ? 'bg-amber-500 text-stone-950 font-bold' : 'bg-stone-900/90 border border-stone-600 text-stone-300 font-mono'} text-[8px] shadow-xs whitespace-nowrap">
+            ${idx >= 32 ? `★ ${idx + 1}` : `H${idx + 1}`}
+          </span>
         </div>
       ` : '';
 
@@ -1788,6 +1809,7 @@
         <div class="flowing-card-unit flex flex-col items-center gap-1.5 w-full ${specialGlow} relative cursor-pointer select-none group" data-card-idx="${idx}" title="點擊翻牌，已翻開點擊可放大檢視">
           ${showRoleTag && role ? `<span class="text-[10px] sm:text-[11px] font-bold text-stone-700 bg-stone-100 px-2 sm:px-2.5 py-0.5 rounded-full border border-stone-200 whitespace-nowrap shadow-2xs">${role}</span>` : ''}
           ${celticBadge}
+          ${tableauBadge}
           <div class="card-scene ${cardSceneClass}" style="${cardSceneStyle}" data-card-idx="${idx}">
             <div class="card-inner w-full h-full relative" style="transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);">
               <!-- 卡背 -->

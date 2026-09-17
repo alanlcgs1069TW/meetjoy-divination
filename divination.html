@@ -1104,7 +1104,7 @@
             btnClassic.className = 'px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-stone-700 hover:text-stone-950 cursor-pointer';
 
             if (flowingInstance) {
-              flowingInstance.init(currentSystem);
+              flowingInstance.init(currentSystem, currentSpreadKey);
             }
           } else {
             flowingContainer.classList.add('hidden');
@@ -1191,6 +1191,9 @@
             updateZiweiCopyrightCard();
             setupSpreadOptions();
             resetAndDraw();
+            if (flowingInstance) {
+              flowingInstance.init(currentSystem, currentSpreadKey);
+            }
           });
         });
       }
@@ -1206,6 +1209,9 @@
         select.onchange = (e) => {
           currentSpreadKey = e.target.value;
           resetAndDraw();
+          if (flowingInstance) {
+            flowingInstance.setSpread(currentSpreadKey);
+          }
         };
       }
 
@@ -2295,8 +2301,8 @@
               </div>
             </div>
 
-            <!-- 卡牌外部標籤 (翻開後清晰顯示中文牌名與撲克花色，雷諾曼無逆位) -->
-            ${!isCeltic && !isTwelve ? (item.isFlipped ? (isLenormand ? `
+            <!-- 卡牌外部標籤 (翻開後清晰顯示中文牌名與撲克花色，大藍圖、凱爾特與十二宮由專屬宮位標籤呈現) -->
+            ${!isCeltic && !isTwelve && !isTableau ? (item.isFlipped ? (isLenormand ? `
               <div class="mt-1.5 text-center max-w-[150px]">
                 <span class="text-[11px] font-black text-stone-800 block truncate" title="${c.name}">${c.name}</span>
                 <span class="text-[9px] font-black text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-full border border-amber-300/50 inline-block shadow-2xs">${c.pips}</span>
@@ -2308,7 +2314,7 @@
               </div>
             `) : `
               <div class="mt-1.5 text-center h-6"></div>
-            `) : (item.isFlipped ? `
+            `) : (item.isFlipped && !isTableau ? `
               <div class="mt-0.5 text-center max-w-full">
                 <span class="text-[9px] font-black ${isTwelve ? 'text-amber-100' : 'text-stone-800'} block truncate" title="${c.name}">${c.name}</span>
               </div>
