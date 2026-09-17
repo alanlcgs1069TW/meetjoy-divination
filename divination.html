@@ -543,6 +543,11 @@
 
       // 初始化頁面
       function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sysParam = urlParams.get('system');
+        if (sysParam && ['tarot', 'ziwei', 'lenormand'].includes(sysParam)) {
+          currentSystem = sysParam;
+        }
         setupSystemTabs();
         setupSpreadOptions();
         setupActions();
@@ -557,19 +562,26 @@
           { id: 'tab_lenormand', key: 'lenormand' }
         ];
 
+        function updateTabUI() {
+          tabs.forEach(o => {
+            const b = document.getElementById(o.id);
+            if (!b) return;
+            if (o.key === currentSystem) {
+              b.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md';
+            } else {
+              b.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700';
+            }
+          });
+        }
+
+        updateTabUI();
+
         tabs.forEach(t => {
           const btn = document.getElementById(t.id);
           if (!btn) return;
           btn.addEventListener('click', () => {
             currentSystem = t.key;
-            tabs.forEach(o => {
-              const b = document.getElementById(o.id);
-              if (o.key === currentSystem) {
-                b.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition bg-[#2E3829] text-amber-100 shadow-md';
-              } else {
-                b.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition hover:bg-white/60 text-stone-700';
-              }
-            });
+            updateTabUI();
             setupSpreadOptions();
             resetAndDraw();
           });
