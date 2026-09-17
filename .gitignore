@@ -4,3 +4,5 @@ node_modules/
 .DS_Store
 ziwei-src/dist/
 *.log
+__pycache__/
+*.pyc

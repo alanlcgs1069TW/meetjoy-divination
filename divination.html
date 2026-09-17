@@ -13,8 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
   
   <!-- 卡牌資料庫與全站導航 -->
-  <script src="./js/ziwei-cards-complete.js"></script>
-  <script src="./js/divination-cards.js"></script>
+  <script src="./js/ziwei-cards-complete.js?v=2026"></script>
+  <script src="./js/divination-cards.js?v=2026"></script>
   <script src="./js/meetjoy-nav.js"></script>
   <script src="./js/meetjoy-protect.js"></script>
   <script src="./js/meetjoy-universal-profiles.js"></script>
@@ -1185,7 +1185,7 @@
                 <!-- 卡背 (雷諾曼採用古典勃艮第紅金 3D 牌背，正向優雅無逆位) -->
                 <div class="card-face card-back ${backClass} group hover:border-amber-400 transition">
                   ${hasImg && c.backImage ? `
-                    <img src="${c.backImage}" alt="${isTarot ? '塔羅牌背' : (c.groupLabel || '紫微') + '牌背'}" class="card-back-image" onerror="this.remove()">
+                    <img src="${c.backImage.includes('?') ? c.backImage : c.backImage + '?v=2026'}" alt="${isTarot ? '塔羅牌背' : (c.groupLabel || '紫微') + '牌背'}" class="card-back-image" onerror="this.remove()">
                     <div class="card-back-copy absolute inset-0 flex flex-col items-center justify-center bg-slate-950/20 group-hover:bg-slate-950/5 transition">
                       <span class="rounded-full bg-black/50 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black tracking-widest text-amber-100 border border-white/20 shadow-md">
                         ${isCeltic ? idx + 1 : '翻開'}
@@ -1213,7 +1213,7 @@
                   ${hasImg ? `
                     <!-- 實體牌卡圖案展示：塔羅與紫微均使用卡庫指定高解析牌面 -->
                     <div class="w-full h-full rounded-xl overflow-hidden relative flex flex-col justify-between bg-stone-950">
-                      <img src="${c.image}" alt="${c.name}" class="${isTarot ? 'tarot-card-image' : 'ziwei-card-image'} ${item.isReversed ? 'card-art-reversed' : ''} w-full h-full object-cover rounded-lg" onerror="this.style.display='none'">
+                      <img src="${c.image ? (c.image.includes('?') ? c.image : c.image + '?v=2026') : ''}" alt="${c.name}" class="${isTarot ? 'tarot-card-image' : 'ziwei-card-image'} ${item.isReversed ? 'card-art-reversed' : ''} w-full h-full object-cover rounded-lg" onerror="this.style.display='none'">
                       
                       <!-- 卡面右上角正逆位柔光標籤 -->
                       <div class="absolute top-1 right-1 z-10">
