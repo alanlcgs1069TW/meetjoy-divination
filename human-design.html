@@ -612,6 +612,17 @@
             <p class="mt-1 text-[11px] text-slate-500">集體大環境氛圍</p>
             <div id="return_transit_channels" class="mt-3 flex flex-wrap gap-2 text-slate-600"></div>
           </section>
+          <section class="rounded-2xl bg-gradient-to-br from-amber-50 to-[#FAF6ED] border-2 border-[#C8A97E] p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <h3 class="font-black text-amber-950 flex items-center gap-1.5">
+                <span>🧭</span> 本回歸專屬輪迴交叉 (Return Incarnation Cross)
+              </h3>
+              <span id="return_cross_gates" class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-[#1E261D] text-[#F7E7CE]">--</span>
+            </div>
+            <p id="return_cross_title" class="mt-1.5 font-black text-sm text-[#987315]">計算中...</p>
+            <p id="return_cross_title_en" class="text-[11px] text-slate-400 font-mono"></p>
+            <p id="return_cross_desc" class="mt-2 text-xs sm:text-sm text-slate-700 leading-relaxed"></p>
+          </section>
           <section class="rounded-2xl bg-[#1E261D] text-[#F7E7CE] border border-[#C8A97E]/50 p-4 shadow-sm">
             <h3 class="font-black">🌿 愛倫院長的生活魔藥處方與調頻指引</h3>
             <p id="return_rx" class="mt-2 leading-relaxed text-xs sm:text-sm text-amber-50/90"></p>
@@ -2138,7 +2149,7 @@
           badgeClass: ret.saturnReturn1.isPassed ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-900 border border-amber-300',
           localStr: ret.saturnReturn1.dateLocalStr,
           subMeta: `國際標準時間：${ret.saturnReturn1.dateUtcStr} ｜ 歷程年齡：約 ${ret.saturnReturn1.age} 歲`,
-          simpleExplanation: '脫離青年期的試錯摸索，承擔起個人責任與核心使命。對於 6 爻人而言，這是正式「走上屋頂」抽離沉澱、客觀觀測世界的 20 年黃金起點。',
+          simpleExplanation: '【成年奠基輪迴交叉】：脫離青年期的試錯摸索，承擔起個人責任與核心使命。此時點宇宙為您重新對齊天命十字，建立成人架構。對於 6 爻人而言，這是正式「走上屋頂」抽離沉澱、客觀觀測世界的 20 年黃金起點。',
           meaning: ret.saturnReturn1.meaningZh,
           customWidget: '', cycleKey: 'saturnReturn1', returnDate: ret.saturnReturn1.date
         },
@@ -2151,7 +2162,7 @@
           badgeClass: ret.uranusOpposition.isPassed ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-900 border border-amber-300',
           localStr: ret.uranusOpposition.dateLocalStr,
           subMeta: `國際標準時間：${ret.uranusOpposition.dateUtcStr} ｜ 歷程年齡：約 ${ret.uranusOpposition.age} 歲`,
-          simpleExplanation: '俗稱的「人生中場換軌」。南交點（前半生環境與習慣制約）正式交棒給北交點（後半生核心願景），勇敢打破外界期待與常規，真正活出自我本色。',
+          simpleExplanation: '【中場換軌輪迴交叉】：俗稱的「人生中場換軌」。南交點（前半生環境與習慣制約）正式交棒給北交點（後半生核心願景），啟動下半場靈魂進化十字，勇敢打破外界期待與常規，真正活出自我本色。',
           meaning: ret.uranusOpposition.meaningZh,
           customWidget: '', cycleKey: 'uranusOpposition', returnDate: ret.uranusOpposition.date
         },
@@ -2164,7 +2175,7 @@
           badgeClass: ret.chironReturn.isPassed ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-900 border border-amber-300',
           localStr: ret.chironReturn.dateLocalStr,
           subMeta: `國際標準時間：${ret.chironReturn.dateUtcStr} ｜ 歷程年齡：約 ${ret.chironReturn.age} 歲`,
-          simpleExplanation: '前半生所經歷的創傷與苦痛，在此時沉澱淬鍊為深邃智慧。對 6 爻人而言，象徵「走下屋頂」步入典範實踐期，不再只是冷眼旁觀，而是以自身生命的真實活法成為激勵他人的活典範。',
+          simpleExplanation: '【靈魂綻放輪迴交叉】：前半生所經歷的創傷與苦痛在此沉澱淬鍊為深邃智慧。點石成金的輪迴交叉天命完全甦醒。對 6 爻人而言，象徵「走下屋頂」步入典範實踐期，不再只是冷眼旁觀，而是以自身生命的真實活法成為激勵他人的活典範。',
           meaning: ret.chironReturn.meaningZh,
           customWidget: '', cycleKey: 'chironReturn', returnDate: ret.chironReturn.date
         },
@@ -2177,7 +2188,7 @@
           badgeClass: ret.saturnReturn2.isPassed ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-900 border border-amber-300',
           localStr: ret.saturnReturn2.dateLocalStr,
           subMeta: `國際標準時間：${ret.saturnReturn2.dateUtcStr} ｜ 歷程年齡：約 ${ret.saturnReturn2.age} 歲`,
-          simpleExplanation: '人生一甲子的大圓滿里程碑。盤點一生的累積，將物質追求昇華為純粹的精神引領與經驗傳承，步入澄澈自在的長老格局。',
+          simpleExplanation: '【長老傳承輪迴交叉】：人生一甲子的大圓滿里程碑。盤點一生的累積，將物質追求昇華為純粹的精神引領與經驗傳承，步入澄澈自在的長老天命格局。',
           meaning: ret.saturnReturn2.meaningZh,
           customWidget: '', cycleKey: 'saturnReturn2', returnDate: ret.saturnReturn2.date
         },
@@ -2415,10 +2426,33 @@
         centerEl.innerHTML = compData.newCenters.length ? compData.newCenters.map(c => `<div class="rounded-xl bg-amber-50 border border-amber-300 px-3 py-2"><strong class="text-amber-950">✦ ${CENTER_NAMES[c] || c}</strong><p class="mt-0.5 text-[11px] leading-relaxed">此週期有穩定運作能量；留意把外界期待誤當成自己的責任，回到內在權威再決定。</p></div>`).join('') : '<p class="text-slate-500">本命開放中心在此週期保有呼吸空間；以觀察取代急著承接，能更清楚分辨哪些感受真正屬於自己。</p>';
         const transitEl = document.getElementById('return_transit_channels');
         transitEl.innerHTML = compData.transitOnly.length ? compData.transitOnly.map(c => `<span class="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-300 font-bold text-amber-950">${c.id} ${c.name}</span>`).join('') : '<span class="text-slate-500">流日沒有單獨完整通道；集體背景更透過懸掛閘門與你的本命圖互動。</span>';
+        // 輪迴交叉 (Incarnation Cross) 計算與呈現 (愛倫院長拍板：每個回歸都要加入輪迴交叉)
+        const cross = transitHd.incarnationCross || {};
+        const crossTitleZh = cross.titleZh || '回歸演化天命十字';
+        const crossTitleEn = cross.titleEn || 'Return Incarnation Cross';
+        const crossGatesStr = transitHd.crossGates || '--';
+        document.getElementById('return_cross_gates').textContent = crossGatesStr;
+        document.getElementById('return_cross_title').textContent = crossTitleZh;
+        document.getElementById('return_cross_title_en').textContent = crossTitleEn;
+
+        let cycleCrossTheme = '';
+        if (cycleKey === 'saturnReturn1') {
+          cycleCrossTheme = `【28~30歲 成年奠基十字】：在第一次土星回歸此重要轉折點，此輪迴交叉揭示您脫離青年試錯期後，靈魂真正要承擔的物質形式與現實架構。藉由四柱核心閘門（${crossGatesStr}）的能量調頻，建立專屬於您的成人邊界與使命。`;
+        } else if (cycleKey === 'uranusOpposition') {
+          cycleCrossTheme = `【38~44歲 中場換軌十字】：在天王星對衝的生命中場大覺醒時刻，南北交點正式交棒。此輪迴交叉為您前半生的制約解套，引領您打破外界期待，全面解鎖後半生真正要活出的靈魂天命軸線。`;
+        } else if (cycleKey === 'chironReturn') {
+          cycleCrossTheme = `【49~51歲 靈魂綻放十字】：凱龍星回歸象徵療癒者原型的成熟大成。此輪迴交叉代表過往所有的創傷與歷練已萃取為點石成金的智慧，引領您走下屋頂，成為激勵他人靈魂的活典範。`;
+        } else if (cycleKey === 'saturnReturn2') {
+          cycleCrossTheme = `【58~60歲 長老傳承十字】：一甲子的大圓滿里程碑。此輪迴交叉引導您將一生的物質與心智成就昇華為長老智慧，為後輩照亮道路，邁入通透澄澈的靈性傳承格局。`;
+        } else {
+          cycleCrossTheme = `【個人年度專屬進化十字】：此為本年度太陽精確返照時宇宙為您校準的天命焦點。在未來 365 天中，四柱核心閘門（${crossGatesStr}）將是引領您做出重大人生抉擇與能量躍升的導航羅盤。`;
+        }
+        document.getElementById('return_cross_desc').innerHTML = cycleCrossTheme;
+
         document.getElementById('return_chart_title').textContent = `🪐 ${cycle.titleZh} 本命＋流日合體圖`;
         document.getElementById('return_chart_meta').textContent = cycle.localStr;
         const age = (cycle.subMeta.match(/約 ([\d.]+) 歲/) || [])[1] || '--';
-        document.getElementById('return_chart_submeta').textContent = `回歸年齡：約 ${age} 歲 ｜ 本命閘門 ${compData.natalGates.size} ｜ 流日閘門 ${compData.transitGates.size} ｜ 電磁接通 ${compData.electro.length} 條`;
+        document.getElementById('return_chart_submeta').textContent = `回歸年齡：約 ${age} 歲 ｜ 本命閘門 ${compData.natalGates.size} ｜ 流日閘門 ${compData.transitGates.size} ｜ 電磁接通 ${compData.electro.length} 條 ｜ 輪迴交叉：${crossTitleZh}`;
         document.getElementById('return_rx').textContent = compData.electro.length || compData.newCenters.length
           ? '把合體啟動當成一週期的實驗室：每天選一件小事，先停下來感覺身體的鬆緊與呼吸深度，再依內在權威決定是否答應。肯定句：我允許當下的能量提醒我，用自己的節奏走向下一步。'
           : '這個週期適合把力量收回日常：為一件熟悉的事留出十分鐘不受打擾的專注，讓本命天賦在安穩節奏中展開。肯定句：我信任自己已有的能量，也珍惜每一個自在呼吸的空間。';
