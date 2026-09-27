@@ -31,6 +31,9 @@ interface Props {
   chartId?: string;
   alias?: string;
   onSaveAlias?: (text: string) => void;
+  onSaveName?: (text: string) => void;   // 正常模式點名字 inline 改名（暫態盤不傳＝不可編）
+  cheatMode?: boolean;                   // 進階「高階顯示」：每宮疊一張 陰陽/五行數/方位 小卡
+  onToggleCheat?: () => void;
   taijiBaseIdx?: number | null; // 立太極改名用（流月/流日 由 App gate 傳 null）
   feixingBaseIdx?: number | null; // 飛化上色用（不 gate 焦點，流月/流日 也上色）
   feixingShow?: boolean;          // 飛化上色 開關（預設關，兩種模式皆由此 toggle 控制）
@@ -46,7 +49,7 @@ const TJ_BR = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌'
 const TJ_NAME2SHORT: Record<string, string> = { 命宮:'命', 兄弟:'兄', 夫妻:'夫', 子女:'子', 財帛:'財', 疾厄:'疾', 遷移:'遷', 交友:'僕', 僕役:'僕', 奴僕:'僕', 官祿:'官', 田宅:'田', 福德:'福', 父母:'父' };
 const FX_STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
 
-export function AstrolabeChart({ chart, horoscope, isNatalMode, isYearlyMode, clickedPalaceIdx, onPalaceClick, originPalaceIdx, onReset, multiBirthOrder, onPrevTime, onNextTime, isRectified, isMinorLimitMode, onMinorLimitToggle, childhoodOverride, advMode, onAdvToggle, advLayers, advFocus, notes, onSaveNotes, chartId, alias, onSaveAlias, taijiBaseIdx, feixingBaseIdx, feixingShow = true, onToggleFeixing, zihuaShow = true, onToggleZihua }: Props) {
+export function AstrolabeChart({ chart, horoscope, isNatalMode, isYearlyMode, clickedPalaceIdx, onPalaceClick, originPalaceIdx, onReset, multiBirthOrder, onPrevTime, onNextTime, isRectified, isMinorLimitMode, onMinorLimitToggle, childhoodOverride, advMode, onAdvToggle, advLayers, advFocus, notes, onSaveNotes, chartId, alias, onSaveAlias, onSaveName, cheatMode = false, onToggleCheat, taijiBaseIdx, feixingBaseIdx, feixingShow = true, onToggleFeixing, zihuaShow = true, onToggleZihua }: Props) {
   const minorLimitAgesMap = useMemo(() => {
     const map: Record<number, number[]> = {};
     chart.palaces.forEach(p => { map[p.index] = p.ages; });
@@ -118,12 +121,13 @@ export function AstrolabeChart({ chart, horoscope, isNatalMode, isYearlyMode, cl
               taijiName={tj?.zh}
               taijiNameEn={tj?.en}
               feixingHua={feixingHuaMap}
+              cheatMode={cheatMode}
             />
           );
         })}
 
         <div className="center-cell" style={{ gridRow: '2/4', gridColumn: '2/4' }}>
-          <CenterInfo chart={chart} horoscope={horoscope} isNatalMode={isNatalMode} onReset={onReset} multiBirthOrder={multiBirthOrder} onPrevTime={onPrevTime} onNextTime={onNextTime} isRectified={isRectified} childhoodOverride={childhoodOverride} advMode={advMode} onAdvToggle={onAdvToggle} notes={notes} onSaveNotes={onSaveNotes} chartId={chartId} alias={alias} onSaveAlias={onSaveAlias} feixingShow={feixingShow} onToggleFeixing={onToggleFeixing} zihuaShow={zihuaShow} onToggleZihua={onToggleZihua} />
+          <CenterInfo chart={chart} horoscope={horoscope} isNatalMode={isNatalMode} onReset={onReset} multiBirthOrder={multiBirthOrder} onPrevTime={onPrevTime} onNextTime={onNextTime} isRectified={isRectified} childhoodOverride={childhoodOverride} advMode={advMode} onAdvToggle={onAdvToggle} notes={notes} onSaveNotes={onSaveNotes} chartId={chartId} alias={alias} onSaveAlias={onSaveAlias} onSaveName={onSaveName} cheatShow={cheatMode} onToggleCheat={onToggleCheat} feixingShow={feixingShow} onToggleFeixing={onToggleFeixing} zihuaShow={zihuaShow} onToggleZihua={onToggleZihua} />
         </div>
 
         {/* 三方四正：永遠可用（點宮即顯示） */}

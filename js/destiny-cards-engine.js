@@ -20,7 +20,7 @@ function getDestinyData() {
 const CARD_SUITS = {
   'H': { name: 'Hearts', zh: '紅心', symbol: '♥', color: '#dc2626', element: '水 (情感 / 愛戀 / 人際)', season: '春' },
   'C': { name: 'Clubs', zh: '梅花', symbol: '♣', color: '#1e293b', element: '風/火 (心智 / 學習 / 智慧)', season: '夏' },
-  'D': { name: 'Diamonds', zh: '方塊', symbol: '♦', color: '#d97706', element: '土 (價值 / 財富 / 實踐)', season: '秋' },
+  'D': { name: 'Diamonds', zh: '方塊', symbol: '♦', color: '#dc2626', element: '土 (價值 / 財富 / 實踐)', season: '秋' },
   'S': { name: 'Spades', zh: '黑桃', symbol: '♠', color: '#0f172a', element: '以太/靈性 (意志 / 靈性 / 終極考驗)', season: '冬' },
   'JOKER': { name: 'Joker', zh: '小丑牌', symbol: '🃏', color: '#9333ea', element: '全知原初 (無限可能)', season: '神聖閏日' }
 };

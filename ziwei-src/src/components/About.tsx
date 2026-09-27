@@ -23,29 +23,35 @@ interface Credit {
 const CREDITS: Credit[] = [
   {
     zh: {
-      name: '癒見幸福療身心靈推廣中心 · 魔法占星學院',
-      website: { url: 'https://meetjoy.net', label: '學院官網' },
+      name: 'ISZN 國際紫微斗數學會',
+      website: { url: 'https://iszntw.ezycourse.com/zh/home/', label: '學會官網' },
       body: (
         <>
-          本星盤大典依據正統紫微斗數星曜佈局與三合四化流派演算法，落實十四主星、六吉六煞、祿羊陀馬、長生博士十二神等完整天星步序，並由愛倫院長團隊精心校準驗證，提供大眾精準、清晰且易於實踐的生活魔藥排盤體驗。
+          本工具的紫微斗數排盤邏輯，主要依據 ISZN 國際紫微斗數學會的教學體系，並以其官方排盤軟體{' '}
+          <a href="https://www.dreamkinin.com" target="_blank" rel="noopener noreferrer">紫微攻略</a>
+          {' '}作為驗證標準。感謝學會多年來在華人世界系統化推廣紫微斗數，提供清晰的算法定義與學習路徑，讓這個小工具能成型。
         </>
       ),
     },
     en: {
-      name: 'MeetJoy Healing Center · Magic Astrology Academy',
-      website: { url: 'https://meetjoy.net', label: 'Academy Website' },
+      name: 'ISZN International Zi Wei Dou Shu Association',
+      website: { url: 'https://iszntw.ezycourse.com/en/home/', label: 'Official Website' },
       body: (
         <>
-          This astrolabe chart system is developed based on classical Zi Wei Dou Shu algorithms, covering the 14 major stars, lucky and tough stars, Chang Sheng and Bo Shi cycles, decadal and yearly transits, with precise algorithmic validation by the MeetJoy Academy team.
+          The Zi Wei Dou Shu chart logic in this tool is primarily based on the teaching system of the ISZN International Zi Wei Dou Shu Association, validated against their official chart software{' '}
+          <a href="https://www.dreamkinin.com" target="_blank" rel="noopener noreferrer">紫微攻略 (Zi Wei Gong Lue)</a>
+          . We are grateful for the Association&apos;s long-standing efforts in systematically spreading Zi Wei Dou Shu across the Chinese-speaking world, providing the clear algorithmic definitions and learning path that made this small tool possible.
         </>
       ),
     },
     cn: {
-      name: '癒見幸福療身心靈推廣中心 · 魔法占星學院',
-      website: { url: 'https://meetjoy.net', label: '學院官網' },
+      name: 'ISZN 国际紫微斗数学会',
+      website: { url: 'https://iszntw.ezycourse.com/zh/home/', label: '学会官网' },
       body: (
         <>
-          本星盤大典依據正統紫微斗數星曜佈局與三合四化流派演算法，落實十四主星、六吉六煞、祿羊陀馬、長生博士十二神等完整天星步序，並由愛倫院長團隊精心校準驗證，提供大眾精準、清晰且易於實踐的生活魔藥排盤體驗。
+          本工具的紫微斗数排盘逻辑，主要依据 ISZN 国际紫微斗数学会的教学体系，并以其官方排盘软件{' '}
+          <a href="https://www.dreamkinin.com" target="_blank" rel="noopener noreferrer">紫微攻略</a>
+          {' '}作为验证标准。感谢学会多年来在华人世界系统化推广紫微斗数，提供清晰的算法定义与学习路径，让这个小工具能成形。
         </>
       ),
     },
@@ -54,17 +60,20 @@ const CREDITS: Credit[] = [
 
 const TITLES: Record<string, string> = {
   'zh-TW': '致謝',
+  'zh-CN': '致谢',
   'en':    'With Thanks',
 };
 
 const INTRO: Record<string, string> = {
   'zh-TW': '感謝以下單位與個人，讓這個工具成為可能。',
+  'zh-CN': '感谢以下单位与个人，让这个工具成为可能。',
   'en':    'With gratitude to the following for making this tool possible.',
 };
 
 // 收尾小註：說明非營利、純個人 AI 學習，語氣輕
 const NOTE: Record<string, string> = {
   'zh-TW': '這個小工具是我在學習、體驗 AI 的過程中做給自己用的，並非商業產品、也無意營利。如果可以對你有幫助，那對我來說會是個小確幸。',
+  'zh-CN': '这个小工具是我在学习、体验 AI 的过程中做给自己用的，并非商业产品、也无意营利。如果可以对你有帮助，那对我来说会是个小确幸。',
   'en':    "This is a personal project I built to learn and experiment with AI. It's not a commercial product. If you find it helpful, that would honestly make my day.",
 };
 
@@ -76,7 +85,7 @@ export function About({ onClose }: Props) {
 
   function pick(credit: Credit): CreditText {
     if (locale === 'en')    return credit.en;
-    
+    if (locale === 'zh-CN') return credit.cn;
     return credit.zh;
   }
 

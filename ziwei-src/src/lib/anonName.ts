@@ -27,7 +27,7 @@ const ZH_ROLE = [
   '湯圓', '包子', '燒餅', '餛飩', '麻糬', '糰子',
 ];
 
-const ZH_SIZE  = ['大', '中', '小'];                          // 置中、大小（真形容詞）
+const ZH_SIZE  = ['大', '中', '小'];                          // 置中・大小（真形容詞）
 const ZH_GAN   = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
 const ALPHA    = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -94,9 +94,9 @@ function pick<T>(arr: T[], key: string, salt: string): T {
 function anonZh(key: string): string {
   const prefix = pick(ZH_PREFIX, key, 'p');
   const role   = pick(ZH_ROLE,   key, 'r');
-  if (hashStr(key + 's') % 2 === 0) {                 // 大小、置中（路過小竹簍）
+  if (hashStr(key + 's') % 2 === 0) {                 // 大小・置中（路過小竹簍）
     return prefix + pick(ZH_SIZE, key, 'm') + role;
-  }                                                   // 序號、置尾（甲乙/A-Z/數字）
+  }                                                   // 序號・置尾（甲乙/A-Z/數字）
   const tail = hashStr(key + 't') % (ZH_LABEL.length + NUMBERS.length);
   const mark = tail < ZH_LABEL.length ? ZH_LABEL[tail] : NUMBERS[tail - ZH_LABEL.length];
   return prefix + role + mark;

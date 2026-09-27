@@ -928,22 +928,41 @@
       </div>
     `).join('');
 
-    // 5. 地支刑沖會合害
+    // 5. 地支刑沖會合害（嚴格區分「本命局現存交互」與「歲運逢支引動」）
     const rels = data.interactions || {};
+    const relsNatal = rels.natal || rels;
+    const relsTrigger = rels.trigger || {};
     const relText = value => Array.isArray(value) ? value.join('、') : (value || '—');
-    const relItems = [
-      { label: '三合', val: relText(rels.sanHe), color: 'text-rose-600' },
-      { label: '三會', val: relText(rels.sanHui), color: 'text-purple-600' },
-      { label: '六合', val: relText(rels.liuHe), color: 'text-rose-700' },
-      { label: '沖', val: relText(rels.chong), color: 'text-emerald-700' },
-      { label: '刑', val: relText(rels.xing), color: 'text-blue-700' },
-      { label: '破', val: relText(rels.po), color: 'text-amber-800' },
-      { label: '害', val: relText(rels.hai), color: 'text-stone-700' }
+
+    const natalItems = [
+      { label: '三合', val: relText(relsNatal.sanHe), color: 'text-rose-600' },
+      { label: '三會', val: relText(relsNatal.sanHui), color: 'text-purple-600' },
+      { label: '六合', val: relText(relsNatal.liuHe), color: 'text-rose-700' },
+      { label: '沖', val: relText(relsNatal.chong), color: 'text-emerald-700' },
+      { label: '刑', val: relText(relsNatal.xing), color: 'text-blue-700' },
+      { label: '破', val: relText(relsNatal.po), color: 'text-amber-800' },
+      { label: '害', val: relText(relsNatal.hai), color: 'text-stone-700' }
     ];
-    const relsTableHtml = relItems.map(item => `
+    const relsNatalHtml = natalItems.map(item => `
       <div class="flex items-center justify-between py-1 border-b border-stone-200 text-xs">
         <span class="font-bold text-stone-600 w-12">${item.label}</span>
         <span class="font-black ${item.color} flex-1 text-right">${item.val}</span>
+      </div>
+    `).join('');
+
+    const triggerItems = [
+      { label: '三合', val: relText(relsTrigger.sanHe), color: 'text-rose-600' },
+      { label: '三會', val: relText(relsTrigger.sanHui), color: 'text-purple-600' },
+      { label: '六合', val: relText(relsTrigger.liuHe), color: 'text-rose-700' },
+      { label: '沖', val: relText(relsTrigger.chong), color: 'text-emerald-700' },
+      { label: '刑', val: relText(relsTrigger.xing), color: 'text-blue-700' },
+      { label: '破', val: relText(relsTrigger.po), color: 'text-amber-800' },
+      { label: '害', val: relText(relsTrigger.hai), color: 'text-stone-700' }
+    ];
+    const relsTriggerHtml = triggerItems.map(item => `
+      <div class="flex items-center justify-between py-1 border-b border-stone-200 text-xs">
+        <span class="font-bold text-stone-600 w-12">${item.label}</span>
+        <span class="font-black ${item.color} flex-1 text-right text-[11px] leading-tight">${item.val}</span>
       </div>
     `).join('');
 
@@ -1162,13 +1181,27 @@
             </div>
 
             <!-- 右欄：地支刑沖合害 -->
-            <div class="lg:col-span-3 p-3 sm:p-4 text-xs bg-stone-50/40">
-              <div class="font-black text-stone-800 pb-1.5 mb-1.5 border-b border-stone-200 flex items-center justify-between">
-                <span>地支刑沖合害速查</span>
-                <span class="text-[10px] text-stone-400">本命局交互</span>
-              </div>
-              <div class="space-y-0.5">
-                ${relsTableHtml}
+            <div class="lg:col-span-3 p-3 sm:p-4 text-xs bg-stone-50/40 flex flex-col justify-between">
+              <div>
+                <div class="font-black text-stone-800 pb-1.5 mb-2 border-b border-stone-200 flex flex-wrap items-center justify-between gap-1">
+                  <span>地支刑沖合害速查</span>
+                  <div class="inline-flex items-center gap-1 bg-stone-200/90 p-0.5 rounded-lg text-[10px] font-bold">
+                    <button type="button" id="btn_zhi_natal" onclick="window.switchZhiInterTab && window.switchZhiInterTab('natal')" class="px-2 py-0.5 rounded-md bg-white text-stone-900 shadow-2xs transition">本命局交互</button>
+                    <button type="button" id="btn_zhi_trigger" onclick="window.switchZhiInterTab && window.switchZhiInterTab('trigger')" class="px-2 py-0.5 rounded-md text-stone-500 hover:text-stone-900 transition">歲運逢支引動</button>
+                  </div>
+                </div>
+                <div id="zhi_panel_natal" class="space-y-0.5">
+                  ${relsNatalHtml}
+                  <div class="text-[10px] text-stone-500 mt-2.5 pt-1.5 border-t border-stone-200/70 leading-relaxed">
+                    💡 <strong>愛倫院長點評</strong>：此為本命原局四柱地支真實交互。原局無沖無刑者心性基底沉穩；若逢歲運引動，可點上方切換查閱。
+                  </div>
+                </div>
+                <div id="zhi_panel_trigger" class="space-y-0.5 hidden">
+                  ${relsTriggerHtml}
+                  <div class="text-[10px] text-stone-500 mt-2.5 pt-1.5 border-t border-stone-200/70 leading-relaxed">
+                    💡 <strong>歲運指引</strong>：此為未來流年、大運走到該地支時引動之能量。如時支帶午，逢午馬流年才引動自刑調頻。
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1373,6 +1406,26 @@
           }
         }
       });
+    };
+
+    // 注入地支刑沖合害本命/歲運切換函數
+    window.switchZhiInterTab = function(mode) {
+      const pNatal = document.getElementById('zhi_panel_natal');
+      const pTrigger = document.getElementById('zhi_panel_trigger');
+      const bNatal = document.getElementById('btn_zhi_natal');
+      const bTrigger = document.getElementById('btn_zhi_trigger');
+      if (!pNatal || !pTrigger) return;
+      if (mode === 'trigger') {
+        pNatal.classList.add('hidden');
+        pTrigger.classList.remove('hidden');
+        if (bNatal) bNatal.className = 'px-2 py-0.5 rounded-md text-stone-500 hover:text-stone-900 transition';
+        if (bTrigger) bTrigger.className = 'px-2 py-0.5 rounded-md bg-white text-stone-900 shadow-2xs transition';
+      } else {
+        pTrigger.classList.add('hidden');
+        pNatal.classList.remove('hidden');
+        if (bTrigger) bTrigger.className = 'px-2 py-0.5 rounded-md text-stone-500 hover:text-stone-900 transition';
+        if (bNatal) bNatal.className = 'px-2 py-0.5 rounded-md bg-white text-stone-900 shadow-2xs transition';
+      }
     };
 
     // 注入康熙字典彈窗函數

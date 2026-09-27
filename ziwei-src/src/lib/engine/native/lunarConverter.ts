@@ -38,7 +38,7 @@ export function solarToLunar(solarDate: string, timeIndex: number): LunarDate {
   const lunarDay = lunar.getDay();
   const absMonth = Math.abs(rawMonth);
   // 閏月十五分界法：1–15日視為當月（lm 不進），16日+ 視為下月（lm + 1）
-  // 驗證（3 筆）：測試A 閏四月廿(ld=20≥16)→lm=5→命宮=子 ✅
+  // 驗證（3 筆）：case-1 壬戌閏四月廿(ld=20≥16)→lm=5→命宮=子 ✅
   //              測試B 庚子閏四月十五(ld=15<16)→lm=4→命宮=亥 ✅
   //              測試C 癸卯閏四月十五(ld=15<16)→lm=4→命宮=亥 ✅
   const lunarMonth = (isLeap && lunarDay >= 16) ? absMonth + 1 : absMonth;

@@ -1,4 +1,5 @@
 import { useRef, useLayoutEffect } from 'react';
+import { BRANCH_INFO } from '../lib/branchInfo';
 import type { ZiweiPalace, ZiweiHoroscope, StarInfo } from '../lib';
 import { getPalaceDisplay, getStarDisplay, getDecadalOverlay, getYearlyOverlay, getMonthlyOverlay, getDailyOverlay, getHourlyOverlay, STEM_PINYIN, BRANCH_PINYIN } from '../i18n';
 import { useLang } from '../contexts/LangContext';
@@ -24,6 +25,7 @@ interface Props {
   isYearlyMode?: boolean;
   isMinorLimitMode?: boolean;
   onMinorLimitToggle?: () => void;
+  cheatMode?: boolean;   // 進階「高階顯示」：疊一張 陰陽/五行數/方位 小卡（暫時壓住星曜沒關係）
   style?: React.CSSProperties;
   isClicked?: boolean;
   onClick?: () => void;
@@ -57,14 +59,14 @@ const FRAMED_STARS = new Set([
   '小祿', '小羊', '小陀',         // 小限祿羊陀
 ]);
 
-// Stars listed in claude.md — full size
+// Stars in the school's main/assistant list — full size
 const FULL_SIZE_STARS = new Set([
   '紫微','天機','太陽','太陰','武曲','天同','廉貞','天梁','天府','天相','七殺','破軍','貪狼','巨門',
   '陀羅','擎羊','火星','鈴星',
   '祿存','文昌','文曲','天鉞','天魁','左輔','右弼','地空','地劫','天馬','紅鸞','天喜',
 ]);
 
-// claude.md 輔/煞星 (not major) → black
+// 學會版輔/煞星 (not major) → black
 const CLAUDE_MINOR_STARS = new Set([
   '陀羅','擎羊','火星','鈴星',
   '祿存','文昌','文曲','天鉞','天魁','左輔','右弼','地空','地劫','天馬','紅鸞','天喜',
@@ -203,7 +205,7 @@ function StarChip({
 
 
 
-export function PalaceCell({ palace, horoscope, isNatalMode = false, isYearlyMode = false, isMinorLimitMode = false, onMinorLimitToggle, style, isClicked, onClick, minorLimitAges = [], advLayers, advFocus, taijiName, taijiNameEn, feixingHua }: Props) {
+export function PalaceCell({ palace, horoscope, isNatalMode = false, isYearlyMode = false, isMinorLimitMode = false, onMinorLimitToggle, cheatMode = false, style, isClicked, onClick, minorLimitAges = [], advLayers, advFocus, taijiName, taijiNameEn, feixingHua }: Props) {
   const { locale, showPinyin } = useLang();
   const isZh = locale.startsWith('zh') && !showPinyin;
 
@@ -220,7 +222,8 @@ export function PalaceCell({ palace, horoscope, isNatalMode = false, isYearlyMod
   const isMinorLimit = horoscope.minorLimit.palaceIndex === palace.index;
   // 本命盤（尚未點選任何大限）時，把命主「目前所在」的大限年齡標紅，一眼看到走到哪一限。
   // 童限排除：童限的 palaceIndex 指向父母/兄弟宮，但命主並不在那個大限裡。
-  const isCurrentDecadal = isNatalMode && !horoscope.decadal.isChildhood
+  // outOfLife 排除：紫占盤生日在未來／已超過末限，預設落一限只是佔位，不是「目前」。
+  const isCurrentDecadal = isNatalMode && !horoscope.decadal.isChildhood && !horoscope.decadal.outOfLife
     && horoscope.decadal.palaceIndex === palace.index;
   const ageCls = `palace-age${isCurrentDecadal ? ' palace-age-now' : ''}`;
   // 命宮 highlight：Advanced 模式跟著「焦點層」走；legacy 沿用原邏輯
@@ -270,7 +273,7 @@ export function PalaceCell({ palace, horoscope, isNatalMode = false, isYearlyMod
     if (name) hourlyMutagenMap[name] = MUTAGEN_CHARS[i];
   });
 
-  // Native stars split into claude.md stars vs other adjective stars
+  // Native stars split into listed stars vs other adjective stars
   const allMinor = [
     ...(palace.minorStars ?? []),
     ...(palace.adjectiveStars ?? []),
@@ -372,6 +375,19 @@ export function PalaceCell({ palace, horoscope, isNatalMode = false, isYearlyMod
       style={style}
       onClick={onClick}
     >
+      {cheatMode && (() => {
+        const bi = BRANCH_INFO[palace.earthlyBranch];
+        if (!bi) return null;
+        return (
+          <div className={`cheat-card el-${bi.elementEn.toLowerCase()}`} aria-hidden>
+            <span className={`cheat-yy ${bi.yinYang === '+' ? 'yy-yang' : 'yy-yin'}`}>{bi.yinYang}</span>
+            <span className="cheat-el">{isZh ? bi.element : bi.elementEn}</span>
+            {/* 方位只寫四正（子北／午南／卯東／酉西），四隅留空；數字位置固定右下 */}
+            <span className="cheat-dir">{bi.dirEn.length === 1 ? (isZh ? bi.dir : bi.dirEn) : ''}</span>
+            <span className="cheat-num">{bi.number}</span>
+          </div>
+        );
+      })()}
 
       {/* Star content: flex:1 so it takes available space, leaving room for palace-bottom */}
       <div className="star-content" ref={starContentRef}>

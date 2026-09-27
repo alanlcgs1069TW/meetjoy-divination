@@ -826,18 +826,18 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
 }
 .lang-toggle-inline:active { opacity: 0.8; }
 
-/* Advanced 模式：只留小 Beta 徽章 + ⓘ（說明點了才彈出），省中央卡高度 */
+/* Advanced 模式：中央卡最下方一顆「高階」cheat sheet 開關（原 Beta 徽章位置） */
 .center-feixing-legend {
   margin-top: 5px;
   display: flex; align-items: center; justify-content: center; gap: 6px;
   flex-wrap: wrap;
 }
-.center-feixing-legend .fx-lg-toggle {
+.center-feixing-legend .fx-lg-toggle, .center-adv-cheat .fx-lg-toggle {
   font-size: 10px; font-weight: 700; line-height: 1.3;
   padding: 1px 7px; border-radius: 4px; cursor: pointer;
   border: 1px solid #ccc; background: transparent; color: #999; /* off */
 }
-.center-feixing-legend .fx-lg-toggle.on {
+.center-feixing-legend .fx-lg-toggle.on, .center-adv-cheat .fx-lg-toggle.on {
   border-color: #b0822f; background: #b0822f; color: #fff; /* on */
 }
 .center-feixing-legend .fx-lg {
@@ -848,14 +848,9 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
   padding: 0 1px;
   display: inline-block;
 }
-.center-adv-beta {
-  position: relative;
-  margin-top: 4px;
+.center-adv-cheat {
+  position: relative; margin-top: 4px;
   display: flex; align-items: center; justify-content: center; gap: 5px;
-}
-.adv-beta-badge {
-  font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em;
-  color: #fff; background: #b0822f; border-radius: 4px; padding: 1px 6px;
 }
 .adv-info-btn {
   background: none; border: none; cursor: pointer; padding: 0;
@@ -867,6 +862,31 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
   background: #4a4234; color: #fff; font-size: 11px; line-height: 1.4;
   padding: 6px 9px; border-radius: 6px; z-index: 50; cursor: pointer;
   box-shadow: 0 2px 10px rgba(0,0,0,0.28); text-align: center;
+}
+
+/* 高階顯示 cheat sheet：每宮一張小卡疊在星曜區上（2×2：陰陽 五行 / 方位 河圖數），
+   pointer-events none 讓點宮照常；開啟期間運線層由 App 收掉 */
+.cheat-card {
+  position: absolute; left: 50%; top: 36%; transform: translate(-50%, -50%);
+  /* 固定尺寸（em 隨字級縮放）：12 張卡一樣大，不隨內容（四正有方位字、四隅留空）變寬 */
+  width: 3.6em; height: 3.2em; box-sizing: border-box;
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0 2px;
+  align-items: center; justify-items: center;
+  background: #fff; border: 1.5px solid #b0822f; border-radius: 6px;
+  padding: 0 3px; z-index: 6; pointer-events: none;
+  font-size: clamp(13.7px, 1.7vw, 19px); font-weight: 800; line-height: 1.2; color: #3a3228;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+/* 五行字＋河圖數＋方位＋外框 全部同色（顏色即資訊）；陰陽沿用中央卡的 陽黑／陰紫 */
+.cheat-card.el-fire  { border-color: #c0392b; } .cheat-card.el-fire  .cheat-el, .cheat-card.el-fire  .cheat-num, .cheat-card.el-fire  .cheat-dir { color: #c0392b; }
+.cheat-card.el-wood  { border-color: #1a8f4c; } .cheat-card.el-wood  .cheat-el, .cheat-card.el-wood  .cheat-num, .cheat-card.el-wood  .cheat-dir { color: #1a8f4c; }
+.cheat-card.el-earth { border-color: #9b6a30; } .cheat-card.el-earth .cheat-el, .cheat-card.el-earth .cheat-num, .cheat-card.el-earth .cheat-dir { color: #9b6a30; }
+.cheat-card.el-metal { border-color: #b58a1c; } .cheat-card.el-metal .cheat-el, .cheat-card.el-metal .cheat-num, .cheat-card.el-metal .cheat-dir { color: #b58a1c; }
+.cheat-card.el-water { border-color: #2b5cc4; } .cheat-card.el-water .cheat-el, .cheat-card.el-water .cheat-num, .cheat-card.el-water .cheat-dir { color: #2b5cc4; }
+.cheat-card .cheat-yy.yy-yang { color: #1a1a1a; }
+.cheat-card .cheat-yy.yy-yin  { color: #6d28d9; }
+@media (max-width: 768px) {
+  .cheat-card { font-size: 12.6px; }
 }
 
 /* 筆記按鈕：與其他文字鈕同大小同 style，僅有筆記時金框高亮 */
@@ -1018,8 +1038,8 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
 [data-show-pinyin="true"] .center-gender-divider  { display: none; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   VERTICAL MODE — 中文直書 (data-show-pinyin="false" + data-locale="zh-TW")
-   Only applies when locale is zh-TW (NOT English).
+   VERTICAL MODE — 中文直書 (data-show-pinyin="false" + data-locale^="zh")
+   Only applies when locale is zh-TW or zh-CN (NOT English).
    Each star becomes a thin vertical column (writing-mode: vertical-lr).
    All star groups sit in a horizontal row (flex-direction: row), then wrap
    to next row when the palace width is exceeded.
@@ -1737,8 +1757,34 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
   padding: 4px 10px; cursor: pointer; line-height: 1.2;
   white-space: nowrap;
 }
-.modal-random-btn:hover { background: #ece8dd; color: var(--black); }
+.modal-random-btn:hover, .modal-random-btn.active { background: #ece8dd; color: var(--black); }
 .modal-random-btn:active { transform: scale(0.96); }
+/* 🔮 紫占鈕點開的選單：系統隨機／紫微占卜 */
+.modal-random-wrap { position: relative; }
+.modal-random-menu {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 5;
+  background: #fff; border: 1px solid #d9d4c8; border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12); overflow: hidden; min-width: 150px;
+}
+.modal-random-item {
+  display: block; width: 100%; text-align: left;
+  background: none; border: none; padding: 10px 14px;
+  font-size: 14px; font-family: var(--font); color: var(--black);
+  cursor: pointer; white-space: nowrap;
+}
+.modal-random-item:hover { background: #f5f1eb; }
+/* 紫微占卜報數面板（取代整張表單） */
+.modal-zizhan-hint { font-size: 14px; color: #6b6456; line-height: 1.6; margin: 0 0 18px; }
+.modal-zizhan-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; }
+.modal-zizhan-row input {
+  width: 110px; border: 1px solid #ddd; border-radius: 8px;
+  padding: 12px 8px; font-size: 22px; font-family: var(--font); text-align: center;
+  -moz-appearance: textfield; appearance: textfield;
+}
+.modal-zizhan-row input::-webkit-outer-spin-button,
+.modal-zizhan-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.modal-zizhan-row input:focus { border-color: #9b6a30; outline: none; }
+.modal-zizhan-sep { font-size: 22px; color: var(--gray); }
 .modal-field { margin-bottom: 16px; }
 .modal-field > label {
   display: block;

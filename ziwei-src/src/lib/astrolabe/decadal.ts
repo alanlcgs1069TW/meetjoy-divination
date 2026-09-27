@@ -8,11 +8,8 @@ import { solarToLunarParts } from '../engine/native/horoscope';
 // 大限祿存地支（天干起，同本命）
 const LU_CUN = [2, 3, 5, 6, 5, 6, 8, 9, 11, 0]; // 甲→寅…癸→子
 
-// 大限天馬地支（地支起）：寅午戌→亥, 巳酉丑→申, 申子辰→寅, 亥卯未→巳
-// index: 子=0…亥=11
-
 /**
- * 計算大限 overlay 星曜（大祿、大羊、大陀、大馬）
+ * 計算大限 overlay 星曜（大祿、大羊、大陀；學會版無大馬）
  * 回傳 StarInfo[][] 索引為 palace.index（ccwOffset 0–11）
  */
 function buildDecadalStars(
@@ -101,14 +98,20 @@ export function getCurrentDecadal(
     ? lunarQueryYear - lunarBirthYear
     : lunarQueryYear - birthYear; // fallback（無農曆生年時近似）
   const fiveElementsJu = Math.min(...palaces.map(p => p.decadal.range[0]));
+  const lastDecadeEnd  = Math.max(...palaces.map(p => p.decadal.range[1]));
+  // 命主不在任何大限內：生日在未來、或早已超過末限（紫占盤生日落 100–9999 年皆可能）。
+  // 沒有「目前」可言 → 不落童限、預設一限但標 outOfLife（不高亮、不標紅），
+  // 讓開盤維持本命視圖（時間軸不展開童限格、流年列從一限起）。
+  const outOfLife = nominalAge < 0 || nominalAge > lastDecadeEnd;
 
   // 童限偵測：虛歲未到一限起點
-  if (nominalAge < fiveElementsJu) {
+  if (!outOfLife && nominalAge < fiveElementsJu) {
     return { ...getChildhoodPeriod(palaces), realAge: calculateRealAge(birthDate, queryDate) };
   }
 
-  const palace = palaces.find(p =>
-    nominalAge >= p.decadal.range[0] && nominalAge <= p.decadal.range[1]
+  const palace = (outOfLife
+    ? palaces.find(p => p.decadal.range[0] === fiveElementsJu)
+    : palaces.find(p => nominalAge >= p.decadal.range[0] && nominalAge <= p.decadal.range[1])
   ) ?? palaces[0];
 
   const stemIdx   = STEMS.indexOf(palace.decadal.heavenlyStem as typeof STEMS[number]);
@@ -124,6 +127,7 @@ export function getCurrentDecadal(
     stars,
     ageRange:      palace.decadal.range,
     realAge:       calculateRealAge(birthDate, queryDate),
+    ...(outOfLife ? { outOfLife: true } : {}),
   };
 }
 

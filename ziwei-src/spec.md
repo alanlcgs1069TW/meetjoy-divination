@@ -1,6 +1,6 @@
 # 紫微斗數 WebApp — 詳細規格書
 
-> 本文件是 `claude.md` 的詳細補充。日常開發以 claude.md 為主，需要精確規格時查此文件。
+> 本文件是規格補充；十干四化表與計算規則見 `FORMULAS.md` §8 與 `說明書.md` §四，需要精確規格時查此文件。
 
 ---
 
@@ -205,7 +205,7 @@
 - 性別（男命 · Male / 女命 · Female）
 - 五行局
 - 陽曆 Solar：solarDate
-- 農曆 Lunar：lunarToArabic() 轉阿拉伯數字（如 ）
+- 農曆 Lunar：lunarToArabic() 轉阿拉伯數字（如 1999-11-25）
 - `!isNatalMode` 才顯示：
   - 大限 Decade：宮名英文 + 歲數範圍
   - 流年 Annual：宮名英文 + 干支 + 拼音
@@ -215,16 +215,13 @@
 
 ## §7. 輸入表單（BirthForm）
 
-> ⚠️ 此元件已從交付包移除（未被任何地方引用）。以下保留規格供日後重建參考；
-> 實際使用中的新增/編輯介面是 `src/components/ChartModal.tsx`。
-
 欄位：
 - 姓名（選填）
 - 陽曆：年/月/日 數字輸入
 - 時辰：`<select>`，格式「寅時 Yin　03:00–05:00」
 - 性別：radio（男命 Male / 女命 Female）
 
-預設值：，時辰 index 2（寅），男
+預設值：2000-1-1，時辰 index 0（子），男（虛構範例）
 
 ---
 
@@ -281,8 +278,7 @@
 
 ## §11. 已知 Pre-existing 問題（不修）
 
-- `src/i18n/index.ts`：TS1117 重複 key（天哭出現兩次）
-- 以上不影響 Vite dev server，待評估是否修復
+- （目前無；早期的 i18n 重複 key 已修）
 
 ---
 
@@ -298,6 +294,10 @@ interface SavedChart {
   solarDate: string;    // 'YYYY-M-D'（使用者輸入的原始日期）
   timeIndex: number;    // 0–11 = 子–亥；12 = 晚子時
   gender: 'male' | 'female';
+  multiBirthOrder?: 2 | 3 | 4;  // 同時辰多胞胎胎次
+  category?: string;
+  notes?: string;       // ≤1000 字
+  alias?: string;       // 隱藏分享用外號
   updatedAt: number;    // Date.now()，雙向 sync 衝突解決用
   deletedAt?: number;   // 軟刪除 timestamp
 }

@@ -125,10 +125,13 @@ function getDayGanzhi(queryDate: Date): { stemIdx: number; branchIdx: number } {
 /**
  * 取得查詢日期的農曆月「序數」與農曆日（流月斗君命宮定位用）。
  *
- * 流月閏月規則（2026-06-01 用戶拍板）：閏月「獨立成月」，命宮用農曆月**序數**斗君，
- * 閏六月序數=6 → 流月命宮同六月（不前進），七月才前進。故**不套十五分界**。
- *   （十五分界僅用於本命安命，見 lunarConverter.ts §1.1，此處不沿用。）
- * 閏月與本月的差異由節氣月干（祿羊陀/四化）自然呈現＝「多走一個月」。
+ * 流月閏月規則（2026-09-18 依學會 49 屆初階筆記「如何找閏月命宮」改回十五分界，
+ * 與本命安命 lunarConverter.ts §1.1 同一條規則）：
+ *   閏月 1–15 日 → 視為當月（閏六月初九 → 找六月的流月命宮）
+ *   閏月 16 日起 → 視為下月（閏六月十八 → 找七月的流月命宮），日不變
+ * 流日／流時都從流月命宮往後數，故跟著修正；祿羊陀／四化依節氣月干，不受影響。
+ * 底部 chip 仍以「閏六」獨立列出；只選閏月未選日時，queryDate 落初一 → 前半月。
+ *   （2026-06-01 曾採「閏月獨立成月、整月不前進」，2026-09-18 依筆記改回。）
  */
 function getLunarMonthDay(queryDate: Date): { month: number; day: number } {
   const y = queryDate.getFullYear();
@@ -136,7 +139,9 @@ function getLunarMonthDay(queryDate: Date): { month: number; day: number } {
   const d = queryDate.getDate();
   const lunar = Solar.fromYmd(y, m, d).getLunar();
   const rawMonth = lunar.getMonth();       // 負數 = 閏月
-  return { month: Math.abs(rawMonth), day: lunar.getDay() };
+  const day = lunar.getDay();
+  const month = (rawMonth < 0 && day >= 16) ? Math.abs(rawMonth) + 1 : Math.abs(rawMonth);
+  return { month, day };
 }
 
 /**

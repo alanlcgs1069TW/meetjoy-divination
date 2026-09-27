@@ -114,6 +114,6 @@ create policy "users own their settings" on public.user_settings
 
 ## 5. 排盤邏輯
 
-- 客製化邏輯（四化表、歲數基準、晚子時）見 `claude.md` §4
+- 客製化邏輯：十干四化表見 `FORMULAS.md` §8，歲數基準／晚子時等規則見 `說明書.md` §四
 - 已知陷阱見 `GOTCHAS.md`
 - 改動理由見 `CHANGELOG.md`

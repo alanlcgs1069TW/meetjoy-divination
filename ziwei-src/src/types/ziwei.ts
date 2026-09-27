@@ -21,6 +21,8 @@ export interface DecadalPeriod {
   ageRange: [number, number];
   realAge: number | null;
   isChildhood?: boolean;
+  /** 命主不在任何大限內（生日在未來，或已超過末限；紫占盤）：預設落一限但不視為「目前」，不標紅 */
+  outOfLife?: boolean;
 }
 
 export interface MinorLimitPeriod {

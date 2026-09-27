@@ -35,7 +35,7 @@ async function compressToBase64(file: File): Promise<{ base64: string; mime: str
 export function BugReportModal({ userEmail, onClose }: Props) {
   const { locale } = useLang();
   const isEn = locale === 'en';
-  const isCN = false;
+  const isCN = locale === 'zh-CN';
 
   const [title, setTitle]             = useState('');
   const [description, setDesc]        = useState('');

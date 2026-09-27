@@ -7,7 +7,7 @@
  *   - 大限範圍（虛歲）
  *   - 小限虛歲列表
  *
- * 驗證：陽男 火六局（命宮=巳）大限分配完全符合 dreamkinin 參考盤
+ * 驗證：壬午年 陽男 火六局（命宮=巳）大限分配完全符合 dreamkinin 參考盤
  */
 
 import { BRANCHES, STEMS } from './lunarConverter';

@@ -18,7 +18,7 @@
 - `YearlyTimeline` 歲數標籤 = 實歲（與大限同基準）
 
 ### 為什麼容易被誤判成 bug
-同一年，大限標「實歲 N」、小限落「虛歲 N+1」的宮位，看起來像小限超前一格。例：農曆年底出生的陽男，某流年大限**實歲 4**、小限**虛歲 5** —— 兩者差 1 是「實歲 vs 虛歲」，**不是 off-by-one bug**。dreamkinin 完全相同。
+同一年，大限標「實歲 N」、小限落「虛歲 N+1」的宮位，看起來像小限超前一格。例：農曆壬戌年底出生的陽男，1986 大限**實歲4**、小限**虛歲5（申）** —— 兩者差 1 是「實歲 vs 虛歲」，**不是 off-by-one bug**。dreamkinin 完全相同。
 
 ### 陷阱
 - 「1 歲小限應在辰」的直覺會誤導：小限起運宮辰 = **虛歲1 = 實歲0**，對應農曆生年（時間軸實歲從 1 起、不畫實歲0），所以時間軸「1 歲」格顯示的是虛歲2（巳），**與 dreamkinin 一致、非錯**。
@@ -50,7 +50,7 @@
 - **農曆月**：正月、二月、…、十二月（看月相 / 朔望）
 - **節氣月**：立春→寅月、驚蟄→卯月、清明→辰月、…（看太陽位置）
 
-兩者大部分時候差一點（節氣月切換在月中），但在「立春前 」這種日子，農曆是十二月（丑），節氣月已經是丑（前一年的丑月延續），看起來一樣；但  凌晨 0:30 這種剛好在 清明 09:13 邊界附近，誤差就出來了。
+兩者大部分時候差一點（節氣月切換在月中），但在「立春前一天（如 2021-02-02）」這種日子，農曆是十二月（丑），節氣月已經是丑（前一年的丑月延續），看起來一樣；但 2023-04-05 凌晨 0:30 這種剛好在 清明 09:13 邊界附近，誤差就出來了。
 
 ### 正確做法
 1. 取出 `lunar.getMonthInGanZhi()` 的月干支字串
@@ -58,14 +58,14 @@
 3. **晚子時要 date+1 才能跨節氣**（既有 `createAstrolabe.ts` 的 `calcDate` 變量就是這個）
 4. 查表：申子辰月→寅, 寅午戌月→申, 亥卯未月→巳, 巳酉丑月→亥
 
+詳見 `FORMULAS.md` §5.5 天馬段。
 
-### 為何 dreamkinin 確認這個答案
-對照學會版排盤的公開資源，確認天馬的鍵值為「節氣月支」（`month_zodiac`），
-該鍵值為天馬獨有、不與其他星曜共用，對應的 12 格位置表正是上述三合驛馬規則。
+### 為何確定是節氣月支
+對照學會版排盤結果，天馬只隨節氣月支變動、不隨農曆月或命宮變動，對應的 12 格位置正是上述三合驛馬規則。
 
-### 9 筆驗證全對（2026-05-20）
-某例 / 某例 / 某例 / 某例 / 某例 / Test D / Test E / Test F = 8 筆有完整資料，全對。
-某例缺完整生日 ⚠️ 待補。
+### 8 筆驗證全對（2026-05-20）
+case-3 / case-8 / case-2 / case-1 / case-4 / Test D / Test E / Test F = 8 筆有完整資料，全對。
+另 1 筆資料不全，未計。
 
 
 ## 雙胞胎盤 computeIsForward 陷阱（2026-05-06 修正）
@@ -103,10 +103,16 @@ function computeIsForward(original: ZiweiChart): boolean {
 - **中間版**：periodNum=(12-newIdx)%12，isForward 永遠 true → 順行twin正確，逆行twin錯誤
 - **修正版**：periodNum=(12-newIdx)%12 or newIdx，isForward 正確偵測 → 兩者均正確
 
+### 驗證案例
+- case-7（己丑年，逆行）Twin2：命宮=巳，正確為 巳→辰→卯（遞減）
+- 壬戌年 順行 Twin2：命宮=申，正確為 申→酉→戌（遞增）
+
+---
+
 ## 博士十二神起點錯誤（2026-05-18 修正）
 
 ### 症狀
-博士十二神全部錯位，某例 12 宮均不符合截圖。
+博士十二神全部錯位，case-4 12 宮均不符合學會版排盤。
 
 ### 根本原因
 起始地支用了 `mingBranchIdx`（命宮），應為 `LU_CUN_MS[yearStemIdx]`（**年干祿存**）。
@@ -119,7 +125,7 @@ branchIdx = ((boShiStart - i) % 12 + 12) % 12;  // 逆行
 ```
 
 ### 驗證
-庚年（祿存=申=8）：博士→申 力士→未 … 12 宮截圖全部一致 ✓
+庚年（祿存=申=8）：博士→申 力士→未 … 12 宮對照全部一致 ✓
 
 ---
 
@@ -127,30 +133,35 @@ branchIdx = ((boShiStart - i) % 12 + 12) % 12;  // 逆行
 
 ### 第一次錯誤 → 修正
 原始程式碼：陽干→順行（錯），陰干→逆行（實際正確）。
-針對 某例（庚=陽干）截圖修正：陽干→逆行 ✓，同時**錯誤地**把陰干改為→順行。
+針對 case-4（庚=陽干）對照修正：陽干→逆行 ✓，同時**錯誤地**把陰干改為→順行。
 
 ### 第二次錯誤 → 最終修正
-修正後陰干（己年 某例）長生顯示錯誤：遷移=養（應=沐浴）、僕役=胎（應=冠帶）。
+修正後陰干（己年 case-5）長生顯示錯誤：遷移=養（應=沐浴）、僕役=胎（應=冠帶）。
 
 ### 正確規則
-**長生十二神一律逆行（地支遞減），陰陽干相同**
+> ⚠️ 2026-05-19 再修正：方向依 `isForward = (isMale === isYangStem)`（陽男陰女順、陰男陽女逆），**並非一律逆行**；下方是 05-18 當日的紀錄，程式以 `FORMULAS.md` 為準。
+
+**（05-18 紀錄）長生十二神一律逆行（地支遞減），陰陽干相同**
 ```ts
 branchIdx = ((changShengStart - i) % 12 + 12) % 12;  // 一律逆行
 ```
 
 ### 驗證
-- 庚年陽干 火六局 寅(2)起逆：某例 12 宮全部一致 ✓
-- 己年陰干 水二局 申(8)起逆：某例 遷移=沐浴、僕役=冠帶、官祿=臨官 ✓
-- 壬年陽干 木三局 亥(11)起逆：某例 4 宮截圖全部一致 ✓
+- 庚年陽干 火六局 寅(2)起逆：case-4 12 宮全部一致 ✓
+- 己年陰干 水二局 申(8)起逆：case-5 遷移=沐浴、僕役=冠帶、官祿=臨官 ✓
+- 壬年陽干 木三局 亥(11)起逆：case-1 4 宮對照全部一致 ✓
 
 ---
 
 ## 天馬 TIAN_MA 陣列兩次錯誤（2026-05-18 最終修正）
+
+> ⛔ **此節已被取代**（2026-05-20）：天馬最終規則是**節氣月支**三合驛馬（`[2,11,8,5,…]`），見上方「天馬用『節氣月』不是『農曆月』」與 `FORMULAS.md` §5.5。本節只是修正歷程，**不要照本節的命宮支陣列改程式**。
+
 - 天馬依**命宮支**查表（非年支），`mingBranchIdx = ((lunarMonth+1)%12 - timeIndex + 12) % 12`
 - 正確陣列：`[8, 11, 11, 5, 8, 11, 11, 5, 8, 11, 11, 5]`（命宮%4→ 0=申,1=亥,2=亥,3=巳）
 - 第一次錯誤陣列（FORMULAS.md殘留）：`[6, 11, 8, 1, ...]`
 - 第二次錯誤陣列（2026-05-07修正後）：`[2, 8, 11, 5, ...]`（只對了 6→亥、11→巳，其他全錯）
-- 驗證 5 筆：子→申(某例) ✓, 丑→亥(某例) ✓, 辰→申(某例) ✓, 午→亥(某例) ✓, 亥→巳(某例) ✓
+- 驗證 5 筆：子→申(case-1) ✓, 丑→亥(case-4) ✓, 辰→申(case-2) ✓, 午→亥(case-8) ✓, 亥→巳(case-6) ✓
 
 ## 四化配色曾在三個檔案各寫一份（2026-08-11 收斂）
 
@@ -181,7 +192,7 @@ branchIdx = ((changShengStart - i) % 12 + 12) % 12;  // 一律逆行
 
 `歲建`、`喪門`、`歲驛`、`化祿`、`化權`
 
-未修的原因：字典內容依規範不由 AI 自行增修（見 claude.md 的執行規範）。
+未修的原因：字典內容依規範不由 AI 自行增修（原作者的規範）。
 要補的話比照現有格式加 `'zh-CN'` 欄位即可。
 
 ## 運線 overlay 星曜命名（學會版，dreamkinin 標準）
@@ -201,21 +212,22 @@ branchIdx = ((changShengStart - i) % 12 + 12) % 12;  // 一律逆行
 - **虛歲 vs 實歲**：大限範圍（`palace.decadal.range`）為**實歲**，偵測活躍大限用
   `農曆流年 − 農曆生年`（**無 +1**，見 `decadal.ts`）；小限才是虛歲（有 +1）。
   ⚠️ 本條 2026-09-12 更正 —— 原本寫成「range 為虛歲、需 +1」，與本檔開頭「大限看實歲」
-  一節、`claude.md` §4 及實際程式全部牴觸。照舊敘述去改會製造 off-by-one。
+  一節、`FORMULAS.md` §8 及實際程式全部牴觸。照舊敘述去改會製造 off-by-one。
 - **農曆年 vs 陽曆年**：正月前出生者（農曆年 ≠ 陽曆年），陰陽/流年計算必須用**農曆出生年**，不可用陽曆年；用 `lunarToArabic(birthInfo.lunarDate)` 取得
 
 ## Supabase 運維
 
-- **env var 空值白屏**：`.env.local` 若缺少 `VITE_SUPABASE_URL` 或 `VITE_SUPABASE_ANON_KEY`，頁面會白屏；anon key 缺失時 client 用 placeholder 啟動，auth/sync 無法用但 app 不崩潰
-- **Free tier 閒置暫停**：閒置 7 天自動暫停，需設 cron ping
+- **env var 空值**：`.env.local` 缺 `VITE_SUPABASE_URL`／`VITE_SUPABASE_ANON_KEY` 時 client 用佔位值啟動、console 報錯，排盤照常，只有 auth/sync 不能用（早期版本會白屏，已修）
+- **Free tier 閒置暫停**：閒置 7 天自動暫停，需設 cron ping（cron ping）
 - **PASSWORD_RECOVERY 攔截**：由 `onAuthStateChange` 監聽 PASSWORD_RECOVERY 事件 → 觸發 ResetPasswordModal，不走一般路由
+- **`resetPasswordForEmail` redirectTo**：用 `VITE_SITE_URL` 環境變數，fallback `window.location.origin`；Supabase 的 Redirect URLs 需包含**每一個**實際部署網域（換網域時 Cloudflare 環境變數與 Supabase Redirect URLs 兩邊要一起改）
 
 ## lunar-javascript 陷阱（Phase 0，2026-05-03）
 
 - **月干支**：`lunar.getMonthGanIndex()` / `getMonthZhiIndex()` 用**節氣月**（Solar term），紫微斗數用**農曆月**。兩者在同一個陽曆日可能差一個月（如 3/15 在驚蟄後已是卯月，但農曆仍是正月）。必須自行用「五虎遁年起月法」從農曆月份推算。
 - **時干支**：`getTimeGanIndex()` 不能直接帶 timeIndex 使用。必須自行用「五鼠遁日起時法」：`(HOUR_STEM_START[dayGanIdx % 5] + timeIndex) % 10`，其中 `HOUR_STEM_START = [0, 2, 4, 6, 8]`（甲/己→0, 乙/庚→2, 丙/辛→4, 丁/壬→6, 戊/癸→8）。
 
-## CSS 垂直模式 badge 對齊陷阱（feature/vertical-stars，2026-05-04）
+## CSS 垂直模式 badge 對齊陷阱（2026-05-04）
 
 ### 症狀
 四化 badge 在中文垂直模式下水平偏移，`translateX` hack 只在特定 viewport size 下偶然正確，換機器或調整視窗就再次歪掉。
@@ -254,7 +266,7 @@ branchIdx = ((changShengStart - i) % 12 + 12) % 12;  // 一律逆行
 
 ### 驗證方式
 ```js
-// 在 MCP Preview eval 中量測：
+// 在瀏覽器 console 量測：
 const stars = document.querySelectorAll('.star');
 const offsets = [...stars].map(s => {
   const sr = s.getBoundingClientRect();
@@ -265,48 +277,6 @@ const offsets = [...stars].map(s => {
 }).filter(Boolean);
 // 修正後全部回傳 "0.0"
 ```
-
----
-
-## Docker 容器管理陷阱（2026-05-05）
-
-### 絕對不能用 `docker compose run`
-`docker compose run` 每次都建立**全新的臨時容器**，即使加了 `--rm` 也會產生孤兒 anonymous volume。  
-應該只用：
-- `docker compose up -d <service>` — 啟動正式命名容器
-- `docker compose exec <service> <cmd>` — 在已跑的容器內執行指令
-
-### Anonymous volume 的 node_modules 不跨容器共享
-`docker-compose.yml` 的 `- /app/node_modules` 是 anonymous volume，每個容器有自己獨立的一份。  
-用 `docker compose run --rm web-test npm install` 裝好的 node_modules 在 `--rm` 後就消失，**不會**讓 `docker compose up` 的容器繼承。
-
-### 正確的首次啟動流程
-`docker-compose.yml` 的 command 已改為：
-```yaml
-command: sh -c "npm install && npm run dev:test"
-```
-這樣每次 `docker compose up` 時自動在容器內裝依賴，Mac 本機完全不碰 node_modules。
-
-### 測試用容器：只用 ziwei-web-test（port 5174）
-- feature branch 測試：`docker compose --profile test up -d web-test`
-- compose 只有 `web-test` 一個 service，且掛在 `test` profile 下（要加 `--profile test`）
-- 不要用 `docker compose run`，會產生多餘容器和 volumes
-
-### 孤兒 Volume 清理方式
-```bash
-# 1. 先確認哪些 volume 沒有 container 使用
-docker volume ls -q | while read vol; do
-  used=$(docker ps -a -q --filter volume="$vol")
-  [ -z "$used" ] && echo "孤兒: $vol"
-done
-
-# 2. 實際查看內容再決定是否刪除
-docker run --rm -v <volume>:/data node:20-slim ls -la /data
-
-# 3. 確認後才刪除
-docker volume rm <volume>
-```
-⚠️ 不要直接 `docker volume prune -f`，會刪掉其他專案（daily-sandbox、base-dev 等）的 volume。
 
 ---
 
@@ -329,10 +299,10 @@ const isDecadalForward = isMale === isYangStem;
 **dreamkinin 驗證**：
 | 案例 | 年干 | 性別 | 方向 |
 |------|------|------|------|
-| 某例/某例 己丑 | 陰 | 女 | 順行（乙亥→丙子→丁丑）✓ |
-| 某例 戊戌 | 陽 | 女 | 逆行（王戌→辛酉→庚申）✓ |
-| 某例 壬戌 | 陽 | 男 | 順行（王寅→癸卯→甲辰）✓ |
-| 某例 己未 | 陰 | 男 | 逆行（庚午→己巳→戊辰）✓ |
+| case-7/case-6 己丑 | 陰 | 女 | 順行（乙亥→丙子→丁丑）✓ |
+| case-9 戊戌 | 陽 | 女 | 逆行（王戌→辛酉→庚申）✓ |
+| case-10 壬戌 | 陽 | 男 | 順行（王寅→癸卯→甲辰）✓ |
+| case-8 己未 | 陰 | 男 | 逆行（庚午→己巳→戊辰）✓ |
 
 ⚠️ **歷史錯誤**（2026-05-05 commit 誤改）：曾錯誤改成 `isDecadalForward = isYangStem`，以為方向與性別無關。此公式只對男命正確，對女命全反。
 
@@ -379,7 +349,7 @@ const lunarMonth = (isLeap && lunarDay >= 16) ? absMonth + 1 : absMonth;
 ### 驗證（3 筆）
 | 案例 | ld | lm | 命宮 | DK |
 |------|----|----|------|-----|
-| 測試A 閏四月廿 | 20 | 5 | 子 | ✅ |
+| case-1 1982 閏四月廿  | 20 | 5 | 子 | ✅ |
 | 測試B 2020 閏四月十五 | 15 | 4 | 亥 | ✅ |
 | 測試C 1963 閏四月十五 | 15 | 4 | 亥 | ✅ |
 
@@ -414,7 +384,7 @@ const lunarMonth = (isLeap && lunarDay >= 16) ? absMonth + 1 : absMonth;
 ### 正確做法（已落實）
 - 納音五行**有公式可推**（見 FORMULAS §2.4：干數+支數）。**2026-06-05 已把手打查表整個換成公式**（`nayinWuxing()`），根除 typo 來源。
 - 換法：先補 typo，再做表版↔公式版**全盤逐字 diff**（主星/雜曜/宮位/運線，零差異）確認行為不變後才換。
-- 納音曾以獨立腳本跑全 60 甲子對標準納音（60/60 通過）；腳本未隨交付包提供。
+- 原作者的驗證腳本（不隨交付包提供）：讀 source 公式常數跑全 60 甲子對標準納音（60/60）守門。
 
 ### 教訓
 AI 手抄一張查表、又不加驗證 = 最容易埋 bug 的做法。能用公式就用公式；非得查表，就同時放一個對標準源的自動驗證。

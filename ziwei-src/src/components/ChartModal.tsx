@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { SavedChart } from '../types/savedChart';
 import { TIME_LABELS, TIME_HOURS, BRANCH_PINYIN } from '../i18n';
 import { useLang } from '../contexts/LangContext';
 import { randomAnonName, RANDOM_NAME_PREFIX } from '../lib/anonName';
+import { catLabel } from '../lib/storage';
+import { isValidZizhanNumber, ZIZHAN_MIN, ZIZHAN_MAX } from '../lib/zizhan';
 
 interface Props {
   mode: 'new' | 'edit';
@@ -11,6 +13,8 @@ interface Props {
   presetCategory?: string;
   categories: string[];
   onSave: (data: Omit<SavedChart, 'id' | 'updatedAt' | 'deletedAt'>) => void;
+  /** 紫占：報兩個數字 → 由 App 亂數起盤、入庫、直接開盤（新增模式才有） */
+  onCreateZizhan?: (n1: number, n2: number) => void;
   onClose: () => void;
 }
 
@@ -32,14 +36,15 @@ function randomName(): string {
   return `${RANDOM_NAME_PREFIX}${randomAnonName()}`;
 }
 
-export function ChartModal({ mode, initial, presetCategory, categories, onSave, onClose }: Props) {
+export function ChartModal({ mode, initial, presetCategory, categories, onSave, onCreateZizhan, onClose }: Props) {
   const { locale } = useLang();
   const isEn = locale === 'en';
-  type UIStrings = { title: string; gender: string; female: string; male: string; name: string; optional: string; category: string; birthday: string; hour: string; confirm: string; cancel: string; advanced: string; random: string; randomHint: string };
+  type UIStrings = { title: string; gender: string; female: string; male: string; name: string; optional: string; category: string; birthday: string; hour: string; confirm: string; cancel: string; advanced: string; zizhan: string; menuRandom: string; menuZizhan: string; randomHint: string; zizhanTitle: string; zizhanHint: string; zizhanGo: string; back: string };
   const UI_MAP: Record<string, UIStrings> = {
-    'en':    { title: mode === 'new' ? 'New Chart'  : 'Edit Chart', gender: 'Gender', female: '♀ Female', male: '♂ Male', name: 'Name',  optional: 'optional', category: 'Category', birthday: 'Solar Birthday', hour: 'Hour',  confirm: mode === 'new' ? 'Add'  : 'Save', cancel: 'Cancel', advanced: 'Multiple Birth · Beta', random: 'Random', randomHint: 'Randomize gender / birthday / hour and fill a random name' },
-    'zh-TW': { title: mode === 'new' ? '新增命盤'  : '編輯命盤',   gender: '性別',   female: '♀ 女',     male: '♂ 男',   name: '姓名', optional: '選填',     category: '分類',     birthday: '陽曆生日',       hour: '時辰', confirm: mode === 'new' ? '確認新增' : '確認修改', cancel: '取消', advanced: '多胞胎功能 · 測試中 Beta', random: '隨機', randomHint: '隨機起盤：隨機填入性別／生日／時辰與姓名（可重複點重骰）' },
-    };
+    'en':    { title: mode === 'new' ? 'New Chart'  : 'Edit Chart', gender: 'Gender', female: '♀ Female', male: '♂ Male', name: 'Name',  optional: 'optional', category: 'Category', birthday: 'Solar Birthday', hour: 'Hour',  confirm: mode === 'new' ? 'Add'  : 'Save', cancel: 'Cancel', advanced: 'Multiple Birth · Beta', zizhan: 'Divination', menuRandom: '🎲 Random chart', menuZizhan: '🔮 Enter numbers', randomHint: 'Randomize gender / birthday / hour and fill a random name', zizhanTitle: 'Zi Wei Divination', zizhanHint: `Hold your question in mind, then give two numbers (${ZIZHAN_MIN}–${ZIZHAN_MAX}). The chart is cast at random from them and opens right away.`, zizhanGo: 'Cast', back: 'Back' },
+    'zh-TW': { title: mode === 'new' ? '新增命盤'  : '編輯命盤',   gender: '性別',   female: '♀ 女',     male: '♂ 男',   name: '姓名', optional: '選填',     category: '分類',     birthday: '陽曆生日',       hour: '時辰', confirm: mode === 'new' ? '確認新增' : '確認修改', cancel: '取消', advanced: '多胞胎功能 · 測試中 Beta', zizhan: '紫占', menuRandom: '🎲 系統隨機', menuZizhan: '🔮 輸入數字', randomHint: '隨機起盤：隨機填入性別／生日／時辰與姓名（可重複點重骰）', zizhanTitle: '紫微占卜', zizhanHint: `心中默想問題，報兩個 ${ZIZHAN_MIN}–${ZIZHAN_MAX} 的數字，系統以此亂數起盤並直接開盤。`, zizhanGo: '起盤', back: '返回' },
+    'zh-CN': { title: mode === 'new' ? '新增命盘'  : '编辑命盘',   gender: '性别',   female: '♀ 女',     male: '♂ 男',   name: '姓名', optional: '选填',     category: '分类',     birthday: '阳历生日',       hour: '时辰', confirm: mode === 'new' ? '确认新增' : '确认修改', cancel: '取消', advanced: '多胞胎功能 · 测试中 Beta', zizhan: '紫占', menuRandom: '🎲 系统随机', menuZizhan: '🔮 输入数字', randomHint: '随机起盘：随机填入性别／生日／时辰与姓名（可重复点重骰）', zizhanTitle: '紫微占卜', zizhanHint: `心中默想问题，报两个 ${ZIZHAN_MIN}–${ZIZHAN_MAX} 的数字，系统以此乱数起盘并直接开盘。`, zizhanGo: '起盘', back: '返回' },
+  };
   const UI = UI_MAP[locale] ?? UI_MAP['zh-TW'];
 
   const [name, setName]       = useState(initial?.name ?? '');
@@ -76,6 +81,27 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
     setName(randomName());
   }
 
+  // 🔮 紫占鈕：點開選單（系統隨機／紫微占卜）；紫微占卜 → 換成報數面板
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [zizhanOpen, setZizhanOpen] = useState(false);
+  const [n1, setN1] = useState('');
+  const [n2, setN2] = useState('');
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpen]);
+  const num1 = parseInt(n1, 10), num2 = parseInt(n2, 10);
+  const zizhanValid = isValidZizhanNumber(num1) && isValidZizhanNumber(num2);
+  function handleZizhanSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (zizhanValid) onCreateZizhan?.(num1, num2);
+  }
+
   function handleRangeInvalid(e: React.InvalidEvent<HTMLInputElement>) {
     const v = e.currentTarget.validity;
     if (v.rangeOverflow || v.rangeUnderflow) e.currentTarget.setCustomValidity('Out of range');
@@ -89,7 +115,7 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
     const y = parseInt(year, 10);
     const m = Math.min(12, Math.max(1, parseInt(month, 10) || 1));
     const d = Math.min(31, Math.max(1, parseInt(day, 10) || 1));
-    if (!y || y < 1900 || y > 2100) return;
+    if (!y || y < 100 || y > 9999) return;   // 100–9999：紫占盤生日可落任何年代；<100 會被 JS Date 當 19xx
     onSave({ name, solarDate: `${y}-${m}-${d}`, timeIndex, gender, multiBirthOrder: multiBirthOrder ?? undefined, category: category || undefined });
   }
 
@@ -97,22 +123,59 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
     <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-box">
         <div className="modal-header">
-          <span className="modal-title">{UI.title}</span>
+          <span className="modal-title">{zizhanOpen ? UI.zizhanTitle : UI.title}</span>
           <div className="modal-header-actions">
-            {mode === 'new' && (
-              <button
-                type="button"
-                className="modal-random-btn"
-                onClick={rerollRandom}
-                title={UI.randomHint}
-              >
-                🎲 {UI.random}
-              </button>
+            {mode === 'new' && !zizhanOpen && (
+              <div className="modal-random-wrap" ref={menuRef}>
+                <button
+                  type="button"
+                  className={`modal-random-btn${menuOpen ? ' active' : ''}`}
+                  onClick={() => setMenuOpen(p => !p)}
+                >
+                  🔮 {UI.zizhan}
+                </button>
+                {menuOpen && (
+                  <div className="modal-random-menu">
+                    <button type="button" className="modal-random-item" title={UI.randomHint}
+                      onClick={() => { setMenuOpen(false); rerollRandom(); }}>
+                      {UI.menuRandom}
+                    </button>
+                    {onCreateZizhan && (
+                      <button type="button" className="modal-random-item"
+                        onClick={() => { setMenuOpen(false); setZizhanOpen(true); }}>
+                        {UI.menuZizhan}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
             <button className="modal-close" onClick={onClose}>✕</button>
           </div>
         </div>
 
+        {zizhanOpen ? (
+        <form className="modal-zizhan" onSubmit={handleZizhanSubmit}>
+          <p className="modal-zizhan-hint">{UI.zizhanHint}</p>
+          <div className="modal-zizhan-row">
+            <input
+              type="number" inputMode="numeric" autoFocus
+              min={ZIZHAN_MIN} max={ZIZHAN_MAX} step={1}
+              value={n1} onChange={e => setN1(e.target.value)}
+              placeholder="1"
+            />
+            <span className="modal-zizhan-sep">{isEn ? ',' : '，'}</span>
+            <input
+              type="number" inputMode="numeric"
+              min={ZIZHAN_MIN} max={ZIZHAN_MAX} step={1}
+              value={n2} onChange={e => setN2(e.target.value)}
+              placeholder="2"
+            />
+          </div>
+          <button type="submit" className="btn-confirm" disabled={!zizhanValid}>{UI.zizhanGo}</button>
+          <button type="button" className="btn-cancel" onClick={() => setZizhanOpen(false)}>{UI.back}</button>
+        </form>
+        ) : (
         <form onSubmit={handleSubmit}>
           {/* Gender */}
           <div className="modal-field">
@@ -158,7 +221,7 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
                   className={`category-btn${category === cat ? ' selected' : ''}`}
                   onClick={() => setCategory(prev => prev === cat ? '' : cat)}
                 >
-                  {cat}
+                  {catLabel(cat, locale)}
                 </button>
               ))}
             </div>
@@ -172,7 +235,7 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
                 type="number" value={year}
                 onChange={e => { resetValidity(e); setYear(e.target.value); }}
                 onInvalid={handleRangeInvalid}
-                min={1900} max={2100} className="modal-input-year"
+                min={100} max={9999} className="modal-input-year"
               />
               <span className="modal-date-sep">{isEn ? '/' : '年'}</span>
               <input
@@ -247,6 +310,7 @@ export function ChartModal({ mode, initial, presetCategory, categories, onSave, 
             </div>
           )}
         </form>
+        )}
       </div>
     </div>
   );

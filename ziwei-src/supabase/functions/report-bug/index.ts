@@ -1,5 +1,3 @@
-// 部署前在 Supabase Edge Function secrets 設定 NOTION_DATABASE_ID
-const NOTION_DATABASE_ID = Deno.env.get('NOTION_DATABASE_ID') ?? '';
 const NOTION_API = 'https://api.notion.com/v1/pages';
 
 const CORS = {
@@ -84,6 +82,12 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...CORS, 'Content-Type': 'application/json' },
     });
   }
+  const databaseId = Deno.env.get('NOTION_DATABASE_ID');
+  if (!databaseId) {
+    return new Response(JSON.stringify({ error: 'NOTION_DATABASE_ID not set' }), {
+      status: 500, headers: { ...CORS, 'Content-Type': 'application/json' },
+    });
+  }
 
   let body: {
     title: string;
@@ -132,7 +136,7 @@ Deno.serve(async (req) => {
 
   // Upload screenshot and attach as image block
   const notionBody: Record<string, unknown> = {
-    parent: { database_id: NOTION_DATABASE_ID },
+    parent: { database_id: databaseId },
     properties,
   };
 

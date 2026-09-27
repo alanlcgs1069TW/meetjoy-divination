@@ -5,9 +5,11 @@ import type { ZiweiChart, ZiweiHoroscope } from '../lib';
 import { TIME_LABELS, TIME_HOURS, BRANCH_PINYIN, lunarToArabic, stemBranchPinyin, SUPPORTED_LOCALES } from '../i18n';
 import { useLang } from '../contexts/LangContext';
 import { getAnonName, isRandomName } from '../lib/anonName';
+import { isZizhanName } from '../lib/zizhan';
 
 const MULTI_BIRTH_LABEL = {
   'zh-TW': { 2: '同時辰第二胎 Twin 2', 3: '同時辰第三胎 Triplet 3', 4: '同時辰第四胎 Quadruplet 4' },
+  'zh-CN': { 2: '同时辰第二胎 Twin 2', 3: '同时辰第三胎 Triplet 3', 4: '同时辰第四胎 Quadruplet 4' },
   'en':    { 2: 'Twin 2',              3: 'Triplet 3',              4: 'Quadruplet 4' },
 } as const;
 
@@ -35,6 +37,9 @@ interface Props {
   chartId?: string;   // 命盤唯一 id，併入匿名代號 hash（區分同性別雙胞胎）
   alias?: string;             // 隱藏分享時的自訂外號（取代隨機代號）
   onSaveAlias?: (text: string) => void;
+  onSaveName?: (text: string) => void;    // 正常模式點名字 inline 改名（暫態盤不傳＝不可編）
+  cheatShow?: boolean;                    // 進階「高階顯示」cheat sheet 開關（取代原 Beta 徽章那列）
+  onToggleCheat?: () => void;
 }
 
 const NOTES_MAX = 1000;
@@ -49,14 +54,13 @@ function linkifyNotes(text: string) {
 }
 
 // 陽男/陽女: 陽年出生，陰男/陰女: 陰年出生（標籤直接用年干，男女相同，不翻轉）
-// 已對照學會版排盤確認：標籤只看年干陰陽，不因性別翻轉；
-// 大限順逆另由 nativePalaces 的 isForward=(isMale===isYangStem) 決定
+// dreamkinin 確認：戊戌年女=陽女(逆行), 己丑年女=陰女(順行), 己未年男=陰男(逆行)
 function getYinYang(lunarYear: number): '陽' | '陰' {
   const stemIdx = ((lunarYear - 4) % 10 + 10) % 10;
   return stemIdx % 2 === 0 ? '陽' : '陰';
 }
 
-export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthOrder, onPrevTime, onNextTime, isRectified, childhoodOverride, advMode, onAdvToggle, feixingShow = true, onToggleFeixing, zihuaShow = true, onToggleZihua, notes, onSaveNotes, chartId, alias, onSaveAlias }: Props) {
+export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthOrder, onPrevTime, onNextTime, isRectified, childhoodOverride, advMode, onAdvToggle, feixingShow = true, onToggleFeixing, zihuaShow = true, onToggleZihua, notes, onSaveNotes, chartId, alias, onSaveAlias, onSaveName, cheatShow = false, onToggleCheat }: Props) {
   const { locale, setLocale, showPinyin, togglePinyin } = useLang();
   const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
   const [hideMode, setHideMode] = useState(false); // 隱藏個資：遮蔽姓名與生日（用戶自行截圖分享用）
@@ -72,6 +76,18 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
   function commitAlias() {
     onSaveAlias?.(aliasDraft.trim().slice(0, ALIAS_MAX));
     setAliasEditing(false);
+  }
+  // 正常模式點名字 → inline 改名，同外號那套（字數／按鍵行為一致）；空＝無名稱
+  const [nameEditing, setNameEditing] = useState(false);
+  const [nameDraft, setNameDraft] = useState('');
+  function openNameEdit() {
+    if (!onSaveName) return;         // 暫態盤（無存檔）不可編
+    setNameDraft(birthInfo.name ?? '');
+    setNameEditing(true);
+  }
+  function commitName() {
+    onSaveName?.(nameDraft.trim().slice(0, ALIAS_MAX));
+    setNameEditing(false);
   }
   // 中央卡自動縮放：內容自然尺寸大於卡片時等比縮小，避免上下被裁切（宮格窄／視窗矮時）
   const fitRef = useRef<HTMLDivElement>(null);
@@ -111,13 +127,14 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
     if (notes) { setNotesDraft(notes); setNotesEditing(false); } // 有舊筆記 → 退回檢視
     else setNotesOpen(false);                                    // 無 → 關閉
   }
+  // 進階列的 ⓘ：點了彈出一句說明，2 秒後自動消失（再點一次也關）
   const [advInfoOpen, setAdvInfoOpen] = useState(false);
   const advInfoTimer = useRef<number | null>(null);
   function showAdvInfo() {
     if (advInfoTimer.current) clearTimeout(advInfoTimer.current);
-    if (advInfoOpen) { setAdvInfoOpen(false); return; } // 再點一次 → 關閉
+    if (advInfoOpen) { setAdvInfoOpen(false); return; }
     setAdvInfoOpen(true);
-    advInfoTimer.current = window.setTimeout(() => setAdvInfoOpen(false), 2000); // 或 2 秒後自動消失
+    advInfoTimer.current = window.setTimeout(() => setAdvInfoOpen(false), 2000);
   }
   useEffect(() => () => { if (advInfoTimer.current) clearTimeout(advInfoTimer.current); }, []);
   const localeMenuRef = useRef<HTMLDivElement>(null);
@@ -148,7 +165,7 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
   const genderEn = birthInfo.gender === 'female' ? 'Female' : 'Male';
 
   const BACK_LABEL: Record<string, string> = {
-    'en': '← Charts', 'zh-TW': '← 命盤',
+    'en': '← Charts', 'zh-TW': '← 命盤', 'zh-CN': '← 命盘',
   };
   const FIVE_ELEMENTS_EN: Record<string, string> = {
     '水二局': 'Water-2', '木三局': 'Wood-3', '金四局': 'Metal-4',
@@ -169,8 +186,8 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
     ? (useEnLabels ? `Decade ${decOrdinal}` : `${CN_NUM[decOrdinal] ?? decOrdinal}限`)
     : (useEnLabels ? 'Decade' : '大限');
   const fiveDisplay   = useEnLabels ? (FIVE_ELEMENTS_EN[fiveElementsClass] ?? fiveElementsClass) : fiveElementsClass;
-  // 隱藏模式顯示的代號：若姓名本身已是隨機匿名（隨機起盤）則直接沿用，不再換一個代號
-  const hiddenName    = isRandomName(birthInfo.name)
+  // 隱藏模式顯示的代號：若姓名本身已是匿名（隨機起盤／紫占預設名）則直接沿用，不再換一個代號
+  const hiddenName    = (isRandomName(birthInfo.name) || isZizhanName(birthInfo.name))
     ? birthInfo.name
     : getAnonName({ ...birthInfo, uid: chartId }, useEnLabels);
 
@@ -224,7 +241,26 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
                 >
                   {alias?.trim() || hiddenName}
                 </span>)
-          : (birthInfo.name || (isEn ? '(Unnamed)' : '（無名稱）'))}
+          : (nameEditing
+              ? <input
+                  className="center-alias-input"
+                  autoFocus
+                  maxLength={ALIAS_MAX}
+                  value={nameDraft}
+                  placeholder={isEn ? 'Name' : '姓名'}
+                  onChange={e => setNameDraft(e.target.value)}
+                  onBlur={commitName}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') commitName();
+                    else if (e.key === 'Escape') setNameEditing(false);
+                  }}
+                />
+              : <span
+                  onClick={openNameEdit}
+                  style={onSaveName ? { cursor: 'text' } : undefined}
+                >
+                  {birthInfo.name || (isEn ? '(Unnamed)' : '（無名稱）')}
+                </span>)}
       </div>
 
       <div className="center-time-row">
@@ -339,9 +375,15 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
       </div>
 
 
-      {advMode && (
-        <div className="center-adv-beta">
-          <span className="adv-beta-badge">Beta</span>
+      {advMode && onToggleCheat && (
+        <div className="center-adv-cheat">
+          <button
+            className={`fx-lg-toggle${cheatShow ? ' on' : ''}`}
+            onClick={onToggleCheat}
+            title={useEnLabels
+              ? 'Cheat sheet: branch yin/yang, element number, direction on every palace (transit layers hidden while on)'
+              : '高階顯示：每宮疊上 地支陰陽／五行數／方位（開啟時暫不畫運線，關掉即回）'}
+          >{useEnLabels ? 'Numbers' : '數字'}</button>
           <button className="adv-info-btn" onClick={showAdvInfo} aria-label="info">ⓘ</button>
           {advInfoOpen && (
             <div className="adv-info-pop" onClick={() => setAdvInfoOpen(false)}>

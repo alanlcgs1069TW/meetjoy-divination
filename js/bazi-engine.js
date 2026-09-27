@@ -371,89 +371,275 @@
     return res;
   }
 
-  // 6. 地支會合刑沖破害速查表推導
+  // 6. 地支會合刑沖破害速查表推導（嚴格區分「本命局現存交互」與「歲運逢支引動」）
   function calculateZhiInteractions(timeZhi, dayZhi, monthZhi, yearZhi) {
-    const focusZhi = timeZhi || dayZhi || '卯';
-
-    const sanHeMap = {
-      '子': '辰龍, 申猴 (合水局)',
-      '丑': '巳蛇, 酉雞 (合金局)',
-      '寅': '午馬, 戌狗 (合火局)',
-      '卯': '未羊, 亥豬 (合木局)',
-      '辰': '申猴, 子鼠 (合水局)',
-      '巳': '酉雞, 丑牛 (合金局)',
-      '午': '寅虎, 戌狗 (合火局)',
-      '未': '亥豬, 卯兔 (合木局)',
-      '申': '子鼠, 辰龍 (合水局)',
-      '酉': '巳蛇, 丑牛 (合金局)',
-      '戌': '寅虎, 午馬 (合火局)',
-      '亥': '卯兔, 未羊 (合木局)'
+    const ZHI_ANIMALS = {
+      '子': '子鼠', '丑': '丑牛', '寅': '寅虎', '卯': '卯兔',
+      '辰': '辰龍', '巳': '巳蛇', '午': '午馬', '未': '未羊',
+      '申': '申猴', '酉': '酉雞', '戌': '戌狗', '亥': '亥豬'
     };
 
-    const sanHuiMap = {
-      '子': '亥豬, 丑牛 (會北方水)',
-      '丑': '亥豬, 子鼠 (會北方水)',
-      '寅': '卯兔, 辰龍 (會東方木)',
-      '卯': '寅虎, 辰龍 (會東方木)',
-      '辰': '寅虎, 卯兔 (會東方木)',
-      '巳': '午馬, 未羊 (會南方火)',
-      '午': '巳蛇, 未羊 (會南方火)',
-      '未': '巳蛇, 午馬 (會南方火)',
-      '申': '酉雞, 戌狗 (會西方金)',
-      '酉': '申猴, 戌狗 (會西方金)',
-      '戌': '申猴, 酉雞 (會西方金)',
-      '亥': '子鼠, 丑牛 (會北方水)'
+    const zhisWithPillar = [
+      { name: '年支', zhi: yearZhi },
+      { name: '月支', zhi: monthZhi },
+      { name: '日支', zhi: dayZhi },
+      { name: '時支', zhi: timeZhi }
+    ].filter(p => !!p.zhi);
+
+    const zhis = zhisWithPillar.map(p => p.zhi);
+    const zhiCounts = {};
+    zhis.forEach(z => zhiCounts[z] = (zhiCounts[z] || 0) + 1);
+
+    // ── 1. 本命局真實交互 (Natal Actual Interactions) ──
+    const natal = {
+      sanHe: [],
+      sanHui: [],
+      liuHe: [],
+      chong: [],
+      xing: [],
+      po: [],
+      hai: []
+    };
+
+    // 三合局組定義
+    const sanHeDefs = [
+      { name: '金局', chars: ['巳', '酉', '丑'] },
+      { name: '水局', chars: ['申', '子', '辰'] },
+      { name: '木局', chars: ['亥', '卯', '未'] },
+      { name: '火局', chars: ['寅', '午', '戌'] }
+    ];
+
+    sanHeDefs.forEach(grp => {
+      const present = grp.chars.filter(c => zhis.includes(c));
+      if (present.length === 3) {
+        natal.sanHe.push(`${grp.chars.join('')} (三合${grp.name}全)`);
+      } else if (present.length === 2) {
+        natal.sanHe.push(`${present.join('')} (半合${grp.name})`);
+      }
+    });
+
+    // 三會局組定義
+    const sanHuiDefs = [
+      { name: '東方木', chars: ['寅', '卯', '辰'] },
+      { name: '南方火', chars: ['巳', '午', '未'] },
+      { name: '西方金', chars: ['申', '酉', '戌'] },
+      { name: '北方水', chars: ['亥', '子', '丑'] }
+    ];
+
+    sanHuiDefs.forEach(grp => {
+      const present = grp.chars.filter(c => zhis.includes(c));
+      if (present.length === 3) {
+        natal.sanHui.push(`${grp.chars.join('')} (三會${grp.name}全)`);
+      } else if (present.length === 2) {
+        natal.sanHui.push(`${present.join('')} (半會${grp.name})`);
+      }
+    });
+
+    // 兩兩交互定義
+    const liuHePairs = ['子丑', '寅亥', '卯戌', '辰酉', '巳申', '午未'];
+    const chongPairs = ['子午', '丑未', '寅申', '卯酉', '辰戌', '巳亥'];
+    const poPairs = ['子酉', '丑辰', '寅亥', '卯午', '巳申', '未戌'];
+    const haiPairs = ['子未', '丑午', '寅巳', '卯辰', '申亥', '酉戌'];
+
+    const sanXingDefs = [
+      { name: '恃勢之刑', chars: ['丑', '戌', '未'] },
+      { name: '無恩之刑', chars: ['寅', '巳', '申'] }
+    ];
+
+    for (let i = 0; i < zhisWithPillar.length; i++) {
+      for (let j = i + 1; j < zhisWithPillar.length; j++) {
+        const p1 = zhisWithPillar[i], p2 = zhisWithPillar[j];
+        const z1 = p1.zhi, z2 = p2.zhi;
+        const sorted = [z1, z2].sort().join('');
+
+        if (liuHePairs.includes(sorted)) {
+          natal.liuHe.push(`${z1}${z2} (${p1.name[0]}${p2.name[0]}六合)`);
+        }
+        if (chongPairs.includes(sorted)) {
+          natal.chong.push(`${z1}${z2} (${p1.name[0]}${p2.name[0]}沖)`);
+        }
+        if (poPairs.includes(sorted)) {
+          natal.po.push(`${z1}${z2} (${p1.name[0]}${p2.name[0]}破)`);
+        }
+        if (haiPairs.includes(sorted)) {
+          natal.hai.push(`${z1}${z2} (${p1.name[0]}${p2.name[0]}害)`);
+        }
+        if (sorted === '子卯') {
+          natal.xing.push(`子卯 (${p1.name[0]}${p2.name[0]}相刑)`);
+        }
+      }
+    }
+
+    sanXingDefs.forEach(sx => {
+      const present = sx.chars.filter(c => zhis.includes(c));
+      if (present.length === 3) {
+        natal.xing.push(`${sx.chars.join('')} (${sx.name}全)`);
+      } else if (present.length === 2) {
+        const sorted = present.slice().sort().join('');
+        if (['寅巳', '巳申', '申寅', '丑戌', '戌未', '丑未'].includes(sorted)) {
+          natal.xing.push(`${present.join('')} (${sx.name.slice(0, 2)}相刑)`);
+        }
+      }
+    });
+
+    // 自刑檢查 (辰辰、午午、酉酉、亥亥) - 必須同支出現 2 次以上才構成自刑
+    ['辰', '午', '酉', '亥'].forEach(c => {
+      if ((zhiCounts[c] || 0) >= 2) {
+        natal.xing.push(`${c}${c} (自刑，命帶${zhiCounts[c]}個)`);
+      }
+    });
+
+    // ── 2. 歲運逢支引動 (Transit Triggers - 流年/大運逢何支觸發) ──
+    const trigger = {
+      sanHe: [],
+      sanHui: [],
+      liuHe: [],
+      chong: [],
+      xing: [],
+      po: [],
+      hai: []
     };
 
     const liuHeMap = {
-      '子': '丑牛 (合土)', '丑': '子鼠 (合土)',
-      '寅': '亥豬 (合木)', '亥': '寅虎 (合木)',
-      '卯': '戌狗 (合火)', '戌': '卯兔 (合火)',
-      '辰': '酉雞 (合金)', '酉': '辰龍 (合金)',
-      '巳': '申猴 (合水)', '申': '巳蛇 (合水)',
-      '午': '未羊 (合火/土)', '未': '午馬 (合火/土)'
+      '子': '丑牛', '丑': '子鼠', '寅': '亥豬', '卯': '戌狗',
+      '辰': '酉雞', '巳': '申猴', '午': '未羊', '未': '午馬',
+      '申': '巳蛇', '酉': '辰龍', '戌': '卯兔', '亥': '寅虎'
     };
-
     const chongMap = {
       '子': '午馬', '丑': '未羊', '寅': '申猴', '卯': '酉雞',
       '辰': '戌狗', '巳': '亥豬', '午': '子鼠', '未': '丑牛',
       '申': '寅虎', '酉': '卯兔', '戌': '辰龍', '亥': '巳蛇'
     };
-
-    const xingMap = {
-      '子': '卯兔 (相刑)', '卯': '子鼠 (相刑)',
-      '寅': '巳蛇, 申猴 (三刑)', '巳': '申猴, 寅虎 (三刑)', '申': '寅虎, 巳蛇 (三刑)',
-      '丑': '戌狗, 未羊 (三刑)', '戌': '未羊, 丑牛 (三刑)', '未': '丑牛, 戌狗 (三刑)',
-      '辰': '辰龍 (自刑)', '午': '午馬 (自刑)', '酉': '酉雞 (自刑)', '亥': '亥豬 (自刑)'
-    };
-
-    const poMap = {
-      '子': '酉雞', '酉': '子鼠',
-      '丑': '辰龍', '辰': '丑牛',
-      '寅': '亥豬', '亥': '寅虎',
-      '卯': '午馬', '午': '卯兔',
-      '巳': '申猴', '申': '巳蛇',
-      '未': '戌狗', '戌': '未羊'
-    };
-
     const haiMap = {
-      '子': '未羊', '未': '子鼠',
-      '丑': '午馬', '午': '丑牛',
-      '寅': '巳蛇', '巳': '寅虎',
-      '卯': '辰龍', '辰': '卯兔',
-      '申': '亥豬', '亥': '申猴',
-      '酉': '戌狗', '戌': '酉雞'
+      '子': '未羊', '丑': '午馬', '寅': '巳蛇', '卯': '辰龍',
+      '辰': '卯兔', '巳': '寅虎', '午': '丑牛', '未': '子鼠',
+      '申': '亥豬', '酉': '戌狗', '戌': '酉雞', '亥': '申猴'
+    };
+    const poMap = {
+      '子': '酉雞', '丑': '辰龍', '寅': '亥豬', '卯': '午馬',
+      '辰': '丑牛', '巳': '申猴', '午': '卯兔', '未': '戌狗',
+      '申': '巳蛇', '酉': '子鼠', '戌': '未羊', '亥': '寅虎'
+    };
+
+    // 歲運六合
+    zhisWithPillar.forEach(p => {
+      const partner = liuHeMap[p.zhi];
+      if (partner && !trigger.liuHe.some(x => x.includes(partner))) {
+        trigger.liuHe.push(`逢${partner}(合${p.name[0]}${p.zhi})`);
+      }
+    });
+
+    // 歲運沖
+    zhisWithPillar.forEach(p => {
+      const opp = chongMap[p.zhi];
+      if (opp && !trigger.chong.some(x => x.includes(opp))) {
+        trigger.chong.push(`逢${opp}(沖${p.name[0]}${p.zhi})`);
+      }
+    });
+
+    // 歲運刑（自刑優先標明，避免誤以為命帶自刑）
+    const zhiXingSelf = [];
+    const zhiXingOther = [];
+    zhisWithPillar.forEach(p => {
+      if (['辰', '午', '酉', '亥'].includes(p.zhi)) {
+        const zName = ZHI_ANIMALS[p.zhi];
+        if (!zhiXingSelf.some(x => x.includes(zName))) {
+          zhiXingSelf.push(`逢${zName}(引動${p.name[0]}${p.zhi}自刑)`);
+        }
+      }
+      if (['寅', '巳', '申'].includes(p.zhi)) {
+        ['寅', '巳', '申'].filter(x => x !== p.zhi).forEach(req => {
+          const reqName = ZHI_ANIMALS[req];
+          if (!zhiXingOther.some(x => x.includes(`逢${reqName}`))) {
+            zhiXingOther.push(`逢${reqName}(引動無恩刑)`);
+          }
+        });
+      }
+      if (['丑', '戌', '未'].includes(p.zhi)) {
+        ['丑', '戌', '未'].filter(x => x !== p.zhi).forEach(req => {
+          const reqName = ZHI_ANIMALS[req];
+          if (!zhiXingOther.some(x => x.includes(`逢${reqName}`))) {
+            zhiXingOther.push(`逢${reqName}(引動恃勢刑)`);
+          }
+        });
+      }
+      if (p.zhi === '子' && !zhiXingOther.some(x => x.includes('卯兔'))) {
+        zhiXingOther.push('逢卯兔(引動無禮刑)');
+      }
+      if (p.zhi === '卯' && !zhiXingOther.some(x => x.includes('子鼠'))) {
+        zhiXingOther.push('逢子鼠(引動無禮刑)');
+      }
+    });
+    trigger.xing = [...zhiXingSelf, ...zhiXingOther];
+
+    // 歲運三合湊齊引動
+    sanHeDefs.forEach(grp => {
+      const present = grp.chars.filter(c => zhis.includes(c));
+      if (present.length >= 1 && present.length < 3) {
+        const missing = grp.chars.filter(c => !zhis.includes(c));
+        const missingNames = missing.map(m => ZHI_ANIMALS[m]).join('/');
+        trigger.sanHe.push(`逢${missingNames}(湊成${grp.name})`);
+      }
+    });
+
+    // 歲運三會湊齊引動
+    sanHuiDefs.forEach(grp => {
+      const present = grp.chars.filter(c => zhis.includes(c));
+      if (present.length >= 1 && present.length < 3) {
+        const missing = grp.chars.filter(c => !zhis.includes(c));
+        const missingNames = missing.map(m => ZHI_ANIMALS[m]).join('/');
+        trigger.sanHui.push(`逢${missingNames}(湊齊${grp.name})`);
+      }
+    });
+
+    // 歲運害
+    zhisWithPillar.forEach(p => {
+      const h = haiMap[p.zhi];
+      if (h && !trigger.hai.some(x => x.includes(h))) {
+        trigger.hai.push(`逢${h}(害${p.name[0]}${p.zhi})`);
+      }
+    });
+
+    // 歲運破
+    zhisWithPillar.forEach(p => {
+      const po = poMap[p.zhi];
+      if (po && !trigger.po.some(x => x.includes(po))) {
+        trigger.po.push(`逢${po}(破${p.name[0]}${p.zhi})`);
+      }
+    });
+
+    const natalPack = {
+      sanHe: natal.sanHe.length ? natal.sanHe.join('、') : '無 (未成合局)',
+      sanHui: natal.sanHui.length ? natal.sanHui.join('、') : '無 (未成會局)',
+      liuHe: natal.liuHe.length ? natal.liuHe.join('、') : '無 (四柱各自獨立)',
+      chong: natal.chong.length ? natal.chong.join('、') : '無 (原局四柱安定)',
+      xing: natal.xing.length ? natal.xing.join('、') : '無 (原局無刑剋自刑)',
+      po: natal.po.length ? natal.po.join('、') : '無 (原局無破)',
+      hai: natal.hai.length ? natal.hai.join('、') : '無 (原局無害)'
+    };
+
+    const triggerPack = {
+      sanHe: trigger.sanHe.slice(0, 3).join('、'),
+      sanHui: trigger.sanHui.slice(0, 2).join('、'),
+      liuHe: trigger.liuHe.slice(0, 4).join('、'),
+      chong: trigger.chong.join('、'),
+      xing: trigger.xing.slice(0, 4).join('、'),
+      po: trigger.po.slice(0, 4).join('、'),
+      hai: trigger.hai.slice(0, 4).join('、')
     };
 
     return {
-      focusZhi,
-      sanHe: sanHeMap[focusZhi] || '',
-      sanHui: sanHuiMap[focusZhi] || '',
-      liuHe: liuHeMap[focusZhi] || '',
-      chong: chongMap[focusZhi] || '',
-      xing: xingMap[focusZhi] || '',
-      po: poMap[focusZhi] || '',
-      hai: haiMap[focusZhi] || ''
+      focusZhi: dayZhi || timeZhi || '卯',
+      natal: natalPack,
+      trigger: triggerPack,
+      // 頂層向後相容欄位，預設直接輸出最真實精確的原局交互
+      sanHe: natalPack.sanHe,
+      sanHui: natalPack.sanHui,
+      liuHe: natalPack.liuHe,
+      chong: natalPack.chong,
+      xing: natalPack.xing,
+      po: natalPack.po,
+      hai: natalPack.hai
     };
   }
 

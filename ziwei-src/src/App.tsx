@@ -12,6 +12,7 @@ import { syncCharts } from './lib/sync';
 import { getSettings, saveSettings, syncSettings } from './lib/settings';
 import type { User } from '@supabase/supabase-js';
 import type { SavedChart } from './types/savedChart';
+import { generateZizhanBirth, zizhanName, ZIZHAN_CATEGORY } from './lib/zizhan';
 import { AstrolabeChart } from './components/AstrolabeChart';
 import { DecadalTimeline } from './components/DecadalTimeline';
 import { YearlyTimeline } from './components/YearlyTimeline';
@@ -93,56 +94,8 @@ function App() {
   }, []);
 
   async function handleLogout() {
-    try {
-      await supabase.auth.signOut();
-    } catch (e) {
-      console.warn('Supabase signOut error:', e);
-    }
-    try {
-      // 1. 清除紫微斗數所有本地 storage
-      localStorage.removeItem('ziwei-user');
-      localStorage.removeItem('ziwei-charts');
-      localStorage.removeItem('ziwei-current-chart');
-      localStorage.removeItem('ziwei-last-sync');
-
-      // 2. 清除通用庫與會員資料
-      localStorage.removeItem('mj_member_user');
-      localStorage.removeItem('mj_universal_profiles');
-      localStorage.removeItem('mj_current_admin_email');
-
-      // 3. 清除所有相關 key (mj_, sb-, ziwei-)
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && (k.startsWith('mj_') || k.startsWith('sb-') || k.startsWith('ziwei-'))) {
-          keysToRemove.push(k);
-        }
-      }
-      keysToRemove.forEach(k => localStorage.removeItem(k));
-
-      // 4. 清除 sessionStorage
-      sessionStorage.clear();
-
-      // 5. 派發事件
-      window.dispatchEvent(new CustomEvent('mj-auth-changed', { detail: null }));
-      window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
-      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
-    } catch (e) {
-      console.warn('Logout cleanup error:', e);
-    }
-
-    // 6. 徹底清理 URL query 並重新載入乾淨頁面
-    try {
-      const cleanUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState(null, '', cleanUrl);
-      setTimeout(() => {
-        window.location.href = cleanUrl;
-      }, 80);
-    } catch {
-      setTimeout(() => {
-        window.location.reload();
-      }, 80);
-    }
+    await supabase.auth.signOut();
+    // user state updated via onAuthStateChange
   }
 
   // ── Dynamic zh-mode font sizing based on viewport ─────────────────────────
@@ -208,44 +161,12 @@ function App() {
     }
   }
 
-  const [savedCharts, setSavedCharts] = useState<SavedChart[]>(() => {
-    let list = getActiveCharts();
-    if (list.length === 0) {
-      const demo: SavedChart = {
-        id: generateId(),
-        name: '癒見幸福 · 示範命盤',
-        solarDate: '1990-05-18',
-        timeIndex: 6, // 午時
-        gender: 'male',
-        category: '自己',
-        updatedAt: Date.now(),
-      };
-      upsertChart(demo);
-      list = [demo];
-    }
-    return list;
-  });
+  // ── Saved charts ─────────────────────────────────────────────────────────────
+  const [savedCharts, setSavedCharts] = useState<SavedChart[]>(() => getActiveCharts());
 
   function refreshCharts() {
     setSavedCharts(getActiveCharts());
   }
-
-  // 監聽全站通用命盤庫變更事件（如八字、占星、頂部 Bar、登入切換或跨分頁異動）
-  useEffect(() => {
-    function handleProfileSync() {
-      refreshCharts();
-    }
-    window.addEventListener('mj-profiles-changed', handleProfileSync);
-    window.addEventListener('meetjoy_profiles_updated', handleProfileSync);
-    window.addEventListener('mj-auth-changed', handleProfileSync);
-    window.addEventListener('storage', handleProfileSync);
-    return () => {
-      window.removeEventListener('mj-profiles-changed', handleProfileSync);
-      window.removeEventListener('meetjoy_profiles_updated', handleProfileSync);
-      window.removeEventListener('mj-auth-changed', handleProfileSync);
-      window.removeEventListener('storage', handleProfileSync);
-    };
-  }, []);
 
   // ── Categories ───────────────────────────────────────────────────────────────
   const [customCategories, setCustomCategories] = useState<string[]>(() => getCustomCategories());
@@ -256,7 +177,7 @@ function App() {
     const fromCharts = savedCharts
       .map(c => c.category)
       .filter((cat): cat is string => !!cat && !DEFAULT_CATEGORIES.includes(cat));
-    const merged = [...new Set([...customCategories, ...fromCharts])];
+    const merged = [...new Set([...customCategories, ...fromCharts])].filter(c => !DEFAULT_CATEGORIES.includes(c));
     return [...DEFAULT_CATEGORIES, ...merged];
   }, [savedCharts, customCategories]);
 
@@ -292,6 +213,21 @@ function App() {
     setModalState(null);
   }
 
+  // 紫占：報兩個數字 → 亂數起盤 → 直接入庫並開盤（不停在新增視窗）
+  function handleCreateZizhan(n1: number, n2: number) {
+    const saved: SavedChart = {
+      id: generateId(),
+      name: zizhanName(n1, n2, locale),
+      ...generateZizhanBirth(n1, n2),
+      category: ZIZHAN_CATEGORY,
+      updatedAt: Date.now(),
+    };
+    upsertChart(saved);
+    refreshCharts();
+    setModalState(null);
+    handleViewChart(saved);
+  }
+
   function handleDeleteChart(id: string) {
     softDeleteChart(id);
     refreshCharts();
@@ -313,16 +249,15 @@ function App() {
 
   const [chart, setChart] = useState<ZiweiChart | null>(() => {
     const id = sessionStorage.getItem(SESSION_KEY);
-    const active = getActiveCharts();
-    const saved = (id ? active.find(c => c.id === id) : active[0]) ?? null;
+    if (!id) return null;
+    const saved = getActiveCharts().find(c => c.id === id);
     if (!saved) return null;
     try { return buildChart(saved); } catch { return null; }
   });
   const [multiBirthOrder, setMultiBirthOrder] = useState<2 | 3 | 4 | null>(() => {
     const id = sessionStorage.getItem(SESSION_KEY);
-    const active = getActiveCharts();
-    const saved = (id ? active.find(c => c.id === id) : active[0]) ?? null;
-    return saved?.multiBirthOrder ?? null;
+    if (!id) return null;
+    return getActiveCharts().find(c => c.id === id)?.multiBirthOrder ?? null;
   });
   const [selectedPalaceIdx, setSelectedPalaceIdx] = useState<number | null>(null);
   const [selectedYear, setSelectedYear]           = useState<number | null>(null);
@@ -336,6 +271,7 @@ function App() {
   const [defaultZihua, setDefaultZihua]     = useState(() => getSettings().defaultZihua);
   const [showFeixing, setShowFeixing] = useState(defaultFeixing); // 飛化上色 開關（兩種模式皆由此 toggle 控制）
   const [showZihua, setShowZihua]     = useState(defaultZihua); // 自化(離心/向心)箭頭 開關（兩種模式皆適用）
+  const [showCheat, setShowCheat]     = useState(false); // 進階「高階顯示」cheat sheet（盤內暫態，開盤／離盤／關進階即重置）
   // 設定選單改預設：持久化 + 立即套用到當前盤（盤內 toggle 仍可臨時蓋過、不回寫預設）
   function handleDefaultFeixingChange(on: boolean) {
     saveSettings({ ...getSettings(), defaultFeixing: on });
@@ -372,8 +308,8 @@ function App() {
   // 定盤：current saved data + override time index + date offset
   const [currentSaved, setCurrentSaved] = useState<SavedChart | null>(() => {
     const id = sessionStorage.getItem(SESSION_KEY);
-    const active = getActiveCharts();
-    return (id ? active.find(c => c.id === id) : active[0]) ?? null;
+    if (!id) return null;
+    return getActiveCharts().find(c => c.id === id) ?? null;
   });
   const [rectTimeIndex, setRectTimeIndex] = useState<number | null>(null);
   const [rectDateOffset, setRectDateOffset] = useState(0);
@@ -405,8 +341,11 @@ function App() {
     if (base === 12) setRectDateOffset(o => o + 1); // 晚子時 → 次日早子時
   }
 
-  // 預設進入「命盤資料庫」列表頁面
-  const [page, setPage] = useState<AppPage>('list');
+  // Restore page to 'chart' if we successfully recovered a chart from sessionStorage
+  const [page, setPage] = useState<AppPage>(() =>
+    sessionStorage.getItem(SESSION_KEY) && getActiveCharts().some(c => c.id === sessionStorage.getItem(SESSION_KEY))
+      ? 'chart' : 'list'
+  );
 
   function handleViewChart(saved: SavedChart) {
     try {
@@ -421,6 +360,7 @@ function App() {
       setClickedPalaceIdx(null);
       setShowFeixing(defaultFeixing); // 開盤以預設值起始（盤內 toggle 為臨時狀態）
       setShowZihua(defaultZihua);
+      setShowCheat(false);
       sessionStorage.setItem(SESSION_KEY, saved.id);
       setPage('chart');
       history.pushState({ page: 'chart', chartId: saved.id }, '');
@@ -445,6 +385,16 @@ function App() {
     setSavedCharts(getActiveCharts());
   }
 
+  function handleSaveName(text: string) {
+    if (!currentSaved) return;
+    const next: SavedChart = { ...currentSaved, name: text, updatedAt: Date.now() };
+    upsertChart(next);
+    setCurrentSaved(next);
+    setSavedCharts(getActiveCharts());
+    // 中央卡讀的是 chart.birthInfo.name → 淺更新即可，不重排盤
+    setChart(prev => prev ? { ...prev, birthInfo: { ...prev.birthInfo, name: text } } : prev);
+  }
+
   function handleBackToList() {
     sessionStorage.removeItem(SESSION_KEY);
     setPage('list');
@@ -457,6 +407,7 @@ function App() {
     setSelectedYear(null);
     setClickedPalaceIdx(null);
     setFocusLevel(null);
+    setShowCheat(false);
     clearMonthDay();
   }
 
@@ -501,12 +452,9 @@ function App() {
   }, [page]);
 
   // ── Lang ─────────────────────────────────────────────────────────────────────
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    const saved = localStorage.getItem('ziwei-locale');
-    if (saved === 'en') return 'en';
-    localStorage.setItem('ziwei-locale', 'zh-TW');
-    return 'zh-TW';
-  });
+  const [locale, setLocaleState] = useState<Locale>(
+    () => (localStorage.getItem('ziwei-locale') as Locale) || 'zh-TW'
+  );
   const [showPinyin, setShowPinyin] = useState<boolean>(
     () => localStorage.getItem('ziwei-pinyin') === 'true'
   );
@@ -530,6 +478,10 @@ function App() {
   // Advanced 模式 3 層滑動視窗：哪些 overlay 層要疊（undefined = 非 Advanced，沿用 legacy）
   // 以焦點為中心的 3 層滑動視窗（夾在 本命↔流日 之間）；視窗內的「運線祿羊陀＋四化」一起顯示。
   // 本命(0)→大限(1)→流年(2)→流月(3)→流日(4)；start = clamp(焦點-1, 0, 2)，視窗 = {start..start+2}。
+  // 高階顯示（cheat sheet）：只改畫面——運線層全收、焦點回本命；已選的流年／月／日／時與 queryDate 不動，
+  // 底部進階列維持原樣，關掉開關即刻跳回原本的運線盤。
+  const cheatOn = advMode && showCheat;
+  const CHEAT_LAYERS = { natal: true, decadal: false, yearly: false, monthly: false, daily: false, hourly: false, minorLimit: false };
   const advLayers = advMode ? (() => {
     // 本命焦點（什麼都沒選）：只顯示本命（生年四化），無任何運線 overlay
     if (effectiveFocus === 'natal') {
@@ -761,6 +713,7 @@ function App() {
             presetCategory={modalState.mode === 'new' ? modalState.presetCategory : undefined}
             categories={allCategories}
             onSave={handleSaveChart}
+            onCreateZizhan={handleCreateZizhan}
             onClose={() => setModalState(null)}
           />
         )}
@@ -800,14 +753,17 @@ function App() {
               onNextTime={handleNextTime}
               isRectified={rectDateOffset !== 0 || (rectTimeIndex !== null && rectTimeIndex !== currentSaved?.timeIndex)}
               advMode={advMode}
-              onAdvToggle={() => { setAdvMode(v => !v); setFocusLevel(null); setClickedPalaceIdx(null); }}
-              advLayers={advLayers}
-              advFocus={advMode ? effectiveFocus : undefined}
+              onAdvToggle={() => { setAdvMode(v => !v); setFocusLevel(null); setClickedPalaceIdx(null); setShowCheat(false); }}
+              advLayers={cheatOn ? CHEAT_LAYERS : advLayers}
+              advFocus={advMode ? (cheatOn ? 'natal' : effectiveFocus) : undefined}
+              cheatMode={cheatOn}
+              onToggleCheat={() => setShowCheat(v => !v)}
               notes={currentSaved?.notes}
               onSaveNotes={currentSaved ? handleSaveNotes : undefined}
               chartId={currentSaved?.id}
               alias={currentSaved?.alias}
               onSaveAlias={currentSaved ? handleSaveAlias : undefined}
+              onSaveName={currentSaved ? handleSaveName : undefined}
               taijiBaseIdx={(effectiveFocus === 'monthly' || effectiveFocus === 'daily' || effectiveFocus === 'hourly') ? null : clickedPalaceIdx}
               feixingBaseIdx={clickedPalaceIdx}
               feixingShow={showFeixing}
