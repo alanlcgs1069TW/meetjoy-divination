@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { SavedChart } from '../types/savedChart';
 import { TIME_LABELS, TIME_HOURS, BRANCH_PINYIN, SUPPORTED_LOCALES } from '../i18n';
 import type { Locale } from '../i18n';
-import { DEFAULT_CATEGORIES, catLabel, exportChartsToJson, importChartsFromJson } from '../lib/storage';
+import { DEFAULT_CATEGORIES, catLabel, exportChartsToJson, importChartsFromJson, getMeetJoyUser, openMeetJoyLoginModal, syncMeetJoyCloud } from '../lib/storage';
 import { useLang } from '../contexts/LangContext';
 
 const ACTIVE_CAT_KEY = 'ziwei-active-cat';
@@ -90,8 +90,19 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
   // 分類列預設收合成一行（手機），按「⋯」展開全部；橫向捲動在手機上不好操作，故用展開而非捲動
   const [tabsExpanded, setTabsExpanded] = useState(false);
   const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
+  const [mjUser, setMjUser] = useState(getMeetJoyUser);
   const localeMenuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleAuth = () => setMjUser(getMeetJoyUser());
+    window.addEventListener('mj-auth-changed', handleAuth);
+    window.addEventListener('storage', handleAuth);
+    return () => {
+      window.removeEventListener('mj-auth-changed', handleAuth);
+      window.removeEventListener('storage', handleAuth);
+    };
+  }, []);
 
   function handleExport() {
     const json = exportChartsToJson();
@@ -245,6 +256,13 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
           <>
             <button className="btn-io-chart" onClick={handleExport} title={locale === 'en' ? "Export JSON backup" : "匯出命例備份 (JSON)"}>📥</button>
             <button className="btn-io-chart" onClick={() => fileInputRef.current?.click()} title={locale === 'en' ? "Import JSON backup" : "匯入命例備份 (JSON)"}>📤</button>
+            <button
+              className={`btn-auth-sync${mjUser ? ' logged-in' : ''}`}
+              onClick={mjUser ? syncMeetJoyCloud : openMeetJoyLoginModal}
+              title={mjUser ? `會員：${mjUser.name || mjUser.email}（點擊雙向同步雲端命盤庫）` : '登入會員 · 跨電腦漫遊同步雲端命盤庫'}
+            >
+              {mjUser ? `🟢 雲端同步` : '🔑 登入同步'}
+            </button>
             <input type="file" ref={fileInputRef} accept=".json" style={{ display: 'none' }} onChange={handleFileChange} />
           </>
         )}

@@ -168,6 +168,22 @@ function App() {
     setSavedCharts(getActiveCharts());
   }
 
+  useEffect(() => {
+    const handleSync = () => {
+      refreshCharts();
+    };
+    window.addEventListener('mj-profiles-changed', handleSync);
+    window.addEventListener('mj-auth-changed', handleSync);
+    window.addEventListener('meetjoy_profiles_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('mj-profiles-changed', handleSync);
+      window.removeEventListener('mj-auth-changed', handleSync);
+      window.removeEventListener('meetjoy_profiles_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
+
   // ── Categories ───────────────────────────────────────────────────────────────
   const [customCategories, setCustomCategories] = useState<string[]>(() => getCustomCategories());
 

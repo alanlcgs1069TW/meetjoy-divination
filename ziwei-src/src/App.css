@@ -1409,6 +1409,39 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
   transform: scale(1.15);
 }
 
+.btn-auth-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(200, 169, 126, 0.15);
+  border: 1px solid rgba(200, 169, 126, 0.5);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 3px 8px;
+  color: #8C6A1A;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-auth-sync:hover {
+  background: #C8A97E;
+  color: #1c1917;
+  border-color: #B38E46;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(200, 169, 126, 0.35);
+}
+.btn-auth-sync.logged-in {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #065f46;
+}
+.btn-auth-sync.logged-in:hover {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #059669;
+}
+
 /* Privacy button */
 .btn-privacy {
   background: none;

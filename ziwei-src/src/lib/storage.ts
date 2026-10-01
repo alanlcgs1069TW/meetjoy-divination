@@ -37,12 +37,119 @@ export function generateId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export function getAllCharts(): SavedChart[] {
+export function timeToTimeIndex(timeStr?: string): number {
+  if (!timeStr) return 6;
+  const parts = timeStr.split(':');
+  const h = parseInt(parts[0], 10);
+  if (isNaN(h)) return 6;
+  if (h === 23) return 12; // 晚子時
+  if (h === 0) return 0;   // 早子時
+  return Math.floor((h + 1) / 2);
+}
+
+export function timeIndexToDefaultTime(idx: number): string {
+  const times = ['00:30', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '23:30'];
+  return times[idx] ?? '12:00';
+}
+
+export function getMeetJoyUser(): { name?: string; email?: string; isAdmin?: boolean } | null {
+  if (typeof window === 'undefined') return null;
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? '[]');
-  } catch {
-    return [];
+    if ((window as any).MeetJoyAuth?.getUser) {
+      return (window as any).MeetJoyAuth.getUser();
+    }
+    const raw = localStorage.getItem('mj_member_user');
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
+export function openMeetJoyLoginModal(): void {
+  if (typeof window === 'undefined') return;
+  if ((window as any).MeetJoyAuth?.showLoginModal) {
+    (window as any).MeetJoyAuth.showLoginModal();
+  } else {
+    window.location.href = 'https://meetjoy.net/my-account/';
   }
+}
+
+export function syncMeetJoyCloud(): void {
+  if (typeof window === 'undefined') return;
+  if ((window as any).MeetJoyProfiles?.syncWithCloud) {
+    (window as any).MeetJoyProfiles.syncWithCloud(false);
+  }
+}
+
+export function getAllCharts(): SavedChart[] {
+  let localCharts: SavedChart[] = [];
+  try {
+    localCharts = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+  } catch {
+    localCharts = [];
+  }
+
+  // 雙向融合全站通用命盤庫 (MeetJoy Universal Profiles Hub)
+  try {
+    let universalList: any[] = [];
+    if (typeof window !== 'undefined' && (window as any).MeetJoyProfiles?.getAll) {
+      universalList = (window as any).MeetJoyProfiles.getAll();
+    } else if (typeof localStorage !== 'undefined') {
+      const raw = localStorage.getItem('mj_universal_profiles');
+      if (raw) universalList = JSON.parse(raw);
+    }
+
+    if (Array.isArray(universalList) && universalList.length > 0) {
+      const map = new Map<string, SavedChart>();
+      localCharts.forEach(c => map.set(c.id, c));
+
+      let changed = false;
+      universalList.forEach(p => {
+        if (!p || !p.id || !p.name) return;
+        const bDate = p.birthDate || p.solarDate;
+        if (!bDate) return;
+
+        const existing = map.get(p.id);
+        if (!existing) {
+          const timeIdx = p.timeIndex !== undefined ? Number(p.timeIndex) : timeToTimeIndex(p.birthTime);
+          const newChart: SavedChart = {
+            id: p.id,
+            name: p.name,
+            solarDate: bDate,
+            birthTime: p.birthTime || timeIndexToDefaultTime(timeIdx),
+            birthCity: p.birthCity || 'tw_taipei',
+            timeIndex: timeIdx,
+            gender: p.gender === 'male' || p.gender === '乾造' ? 'male' : 'female',
+            category: p.category || '自己',
+            notes: p.notes || '',
+            updatedAt: p.updatedAt || Date.now(),
+            deletedAt: p.deletedAt,
+          };
+          map.set(p.id, newChart);
+          localCharts.push(newChart);
+          changed = true;
+        } else if ((p.updatedAt || 0) > (existing.updatedAt || 0)) {
+          existing.name = p.name;
+          existing.solarDate = bDate;
+          if (p.birthTime) existing.birthTime = p.birthTime;
+          if (p.timeIndex !== undefined) existing.timeIndex = Number(p.timeIndex);
+          existing.gender = p.gender === 'male' || p.gender === '乾造' ? 'male' : 'female';
+          if (p.category) existing.category = p.category;
+          if (p.notes) existing.notes = p.notes;
+          existing.updatedAt = p.updatedAt;
+          existing.deletedAt = p.deletedAt;
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        localStorage.setItem(KEY, JSON.stringify(localCharts));
+      }
+    }
+  } catch (e) {
+    console.warn('[Storage] Universal profiles merge error:', e);
+  }
+
+  return localCharts;
 }
 
 export function getActiveCharts(): SavedChart[] {
@@ -51,7 +158,42 @@ export function getActiveCharts(): SavedChart[] {
 
 export function upsertChart(chart: SavedChart): void {
   const charts = getAllCharts().filter(c => c.id !== chart.id);
-  localStorage.setItem(KEY, JSON.stringify([...charts, chart]));
+  const updatedCharts = [...charts, chart];
+  localStorage.setItem(KEY, JSON.stringify(updatedCharts));
+
+  // 1. 同步寫入 window.MeetJoyProfiles 全站通用命盤庫
+  try {
+    const univProfile = {
+      id: chart.id,
+      name: chart.name,
+      gender: chart.gender,
+      birthDate: chart.solarDate,
+      birthTime: chart.birthTime || timeIndexToDefaultTime(chart.timeIndex),
+      birthCity: chart.birthCity || 'tw_taipei',
+      timeIndex: chart.timeIndex,
+      category: chart.category || '自己',
+      notes: chart.notes || '',
+      updatedAt: chart.updatedAt || Date.now(),
+    };
+
+    if (typeof window !== 'undefined' && (window as any).MeetJoyProfiles?.upsert) {
+      (window as any).MeetJoyProfiles.upsert(univProfile);
+    } else if (typeof localStorage !== 'undefined') {
+      let univ: any[] = [];
+      const raw = localStorage.getItem('mj_universal_profiles');
+      if (raw) univ = JSON.parse(raw);
+      univ = univ.filter((p: any) => p.id !== chart.id);
+      univ.unshift(univProfile);
+      localStorage.setItem('mj_universal_profiles', JSON.stringify(univ));
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: chart }));
+      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated', { detail: chart }));
+    }
+  } catch (e) {
+    console.warn('[Storage] Sync upsert to universal failed:', e);
+  }
 }
 
 export function softDeleteChart(id: string): void {
@@ -60,6 +202,25 @@ export function softDeleteChart(id: string): void {
     c.id === id ? { ...c, deletedAt: now, updatedAt: now } : c
   );
   localStorage.setItem(KEY, JSON.stringify(charts));
+
+  try {
+    if (typeof window !== 'undefined' && (window as any).MeetJoyProfiles?.delete) {
+      (window as any).MeetJoyProfiles.delete(id);
+    } else if (typeof localStorage !== 'undefined') {
+      let univ: any[] = [];
+      const raw = localStorage.getItem('mj_universal_profiles');
+      if (raw) univ = JSON.parse(raw);
+      univ = univ.filter((p: any) => p.id !== id);
+      localStorage.setItem('mj_universal_profiles', JSON.stringify(univ));
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed', { detail: { id, deleted: true } }));
+      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated', { detail: { id, deleted: true } }));
+    }
+  } catch (e) {
+    console.warn('[Storage] Sync delete to universal failed:', e);
+  }
 }
 
 export function saveAllCharts(charts: SavedChart[]): void {

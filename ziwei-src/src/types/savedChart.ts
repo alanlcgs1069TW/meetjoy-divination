@@ -4,6 +4,8 @@ export interface SavedChart {
   solarDate: string;    // 'YYYY-M-D'
   timeIndex: number;    // 0–11 = 子–亥, 12 = 晚子時
   gender: 'male' | 'female';
+  birthTime?: string;           // 'HH:mm' 精確時間
+  birthCity?: string;           // 出生地城市代碼，如 'tw_taipei'
   multiBirthOrder?: 2 | 3 | 4;  // 同時辰多胞胎胎次：2=遷移, 3=兄弟, 4=僕役 為命宮
   category?: string;
   notes?: string;       // 自由筆記，純文字，≤1000 字
