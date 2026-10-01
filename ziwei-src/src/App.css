@@ -614,6 +614,35 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
   background: rgba(180, 120, 0, 0.13);
   outline: 1.5px solid rgba(180, 120, 0, 0.35);
 }
+.center-save-rectified-row {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 2px 0;
+  animation: fadeIn 0.2s ease-in;
+}
+.btn-save-rectified {
+  background: linear-gradient(135deg, #C5A059 0%, #B38E46 100%);
+  color: #ffffff;
+  border: 1px solid rgba(142, 109, 36, 0.4);
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(197, 160, 89, 0.35);
+  transition: all 0.15s ease;
+}
+.btn-save-rectified:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(197, 160, 89, 0.45);
+  background: #a98337;
+}
+.btn-save-rectified:active {
+  transform: translateY(0);
+}
 .btn-time-arrow {
   background: none;
   border: none;
@@ -1363,6 +1392,21 @@ body { font-family: var(--font); background: #f5f5f0; color: var(--black); }
   cursor: pointer;
   padding: 4px 8px;
   color: var(--black);
+}
+.btn-io-chart {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  color: var(--black);
+  opacity: 0.65;
+  transition: opacity 0.15s, transform 0.15s;
+  line-height: 1;
+}
+.btn-io-chart:hover {
+  opacity: 1;
+  transform: scale(1.15);
 }
 
 /* Privacy button */

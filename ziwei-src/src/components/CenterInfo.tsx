@@ -40,6 +40,8 @@ interface Props {
   onSaveName?: (text: string) => void;    // 正常模式點名字 inline 改名（暫態盤不傳＝不可編）
   cheatShow?: boolean;                    // 進階「高階顯示」cheat sheet 開關（取代原 Beta 徽章那列）
   onToggleCheat?: () => void;
+  onSaveRectified?: () => void;           // 儲存定盤時辰與生辰
+  onEditChart?: () => void;               // 盤面內直接編輯完整命盤資料
 }
 
 const NOTES_MAX = 1000;
@@ -60,7 +62,7 @@ function getYinYang(lunarYear: number): '陽' | '陰' {
   return stemIdx % 2 === 0 ? '陽' : '陰';
 }
 
-export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthOrder, onPrevTime, onNextTime, isRectified, childhoodOverride, advMode, onAdvToggle, feixingShow = true, onToggleFeixing, zihuaShow = true, onToggleZihua, notes, onSaveNotes, chartId, alias, onSaveAlias, onSaveName, cheatShow = false, onToggleCheat }: Props) {
+export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthOrder, onPrevTime, onNextTime, isRectified, childhoodOverride, advMode, onAdvToggle, feixingShow = true, onToggleFeixing, zihuaShow = true, onToggleZihua, notes, onSaveNotes, chartId, alias, onSaveAlias, onSaveName, cheatShow = false, onToggleCheat, onSaveRectified, onEditChart }: Props) {
   const { locale, setLocale, showPinyin, togglePinyin } = useLang();
   const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
   const [hideMode, setHideMode] = useState(false); // 隱藏個資：遮蔽姓名與生日（用戶自行截圖分享用）
@@ -289,6 +291,19 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
         {!hideMode && <button className="btn-time-arrow" onClick={onNextTime} title="Next hour">▶</button>}
       </div>
 
+      {isRectified && onSaveRectified && (
+        <div className="center-save-rectified-row">
+          <button
+            type="button"
+            className="btn-save-rectified"
+            onClick={onSaveRectified}
+            title={useEnLabels ? "Save rectified birth time to profile" : "儲存定盤生辰至檔案庫"}
+          >
+            💾 {useEnLabels ? "Save Time" : "儲存定盤"}
+          </button>
+        </div>
+      )}
+
       {/* 陰陽與男女是兩個獨立的二元軸，各自上色（不用記四種組合的對照表）：
           男/女 用色相（藍/粉，沿用命盤列表的性別圖示慣例）、陽/陰 用濃淡（無彩）。
           一彩一無彩，兩個字並排不會互相搶。 */}
@@ -354,6 +369,16 @@ export function CenterInfo({ chart, horoscope, isNatalMode, onReset, multiBirthO
             onClick={openNotes}
           >
             {useEnLabels ? 'Notes' : '筆記'}
+          </button>
+        )}
+        {onEditChart && (
+          <button
+            type="button"
+            className="lang-toggle-inline center-edit-btn"
+            onClick={onEditChart}
+            title={useEnLabels ? 'Edit chart details' : '編輯命盤生辰與資料'}
+          >
+            ✏️ {useEnLabels ? 'Edit' : '編輯'}
           </button>
         )}
       </div>

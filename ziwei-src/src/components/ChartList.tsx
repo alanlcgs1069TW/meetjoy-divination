@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { SavedChart } from '../types/savedChart';
 import { TIME_LABELS, TIME_HOURS, BRANCH_PINYIN, SUPPORTED_LOCALES } from '../i18n';
 import type { Locale } from '../i18n';
-import { DEFAULT_CATEGORIES, catLabel } from '../lib/storage';
+import { DEFAULT_CATEGORIES, catLabel, exportChartsToJson, importChartsFromJson } from '../lib/storage';
 import { useLang } from '../contexts/LangContext';
 
 const ACTIVE_CAT_KEY = 'ziwei-active-cat';
@@ -48,6 +48,7 @@ interface Props {
   onAddNew: (presetCategory?: string) => void;
   onOpenSidebar: () => void;
   isLoggedIn?: boolean;
+  onRefreshCharts?: () => void;
 }
 
 function GenderIcon({ gender }: { gender: 'male' | 'female' }) {
@@ -73,7 +74,7 @@ const TWIN_LABELS: Record<Locale, string[]> = {
   'en':    ['Twin 2',        'Triplet 3',         'Quadruplet 4'],
 };
 
-export function ChartList({ charts, categories, onCategoriesChange, onRenameCategory, onView, onEdit, onDelete, onAddNew, onOpenSidebar, isLoggedIn = false }: Props) {
+export function ChartList({ charts, categories, onCategoriesChange, onRenameCategory, onView, onEdit, onDelete, onAddNew, onOpenSidebar, isLoggedIn = false, onRefreshCharts }: Props) {
   const { locale, setLocale, showPinyin } = useLang();
 
   type UIStrings = { title: string; search: string; edit: string; delete: string; confirmDelete: string; noResults: string; empty: string; allTab: string; untaggedTab: string; unnamed: string; catPlaceholder: string; addChart: string; customCat: string };
@@ -90,6 +91,45 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
   const [tabsExpanded, setTabsExpanded] = useState(false);
   const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
   const localeMenuRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleExport() {
+    const json = exportChartsToJson();
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+    a.href = url;
+    a.download = `癒見幸福療_紫微命盤備份_${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (!content) return;
+      const res = importChartsFromJson(content);
+      if (res.success) {
+        alert(locale === 'en' ? `Successfully imported ${res.count} charts!` : `✅ 成功匯入 ${res.count} 組命盤資料！`);
+        onRefreshCharts?.();
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+          window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+        }
+      } else {
+        alert((locale === 'en' ? 'Import failed: ' : '匯入失敗：') + (res.error || '未知錯誤'));
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
 
   useEffect(() => {
     if (!localeMenuOpen) return;
@@ -200,6 +240,13 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
         {!privacyMode && (
           // 「無標籤」tab 下新增 → 不預選分類（本來就是要建無分類的盤）
           <button className="btn-add-chart" onClick={() => onAddNew(validTab && activeCategory !== 'all' && activeCategory !== UNTAGGED ? activeCategory : undefined)} title={UI.addChart}>＋</button>
+        )}
+        {!privacyMode && (
+          <>
+            <button className="btn-io-chart" onClick={handleExport} title={locale === 'en' ? "Export JSON backup" : "匯出命例備份 (JSON)"}>📥</button>
+            <button className="btn-io-chart" onClick={() => fileInputRef.current?.click()} title={locale === 'en' ? "Import JSON backup" : "匯入命例備份 (JSON)"}>📤</button>
+            <input type="file" ref={fileInputRef} accept=".json" style={{ display: 'none' }} onChange={handleFileChange} />
+          </>
         )}
         {!privacyMode && (
           <div className="locale-menu-wrap" ref={localeMenuRef}>

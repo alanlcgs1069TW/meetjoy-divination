@@ -74,3 +74,43 @@ export function getLastSyncTime(): number | null {
 export function setLastSyncTime(ts: number): void {
   localStorage.setItem('ziwei-last-sync', String(ts));
 }
+
+export function exportChartsToJson(): string {
+  const charts = getAllCharts();
+  return JSON.stringify(charts, null, 2);
+}
+
+export function importChartsFromJson(jsonStr: string): { success: boolean; count: number; error?: string } {
+  try {
+    const parsed = JSON.parse(jsonStr);
+    if (!Array.isArray(parsed)) {
+      return { success: false, count: 0, error: '檔案格式錯誤：必須為命盤陣列' };
+    }
+    const current = getAllCharts();
+    const map = new Map<string, SavedChart>();
+    current.forEach(c => map.set(c.id, c));
+
+    let importedCount = 0;
+    for (const item of parsed) {
+      if (!item || typeof item !== 'object') continue;
+      if (!item.name || !item.solarDate || typeof item.timeIndex !== 'number' || !item.gender) continue;
+
+      const id = item.id || generateId();
+      const existing = map.get(id);
+      if (!existing || (item.updatedAt || 0) >= (existing.updatedAt || 0)) {
+        map.set(id, {
+          ...item,
+          id,
+          updatedAt: item.updatedAt || Date.now(),
+        });
+        importedCount++;
+      }
+    }
+
+    const merged = Array.from(map.values());
+    saveAllCharts(merged);
+    return { success: true, count: importedCount };
+  } catch (err) {
+    return { success: false, count: 0, error: (err as Error).message };
+  }
+}

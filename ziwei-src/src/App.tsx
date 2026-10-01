@@ -208,9 +208,61 @@ function App() {
       const prev = savedCharts.find(c => c.category === '自己' && c.id !== id);
       if (prev) upsertChart({ ...prev, category: undefined, updatedAt: Date.now() });
     }
-    upsertChart({ ...data, id, updatedAt: Date.now() });
+    const nextSaved: SavedChart = { ...data, id, updatedAt: Date.now() };
+    upsertChart(nextSaved);
     refreshCharts();
     setModalState(null);
+
+    // If currently viewing this chart, rebuild and update in place!
+    if (page === 'chart' && currentSaved?.id === id) {
+      setCurrentSaved(nextSaved);
+      setRectTimeIndex(null);
+      setRectDateOffset(0);
+      try {
+        const newChart = buildChart(nextSaved);
+        setChart(newChart);
+        setMultiBirthOrder(nextSaved.multiBirthOrder ?? null);
+      } catch (err) {
+        console.error('Rebuild chart after edit error:', err);
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+    }
+  }
+
+  function handleSaveRectified() {
+    if (!currentSaved) return;
+    const newSolarDate = rectDateOffset !== 0
+      ? adjustSolarDate(currentSaved.solarDate, rectDateOffset)
+      : currentSaved.solarDate;
+    const newTimeIndex = rectTimeIndex !== null ? rectTimeIndex : currentSaved.timeIndex;
+
+    const next: SavedChart = {
+      ...currentSaved,
+      solarDate: newSolarDate,
+      timeIndex: newTimeIndex,
+      updatedAt: Date.now(),
+    };
+
+    upsertChart(next);
+    setCurrentSaved(next);
+    setRectTimeIndex(null);
+    setRectDateOffset(0);
+    try {
+      const newChart = buildChart(next);
+      setChart(newChart);
+    } catch (e) {
+      console.error('Rebuild chart after rectification error:', e);
+    }
+    refreshCharts();
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('meetjoy_profiles_updated'));
+      window.dispatchEvent(new CustomEvent('mj-profiles-changed'));
+    }
   }
 
   // 紫占：報兩個數字 → 亂數起盤 → 直接入庫並開盤（不停在新增視窗）
@@ -731,6 +783,7 @@ function App() {
             onAddNew={presetCategory => setModalState({ mode: 'new', presetCategory })}
             onOpenSidebar={() => setSidebarOpen(true)}
             isLoggedIn={!!user}
+            onRefreshCharts={refreshCharts}
           />
         )}
 
@@ -752,6 +805,8 @@ function App() {
               onPrevTime={handlePrevTime}
               onNextTime={handleNextTime}
               isRectified={rectDateOffset !== 0 || (rectTimeIndex !== null && rectTimeIndex !== currentSaved?.timeIndex)}
+              onSaveRectified={currentSaved ? handleSaveRectified : undefined}
+              onEditChart={currentSaved ? () => setModalState({ mode: 'edit', chart: currentSaved }) : undefined}
               advMode={advMode}
               onAdvToggle={() => { setAdvMode(v => !v); setFocusLevel(null); setClickedPalaceIdx(null); setShowCheat(false); }}
               advLayers={cheatOn ? CHEAT_LAYERS : advLayers}
