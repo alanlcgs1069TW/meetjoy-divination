@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>癒見幸福療 · 7 步驟生命轉化見證法</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1920px;
+      height: 1080px;
+      background: #FAF8F5;
+      background: radial-gradient(circle at 10% 10%, #FFFDF9 0%, #FAF8F5 45%, #F4EFE6 100%);
+      font-family: 'PingFang TC', 'Noto Sans TC', sans-serif;
+      color: #1E293B;
+      padding: 44px 56px 40px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 頂部香檳金裝飾線 */
+    .top-gold-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #9FB8AD 0%, #C5A059 40%, #E8D3A7 70%, #9FB8AD 100%);
+    }
+
+    /* 頁首標題區 */
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 24px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .brand-logo-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 3px solid #C5A059;
+      box-shadow: 0 4px 14px rgba(197, 160, 89, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+    .header-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .brand-sub {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #C5A059;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .main-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .main-title {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #1E293B;
+    }
+    .pill-badge {
+      padding: 6px 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #C5A059 0%, #B38E46 100%);
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(179, 142, 70, 0.35);
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      background: #FFFFFF;
+      border: 1.5px solid #9FB8AD;
+      border-radius: 24px;
+      padding: 12px 28px;
+      box-shadow: 0 4px 14px rgba(159, 184, 173, 0.2);
+      text-align: center;
+    }
+    .header-right-text {
+      font-size: 16px;
+      font-weight: 800;
+      color: #2D5A47;
+      line-height: 1.45;
+    }
+
+    /* 卡片網格：上排 4 張、下排 3 張 */
+    .grid-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+      justify-content: center;
+    }
+    .grid-row-top {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .grid-row-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    /* 浮島卡片本體 */
+    .island-card {
+      background: #FFFFFF;
+      border-radius: 22px;
+      padding: 20px 22px 18px 22px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid var(--border-color);
+    }
+    .card-top-stripe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--badge-bg);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .step-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--badge-bg);
+      color: #FFFFFF;
+      font-size: 20px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+    .card-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .card-main-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #1E293B;
+      line-height: 1.25;
+    }
+    .card-sub-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--badge-bg);
+      letter-spacing: 0.5px;
+    }
+
+    .card-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      margin-bottom: 12px;
+    }
+    .card-items li {
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.55;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card-items li::before {
+      content: '•';
+      color: var(--badge-bg);
+      font-size: 18px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .card-tip-badge {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--badge-bg);
+      background: var(--tip-bg);
+      padding: 6px 12px;
+      border-radius: 12px;
+      align-self: flex-start;
+      letter-spacing: 0.2px;
+    }
+
+    /* 底部靈魂金句條 */
+    .bottom-golden-banner {
+      width: 100%;
+      background: #FFFFFF;
+      border: 2px solid #C5A059;
+      border-radius: 24px;
+      padding: 14px 32px;
+      box-shadow: 0 4px 16px rgba(197, 160, 89, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .banner-icon {
+      font-size: 24px;
+    }
+    .golden-quote {
+      font-family: 'Songti TC', 'Noto Serif TC', serif;
+      font-size: 21px;
+      font-weight: 900;
+      color: #8E6D24;
+      letter-spacing: 0.8px;
+    }
+    .author-tag {
+      font-size: 15px;
+      font-weight: 800;
+      color: #64748B;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-gold-bar"></div>
+
+  <!-- 頁首 -->
+  <div class="header-row">
+    <div class="header-left">
+      <div class="brand-logo-badge">🌿</div>
+      <div class="header-titles">
+        <div class="brand-sub">
+          <span>✨ 癒見幸福療 · 魔法占星學院</span>
+          <span>|</span>
+          <span>精神導師 ＆ 院長：楊愛倫（愛倫院長）</span>
+        </div>
+        <div class="main-title-wrap">
+          <h1 class="main-title">真實觸動心靈的生命見證</h1>
+          <div class="pill-badge">7 步驟生命轉化見證法</div>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <p class="header-right-text">
+        以真實的生命旅程共振人心，<br>
+        讓光與改變在生活中自然流動 🌿
+      </p>
+    </div>
+  </div>
+
+  <!-- 7 步驟卡片網格 -->
+  <div class="grid-container">
+    <!-- 上排 4 張 -->
+    <div class="grid-row-top">
+      <!-- Step 1 -->
+      <div class="island-card" style="--badge-bg: #A64638; --border-color: #F3DDD9; --tip-bg: #FDF2F0;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">1</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">我是誰？</h3>
+            <span class="card-sub-title">—— 建立真實生命連結</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>我生活在哪座城市、身處什麼人生階段？</li>
+          <li>我的日常家庭角色與生活節奏如何？</li>
+          <li>我在職場或專業領域中的真實面貌是什麼？</li>
+        </ul>
+        <div class="card-tip-badge">🌸 建立真誠共鳴，讓聽者看見有溫度的你</div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="island-card" style="--badge-bg: #3B6656; --border-color: #D6E6DF; --tip-bg: #F0F6F3;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">2</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">曾經的卡點</h3>
+            <span class="card-sub-title">—— 靈魂為何渴望轉變？</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>過去在情緒、關係或生命中遇到什麼死結？</li>
+          <li>當時身心處於怎樣的消耗或迷惘低谷？</li>
+          <li>曾經試過哪些傳統方法，依然感到原地打轉？</li>
+        </ul>
+        <div class="card-tip-badge">🌿 直面盲點與痛點，喚起深層理解與同理</div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="island-card" style="--badge-bg: #8E6D24; --border-color: #F6E6CC; --tip-bg: #FDF9F2;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">3</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">如何與學院相遇？</h3>
+            <span class="card-sub-title">—— 遇見轉折契機</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>是哪位引路人的分享，或是哪次機緣引領？</li>
+          <li>初次接觸五大學院或愛倫院長時有何好奇？</li>
+          <li>哪一句話或哪份頻率共振，讓自己打開心門？</li>
+        </ul>
+        <div class="card-tip-badge">✨ 照亮心靈的微光，跨出突破的第一步</div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="island-card" style="--badge-bg: #995F0E; --border-color: #F6E2C4; --tip-bg: #FEF6EB;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">4</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">如何融入日常？</h3>
+            <span class="card-sub-title">—— 溫和微儀式落地</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>接觸了學院哪些星盤解讀、課程或微處方？</li>
+          <li>如何將花精、靜心調頻融入每一天的生活作息？</li>
+          <li>持續實踐了多久？搭配了哪些思維微調？</li>
+        </ul>
+        <div class="card-tip-badge">🍵 落地微處方，讓智慧化為生活自然呼吸</div>
+      </div>
+    </div>
+
+    <!-- 下排 3 張 -->
+    <div class="grid-row-bottom">
+      <!-- Step 5 -->
+      <div class="island-card" style="--badge-bg: #594475; --border-color: #E8DFF3; --tip-bg: #F6F3F9;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">5</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">身心轉化的體感過程</h3>
+            <span class="card-sub-title">—— 內在發生了什麼？</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>在調頻與自我覺察過程中，身心有哪些真實細膩感受？</li>
+          <li>哪一個頓悟瞬間或轉念，讓胸口沉重的死結真正鬆開了？</li>
+          <li>面對舊有情緒慣性或能量起伏時，學會如何溫柔接納自己？</li>
+        </ul>
+        <div class="card-tip-badge">🔮 細膩體會頻率共振，看見內在自性力量的甦醒</div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="island-card" style="--badge-bg: #B48C36; --border-color: #F8E8C7; --tip-bg: #FFFDF5;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">6</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">蛻變前後的生命風景</h3>
+            <span class="card-sub-title">—— 我看見了什麼奇蹟？</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>過去面對生活壓力的心力交瘁與無奈緊繃</li>
+          <li>現在面對生命起伏的沉著清明、安定從容與自性力量</li>
+          <li>自身的能量氣場、家庭氛圍與人際關係最深刻的真實質變</li>
+        </ul>
+        <div class="card-tip-badge">☀️ 從自我耗損到豐盛自在，生命實證就是最美的光</div>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="island-card" style="--badge-bg: #325780; --border-color: #D3E0EE; --tip-bg: #F0F4FA;">
+        <div class="card-top-stripe"></div>
+        <div class="card-header">
+          <div class="step-circle">7</div>
+          <div class="card-title-group">
+            <h3 class="card-main-title">靈魂的願力與傳遞</h3>
+            <span class="card-sub-title">—— 為何願意點亮他人？</span>
+          </div>
+        </div>
+        <ul class="card-items">
+          <li>為什麼這份轉化深深定錨，成為我生命不可分割的養分？</li>
+          <li>為什麼由衷渴望將這份幸福療癒的能量分享給親朋好友？</li>
+          <li>我最希望把這段走過幽谷看見光明的歷程，帶給哪一位朋友？</li>
+        </ul>
+        <div class="card-tip-badge">🌌 生命點亮生命，讓愛與共鳴在世界持續迴盪</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部靈魂金句橫幅 -->
+  <div class="bottom-golden-banner">
+    <span class="banner-icon">📣</span>
+    <span class="golden-quote">「最動人的生命見證，源自靈魂真實走過的蛻變歷程；帶著愛與生命的溫度，自然點亮身邊的每一個靈魂。」</span>
+    <span class="author-tag">—— 癒見幸福療 · 愛倫院長</span>
+  </div>
+</body>
+</html>
