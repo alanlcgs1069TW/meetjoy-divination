@@ -26,7 +26,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifest: false,         // use existing public/manifest.json
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        navigateFallback: null,
+        globPatterns: ['**/*.{js,css,png,svg,ico,woff2}'],
         runtimeCaching: [],
       },
     }),

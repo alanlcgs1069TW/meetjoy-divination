@@ -6,7 +6,7 @@ import { lunarToSolarDate, leapMonthOfYear, hourOfTimeIndex } from './lib/engine
 import { AdvancedNav, type AdvLevel } from './components/AdvancedNav';
 import { LangContext } from './contexts/LangContext';
 import type { Locale } from './i18n';
-import { getActiveCharts, getAllCharts, upsertChart, softDeleteChart, generateId, getLastSyncTime, DEFAULT_CATEGORIES, getCustomCategories, saveCustomCategories } from './lib/storage';
+import { getActiveCharts, getAllCharts, upsertChart, softDeleteChart, generateId, getLastSyncTime, DEFAULT_CATEGORIES, getCustomCategories, saveCustomCategories, timeToTimeIndex, timeIndexToDefaultTime } from './lib/storage';
 import { supabase } from './lib/supabase';
 import { syncCharts } from './lib/sync';
 import { getSettings, saveSettings, syncSettings } from './lib/settings';
@@ -241,6 +241,9 @@ function App() {
       } catch (err) {
         console.error('Rebuild chart after edit error:', err);
       }
+    } else {
+      // 核心修復：新增命盤或從列表排盤時，立即開盤並跳轉至星盤畫面！
+      handleViewChart(nextSaved);
     }
 
     if (typeof window !== 'undefined') {
@@ -315,17 +318,28 @@ function App() {
     return order ? createTwinChart(base, order) : base;
   }
 
+  function getInitialActiveChart(): SavedChart | null {
+    const active = getActiveCharts();
+    const id = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(SESSION_KEY) : null;
+    if (id) {
+      const found = active.find(c => c.id === id);
+      if (found) return found;
+    }
+    const selfChart = active.find(c => c.category === '自己');
+    if (selfChart) return selfChart;
+    if (active.length > 0) return active[0];
+    return null;
+  }
+
+  const [currentSaved, setCurrentSaved] = useState<SavedChart | null>(() => getInitialActiveChart());
+
   const [chart, setChart] = useState<ZiweiChart | null>(() => {
-    const id = sessionStorage.getItem(SESSION_KEY);
-    if (!id) return null;
-    const saved = getActiveCharts().find(c => c.id === id);
-    if (!saved) return null;
-    try { return buildChart(saved); } catch { return null; }
+    const init = getInitialActiveChart();
+    if (!init) return null;
+    try { return buildChart(init); } catch { return null; }
   });
   const [multiBirthOrder, setMultiBirthOrder] = useState<2 | 3 | 4 | null>(() => {
-    const id = sessionStorage.getItem(SESSION_KEY);
-    if (!id) return null;
-    return getActiveCharts().find(c => c.id === id)?.multiBirthOrder ?? null;
+    return getInitialActiveChart()?.multiBirthOrder ?? null;
   });
   const [selectedPalaceIdx, setSelectedPalaceIdx] = useState<number | null>(null);
   const [selectedYear, setSelectedYear]           = useState<number | null>(null);
@@ -373,12 +387,6 @@ function App() {
     (!advMode || focusLevel == null || LEVEL_RANK[focusLevel] > LEVEL_RANK[advLevel])
       ? advLevel : focusLevel;
 
-  // 定盤：current saved data + override time index + date offset
-  const [currentSaved, setCurrentSaved] = useState<SavedChart | null>(() => {
-    const id = sessionStorage.getItem(SESSION_KEY);
-    if (!id) return null;
-    return getActiveCharts().find(c => c.id === id) ?? null;
-  });
   const [rectTimeIndex, setRectTimeIndex] = useState<number | null>(null);
   const [rectDateOffset, setRectDateOffset] = useState(0);
 
@@ -409,11 +417,11 @@ function App() {
     if (base === 12) setRectDateOffset(o => o + 1); // 晚子時 → 次日早子時
   }
 
-  // Restore page to 'chart' if we successfully recovered a chart from sessionStorage
-  const [page, setPage] = useState<AppPage>(() =>
-    sessionStorage.getItem(SESSION_KEY) && getActiveCharts().some(c => c.id === sessionStorage.getItem(SESSION_KEY))
-      ? 'chart' : 'list'
-  );
+  // Restore page to 'chart' if we have an active chart
+  const [page, setPage] = useState<AppPage>(() => {
+    const init = getInitialActiveChart();
+    return init ? 'chart' : 'list';
+  });
 
   function handleViewChart(saved: SavedChart) {
     try {
@@ -518,6 +526,66 @@ function App() {
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [page]);
+
+  // ── URL query parameters & Initial Welcome ────────────────────────────────────
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const paramId = params.get('id');
+      const paramName = params.get('name');
+      const paramDate = params.get('birthDate') || params.get('solarDate');
+      const paramTime = params.get('birthTime');
+      const paramTimeIdx = params.get('timeIndex');
+      const paramGender = params.get('gender');
+      const paramAction = params.get('action');
+
+      if (paramAction === 'new') {
+        setModalState({ mode: 'new' });
+        return;
+      }
+
+      if (paramId) {
+        const found = getActiveCharts().find(c => c.id === paramId);
+        if (found) {
+          handleViewChart(found);
+          return;
+        }
+      }
+
+      if (paramDate) {
+        const timeIndex = paramTimeIdx !== null ? parseInt(paramTimeIdx, 10) : timeToTimeIndex(paramTime || undefined);
+        const gender: 'male' | 'female' = (paramGender === 'female' || paramGender === '坤造' || paramGender === '女') ? 'female' : 'male';
+        const name = paramName || '訪客';
+        const existing = getActiveCharts().find(c => c.solarDate === paramDate && c.timeIndex === timeIndex && c.gender === gender);
+        if (existing) {
+          handleViewChart(existing);
+        } else {
+          const newChart: SavedChart = {
+            id: generateId(),
+            name,
+            solarDate: paramDate,
+            birthTime: paramTime || timeIndexToDefaultTime(timeIndex),
+            timeIndex,
+            gender,
+            category: '自己',
+            updatedAt: Date.now(),
+          };
+          upsertChart(newChart);
+          refreshCharts();
+          handleViewChart(newChart);
+        }
+        return;
+      }
+
+      // If user has zero saved charts on arrival, prompt modal immediately so they aren't stuck on an empty screen
+      const active = getActiveCharts();
+      if (active.length === 0 && modalState === null) {
+        setModalState({ mode: 'new' });
+      }
+    } catch (e) {
+      console.warn('[Ziwei App] URL params / init error:', e);
+    }
+  }, []);
 
   // ── Lang ─────────────────────────────────────────────────────────────────────
   const [locale, setLocaleState] = useState<Locale>(

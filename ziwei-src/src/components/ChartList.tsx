@@ -399,8 +399,31 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
       {/* List */}
       <div className="chart-items">
         {filtered.length === 0 && (
-          <div className="chart-empty">
-            {query ? UI.noResults : UI.empty}
+          <div className="chart-empty" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', padding: '36px 16px' }}>
+            <div style={{ fontSize: '15px', color: '#78716c' }}>{query ? UI.noResults : UI.empty}</div>
+            {!query && (
+              <button
+                type="button"
+                onClick={() => onAddNew(validTab && activeCategory !== 'all' && activeCategory !== UNTAGGED ? activeCategory : undefined)}
+                style={{
+                  background: 'linear-gradient(135deg, #C8A97E 0%, #B8860B 100%)',
+                  color: '#182622',
+                  border: '1px solid rgba(200, 169, 126, 0.8)',
+                  borderRadius: '14px',
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontWeight: 900,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(200, 169, 126, 0.35)',
+                  transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>✨ 立即輸入生辰排盤 ➔</span>
+              </button>
+            )}
           </div>
         )}
         {!isLoggedIn && !query && (
