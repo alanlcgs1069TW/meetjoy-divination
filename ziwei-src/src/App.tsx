@@ -417,11 +417,8 @@ function App() {
     if (base === 12) setRectDateOffset(o => o + 1); // 晚子時 → 次日早子時
   }
 
-  // Restore page to 'chart' if we have an active chart
-  const [page, setPage] = useState<AppPage>(() => {
-    const init = getInitialActiveChart();
-    return init ? 'chart' : 'list';
-  });
+  // 紫微首頁預設為「命盤庫」那一頁 ('list')
+  const [page, setPage] = useState<AppPage>('list');
 
   function handleViewChart(saved: SavedChart) {
     try {
@@ -575,12 +572,6 @@ function App() {
           handleViewChart(newChart);
         }
         return;
-      }
-
-      // If user has zero saved charts on arrival, prompt modal immediately so they aren't stuck on an empty screen
-      const active = getActiveCharts();
-      if (active.length === 0 && modalState === null) {
-        setModalState({ mode: 'new' });
       }
     } catch (e) {
       console.warn('[Ziwei App] URL params / init error:', e);

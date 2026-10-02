@@ -80,7 +80,7 @@ export function ChartList({ charts, categories, onCategoriesChange, onRenameCate
   type UIStrings = { title: string; search: string; edit: string; delete: string; confirmDelete: string; noResults: string; empty: string; allTab: string; untaggedTab: string; unnamed: string; catPlaceholder: string; addChart: string; customCat: string };
   const UI_BY_LOCALE: Record<string, UIStrings> = {
     'en':    { title: 'Charts',      search: 'Search by name or date...', edit: 'Edit',  delete: 'Delete', confirmDelete: 'Confirm?',  noResults: 'No results found',    empty: 'No charts yet — use ＋ to add',  allTab: 'All',  untaggedTab: 'Untagged',  unnamed: '(Unnamed)',   catPlaceholder: 'Category name', addChart: 'New Chart', customCat: 'Custom' },
-    'zh-TW': { title: '命盤資料庫', search: '搜尋名字或日期',            edit: '編輯', delete: '刪除',  confirmDelete: '確認刪除',  noResults: '找不到符合的命盤',  empty: '尚無命盤，點右上角 ＋ 新增', allTab: '全部', untaggedTab: '無標籤', unnamed: '（無名稱）', catPlaceholder: '分類名稱',    addChart: '新增命盤', customCat: '自訂' },
+    'zh-TW': { title: '紫微命盤庫', search: '搜尋名字或日期',            edit: '編輯', delete: '刪除',  confirmDelete: '確認刪除',  noResults: '找不到符合的命盤',  empty: '尚無命盤，點右上角 ＋ 新增', allTab: '全部', untaggedTab: '無標籤', unnamed: '（無名稱）', catPlaceholder: '分類名稱',    addChart: '新增命盤', customCat: '自訂' },
     'zh-CN': { title: '命盘资料库', search: '搜寻名字或日期',            edit: '编辑', delete: '删除',  confirmDelete: '确认删除',  noResults: '找不到符合的命盘',  empty: '尚无命盘，点右上角 ＋ 新增', allTab: '全部', untaggedTab: '无标签', unnamed: '（无名称）', catPlaceholder: '分类名称',    addChart: '新增命盘', customCat: '自定义' },
   };
   const UI = UI_BY_LOCALE[locale] ?? UI_BY_LOCALE['zh-TW'];
